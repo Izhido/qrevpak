@@ -1,0 +1,230 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{B8DB2596-9EF6-43C5-B456-AF4CF8EB1199}</ProjectGuid>
+    <RootNamespace>Q1Rev-GL</RootNamespace>
+    <Keyword>MakeFileProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.21006.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
+    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">make 2&gt;&amp;1 | sed -e 's/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/' -e 's/\(undefined reference\)/error : \1/'</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">make clean
+make 2&gt;&amp;1 | sed -e 's/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/' -e 's/\(undefined reference\)/error : \1/'</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">make clean</NMakeCleanCommandLine>
+    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">GLQUAKE;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
+    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">make clean
+make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">make clean</NMakeCleanCommandLine>
+    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ARM9;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\source\glrevol\source\glrevol.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\cd_revol.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\chase.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\cl_demo.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\cl_input.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\cl_main.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\cl_parse.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\cl_tent.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\cmd.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\common.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\console.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\crc.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\cvar.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\d_edge.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\d_init.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\d_modech.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\d_part.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\d_polyse.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\d_scan.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\d_sky.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\d_sprite.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\d_surf.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\d_vars.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\d_zpoint.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\draw.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_draw.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_mesh.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_model.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_refrag.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_rlight.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_rmain.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_rmisc.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_rsurf.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_screen.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_test.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_vidrevol.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_warp.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\host.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\host_cmd.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\in_revol.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\keys.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\mathlib.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\menu.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\model.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\net_dgrm.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\net_loop.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\net_main.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\net_revol.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\net_udp.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\net_vcr.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\nonintel.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\osk_revol.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\pr_cmds.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\pr_edict.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\pr_exec.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\r_aclip.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\r_alias.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\r_bsp.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\r_draw.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\r_edge.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\r_efrag.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\r_light.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\r_main.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\r_misc.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\r_part.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\r_sky.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\r_sprite.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\r_surf.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\r_vars.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\sbar.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\screen.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\snd_dma.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\snd_mem.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\snd_mix.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\snd_revol.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\sv_main.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\sv_move.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\sv_phys.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\sv_user.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\sys_revol.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\vid_revol.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\view.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\wad.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\world.c" />
+    <ClCompile Include="..\..\..\source\q1source\WinQuake\zone.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\source\glrevol\include\GL\gl.h" />
+    <ClInclude Include="..\..\..\source\glrevol\include\GL\glu.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\adivtab.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\anorm_dots.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\anorms.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\asm_draw.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\asm_i386.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\block16.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\block8.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\bspfile.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\cdaudio.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\client.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\cmd.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\common.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\conproc.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\console.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\crc.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\cvar.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\d_iface.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\d_ifacea.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\d_local.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\dosisms.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\draw.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\gl_model.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\gl_warp_sin.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\glquake.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\glquake2.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\input.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\keys.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\mathlib.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\menu.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\model.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\modelgen.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\mpdosock.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\net.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\net_bw.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\net_dgrm.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\net_ipx.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\net_loop.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\net_mp.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\net_ser.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\net_udp.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\net_vcr.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\net_wins.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\net_wipx.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\osk_revol.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\pr_comp.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\progdefs.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\progs.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\protocol.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\quakeasm.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\quakedef.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\r_local.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\r_shared.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\render.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\resource.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\sbar.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\screen.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\server.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\sound.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\spritegn.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\sys.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\vgamodes.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\vid.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\vid_dos.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\view.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\vregset.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\wad.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\winquake.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\world.h" />
+    <ClInclude Include="..\..\..\source\q1source\WinQuake\zone.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Makefile" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

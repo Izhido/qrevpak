@@ -1,0 +1,190 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{955D8603-4B1C-4166-BA43-576F7EBDE4B2}</ProjectGuid>
+    <RootNamespace>QWRev-GL</RootNamespace>
+    <Keyword>MakeFileProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.21006.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
+    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">make 2&gt;&amp;1 | sed -e 's/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/' -e 's/\(undefined reference\)/error : \1/'</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">make clean
+make 2&gt;&amp;1 | sed -e 's/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/' -e 's/\(undefined reference\)/error : \1/'</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">make clean</NMakeCleanCommandLine>
+    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
+    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">make clean
+make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">make clean</NMakeCleanCommandLine>
+    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ARM9;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\source\q1source\QW\client\cd_revol.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\cl_cam.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\cl_demo.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\cl_ents.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\cl_input.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\cl_main.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\cl_parse.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\cl_pred.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\cl_tent.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\cmd.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\common.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\console.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\crc.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\cvar.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\d_edge.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\d_fill.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\d_init.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\d_modech.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\d_part.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\d_polyse.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\d_scan.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\d_sky.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\d_sprite.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\d_surf.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\d_vars.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\d_zpoint.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\draw.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\in_revol.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\keys.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\mathlib.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\md4.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\menu.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\model.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\net_chan.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\net_udp.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\nonintel.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\osk_revol.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\pmove.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\pmovetst.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\r_aclip.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\r_alias.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\r_bsp.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\r_draw.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\r_edge.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\r_efrag.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\r_light.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\r_main.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\r_misc.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\r_part.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\r_sky.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\r_sprite.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\r_surf.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\r_vars.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\sbar.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\screen.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\skin.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\snd_dma.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\snd_mem.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\snd_mix.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\snd_revol.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\sys_revol.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\vid_revol.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\view.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\wad.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\zone.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\source\glrevol\include\GL\gl.h" />
+    <ClInclude Include="..\..\..\source\glrevol\include\GL\glu.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\adivtab.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\anorm_dots.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\anorms.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\asm_draw.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\asm_i386.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\block16.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\block8.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\bothdefs.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\bspfile.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\cdaudio.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\client.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\cmd.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\common.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\console.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\crc.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\cvar.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\d_iface.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\d_ifacea.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\d_local.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\draw.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\gl_model.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\gl_warp_sin.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\glquake.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\glquake2.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\input.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\keys.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\mathlib.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\menu.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\model.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\modelgen.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\net.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\pmove.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\protocol.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\quakeasm.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\quakedef.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\r_local.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\r_shared.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\render.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\resource.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\sbar.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\screen.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\sound.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\spritegn.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\sys.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\vid.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\view.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\wad.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\winquake.h" />
+    <ClInclude Include="..\..\..\source\q1source\QW\client\zone.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Makefile" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

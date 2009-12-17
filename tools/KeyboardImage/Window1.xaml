@@ -1,0 +1,297 @@
+﻿<Window x:Class="Window1"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Window1" Height="338px" Width="622px" Background="Black">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+            <Rectangle Stroke="White" Grid.Column="0"/>
+            <TextBlock  Grid.Column="0" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">ESC</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="1"/>
+            <TextBlock Grid.Column="1" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">F1</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="2"/>
+            <TextBlock Grid.Column="2" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">F2</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="3"/>
+            <TextBlock Grid.Column="3" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">F3</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="4"/>
+            <TextBlock Grid.Column="4" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">F4</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="5"/>
+            <TextBlock Grid.Column="5" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">F5</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="6"/>
+            <TextBlock Grid.Column="6" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">F6</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="7"/>
+            <TextBlock Grid.Column="7" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">F7</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="8"/>
+            <TextBlock Grid.Column="8" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">F8</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="9"/>
+            <TextBlock Grid.Column="9" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">F9</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="10"/>
+            <TextBlock Grid.Column="10" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">F10</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="11"/>
+            <TextBlock Grid.Column="11" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">F11</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="12"/>
+            <TextBlock Grid.Column="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">F12</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="13"/>
+            <TextBlock Grid.Column="13" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap">Num Lock</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="14"/>
+            <TextBlock Grid.Column="14" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">Pause</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="15"/>
+            <TextBlock Grid.Column="15" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">Ins</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="16"/>
+            <TextBlock Grid.Column="16" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">Del</TextBlock>
+        </Grid>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+            <Rectangle Stroke="White" Grid.Column="0"/>
+            <TextBlock Grid.Column="0" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">~</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="1"/>
+            <TextBlock Grid.Column="1" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">1</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="2"/>
+            <TextBlock Grid.Column="2" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">2</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="3"/>
+            <TextBlock Grid.Column="3" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">3</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="4"/>
+            <TextBlock Grid.Column="4" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">4</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="5"/>
+            <TextBlock Grid.Column="5" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">5</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="6"/>
+            <TextBlock Grid.Column="6" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">6</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="7"/>
+            <TextBlock Grid.Column="7" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">7</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="8"/>
+            <TextBlock Grid.Column="8" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">8</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="9"/>
+            <TextBlock Grid.Column="9" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">9</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="10"/>
+            <TextBlock Grid.Column="10" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">0</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="11"/>
+            <TextBlock Grid.Column="11" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">-</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="12"/>
+            <TextBlock Grid.Column="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">=</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="13"/>
+            <TextBlock Grid.Column="13" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">Bksp</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="14"/>
+            <TextBlock Grid.Column="14" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">Home</TextBlock>
+        </Grid>
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition  Width="2*" />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+            <Rectangle Stroke="White" Grid.Column="0"/>
+            <TextBlock Grid.Column="0" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">Tab</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="1"/>
+            <TextBlock Grid.Column="1" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">Q</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="2"/>
+            <TextBlock Grid.Column="2" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">W</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="3"/>
+            <TextBlock Grid.Column="3" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">E</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="4"/>
+            <TextBlock Grid.Column="4" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">R</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="5"/>
+            <TextBlock Grid.Column="5" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">T</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="6"/>
+            <TextBlock Grid.Column="6" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">Y</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="7"/>
+            <TextBlock Grid.Column="7" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">U</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="8"/>
+            <TextBlock Grid.Column="8" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">I</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="9"/>
+            <TextBlock Grid.Column="9" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">O</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="10"/>
+            <TextBlock Grid.Column="10" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">P</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="11"/>
+            <TextBlock Grid.Column="11" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">[</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="12"/>
+            <TextBlock Grid.Column="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">]</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="13"/>
+            <TextBlock Grid.Column="13" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">\</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="14"/>
+            <TextBlock Grid.Column="14" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap">Page Up</TextBlock>
+        </Grid>
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition  Width="2*"/>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition  Width="2*"/>
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+            <Rectangle Stroke="White" Grid.Column="0"/>
+            <TextBlock Grid.Column="0" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap">Caps Lock</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="1"/>
+            <TextBlock Grid.Column="1" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">A</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="2"/>
+            <TextBlock Grid.Column="2" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">S</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="3"/>
+            <TextBlock Grid.Column="3" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">D</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="4"/>
+            <TextBlock Grid.Column="4" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">F</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="5"/>
+            <TextBlock Grid.Column="5" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">G</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="6"/>
+            <TextBlock Grid.Column="6" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">H</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="7"/>
+            <TextBlock Grid.Column="7" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">J</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="8"/>
+            <TextBlock Grid.Column="8" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">K</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="9"/>
+            <TextBlock Grid.Column="9" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">L</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="10"/>
+            <TextBlock Grid.Column="10" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">;</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="11"/>
+            <TextBlock Grid.Column="11" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">'</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="12"/>
+            <TextBlock Grid.Column="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">Enter</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="13"/>
+            <TextBlock Grid.Column="13" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap">Page Down</TextBlock>
+        </Grid>
+            <Grid Grid.Row="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition  Width="2*"/>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition  Width="2*"/>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+            <Rectangle Stroke="White" Grid.Column="0"/>
+            <TextBlock Grid.Column="0" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap">Shift</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="1"/>
+            <TextBlock Grid.Column="1" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">Z</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="2"/>
+            <TextBlock Grid.Column="2" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">X</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="3"/>
+            <TextBlock Grid.Column="3" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">C</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="4"/>
+            <TextBlock Grid.Column="4" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">V</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="5"/>
+            <TextBlock Grid.Column="5" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">B</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="6"/>
+            <TextBlock Grid.Column="6" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">N</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="7"/>
+            <TextBlock Grid.Column="7" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">M</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="8"/>
+            <TextBlock Grid.Column="8" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">,</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="9"/>
+            <TextBlock Grid.Column="9" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">.</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="10"/>
+            <TextBlock Grid.Column="10" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">/</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="11"/>
+            <TextBlock Grid.Column="11" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">Shift</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="12"/>
+            <TextBlock Grid.Column="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">[Up]</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="13"/>
+            <TextBlock Grid.Column="13" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">End</TextBlock>
+        </Grid>
+            <Grid Grid.Row="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition  Width="6*"/>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+            <Rectangle Stroke="White" Grid.Column="0"/>
+            <TextBlock Grid.Column="0" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">Ctrl</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="1"/>
+            <TextBlock Grid.Column="1" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+            <Rectangle Stroke="White" Grid.Column="2"/>
+            <TextBlock Grid.Column="2" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+            <Rectangle Stroke="White" Grid.Column="3"/>
+            <TextBlock Grid.Column="3" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">Alt</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="4"/>
+            <TextBlock Grid.Column="4" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">Space</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="5"/>
+            <TextBlock Grid.Column="5" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">Alt</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="6"/>
+            <TextBlock Grid.Column="6" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+            <Rectangle Stroke="White" Grid.Column="7"/>
+            <TextBlock Grid.Column="7" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">Ctrl</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="8"/>
+            <TextBlock Grid.Column="8" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">[Left]</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="9"/>
+            <TextBlock Grid.Column="9" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">[Down]</TextBlock>
+            <Rectangle Stroke="White" Grid.Column="10"/>
+            <TextBlock Grid.Column="10" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center">[Right]</TextBlock>
+        </Grid>
+    </Grid>
+</Window>

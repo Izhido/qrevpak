@@ -1,0 +1,241 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{87DE1C6F-EF8A-4D5D-96C2-7E8D10ED143F}</ProjectGuid>
+    <RootNamespace>Q2Rev-SWimp</RootNamespace>
+    <Keyword>MakeFileProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.21006.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
+    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">make 2&gt;&amp;1 | sed -e 's/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/' -e 's/\(undefined reference\)/error : \1/'</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">make clean
+make 2&gt;&amp;1 | sed -e 's/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/' -e 's/\(undefined reference\)/error : \1/'</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">make clean</NMakeCleanCommandLine>
+    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
+    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">make clean
+make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">make clean</NMakeCleanCommandLine>
+    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ARM9;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\cd_revol.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\glimp_revol.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\in_revol.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\net_udp.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\osk_revol.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\snddma_revol.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\swimp_revol.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\sys_revol.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\vid_revol.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\qcommon\cmd.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\qcommon\cmodel.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\qcommon\common.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\qcommon\crc.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\qcommon\cvar.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\qcommon\files.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\qcommon\md4.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\qcommon\net_chan.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\qcommon\pmove.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_ai.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_chase.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_cmds.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_combat.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_func.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_items.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_main.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_misc.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_monster.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_phys.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_save.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_spawn.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_svcmds.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_target.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_trigger.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_turret.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_utils.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_weapon.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_actor.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_berserk.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_boss2.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_boss3.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_boss31.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_boss32.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_brain.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_chick.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_flash.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_flipper.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_float.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_flyer.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_gladiator.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_gunner.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_hover.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_infantry.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_insane.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_medic.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_move.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_mutant.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_parasite.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_soldier.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_supertank.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_tank.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\p_client.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\p_hud.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\p_trail.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\p_view.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\p_weapon.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\q_shared.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\server\sv_ccmds.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\server\sv_ents.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\server\sv_game.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\server\sv_init.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\server\sv_main.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\server\sv_send.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\server\sv_user.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\server\sv_world.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\client\cl_cin.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\client\cl_ents.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\client\cl_fx.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\client\cl_input.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\client\cl_inv.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\client\cl_main.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\client\cl_newfx.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\client\cl_parse.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\client\cl_pred.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\client\cl_scrn.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\client\cl_tent.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\client\cl_view.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\client\console.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\client\keys.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\client\menu.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\client\qmenu.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\client\snd_dma.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\client\snd_mem.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\client\snd_mix.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\client\x86.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_aclip.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_alias.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_bsp.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_draw.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_edge.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_image.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_light.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_main.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_misc.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_model.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_part.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_poly.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_polyse.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_rast.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_scan.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_sprite.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_surf.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\g_local.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\game.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_actor.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_berserk.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_boss2.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_boss31.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_boss32.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_brain.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_chick.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_flipper.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_float.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_flyer.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_gladiator.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_gunner.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_hover.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_infantry.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_insane.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_medic.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_mutant.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_parasite.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_player.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_rider.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_soldier.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_supertank.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_tank.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\q_shared.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\revol\osk_revol.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\revol\glstub\include\GL\gl.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\revol\glstub\include\GL\glu.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\qcommon\crc.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\qcommon\qcommon.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\qcommon\qfiles.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\server\server.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\client\adivtab.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\client\anorms.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\client\asm_i386.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\client\block16.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\client\block8.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\client\cdaudio.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\client\client.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\client\console.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\client\input.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\client\keys.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\client\qmenu.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\client\ref.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\client\screen.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\client\snd_loc.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\client\sound.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\client\vid.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_soft\adivtab.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_soft\anorms.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_soft\asm_draw.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_soft\d_ifacea.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_local.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_model.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_soft\rand1k.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Makefile" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
