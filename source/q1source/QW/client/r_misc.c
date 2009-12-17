@@ -20,6 +20,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // r_misc.c
 
 #include "quakedef.h"
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Include only for the software renderer builds (part 1):
+#ifndef GLQUAKE
+// <<< FIX
 #include "r_local.h"
 
 
@@ -593,4 +597,8 @@ r_refdef.viewangles[2]=    0;
 
 	D_SetupFrame ();
 }
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Include only for the software renderer builds (part 2):
+#endif
+// <<< FIX
 

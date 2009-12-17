@@ -20,6 +20,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // r_edge.c
 
 #include "quakedef.h"
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Include only for the software renderer builds (part 1):
+#ifndef GLQUAKE
+// <<< FIX
 #include "r_local.h"
 
 #if 0
@@ -775,5 +779,9 @@ void R_ScanEdges (void)
 	Sys_BigStackFree(MAXSPANS*sizeof(espan_t)+CACHE_SIZE, "R_ScanEdges");
 // <<< FIX
 }
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Include only for the software renderer builds (part 2):
+#endif
+// <<< FIX
 
 

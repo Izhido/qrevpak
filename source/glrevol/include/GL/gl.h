@@ -147,6 +147,8 @@ typedef unsigned short GLushort;
 
 #define GL_TEXTURE_WRAP_T 56
 
+#define GL_COLOR_INDEX8_EXT 57
+
 void glTexImage2D(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid* data);
 
 void glTexParameterf(GLenum target, GLenum pname, GLfloat param);
@@ -240,5 +242,11 @@ void glAlphaFunc(GLenum func, GLclampf ref);
 void glPolygonMode(GLenum face, GLenum mode);
 
 void glColor3ubv(const GLubyte* v);
+
+void glColor4ubv(const GLubyte* v);
+
+GLboolean glIsEnabled(GLenum cap);
+
+void glColor4ub(GLubyte red, GLubyte green, GLubyte blue, GLubyte alpha); 
 
 #endif

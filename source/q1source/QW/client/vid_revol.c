@@ -5,6 +5,10 @@
 #include <wiiuse/wpad.h>
 
 #include "quakedef.h"
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Include only for the software renderer builds (part 1):
+#ifndef GLQUAKE
+// <<< FIX
 #include "d_local.h"
 #include "Keyboard_img.h"
 #include "KeyboardInverted_img.h"
@@ -537,3 +541,7 @@ void VID_UpdateFullScreenStatus(void)
 	WPAD_IR(WPAD_CHAN_0, &p);
 	scr_copyeverything = (p.valid) || (in_osk.value);
 }
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Include only for the software renderer builds (part 2):
+#endif
+// <<< FIX

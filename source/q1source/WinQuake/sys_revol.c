@@ -809,6 +809,8 @@ int main (int argc, char* argv[])
 	sys_framebuffer[2] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(sys_rmode));
 #endif
 
+	VIDEO_ClearFrameBuffer(sys_rmode, sys_framebuffer[0], COLOR_BLACK);
+
 	CON_Init(sys_framebuffer[0], 20, 20, sys_rmode->fbWidth, sys_rmode->xfbHeight, sys_rmode->fbWidth * VI_DISPLAY_PIX_SZ);
 
 #ifndef GLQUAKE

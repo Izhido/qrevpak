@@ -20,6 +20,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // r_surf.c: surface-related refresh code
 
 #include "quakedef.h"
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Include only for the software renderer builds (part 1):
+#ifndef GLQUAKE
+// <<< FIX
 #include "r_local.h"
 
 drawsurf_t	r_drawsurf;
@@ -658,4 +662,8 @@ void R_GenTile (msurface_t *psurf, void *pdest)
 		Sys_Error ("Unknown tile type");
 	}
 }
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Include only for the software renderer builds (part 2):
+#endif
+// <<< FIX
 

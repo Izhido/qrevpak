@@ -21,6 +21,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // sprites
 
 #include "quakedef.h"
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Include only for the software renderer builds (part 1):
+#ifndef GLQUAKE
+// <<< FIX
 #include "d_local.h"
 
 static int		sprite_height;
@@ -624,4 +628,8 @@ void D_DrawSprite (void)
 	Sys_BigStackFree(sizeof(sspan_t) * (MAXHEIGHT+1), "D_DrawSprite");
 // <<< FIX
 }
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Include only for the software renderer builds (part 2):
+#endif
+// <<< FIX
 

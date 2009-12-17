@@ -71,6 +71,11 @@ console is:
 
 */
 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Include only for the GL builds (part 1):
+#ifdef GLQUAKE
+// <<< FIX
+
 
 int                     glx, gly, glwidth, glheight;
 
@@ -1186,3 +1191,8 @@ void SCR_UpdateScreen (void)
 
 	GL_EndRendering ();
 }
+
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Include only for the GL builds (part 2):
+#endif
+// <<< FIX

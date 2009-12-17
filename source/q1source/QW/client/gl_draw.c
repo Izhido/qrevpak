@@ -23,6 +23,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "quakedef.h"
 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Include only for the GL builds (part 1):
+#ifdef GLQUAKE
+// <<< FIX
 extern unsigned char d_15to8table[65536];
 extern cvar_t crosshair, cl_crossx, cl_crossy, crosshaircolor;
 
@@ -725,7 +729,12 @@ Only used for the player color selection menu
 void Draw_TransPicTranslate (int x, int y, qpic_t *pic, byte *translation)
 {
 	int				v, u, c;
-	unsigned		trans[64*64], *dest;
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Allocating in big stack. Stack in this device is pretty small:
+	//unsigned		trans[64*64], *dest;
+	unsigned*		trans = Sys_BigStackAlloc(64*64 * sizeof(unsigned), "Draw_TransPicTranslate");
+	unsigned *dest;
+// <<< FIX
 	byte			*src;
 	int				p;
 
@@ -763,6 +772,10 @@ void Draw_TransPicTranslate (int x, int y, qpic_t *pic, byte *translation)
 	glTexCoord2f (0, 1);
 	glVertex2f (x, y+pic->height);
 	glEnd ();
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+	Sys_BigStackFree(64*64 * sizeof(unsigned), "Draw_TransPicTranslate");
+// <<< FIX
 }
 
 
@@ -1367,12 +1380,21 @@ void GL_SelectTexture (GLenum target)
 {
 	if (!gl_mtexable)
 		return;
-#ifndef __linux__ // no multitexture under Linux yet
-	qglSelectTextureSGIS(target);
-#endif
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Until we learn to use multitexturing on this platform, this will be removed:
+//#ifndef __linux__ // no multitexture under Linux yet
+//	qglSelectTextureSGIS(target);
+//#endif
+// <<< FIX
 	if (target == oldtarget) 
 		return;
 	cnttextures[oldtarget-TEXTURE0_SGIS] = currenttexture;
 	currenttexture = cnttextures[target-TEXTURE0_SGIS];
 	oldtarget = target;
 }
+
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Include only for the GL builds (part 2):
+#endif
+// <<< FIX
+

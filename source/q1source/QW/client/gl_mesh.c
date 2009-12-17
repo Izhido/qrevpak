@@ -21,6 +21,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "quakedef.h"
 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Include only for the GL builds (part 1):
+#ifdef GLQUAKE
+// <<< FIX
+
 /*
 =================================================================
 
@@ -201,8 +206,13 @@ void BuildTris (void)
 	int		startv;
 	float	s, t;
 	int		len, bestlen, besttype;
-	int		bestverts[1024];
-	int		besttris[1024];
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Allocating in big stack. Stack in this device is pretty small:
+	//int		bestverts[1024];
+	//int		besttris[1024];
+	int*		bestverts = Sys_BigStackAlloc(1024 * sizeof(int), "BuildTris");
+	int*		besttris = Sys_BigStackAlloc(1024 * sizeof(int), "BuildTris");
+// <<< FIX
 	int		type;
 
 	//
@@ -273,6 +283,10 @@ void BuildTris (void)
 
 	allverts += numorder;
 	alltris += pheader->numtris;
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+	Sys_BigStackFree(1024 * sizeof(int) + 1024 * sizeof(int), "BuildTris");
+// <<< FIX
 }
 
 
@@ -357,3 +371,7 @@ void GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr)
 			*verts++ = poseverts[i][vertexorder[j]];
 }
 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Include only for the GL builds (part 2):
+#endif
+// <<< FIX

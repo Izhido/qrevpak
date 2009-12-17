@@ -20,6 +20,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // r_bsp.c
 
 #include "quakedef.h"
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Include only for the software renderer builds (part 1):
+#ifndef GLQUAKE
+// <<< FIX
 #include "r_local.h"
 
 //
@@ -691,5 +695,9 @@ void R_RenderWorld (void)
 	Sys_BigStackFree(MAX_BTOFPOLYS * sizeof(btofpoly_t), "R_RenderWorld");
 // <<< FIX
 }
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Include only for the software renderer builds (part 2):
+#endif
+// <<< FIX
 
 

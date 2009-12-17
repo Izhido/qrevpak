@@ -22,6 +22,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "quakedef.h"
 
 extern void R_InitBubble();
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Include only for the GL builds (part 1):
+#ifdef GLQUAKE
+// <<< FIX
 
 /*
 ==================
@@ -105,7 +109,11 @@ Grab six views for environment mapping tests
 */
 void R_Envmap_f (void)
 {
-	byte	buffer[256*256*4];
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Allocating in big stack. Stack in this device is pretty small:
+	//byte	buffer[256*256*4];
+	byte* buffer = Sys_BigStackAlloc(256*256*4 * sizeof(byte), "R_Envmap_f");
+// <<< FIX
 
 	glDrawBuffer  (GL_FRONT);
 	glReadBuffer  (GL_FRONT);
@@ -122,44 +130,72 @@ void R_Envmap_f (void)
 	GL_BeginRendering (&glx, &gly, &glwidth, &glheight);
 	R_RenderView ();
 	glReadPixels (0, 0, 256, 256, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-	COM_WriteFile ("env0.rgb", buffer, sizeof(buffer));		
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Adjusting for previous fix:
+	//COM_WriteFile ("env0.rgb", buffer, sizeof(buffer));		
+	COM_WriteFile ("env0.rgb", buffer, 256*256*4 * sizeof(byte));		
+// <<< FIX
 
 	r_refdef.viewangles[1] = 90;
 	GL_BeginRendering (&glx, &gly, &glwidth, &glheight);
 	R_RenderView ();
 	glReadPixels (0, 0, 256, 256, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-	COM_WriteFile ("env1.rgb", buffer, sizeof(buffer));		
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Adjusting for previous fix:
+	//COM_WriteFile ("env1.rgb", buffer, sizeof(buffer));		
+	COM_WriteFile ("env1.rgb", buffer, 256*256*4 * sizeof(byte));		
+// <<< FIX
 
 	r_refdef.viewangles[1] = 180;
 	GL_BeginRendering (&glx, &gly, &glwidth, &glheight);
 	R_RenderView ();
 	glReadPixels (0, 0, 256, 256, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-	COM_WriteFile ("env2.rgb", buffer, sizeof(buffer));		
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Adjusting for previous fix:
+	//COM_WriteFile ("env2.rgb", buffer, sizeof(buffer));		
+	COM_WriteFile ("env2.rgb", buffer, 256*256*4 * sizeof(byte));		
+// <<< FIX
 
 	r_refdef.viewangles[1] = 270;
 	GL_BeginRendering (&glx, &gly, &glwidth, &glheight);
 	R_RenderView ();
 	glReadPixels (0, 0, 256, 256, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-	COM_WriteFile ("env3.rgb", buffer, sizeof(buffer));		
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Adjusting for previous fix:
+	//COM_WriteFile ("env3.rgb", buffer, sizeof(buffer));		
+	COM_WriteFile ("env3.rgb", buffer, 256*256*4 * sizeof(byte));		
+// <<< FIX
 
 	r_refdef.viewangles[0] = -90;
 	r_refdef.viewangles[1] = 0;
 	GL_BeginRendering (&glx, &gly, &glwidth, &glheight);
 	R_RenderView ();
 	glReadPixels (0, 0, 256, 256, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-	COM_WriteFile ("env4.rgb", buffer, sizeof(buffer));		
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Adjusting for previous fix:
+	//COM_WriteFile ("env4.rgb", buffer, sizeof(buffer));		
+	COM_WriteFile ("env4.rgb", buffer, 256*256*4 * sizeof(byte));		
+// <<< FIX
 
 	r_refdef.viewangles[0] = 90;
 	r_refdef.viewangles[1] = 0;
 	GL_BeginRendering (&glx, &gly, &glwidth, &glheight);
 	R_RenderView ();
 	glReadPixels (0, 0, 256, 256, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-	COM_WriteFile ("env5.rgb", buffer, sizeof(buffer));		
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Adjusting for previous fix:
+	//COM_WriteFile ("env5.rgb", buffer, sizeof(buffer));		
+	COM_WriteFile ("env5.rgb", buffer, 256*256*4 * sizeof(byte));		
+// <<< FIX
 
 	envmap = false;
 	glDrawBuffer  (GL_BACK);
 	glReadBuffer  (GL_BACK);
 	GL_EndRendering ();
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+	Sys_BigStackFree(256*256*4 * sizeof(byte), "R_Envmap_f");
+// <<< FIX
 }
 
 /*
@@ -234,7 +270,12 @@ void R_TranslatePlayerSkin (int playernum)
 	unsigned	translate32[256];
 	int		i, j;
 	byte	*original;
-	unsigned	pixels[512*256], *out;
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deferring allocation. Stack in this device is pretty small:
+	//unsigned	pixels[512*256], *out;
+	unsigned* pixels;
+	unsigned* out;
+// <<< FIX
 	unsigned	scaled_width, scaled_height;
 	int			inwidth, inheight;
 	int			tinwidth, tinheight;
@@ -331,11 +372,20 @@ void R_TranslatePlayerSkin (int playernum)
 		scaled_width >>= (int)gl_playermip.value;
 		scaled_height >>= (int)gl_playermip.value;
 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Allocating for previous fix:
+		pixels = Sys_BigStackAlloc(512*256 * sizeof(unsigned), "R_TranslatePlayerSkin");
+// <<< FIX
+
 		if (VID_Is8bit()) { // 8bit texture upload
 			byte *out2;
 
 			out2 = (byte *)pixels;
-			memset(pixels, 0, sizeof(pixels));
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Adjusting for previous fix:
+			//memset(pixels, 0, sizeof(pixels));
+			memset(pixels, 0, 512*256 * sizeof(unsigned));
+// <<< FIX
 			fracstep = tinwidth*0x10000/scaled_width;
 			for (i=0 ; i<scaled_height ; i++, out2 += scaled_width)
 			{
@@ -355,6 +405,10 @@ void R_TranslatePlayerSkin (int playernum)
 			}
 
 			GL_Upload8_EXT ((byte *)pixels, scaled_width, scaled_height, false, false);
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+		Sys_BigStackFree(512*256 * sizeof(unsigned), "R_TranslatePlayerSkin");
+// <<< FIX
 			return;
 		}
 
@@ -388,6 +442,10 @@ void R_TranslatePlayerSkin (int playernum)
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+		Sys_BigStackFree(512*256 * sizeof(unsigned), "R_TranslatePlayerSkin");
+// <<< FIX
 	}
 }
 
@@ -471,3 +529,7 @@ void D_FlushCaches (void)
 }
 
 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Include only for the GL builds (part 2):
+#endif
+// <<< FIX

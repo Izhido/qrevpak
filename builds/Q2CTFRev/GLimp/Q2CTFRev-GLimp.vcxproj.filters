@@ -8,8 +8,8 @@
     <Filter Include="Header Files\client">
       <UniqueIdentifier>{0321aca8-87c4-4bd2-a163-9727bff6e761}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\game">
-      <UniqueIdentifier>{1480a592-581c-454c-bd13-2cd228550ca6}</UniqueIdentifier>
+    <Filter Include="Header Files\ctf">
+      <UniqueIdentifier>{0eab7b5c-f908-44a9-9221-9927a183267b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\glrevol">
       <UniqueIdentifier>{c7d393f5-481a-4ab3-86e9-028418362f08}</UniqueIdentifier>
@@ -43,8 +43,8 @@
     <Filter Include="Source Files\client">
       <UniqueIdentifier>{69db9708-31b6-4518-8105-c4dbef7f5e5d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\game">
-      <UniqueIdentifier>{cbb1692c-6c51-499f-939c-abaddcdfabaa}</UniqueIdentifier>
+    <Filter Include="Source Files\ctf">
+      <UniqueIdentifier>{30d4bc62-e52c-47df-bbe0-ea12cfa47f67}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\qcommon">
       <UniqueIdentifier>{a62b92f2-b15f-49c4-a893-20ac16fe551d}</UniqueIdentifier>
@@ -60,8 +60,83 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\q_shared.c">
-      <Filter>Source Files\game</Filter>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\g_ai.c">
+      <Filter>Source Files\ctf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\g_chase.c">
+      <Filter>Source Files\ctf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\g_cmds.c">
+      <Filter>Source Files\ctf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\g_combat.c">
+      <Filter>Source Files\ctf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\g_ctf.c">
+      <Filter>Source Files\ctf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\g_func.c">
+      <Filter>Source Files\ctf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\g_items.c">
+      <Filter>Source Files\ctf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\g_main.c">
+      <Filter>Source Files\ctf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\g_misc.c">
+      <Filter>Source Files\ctf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\g_monster.c">
+      <Filter>Source Files\ctf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\g_phys.c">
+      <Filter>Source Files\ctf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\g_save.c">
+      <Filter>Source Files\ctf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\g_spawn.c">
+      <Filter>Source Files\ctf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\g_svcmds.c">
+      <Filter>Source Files\ctf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\g_target.c">
+      <Filter>Source Files\ctf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\g_trigger.c">
+      <Filter>Source Files\ctf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\g_utils.c">
+      <Filter>Source Files\ctf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\g_weapon.c">
+      <Filter>Source Files\ctf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\m_move.c">
+      <Filter>Source Files\ctf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\p_client.c">
+      <Filter>Source Files\ctf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\p_hud.c">
+      <Filter>Source Files\ctf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\p_menu.c">
+      <Filter>Source Files\ctf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\p_trail.c">
+      <Filter>Source Files\ctf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\p_view.c">
+      <Filter>Source Files\ctf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\p_weapon.c">
+      <Filter>Source Files\ctf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\q_shared.c">
+      <Filter>Source Files\ctf</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\cd_revol.c">
       <Filter>Source Files\revol</Filter>
@@ -113,147 +188,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\qcommon\pmove.c">
       <Filter>Source Files\qcommon</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_ai.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_chase.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_cmds.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_combat.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_func.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_items.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_main.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_misc.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_monster.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_phys.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_save.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_spawn.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_svcmds.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_target.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_trigger.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_turret.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_utils.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\g_weapon.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_actor.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_berserk.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_boss2.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_boss3.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_boss31.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_boss32.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_brain.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_chick.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_flash.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_flipper.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_float.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_flyer.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_gladiator.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_gunner.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_hover.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_infantry.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_insane.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_medic.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_move.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_mutant.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_parasite.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_soldier.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_supertank.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\m_tank.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\p_client.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\p_hud.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\p_trail.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\p_view.c">
-      <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\p_weapon.c">
-      <Filter>Source Files\game</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\vid_revol.c">
       <Filter>Source Files\revol</Filter>
@@ -401,83 +335,23 @@
     <ClInclude Include="..\..\..\source\glrevol\include\GL\glu.h">
       <Filter>Header Files\glrevol\GL</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\game.h">
-      <Filter>Header Files\game</Filter>
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ctf\game.h">
+      <Filter>Header Files\ctf</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\g_local.h">
-      <Filter>Header Files\game</Filter>
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ctf\g_ctf.h">
+      <Filter>Header Files\ctf</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_actor.h">
-      <Filter>Header Files\game</Filter>
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ctf\g_local.h">
+      <Filter>Header Files\ctf</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_berserk.h">
-      <Filter>Header Files\game</Filter>
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ctf\m_player.h">
+      <Filter>Header Files\ctf</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_boss2.h">
-      <Filter>Header Files\game</Filter>
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ctf\p_menu.h">
+      <Filter>Header Files\ctf</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_boss31.h">
-      <Filter>Header Files\game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_boss32.h">
-      <Filter>Header Files\game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_brain.h">
-      <Filter>Header Files\game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_chick.h">
-      <Filter>Header Files\game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_flipper.h">
-      <Filter>Header Files\game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_float.h">
-      <Filter>Header Files\game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_flyer.h">
-      <Filter>Header Files\game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_gladiator.h">
-      <Filter>Header Files\game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_gunner.h">
-      <Filter>Header Files\game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_hover.h">
-      <Filter>Header Files\game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_infantry.h">
-      <Filter>Header Files\game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_insane.h">
-      <Filter>Header Files\game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_medic.h">
-      <Filter>Header Files\game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_mutant.h">
-      <Filter>Header Files\game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_parasite.h">
-      <Filter>Header Files\game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_player.h">
-      <Filter>Header Files\game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_rider.h">
-      <Filter>Header Files\game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_soldier.h">
-      <Filter>Header Files\game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_supertank.h">
-      <Filter>Header Files\game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_tank.h">
-      <Filter>Header Files\game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\q_shared.h">
-      <Filter>Header Files\game</Filter>
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ctf\q_shared.h">
+      <Filter>Header Files\ctf</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_soft\anorms.h">
       <Filter>Header Files\ref_soft</Filter>

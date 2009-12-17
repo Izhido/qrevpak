@@ -19,9 +19,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // disable data conversion warnings
 
-#pragma warning(disable : 4244)     // MIPS
-#pragma warning(disable : 4136)     // X86
-#pragma warning(disable : 4051)     // ALPHA
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// These are not needed for this particular platform. Removing:
+//#pragma warning(disable : 4244)     // MIPS
+//#pragma warning(disable : 4136)     // X86
+//#pragma warning(disable : 4051)     // ALPHA
+// <<< FIX
   
 #ifdef _WIN32
 #include <windows.h>
@@ -35,19 +38,22 @@ void GL_EndRendering (void);
 
 
 // Function prototypes for the Texture Object Extension routines
-typedef GLboolean (APIENTRY *ARETEXRESFUNCPTR)(GLsizei, const GLuint *,
-                    const GLboolean *);
-typedef void (APIENTRY *BINDTEXFUNCPTR)(GLenum, GLuint);
-typedef void (APIENTRY *DELTEXFUNCPTR)(GLsizei, const GLuint *);
-typedef void (APIENTRY *GENTEXFUNCPTR)(GLsizei, GLuint *);
-typedef GLboolean (APIENTRY *ISTEXFUNCPTR)(GLuint);
-typedef void (APIENTRY *PRIORTEXFUNCPTR)(GLsizei, const GLuint *,
-                    const GLclampf *);
-typedef void (APIENTRY *TEXSUBIMAGEPTR)(int, int, int, int, int, int, int, int, void *);
-
-extern	BINDTEXFUNCPTR bindTexFunc;
-extern	DELTEXFUNCPTR delTexFunc;
-extern	TEXSUBIMAGEPTR TexSubImage2DFunc;
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// The following are in use only for the Windows build. Removing:
+//typedef GLboolean (APIENTRY *ARETEXRESFUNCPTR)(GLsizei, const GLuint *,
+//                    const GLboolean *);
+//typedef void (APIENTRY *BINDTEXFUNCPTR)(GLenum, GLuint);
+//typedef void (APIENTRY *DELTEXFUNCPTR)(GLsizei, const GLuint *);
+//typedef void (APIENTRY *GENTEXFUNCPTR)(GLsizei, GLuint *);
+//typedef GLboolean (APIENTRY *ISTEXFUNCPTR)(GLuint);
+//typedef void (APIENTRY *PRIORTEXFUNCPTR)(GLsizei, const GLuint *,
+//                    const GLclampf *);
+//typedef void (APIENTRY *TEXSUBIMAGEPTR)(int, int, int, int, int, int, int, int, void *);
+//
+//extern	BINDTEXFUNCPTR bindTexFunc;
+//extern	DELTEXFUNCPTR delTexFunc;
+//extern	TEXSUBIMAGEPTR TexSubImage2DFunc;
+// <<< FIX
 
 extern	int texture_extension_number;
 extern	int		texture_mode;

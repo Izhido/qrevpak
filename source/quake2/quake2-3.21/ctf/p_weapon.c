@@ -23,8 +23,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "m_player.h"
 
 
-static qboolean	is_quad;
-static byte		is_silenced;
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Unsupported mixed static / external attributes for this platform, removing:
+//static qboolean	is_quad;
+//static byte		is_silenced;
+qboolean	is_quad;
+byte		is_silenced;
+// <<< FIX
 
 
 void weapon_grenade_fire (edict_t *ent, qboolean held);

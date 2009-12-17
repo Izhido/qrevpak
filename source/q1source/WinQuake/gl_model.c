@@ -1416,7 +1416,7 @@ void Mod_FloodFillSkin( byte *skin, int skinwidth, int skinheight )
 		skin[x + skinwidth * y] = fdc;
 	}
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Allocating for previous fix:
+// Deallocating for previous fix:
 	Sys_BigStackFree(FLOODFILL_FIFO_SIZE * sizeof(floodfill_t), "Mod_FloodFillSkin");
 // <<< FIX
 }

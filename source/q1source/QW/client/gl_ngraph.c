@@ -21,6 +21,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "quakedef.h"
 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Include only for the GL builds (part 1):
+#ifdef GLQUAKE
+// <<< FIX
+
 extern byte		*draw_chars;				// 8*8 graphic characters
 
 int	netgraphtexture;	// netgraph texture
@@ -138,4 +143,8 @@ void R_NetGraph (void)
 	glVertex2f (x, y+NET_GRAPHHEIGHT);
 	glEnd ();
 }
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Include only for the GL builds (part 2):
+#endif
+// <<< FIX
 

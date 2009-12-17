@@ -556,6 +556,20 @@ void glPolygonMode(GLenum face, GLenum mode)
 
 void glColor3ubv(const GLubyte* v)
 {
+	glColor4f(*(v) / 255.0f, *(v + 1) / 255.0f, *(v + 2) / 255.0f, 1);
+}
+
+void glColor4ubv(const GLubyte* v)
+{
 	glColor4f(*(v) / 255.0f, *(v + 1) / 255.0f, *(v + 2) / 255.0f, *(v + 3) / 255.0f);
 }
 
+GLboolean glIsEnabled(GLenum cap)
+{
+	return false;
+} 
+
+void glColor4ub(GLubyte red, GLubyte green, GLubyte blue, GLubyte alpha)
+{
+	glColor4f(red / 255.0f, green / 255.0f, blue / 255.0f, alpha / 255.0f);
+}
