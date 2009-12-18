@@ -20,8 +20,8 @@
     <Filter Include="Header Files\qcommon">
       <UniqueIdentifier>{3a1ddae6-78f8-451a-80e5-20e37d8b7f3b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\ref_soft">
-      <UniqueIdentifier>{2210d329-e364-48e8-a13a-d017f3f74bb6}</UniqueIdentifier>
+    <Filter Include="Header Files\ref_gl">
+      <UniqueIdentifier>{5427f42d-c8d1-488c-b1c5-670c0c20fcfb}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\revol">
       <UniqueIdentifier>{c8b1f0a8-0997-474e-98c8-9a9110a237ee}</UniqueIdentifier>
@@ -49,8 +49,8 @@
     <Filter Include="Source Files\qcommon">
       <UniqueIdentifier>{a62b92f2-b15f-49c4-a893-20ac16fe551d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\ref_soft">
-      <UniqueIdentifier>{c0054950-bc44-4f52-bee4-14139b72d722}</UniqueIdentifier>
+    <Filter Include="Source Files\ref_gl">
+      <UniqueIdentifier>{a66a1559-b47f-4b34-b631-d9c011673fdf}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\revol">
       <UniqueIdentifier>{19f75ff7-872d-433f-a58e-9e88ff5f013c}</UniqueIdentifier>
@@ -62,6 +62,33 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\q_shared.c">
       <Filter>Source Files\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_draw.c">
+      <Filter>Source Files\ref_gl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_image.c">
+      <Filter>Source Files\ref_gl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_light.c">
+      <Filter>Source Files\ref_gl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_mesh.c">
+      <Filter>Source Files\ref_gl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_model.c">
+      <Filter>Source Files\ref_gl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_rmain.c">
+      <Filter>Source Files\ref_gl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_rmisc.c">
+      <Filter>Source Files\ref_gl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_rsurf.c">
+      <Filter>Source Files\ref_gl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_warp.c">
+      <Filter>Source Files\ref_gl</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\cd_revol.c">
       <Filter>Source Files\revol</Filter>
@@ -342,57 +369,6 @@
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\client\x86.c">
       <Filter>Source Files\client</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_aclip.c">
-      <Filter>Source Files\ref_soft</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_alias.c">
-      <Filter>Source Files\ref_soft</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_bsp.c">
-      <Filter>Source Files\ref_soft</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_draw.c">
-      <Filter>Source Files\ref_soft</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_edge.c">
-      <Filter>Source Files\ref_soft</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_image.c">
-      <Filter>Source Files\ref_soft</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_light.c">
-      <Filter>Source Files\ref_soft</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_main.c">
-      <Filter>Source Files\ref_soft</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_misc.c">
-      <Filter>Source Files\ref_soft</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_model.c">
-      <Filter>Source Files\ref_soft</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_part.c">
-      <Filter>Source Files\ref_soft</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_poly.c">
-      <Filter>Source Files\ref_soft</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_polyse.c">
-      <Filter>Source Files\ref_soft</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_rast.c">
-      <Filter>Source Files\ref_soft</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_scan.c">
-      <Filter>Source Files\ref_soft</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_sprite.c">
-      <Filter>Source Files\ref_soft</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_surf.c">
-      <Filter>Source Files\ref_soft</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\glrevol\include\GL\gl.h">
@@ -479,9 +455,6 @@
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\q_shared.h">
       <Filter>Header Files\game</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_soft\anorms.h">
-      <Filter>Header Files\ref_soft</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\qcommon\crc.h">
       <Filter>Header Files\qcommon</Filter>
     </ClInclude>
@@ -490,6 +463,24 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\qcommon\qfiles.h">
       <Filter>Header Files\qcommon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gl\anorms.h">
+      <Filter>Header Files\ref_gl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gl\anormtab.h">
+      <Filter>Header Files\ref_gl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_local.h">
+      <Filter>Header Files\ref_gl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_model.h">
+      <Filter>Header Files\ref_gl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gl\qgl.h">
+      <Filter>Header Files\ref_gl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gl\warpsin.h">
+      <Filter>Header Files\ref_gl</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\revol\glstub\include\GL\gl.h">
       <Filter>Header Files\revol\glstub</Filter>
@@ -550,24 +541,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\client\vid.h">
       <Filter>Header Files\client</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_soft\adivtab.h">
-      <Filter>Header Files\ref_soft</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_soft\asm_draw.h">
-      <Filter>Header Files\ref_soft</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_soft\d_ifacea.h">
-      <Filter>Header Files\ref_soft</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_local.h">
-      <Filter>Header Files\ref_soft</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_model.h">
-      <Filter>Header Files\ref_soft</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_soft\rand1k.h">
-      <Filter>Header Files\ref_soft</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -39,7 +39,7 @@ INCLUDES	:=  ../../../source/quake2/quake2-3.21/revol \
 CFLAGS	= -g -O2 -Wall $(MACHDEP) $(INCLUDE) \
           -DGAME_HARD_LINKED \
           -DREF_HARD_LINKED \
-          -DGLIMP_HARD_LINKED
+          -DGLIMP
 CXXFLAGS	=	$(CFLAGS)
 
 LDFLAGS	=	-g $(MACHDEP) -Wl,-Map,$(notdir $@).map

@@ -62,6 +62,15 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_draw.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_image.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_light.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_mesh.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_model.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_rmain.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_rmisc.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_rsurf.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_warp.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\cd_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\glimp_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\in_revol.c" />
@@ -156,23 +165,6 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\client\snd_mem.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\client\snd_mix.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\client\x86.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_aclip.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_alias.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_bsp.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_draw.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_edge.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_image.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_light.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_main.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_misc.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_model.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_part.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_poly.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_polyse.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_rast.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_scan.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_sprite.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_surf.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\glrevol\include\GL\gl.h" />
@@ -203,6 +195,12 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_supertank.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_tank.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\q_shared.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gl\anorms.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gl\anormtab.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_local.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_model.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gl\qgl.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gl\warpsin.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\revol\osk_revol.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\revol\glstub\include\GL\gl.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\revol\glstub\include\GL\glu.h" />
@@ -226,13 +224,6 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\client\snd_loc.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\client\sound.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\client\vid.h" />
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_soft\adivtab.h" />
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_soft\anorms.h" />
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_soft\asm_draw.h" />
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_soft\d_ifacea.h" />
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_local.h" />
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_model.h" />
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_soft\rand1k.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Makefile" />

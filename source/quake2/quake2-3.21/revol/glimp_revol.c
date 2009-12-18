@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Include only for the GL builds (part 1):
-#ifdef GLIMP_HARD_LINKED
+#ifdef GLIMP
 // <<< FIX
 #include "../ref_gl/gl_local.h"
 
@@ -34,7 +34,7 @@ void		GLimp_EndFrame( void )
 
 int 		GLimp_Init( void *hinstance, void *hWnd )
 {
-	return false;
+	return true;
 }
 
 void		GLimp_Shutdown( void )
@@ -43,7 +43,33 @@ void		GLimp_Shutdown( void )
 
 int     	GLimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen )
 {
-	return rserr_invalid_mode;
+	int width, height;
+	GLint attribs[32];
+
+	fprintf(stderr, "GLimp_SetMode\n");
+
+	ri.Con_Printf( PRINT_ALL, "Initializing OpenGL display\n");
+
+	ri.Con_Printf (PRINT_ALL, "...setting mode %d:", mode );
+
+	if ( !ri.Vid_GetModeInfo( &width, &height, mode ) )
+	{
+		ri.Con_Printf( PRINT_ALL, " invalid mode\n" );
+		return rserr_invalid_mode;
+	}
+
+	ri.Con_Printf( PRINT_ALL, " %d %d\n", width, height );
+
+	// destroy the existing window
+	GLimp_Shutdown ();
+
+	*pwidth = width;
+	*pheight = height;
+
+	// let the sound and input subsystems know about the new window
+	ri.Vid_NewWindow (width, height);
+
+	return rserr_ok;
 }
 
 void		GLimp_AppActivate( qboolean active )

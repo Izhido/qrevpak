@@ -360,7 +360,7 @@ void VID_MenuInit( void )
 	{
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Selection based on the respective builds (part 1):
-#ifndef GLIMP_HARD_LINKED
+#ifndef GLIMP
 // <<< FIX
 		"[software      ]",
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
