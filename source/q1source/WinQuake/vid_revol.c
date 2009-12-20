@@ -20,14 +20,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // vid_revol.c -- video driver for the Nintendo Wii using devkitPPC / libogc
 // (based on vid_null.c)
 
-#include <gccore.h>
-#include <wiiuse/wpad.h>
-
-#include "quakedef.h"
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Include only for the software renderer builds (part 1):
 #ifndef GLQUAKE
 // <<< FIX
+
+#include <gccore.h>
+#include <wiiuse/wpad.h>
+
+#include "quakedef.h"
 #include "d_local.h"
 #include "Keyboard_img.h"
 #include "KeyboardInverted_img.h"

@@ -69,6 +69,7 @@ int	SNDDMA_GetDMAPos(void)
 void SNDDMA_Shutdown(void)
 {
 	ASND_End();
+	free(dma.buffer);
 }
 
 void SNDDMA_BeginPainting (void)

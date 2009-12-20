@@ -797,4 +797,3 @@ void R_DrawParticles (void)
 	D_EndParticles ();
 #endif
 }
-

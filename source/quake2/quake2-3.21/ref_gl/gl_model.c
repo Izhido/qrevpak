@@ -224,7 +224,11 @@ model_t *Mod_ForName (char *name, qboolean crash)
 	//
 	// load the file
 	//
-	modfilelen = ri.FS_LoadFile (mod->name, &buf);
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Precaching the model file if possible:
+	//modfilelen = ri.FS_LoadFile (mod->name, &buf);
+	modfilelen = ri.FS_LoadFile (mod->name, &buf, true);
+// <<< FIX
 	if (!buf)
 	{
 		if (crash)

@@ -19,11 +19,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // r_alias.c: routines for setting up to draw alias models
 
-#include "quakedef.h"
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Include only for the software renderer builds (part 1):
 #ifndef GLQUAKE
 // <<< FIX
+
+#include "quakedef.h"
 #include "r_local.h"
 #include "d_local.h"	// FIXME: shouldn't be needed (is needed for patch
 						// right now, but that should move)

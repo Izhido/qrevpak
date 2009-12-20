@@ -19,12 +19,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // r_surf.c: surface-related refresh code
 
-#include "quakedef.h"
-
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Include only for the GL builds (part 1):
 #ifdef GLQUAKE
 // <<< FIX
+
+#include "quakedef.h"
 
 int			skytexturenum;
 

@@ -1,14 +1,15 @@
 // vid_revol.c -- video driver for the Nintendo Wii using devkitPPC / libogc
 // (based on vid_null.c)
 
-#include <gccore.h>
-#include <wiiuse/wpad.h>
-
-#include "quakedef.h"
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Include only for the software renderer builds (part 1):
 #ifndef GLQUAKE
 // <<< FIX
+
+#include <gccore.h>
+#include <wiiuse/wpad.h>
+
+#include "quakedef.h"
 #include "d_local.h"
 #include "Keyboard_img.h"
 #include "KeyboardInverted_img.h"
@@ -44,7 +45,7 @@ struct y1cby2cr_palentry_t d_8toy1cby2cr[256][256];
 
 int vid_palentry_increment;
 
-extern void* sys_framebuffer[2];
+extern void* sys_framebuffer[3];
 
 int vid_scale;
 
@@ -109,7 +110,7 @@ void VID_DrawOnScreenKeyboard(void)
 			osk_selected = 0;
 		};
 		k = WPAD_ButtonsHeld(WPAD_CHAN_0);
-		v = ((u32*)(sys_framebuffer[0])) + ((sys_rmode->viHeight - n) / 4 * sys_rmode->viWidth) + ((sys_rmode->viWidth - m) / 4);
+		v = ((u32*)(sys_framebuffer[1])) + ((sys_rmode->viHeight - n) / 4 * sys_rmode->viWidth) + ((sys_rmode->viWidth - m) / 4);
 		vinc = (sys_rmode->viWidth - m) / 2;
 		l = 0;
 		for(j = 0; j < n; j++)
@@ -193,7 +194,7 @@ void VID_DrawWmoteGuide(void)
 				y = p.y - r * sin(a + vid_guide_increment);
 				if((x > vid_outerwidthborder)&&(x < (sys_rmode->viWidth - vid_outerwidthborder))&&(y > vid_outerheightborder)&&(y < (sys_rmode->viHeight - vid_outerheightborder)))
 				{
-					v = ((u32*)(sys_framebuffer[0])) + (y * sys_rmode->viWidth / 2) + (x / 2);
+					v = ((u32*)(sys_framebuffer[1])) + (y * sys_rmode->viWidth / 2) + (x / 2);
 					if(d_8toy1cby2cr[vid_pal_increment][vid_pal_increment].count == vid_palentry_increment)
 					{
 						*v = d_8toy1cby2cr[vid_pal_increment][vid_pal_increment].color;
@@ -366,7 +367,7 @@ void	VID_Update (vrect_t *rects)
 		h = r->height;
 		w = r->width;
 		p = vid_buffer + i * vid_height + j;
-		v = ((u32*)(sys_framebuffer[0])) + ((vid_outerheightborder + (i * vid_scale)) * (sys_rmode->viWidth / 2)) + (vid_outerwidthborder / 2) + (j * vid_scale / 2);
+		v = ((u32*)(sys_framebuffer[1])) + ((vid_outerheightborder + (i * vid_scale)) * (sys_rmode->viWidth / 2)) + (vid_outerwidthborder / 2) + (j * vid_scale / 2);
 		vinc = (sys_rmode->viWidth - (r->width * vid_scale)) / 2;
 		i = 0;
 		ix = 0;
@@ -460,7 +461,7 @@ void D_BeginDirectRect (int x, int y, byte *pbitmap, int width, int height)
 	h = height;
 	w = width;
 	p = pbitmap;
-	v = ((u32*)(sys_framebuffer[0])) + ((vid_outerheightborder + (i * vid_scale)) * (sys_rmode->viWidth / 2)) + (vid_outerwidthborder / 2) + (j * vid_scale / 2);
+	v = ((u32*)(sys_framebuffer[1])) + ((vid_outerheightborder + (i * vid_scale)) * (sys_rmode->viWidth / 2)) + (vid_outerwidthborder / 2) + (j * vid_scale / 2);
 	vinc = (sys_rmode->viWidth - (w * vid_scale)) / 2;
 	i = 0;
 	ix = 0;

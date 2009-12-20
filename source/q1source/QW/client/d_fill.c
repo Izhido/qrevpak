@@ -19,6 +19,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // d_clear: clears a specified rectangle to the specified color
 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Include only for the software renderer builds (part 1):
+#ifndef GLQUAKE
+// <<< FIX
+
 #include "quakedef.h"
 
 
@@ -85,4 +90,8 @@ void D_FillRect (vrect_t *rect, int color)
 		}
 	}
 }
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Include only for the software renderer builds (part 2):
+#endif
+// <<< FIX
 

@@ -94,6 +94,7 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\in_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\net_udp.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\osk_revol.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\qgl_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\snddma_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\swimp_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\sys_revol.c" />

@@ -20,11 +20,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // r_draw.c
 
-#include "quakedef.h"
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Include only for the software renderer builds (part 1):
 #ifndef GLQUAKE
 // <<< FIX
+
+#include "quakedef.h"
 #include "r_local.h"
 #include "d_local.h"	// FIXME: shouldn't need to include this
 

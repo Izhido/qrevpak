@@ -20,13 +20,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // gl_vidrevol.c -- GL video driver for the Nintendo Wii using devkitPPC / libogc
 // (based on vid_null.c)
 
-#include <gccore.h>
-
-#include "quakedef.h"
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Include only for the GL builds (part 1):
 #ifdef GLQUAKE
 // <<< FIX
+
+#include <gccore.h>
+
+#include "quakedef.h"
 
 unsigned	d_8to24table[256];
 unsigned char d_15to8table[65536];

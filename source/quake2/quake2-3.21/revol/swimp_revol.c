@@ -32,7 +32,7 @@ struct y1cby2cr_palentry_t
 	u32 count;
 };
 
-extern void* sys_framebuffer[2];
+extern void* sys_framebuffer[3];
 
 extern cvar_t* in_osk;
 
@@ -101,7 +101,7 @@ void SWimp_DrawOnScreenKeyboard(void)
 			osk_selected = 0;
 		};
 		k = WPAD_ButtonsHeld(WPAD_CHAN_0);
-		v = ((u32*)(sys_framebuffer[0])) + ((sys_rmode->viHeight - n) / 4 * sys_rmode->viWidth) + ((sys_rmode->viWidth - m) / 4);
+		v = ((u32*)(sys_framebuffer[1])) + ((sys_rmode->viHeight - n) / 4 * sys_rmode->viWidth) + ((sys_rmode->viWidth - m) / 4);
 		vinc = (sys_rmode->viWidth - m) / 2;
 		l = 0;
 		for(j = 0; j < n; j++)
@@ -185,7 +185,7 @@ void SWimp_DrawWmoteGuide(void)
 				y = p.y - r * sin(a + swimp_guide_increment);
 				if((x > swimp_outerwidthborder)&&(x < (sys_rmode->viWidth - swimp_outerwidthborder))&&(y > swimp_outerheightborder)&&(y < (sys_rmode->viHeight - swimp_outerheightborder)))
 				{
-					v = ((u32*)(sys_framebuffer[0])) + (y * sys_rmode->viWidth / 2) + (x / 2);
+					v = ((u32*)(sys_framebuffer[1])) + (y * sys_rmode->viWidth / 2) + (x / 2);
 					if(d_8toy1cby2cr[swimp_pal_increment][swimp_pal_increment].count == swimp_palentry_increment)
 					{
 						f = d_8toy1cby2cr[swimp_pal_increment][swimp_pal_increment].color;
@@ -250,7 +250,7 @@ void		SWimp_EndFrame (void)
 	h = vid.height;
 	w = vid.rowbytes;
 	p = vid.buffer + i * vid.height + j;
-	v = ((u32*)(sys_framebuffer[0])) + ((swimp_outerheightborder + (i * swimp_scale)) * (sys_rmode->viWidth / 2)) + (swimp_outerwidthborder / 2) + (j * swimp_scale / 2);
+	v = ((u32*)(sys_framebuffer[1])) + ((swimp_outerheightborder + (i * swimp_scale)) * (sys_rmode->viWidth / 2)) + (swimp_outerwidthborder / 2) + (j * swimp_scale / 2);
 	vinc = (sys_rmode->viWidth - (vid.width * swimp_scale)) / 2;
 	i = 0;
 	ix = 0;

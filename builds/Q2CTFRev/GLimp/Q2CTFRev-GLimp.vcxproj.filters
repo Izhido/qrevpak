@@ -46,6 +46,9 @@
     <Filter Include="Source Files\ctf">
       <UniqueIdentifier>{30d4bc62-e52c-47df-bbe0-ea12cfa47f67}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\glrevol">
+      <UniqueIdentifier>{4060ce70-77d9-45e8-b27f-a701dac709fb}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\qcommon">
       <UniqueIdentifier>{a62b92f2-b15f-49c4-a893-20ac16fe551d}</UniqueIdentifier>
     </Filter>
@@ -60,6 +63,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\source\glrevol\source\glrevol.c">
+      <Filter>Source Files\glrevol</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\g_ai.c">
       <Filter>Source Files\ctf</Filter>
     </ClCompile>
@@ -178,6 +184,9 @@
       <Filter>Source Files\revol</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\osk_revol.c">
+      <Filter>Source Files\revol</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\qgl_revol.c">
       <Filter>Source Files\revol</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\snddma_revol.c">

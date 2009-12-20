@@ -273,7 +273,7 @@ void Sys_Error (char *error, ...)
 	va_end (argptr);
 	printf ("\n");
 
-	VIDEO_SetNextFramebuffer(sys_framebuffer[1]);
+	VIDEO_SetNextFramebuffer(sys_framebuffer[0]);
 	VIDEO_WaitVSync();
 
     Host_Shutdown();
@@ -814,13 +814,15 @@ int main (int argc, char* argv[])
         GX_SetPixelFmt(GX_PF_RGB8_Z24, GX_ZC_LINEAR);
 	};
 	GX_SetCullMode(GX_CULL_NONE);
+	GX_SetBlendMode(GX_BM_BLEND, GX_BL_SRCALPHA, GX_BL_INVSRCALPHA, GX_LO_CLEAR);
+	GX_SetAlphaUpdate(GX_ENABLE);
 	GX_CopyDisp(sys_framebuffer[sys_currentframebuf], GX_TRUE);
 	GX_SetDispCopyGamma(GX_GM_1_0);
 	GX_ClearVtxDesc();
 	GX_SetVtxDesc(GX_VA_POS, GX_DIRECT);
  	GX_SetVtxDesc(GX_VA_CLR0, GX_DIRECT);
 	GX_SetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_POS_XYZ, GX_F32, 0);
-	GX_SetVtxAttrFmt(GX_VTXFMT0, GX_VA_CLR0, GX_CLR_RGBA, GX_RGB8, 0);
+	GX_SetVtxAttrFmt (GX_VTXFMT0, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8, 0);
 	GX_SetNumChans(1);
 	GX_SetNumTexGens(0);
 	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);

@@ -20,6 +20,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // screen.c -- master for refresh, status bar, console, chat, notify, etc
 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Include only for the GL builds (part 1):
+#ifdef GLQUAKE
+// <<< FIX
+
 #include "quakedef.h"
 
 /*
@@ -68,12 +73,6 @@ console is:
 	
 
 */
-
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Include only for the GL builds (part 1):
-#ifdef GLQUAKE
-// <<< FIX
-
 
 int			glx, gly, glwidth, glheight;
 

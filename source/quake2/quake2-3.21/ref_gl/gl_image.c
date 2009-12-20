@@ -444,7 +444,11 @@ void LoadPCX (char *filename, byte **pic, byte **palette, int *width, int *heigh
 	//
 	// load the file
 	//
-	len = ri.FS_LoadFile (filename, (void **)&raw);
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Precaching the pcx file if possible:
+	//len = ri.FS_LoadFile (filename, (void **)&raw);
+	len = ri.FS_LoadFile (filename, (void **)&raw, true);
+// <<< FIX
 	if (!raw)
 	{
 		ri.Con_Printf (PRINT_DEVELOPER, "Bad pcx file %s\n", filename);
@@ -564,7 +568,11 @@ void LoadTGA (char *name, byte **pic, int *width, int *height)
 	//
 	// load the file
 	//
-	length = ri.FS_LoadFile (name, (void **)&buffer);
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Precaching the targa file if possible:
+	//length = ri.FS_LoadFile (name, (void **)&buffer);
+	length = ri.FS_LoadFile (name, (void **)&buffer, true);
+// <<< FIX
 	if (!buffer)
 	{
 		ri.Con_Printf (PRINT_DEVELOPER, "Bad tga file %s\n", name);
@@ -1332,7 +1340,11 @@ image_t *GL_LoadWal (char *name)
 	int			width, height, ofs;
 	image_t		*image;
 
-	ri.FS_LoadFile (name, (void **)&mt);
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Precaching the wal file if possible:
+	//ri.FS_LoadFile (name, (void **)&mt);
+	ri.FS_LoadFile (name, (void **)&mt, true);
+// <<< FIX
 	if (!mt)
 	{
 		ri.Con_Printf (PRINT_ALL, "GL_FindImage: can't load %s\n", name);
@@ -1522,7 +1534,11 @@ void	GL_InitImages (void)
 
 	if ( qglColorTableEXT )
 	{
-		ri.FS_LoadFile( "pics/16to8.dat", &gl_state.d_16to8table );
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Precaching the palette file if possible:
+		//ri.FS_LoadFile( "pics/16to8.dat", &gl_state.d_16to8table );
+		ri.FS_LoadFile( "pics/16to8.dat", &gl_state.d_16to8table, true);
+// <<< FIX
 		if ( !gl_state.d_16to8table )
 			ri.Sys_Error( ERR_FATAL, "Couldn't load pics/16to8.pcx");
 	}

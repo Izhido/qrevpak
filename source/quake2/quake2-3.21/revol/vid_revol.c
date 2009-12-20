@@ -175,6 +175,7 @@ void	VID_Init (void)
     ri.Cvar_Set = Cvar_Set;
     ri.Cvar_SetValue = Cvar_SetValue;
     ri.Vid_GetModeInfo = VID_GetModeInfo;
+	ri.Vid_MenuInit = VID_MenuInit;
 
     re = GetRefAPI(ri);
 
@@ -387,7 +388,11 @@ void VID_MenuInit( void )
 	if ( !gl_picmip )
 		gl_picmip = Cvar_Get( "gl_picmip", "0", 0 );
 	if ( !gl_mode )
-		gl_mode = Cvar_Get( "gl_mode", "3", 0 );
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// For the time being, there is no mode 3 in the current implementation. Replacing:
+		//gl_mode = Cvar_Get( "gl_mode", "3", 0 );
+		gl_mode = Cvar_Get( "gl_mode", "0", 0 );
+// <<< FIX
 	if ( !sw_mode )
 		sw_mode = Cvar_Get( "sw_mode", "0", 0 );
 	if ( !gl_ext_palettedtexture )

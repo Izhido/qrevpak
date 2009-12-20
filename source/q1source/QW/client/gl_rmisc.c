@@ -19,13 +19,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // r_misc.c
 
-#include "quakedef.h"
-
-extern void R_InitBubble();
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Include only for the GL builds (part 1):
 #ifdef GLQUAKE
 // <<< FIX
+
+#include "quakedef.h"
+
+extern void R_InitBubble();
 
 /*
 ==================
