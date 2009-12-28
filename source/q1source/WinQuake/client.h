@@ -271,6 +271,10 @@ extern	cvar_t	sensitivity;
 extern	cvar_t	wmotespeed;
 extern	cvar_t	gcpadspeed;
 // <<< FIX
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Declaring new cvar for Wii Remote look button invert:
+extern	cvar_t	wmotelookbinv;
+// <<< FIX
 
 extern	cvar_t	m_pitch;
 extern	cvar_t	m_yaw;

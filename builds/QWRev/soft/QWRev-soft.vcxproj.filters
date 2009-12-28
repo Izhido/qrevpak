@@ -5,6 +5,9 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="Header Files\oskrevol">
+      <UniqueIdentifier>{2d6e08bd-7003-473d-9912-e8a91924ac2f}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
@@ -13,8 +16,14 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="Source Files\oskrevol">
+      <UniqueIdentifier>{8855a9e8-5cf3-44aa-b2aa-23830cbc006c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\source\oskrevol\source\osk_revol.c">
+      <Filter>Source Files\oskrevol</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\source\q1source\QW\client\cd_revol.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -162,9 +171,6 @@
     <ClCompile Include="..\..\..\source\q1source\QW\client\nonintel.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\QW\client\osk_revol.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\q1source\QW\client\pmove.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -251,6 +257,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\source\oskrevol\include\osk_revol.h">
+      <Filter>Header Files\oskrevol</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\source\q1source\QW\client\adivtab.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -11,6 +11,9 @@
     <Filter Include="Header Files\glrevol\GL">
       <UniqueIdentifier>{9f79d04b-a1d9-4e18-a375-b806879bc781}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\oskrevol">
+      <UniqueIdentifier>{2d33e1aa-e719-40d1-924c-bed25b2a9158}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
@@ -22,10 +25,16 @@
     <Filter Include="Source Files\glrevol">
       <UniqueIdentifier>{8c943263-503b-42f7-8a3d-74e29808c35b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\oskrevol">
+      <UniqueIdentifier>{45103e7e-696f-4a7c-8646-f7a373e08907}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\glrevol\source\glrevol.c">
       <Filter>Source Files\glrevol</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\oskrevol\source\osk_revol.c">
+      <Filter>Source Files\oskrevol</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\q1source\WinQuake\cd_revol.c">
       <Filter>Source Files</Filter>
@@ -177,9 +186,6 @@
     <ClCompile Include="..\..\..\source\q1source\WinQuake\nonintel.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\osk_revol.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\q1source\WinQuake\pr_cmds.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -286,6 +292,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\glrevol\include\GL\glu.h">
       <Filter>Header Files\glrevol\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\oskrevol\include\osk_revol.h">
+      <Filter>Header Files\oskrevol</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\source\q1source\WinQuake\adivtab.h">
       <Filter>Header Files</Filter>
@@ -414,9 +423,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\source\q1source\WinQuake\net_wipx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\q1source\WinQuake\osk_revol.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\source\q1source\WinQuake\progdefs.h">

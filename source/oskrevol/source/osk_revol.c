@@ -1,25 +1,6 @@
-/*
-Copyright (C) 1997-2001 Id Software, Inc.
-Modifications (C) 2009 Heriberto Delgado.
-
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
-
-See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-
-*/
 #include "osk_revol.h"
-#include "../qcommon/qcommon.h"
+#include <malloc.h>
+#include <string.h>
 
 oskkey_t** osk_allkeys = 0;
 
@@ -256,4 +237,107 @@ oskkey_t* OSK_KeyAt(int x, int y)
 		i++;
 	} while(k);
 	return k;
+}
+
+int OSK_HandleKeys(bool KeyPressed)
+{
+	int k;
+
+	k = -1;
+	if(osk_selected != 0)
+	{
+		if(osk_selected->key == 22)
+		{
+			if(KeyPressed)
+			{
+				if(osk_layout == okl_normal)
+				{
+					osk_layout = okl_caps;
+					osk_capspressed = osk_selected;
+				} else if(osk_layout == okl_shift)
+				{
+					osk_layout = okl_shiftcaps;
+					osk_capspressed = osk_selected;
+				} else if(osk_layout == okl_shiftcaps)
+				{
+					osk_layout = okl_shift;
+					osk_capspressed = 0;
+				} else if(osk_layout == okl_caps)
+				{
+					osk_layout = okl_normal;
+					osk_capspressed = 0;
+				};
+			};
+		} else if(osk_selected->key == 23)
+		{
+			if(KeyPressed)
+			{
+				if(osk_layout == okl_normal)
+				{
+					osk_layout = okl_shift;
+					osk_shiftpressed = osk_selected;
+				} else if(osk_layout == okl_shift)
+				{
+					osk_layout = okl_normal;
+					osk_shiftpressed = 0;
+				} else if(osk_layout == okl_shiftcaps)
+				{
+					osk_layout = okl_caps;
+					osk_shiftpressed = 0;
+				} else if(osk_layout == okl_caps)
+				{
+					osk_layout = okl_shiftcaps;
+					osk_shiftpressed = osk_selected;
+				};
+			};
+		} else
+		{
+			k = osk_selected->key;
+			if(KeyPressed)
+			{
+				if(osk_layout == okl_shift)
+				{
+					osk_layout = okl_normal;
+					osk_shiftpressed = 0;
+				} else if(osk_layout == okl_shiftcaps)
+				{
+					osk_layout = okl_caps;
+					osk_shiftpressed = 0;
+				};
+			};
+		};
+	};
+	return k;
+}
+
+bool OSK_ShowInverted(bool KeyPressed, int x, int y)
+{
+	bool inv;
+
+	inv = false;
+	if(osk_selected != 0)
+	{
+		if(KeyPressed)
+		{
+			if((x >= osk_selected->left)&&(x <= osk_selected->right)&&(y >= osk_selected->top)&&(y <= osk_selected->bottom))
+			{
+				inv = true;
+			};
+		};
+	};
+	if(osk_shiftpressed != 0)
+	{
+		if((x >= osk_shiftpressed->left)&&(x <= osk_shiftpressed->right)&&(y >= osk_shiftpressed->top)&&(y <= osk_shiftpressed->bottom))
+		{
+				inv = true;
+		};
+	};
+	if(osk_capspressed != 0)
+	{
+		if((x >= osk_capspressed->left)&&(x <= osk_capspressed->right)&&(y >= osk_capspressed->top)&&(y <= osk_capspressed->bottom))
+		{
+				inv = true;
+		};
+	};
+	return inv;
 }

@@ -1336,7 +1336,7 @@ void COM_CopyFile (char *netpath, char *cachepath)
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Allocating in heap. Stack in this device is pretty small:
 	//char    buf[4096];
-	char*    buf = Sys_Malloc(4096, "COM_CopyFile");
+	char*    buf = Sys_BigStackAlloc(4096, "COM_CopyFile");
 // <<< FIX
 	
 	remaining = Sys_FileOpenRead (netpath, &in);            
@@ -1366,7 +1366,7 @@ void COM_CopyFile (char *netpath, char *cachepath)
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
-	free(buf);
+	Sys_BigStackFree(4096, "COM_CopyFile");
 // <<< FIX
 }
 

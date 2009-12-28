@@ -17,17 +17,14 @@
     <Filter Include="Header Files\glrevol\GL">
       <UniqueIdentifier>{050fc453-014b-4c2e-9624-05599a651aae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\oskrevol">
+      <UniqueIdentifier>{5c467e43-cb0e-4811-acc6-bd061b566e8d}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Header Files\qcommon">
       <UniqueIdentifier>{3a1ddae6-78f8-451a-80e5-20e37d8b7f3b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\ref_gl">
       <UniqueIdentifier>{a262226d-94e2-40fd-9ec6-75066cd4d6b4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\revol">
-      <UniqueIdentifier>{c8b1f0a8-0997-474e-98c8-9a9110a237ee}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\revol\glstub">
-      <UniqueIdentifier>{0c5c2406-a5e5-4331-9860-0b31ba7eed3a}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\server">
       <UniqueIdentifier>{5b07fa2c-fe03-4d53-902f-8c251563f338}</UniqueIdentifier>
@@ -49,6 +46,9 @@
     <Filter Include="Source Files\glrevol">
       <UniqueIdentifier>{4060ce70-77d9-45e8-b27f-a701dac709fb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\oskrevol">
+      <UniqueIdentifier>{ddffd1b6-7cfb-4e4c-a47a-cce22989744e}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\qcommon">
       <UniqueIdentifier>{a62b92f2-b15f-49c4-a893-20ac16fe551d}</UniqueIdentifier>
     </Filter>
@@ -65,6 +65,9 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\source\glrevol\source\glrevol.c">
       <Filter>Source Files\glrevol</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\oskrevol\source\osk_revol.c">
+      <Filter>Source Files\oskrevol</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\g_ai.c">
       <Filter>Source Files\ctf</Filter>
@@ -181,9 +184,6 @@
       <Filter>Source Files\revol</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\net_udp.c">
-      <Filter>Source Files\revol</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\osk_revol.c">
       <Filter>Source Files\revol</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\qgl_revol.c">
@@ -320,6 +320,9 @@
     <ClInclude Include="..\..\..\source\glrevol\include\GL\glu.h">
       <Filter>Header Files\glrevol\GL</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\source\oskrevol\include\osk_revol.h">
+      <Filter>Header Files\oskrevol</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ctf\game.h">
       <Filter>Header Files\ctf</Filter>
     </ClInclude>
@@ -364,15 +367,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gl\warpsin.h">
       <Filter>Header Files\ref_gl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\revol\glstub\include\GL\gl.h">
-      <Filter>Header Files\revol\glstub</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\revol\glstub\include\GL\glu.h">
-      <Filter>Header Files\revol\glstub</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\revol\osk_revol.h">
-      <Filter>Header Files\revol</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\server\server.h">
       <Filter>Header Files\server</Filter>

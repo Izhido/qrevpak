@@ -74,6 +74,7 @@ console is:
 
 */
 
+
 int			glx, gly, glwidth, glheight;
 
 // only the refresh window will be updated unless these variables are flagged 

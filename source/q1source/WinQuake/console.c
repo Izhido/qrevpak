@@ -189,7 +189,7 @@ void Con_CheckResize (void)
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Allocating for previous fix:
-		tbuf = Sys_Malloc(CON_TEXTSIZE, "Con_CheckResize");
+		tbuf = Sys_BigStackAlloc(CON_TEXTSIZE, "Con_CheckResize");
 // <<< FIX
 
 		Q_memcpy (tbuf, con_text, CON_TEXTSIZE);
@@ -207,7 +207,7 @@ void Con_CheckResize (void)
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
-		free(tbuf);
+		Sys_BigStackFree(CON_TEXTSIZE, "Con_CheckResize");
 // <<< FIX
 
 		Con_ClearNotify ();

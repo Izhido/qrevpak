@@ -109,30 +109,12 @@ void SWimp_DrawOnScreenKeyboard(void)
 			i = 0;
 			while(i < m)
 			{
-				img = Keyboard_img;
-				if(osk_selected != 0)
+				if(OSK_ShowInverted((k & WPAD_BUTTON_A) != WPAD_BUTTON_A, i, j))
 				{
-					if((k & WPAD_BUTTON_A) != WPAD_BUTTON_A)
-					{
-						if((i >= osk_selected->left)&&(i <= osk_selected->right)&&(j >= osk_selected->top)&&(j <= osk_selected->bottom))
-						{
-							img = KeyboardInverted_img;
-						};
-					};
-				};
-				if(osk_shiftpressed != 0)
+					img = KeyboardInverted_img;
+				} else
 				{
-					if((i >= osk_shiftpressed->left)&&(i <= osk_shiftpressed->right)&&(j >= osk_shiftpressed->top)&&(j <= osk_shiftpressed->bottom))
-					{
-						img = KeyboardInverted_img;
-					};
-				};
-				if(osk_capspressed != 0)
-				{
-					if((i >= osk_capspressed->left)&&(i <= osk_capspressed->right)&&(j >= osk_capspressed->top)&&(j <= osk_capspressed->bottom))
-					{
-						img = KeyboardInverted_img;
-					};
+					img = Keyboard_img;
 				};
 				a = img[l];
 				if(a == 0)

@@ -158,7 +158,7 @@ void CL_KeepaliveMessage (void)
 	if (sv.active)
 		return;		// no need if server is local
 	if (cls.demoplayback)
-		return;		// no need if server is local
+		return;
 
 // read messages from server, should just be nops
 	old = net_message;
@@ -273,10 +273,10 @@ void CL_ParseServerInfo (void)
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Allocating for previous fix:
-	model_precache = Sys_Malloc(MAX_MODELS * sizeof(char*), "CL_ParseServerInfo");
+	model_precache = Sys_BigStackAlloc(MAX_MODELS * sizeof(char*), "CL_ParseServerInfo");
 	for(i = 0; i < MAX_MODELS; i++)
 	{
-		model_precache[i] = Sys_Malloc(MAX_QPATH, "CL_ParseServerInfo");
+		model_precache[i] = Sys_BigStackAlloc(MAX_QPATH, "CL_ParseServerInfo");
 	};
 // <<< FIX
 
@@ -308,10 +308,10 @@ void CL_ParseServerInfo (void)
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Allocating for previous fix:
-	sound_precache = Sys_Malloc(MAX_SOUNDS * sizeof(char*), "CL_ParseServerInfo");
+	sound_precache = Sys_BigStackAlloc(MAX_SOUNDS * sizeof(char*), "CL_ParseServerInfo");
 	for(i = 0; i < MAX_SOUNDS; i++)
 	{
-		sound_precache[i] = Sys_Malloc(MAX_QPATH, "CL_ParseServerInfo");
+		sound_precache[i] = Sys_BigStackAlloc(MAX_QPATH, "CL_ParseServerInfo");
 	};
 // <<< FIX
 
@@ -328,16 +328,7 @@ void CL_ParseServerInfo (void)
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
-		for(i = MAX_SOUNDS - 1; i >= 0; i--)
-		{
-			free(sound_precache[i]);
-		};
-		free(sound_precache);
-		for(i = MAX_MODELS - 1; i >= 0; i--)
-		{
-			free(model_precache[i]);
-		};
-		free(model_precache);
+			Sys_BigStackFree(MAX_MODELS * sizeof(char*) + MAX_MODELS * MAX_QPATH + MAX_SOUNDS * sizeof(char*) + MAX_SOUNDS * MAX_QPATH, "CL_ParseServerInfo");
 // <<< FIX
 
 			return;
@@ -359,16 +350,7 @@ void CL_ParseServerInfo (void)
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
-			for(i = MAX_SOUNDS - 1; i >= 0; i--)
-			{
-				free(sound_precache[i]);
-			};
-			free(sound_precache);
-			for(i = MAX_MODELS - 1; i >= 0; i--)
-			{
-				free(model_precache[i]);
-			};
-			free(model_precache);
+			Sys_BigStackFree(MAX_MODELS * sizeof(char*) + MAX_MODELS * MAX_QPATH + MAX_SOUNDS * sizeof(char*) + MAX_SOUNDS * MAX_QPATH, "CL_ParseServerInfo");
 // <<< FIX
 
 			return;
@@ -396,16 +378,7 @@ void CL_ParseServerInfo (void)
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
-	for(i = MAX_SOUNDS - 1; i >= 0; i--)
-	{
-		free(sound_precache[i]);
-	};
-	free(sound_precache);
-	for(i = MAX_MODELS - 1; i >= 0; i--)
-	{
-		free(model_precache[i]);
-	};
-	free(model_precache);
+	Sys_BigStackFree(MAX_MODELS * sizeof(char*) + MAX_MODELS * MAX_QPATH + MAX_SOUNDS * sizeof(char*) + MAX_SOUNDS * MAX_QPATH, "CL_ParseServerInfo");
 // <<< FIX
 	
 }

@@ -63,6 +63,7 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\glrevol\source\glrevol.c" />
+    <ClCompile Include="..\..\..\source\oskrevol\source\osk_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\g_ai.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\g_chase.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\g_cmds.c" />
@@ -102,7 +103,6 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\glimp_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\in_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\net_udp.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\osk_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\qgl_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\snddma_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\swimp_revol.c" />
@@ -149,6 +149,7 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
   <ItemGroup>
     <ClInclude Include="..\..\..\source\glrevol\include\GL\gl.h" />
     <ClInclude Include="..\..\..\source\glrevol\include\GL\glu.h" />
+    <ClInclude Include="..\..\..\source\oskrevol\include\osk_revol.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ctf\game.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ctf\g_ctf.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ctf\g_local.h" />
@@ -161,9 +162,6 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_model.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gl\qgl.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gl\warpsin.h" />
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\revol\osk_revol.h" />
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\revol\glstub\include\GL\gl.h" />
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\revol\glstub\include\GL\glu.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\qcommon\crc.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\qcommon\qcommon.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\qcommon\qfiles.h" />

@@ -63,6 +63,7 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\glrevol\source\glrevol.c" />
+    <ClCompile Include="..\..\..\source\oskrevol\source\osk_revol.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\cd_revol.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\cl_cam.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\cl_demo.c" />
@@ -112,7 +113,6 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
     <ClCompile Include="..\..\..\source\q1source\QW\client\net_chan.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\net_udp.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\nonintel.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\osk_revol.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\pmove.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\pmovetst.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\r_aclip.c" />
@@ -145,6 +145,7 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
   <ItemGroup>
     <ClInclude Include="..\..\..\source\glrevol\include\GL\gl.h" />
     <ClInclude Include="..\..\..\source\glrevol\include\GL\glu.h" />
+    <ClInclude Include="..\..\..\source\oskrevol\include\osk_revol.h" />
     <ClInclude Include="..\..\..\source\q1source\QW\client\adivtab.h" />
     <ClInclude Include="..\..\..\source\q1source\QW\client\anorm_dots.h" />
     <ClInclude Include="..\..\..\source\q1source\QW\client\anorms.h" />

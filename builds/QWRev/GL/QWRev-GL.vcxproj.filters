@@ -11,6 +11,9 @@
     <Filter Include="Header Files\glrevol\GL">
       <UniqueIdentifier>{4a908926-5b9f-4493-961e-f882ebe0eee4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\oskrevol">
+      <UniqueIdentifier>{8547ff98-d5f5-43b6-b208-6c803f7986a9}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
@@ -22,10 +25,16 @@
     <Filter Include="Source Files\glrevol">
       <UniqueIdentifier>{bfdb4d36-342b-4968-afce-8fdc5bfbf5de}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\oskrevol">
+      <UniqueIdentifier>{a094d064-f8a8-4944-b9a6-b596a56b830c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\glrevol\source\glrevol.c">
       <Filter>Source Files\glrevol</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\oskrevol\source\osk_revol.c">
+      <Filter>Source Files\oskrevol</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\q1source\QW\client\cd_revol.c">
       <Filter>Source Files</Filter>
@@ -174,9 +183,6 @@
     <ClCompile Include="..\..\..\source\q1source\QW\client\nonintel.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\QW\client\osk_revol.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\q1source\QW\client\pmove.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -268,6 +274,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\glrevol\include\GL\glu.h">
       <Filter>Header Files\glrevol\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\oskrevol\include\osk_revol.h">
+      <Filter>Header Files\oskrevol</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\source\q1source\QW\client\adivtab.h">
       <Filter>Header Files</Filter>

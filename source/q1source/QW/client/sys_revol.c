@@ -446,6 +446,7 @@ void Sys_SendKeyEvents (void)
 	u32 k;
 	u32 g;
 	keyboard_event e;
+	int osk_key;
 
 	WPAD_ScanPads();
 	k = WPAD_ButtonsHeld(WPAD_CHAN_0);
@@ -533,68 +534,10 @@ void Sys_SendKeyEvents (void)
 	{
 		if(in_osk.value)
 		{
-			if(osk_selected != 0)
+			osk_key = OSK_HandleKeys((k & WPAD_BUTTON_A) == WPAD_BUTTON_A);
+			if(osk_key >= 0)
 			{
-				if(osk_selected->key == 22)
-				{
-					if((k & WPAD_BUTTON_A) == WPAD_BUTTON_A)
-					{
-						if(osk_layout == okl_normal)
-						{
-							osk_layout = okl_caps;
-							osk_capspressed = osk_selected;
-						} else if(osk_layout == okl_shift)
-						{
-							osk_layout = okl_shiftcaps;
-							osk_capspressed = osk_selected;
-						} else if(osk_layout == okl_shiftcaps)
-						{
-							osk_layout = okl_shift;
-							osk_capspressed = 0;
-						} else if(osk_layout == okl_caps)
-						{
-							osk_layout = okl_normal;
-							osk_capspressed = 0;
-						};
-					};
-				} else if(osk_selected->key == 23)
-				{
-					if((k & WPAD_BUTTON_A) == WPAD_BUTTON_A)
-					{
-						if(osk_layout == okl_normal)
-						{
-							osk_layout = okl_shift;
-							osk_shiftpressed = osk_selected;
-						} else if(osk_layout == okl_shift)
-						{
-							osk_layout = okl_normal;
-							osk_shiftpressed = 0;
-						} else if(osk_layout == okl_shiftcaps)
-						{
-							osk_layout = okl_caps;
-							osk_shiftpressed = 0;
-						} else if(osk_layout == okl_caps)
-						{
-							osk_layout = okl_shiftcaps;
-							osk_shiftpressed = osk_selected;
-						};
-					};
-				} else
-				{
-					Key_Event(osk_selected->key, ((k & WPAD_BUTTON_A) == WPAD_BUTTON_A));
-					if((k & WPAD_BUTTON_A) != WPAD_BUTTON_A)
-					{
-						if(osk_layout == okl_shift)
-						{
-							osk_layout = okl_normal;
-							osk_shiftpressed = 0;
-						} else if(osk_layout == okl_shiftcaps)
-						{
-							osk_layout = okl_caps;
-							osk_shiftpressed = 0;
-						};
-					};
-				};
+				Key_Event(osk_key, ((k & WPAD_BUTTON_A) == WPAD_BUTTON_A));
 			};
 		};
 	};

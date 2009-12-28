@@ -62,11 +62,11 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\source\oskrevol\source\osk_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\cd_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\glimp_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\in_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\net_udp.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\osk_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\qgl_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\snddma_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\swimp_revol.c" />
@@ -176,6 +176,7 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_surf.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\source\oskrevol\include\osk_revol.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\g_local.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\game.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_actor.h" />
@@ -202,9 +203,6 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_supertank.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\m_tank.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\q_shared.h" />
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\revol\osk_revol.h" />
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\revol\glstub\include\GL\gl.h" />
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\revol\glstub\include\GL\glu.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\qcommon\crc.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\qcommon\qcommon.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\qcommon\qfiles.h" />

@@ -423,6 +423,7 @@ void Mod_LoadTextures (lump_t *l)
 			tx->offsets[j] = mt->offsets[j] + sizeof(texture_t) - sizeof(miptex_t);
 		// the pixels immediately follow the structures
 		memcpy ( tx+1, mt+1, pixels);
+		
 		if (!Q_strncmp(mt->name,"sky",3))	
 			R_InitSky (tx);
 	}

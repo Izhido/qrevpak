@@ -63,6 +63,7 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\glrevol\source\glrevol.c" />
+    <ClCompile Include="..\..\..\source\oskrevol\source\osk_revol.c" />
     <ClCompile Include="..\..\..\source\q1source\WinQuake\cd_revol.c" />
     <ClCompile Include="..\..\..\source\q1source\WinQuake\chase.c" />
     <ClCompile Include="..\..\..\source\q1source\WinQuake\cl_demo.c" />
@@ -113,7 +114,6 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
     <ClCompile Include="..\..\..\source\q1source\WinQuake\net_udp.c" />
     <ClCompile Include="..\..\..\source\q1source\WinQuake\net_vcr.c" />
     <ClCompile Include="..\..\..\source\q1source\WinQuake\nonintel.c" />
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\osk_revol.c" />
     <ClCompile Include="..\..\..\source\q1source\WinQuake\pr_cmds.c" />
     <ClCompile Include="..\..\..\source\q1source\WinQuake\pr_edict.c" />
     <ClCompile Include="..\..\..\source\q1source\WinQuake\pr_exec.c" />
@@ -151,6 +151,7 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
   <ItemGroup>
     <ClInclude Include="..\..\..\source\glrevol\include\GL\gl.h" />
     <ClInclude Include="..\..\..\source\glrevol\include\GL\glu.h" />
+    <ClInclude Include="..\..\..\source\oskrevol\include\osk_revol.h" />
     <ClInclude Include="..\..\..\source\q1source\WinQuake\adivtab.h" />
     <ClInclude Include="..\..\..\source\q1source\WinQuake\anorm_dots.h" />
     <ClInclude Include="..\..\..\source\q1source\WinQuake\anorms.h" />
@@ -194,7 +195,6 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
     <ClInclude Include="..\..\..\source\q1source\WinQuake\net_vcr.h" />
     <ClInclude Include="..\..\..\source\q1source\WinQuake\net_wins.h" />
     <ClInclude Include="..\..\..\source\q1source\WinQuake\net_wipx.h" />
-    <ClInclude Include="..\..\..\source\q1source\WinQuake\osk_revol.h" />
     <ClInclude Include="..\..\..\source\q1source\WinQuake\pr_comp.h" />
     <ClInclude Include="..\..\..\source\q1source\WinQuake\progdefs.h" />
     <ClInclude Include="..\..\..\source\q1source\WinQuake\progs.h" />

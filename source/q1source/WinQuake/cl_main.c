@@ -39,6 +39,10 @@ cvar_t	sensitivity = {"sensitivity","3", true};
 cvar_t	wmotespeed = {"wmotespeed","3", true};
 cvar_t	gcpadspeed = {"gcpadspeed","3", true};
 // <<< FIX
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// New cvar for Wii Remote look button invert:
+cvar_t	wmotelookbinv = {"wmotelookbinv","0", true};
+// <<< FIX
 
 cvar_t	m_pitch = {"m_pitch","0.022", true};
 cvar_t	m_yaw = {"m_yaw","0.022", true};
@@ -778,6 +782,10 @@ void CL_Init (void)
 // Registering new cvars for Wii Remote / Gamecube controller speed:
 	Cvar_RegisterVariable (&wmotespeed);
 	Cvar_RegisterVariable (&gcpadspeed);
+// <<< FIX
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Registering new cvar for Wii Remote look button invert:
+	Cvar_RegisterVariable (&wmotelookbinv);
 // <<< FIX
 
 	Cvar_RegisterVariable (&m_pitch);

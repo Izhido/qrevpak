@@ -377,7 +377,11 @@ void M_Main_Key (int key)
 //=============================================================================
 /* OPTIONS MENU */
 
-#define	OPTIONS_ITEMS	16
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Including new menu options for the platform:
+//#define	OPTIONS_ITEMS	16
+#define	OPTIONS_ITEMS	19
+// <<< FIX
 
 #define	SLIDER_RANGE	10
 
@@ -426,7 +430,7 @@ void M_AdjustSliders (int dir)
 		Cvar_SetValue ("sensitivity", sensitivity.value);
 		break;
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Making room for new Wii Remote / Gamecube controller speed sliders:
+// Making room for new menu options for this platform:
 /*	case 6:	// music volume
 #ifdef _WIN32
 		bgmvolume.value += dir * 1.0;
@@ -546,14 +550,19 @@ void M_AdjustSliders (int dir)
 		Cvar_SetValue ("lookstrafe", !lookstrafe.value);
 		break;
 
-	case 14:
-		Cvar_SetValue ("cl_sbar", !cl_sbar.value);
+	case 14:	// Wii Remote look button invert
+		Cvar_SetValue ("wmotelookbinv", !wmotelookbinv.value);
 		break;
 
 	case 15:
-		Cvar_SetValue ("cl_hudswap", !cl_hudswap.value);
+		Cvar_SetValue ("cl_sbar", !cl_sbar.value);
+		break;
 
-	case 17:	// _windowed_mouse
+	case 16:
+		Cvar_SetValue ("cl_hudswap", !cl_hudswap.value);
+		break;
+
+	case 18:	// _windowed_mouse
 		Cvar_SetValue ("_windowed_mouse", !_windowed_mouse.value);
 		break;
 	}
@@ -616,7 +625,7 @@ void M_Options_Draw (void)
 	M_DrawSlider (220, 72, r);
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Making room for new Wii Remote / Gamecube controller speed sliders:
+// Making room for new menu options for this platform:
 /*	M_Print (16, 80, "       CD Music Volume");
 	r = bgmvolume.value;
 	M_DrawSlider (220, 80, r);
@@ -684,21 +693,24 @@ void M_Options_Draw (void)
 	M_Print (16, 136, "            Lookstrafe");
 	M_DrawCheckbox (220, 136, lookstrafe.value);
 
-	M_Print (16, 144, "    Use old status bar");
-	M_DrawCheckbox (220, 144, cl_sbar.value);
+	M_Print (16, 144, "Invert Wiimote look bt");
+	M_DrawCheckbox (220, 144, wmotelookbinv.value);
 
-	M_Print (16, 152, "      HUD on left side");
-	M_DrawCheckbox (220, 152, cl_hudswap.value);
+	M_Print (16, 152, "    Use old status bar");
+	M_DrawCheckbox (220, 152, cl_sbar.value);
+
+	M_Print (16, 160, "      HUD on left side");
+	M_DrawCheckbox (220, 160, cl_hudswap.value);
 
 	if (vid_menudrawfn)
-		M_Print (16, 160, "         Video Options");
+		M_Print (16, 168, "         Video Options");
 
 #ifdef _WIN32
 	if (modestate == MS_WINDOWED)
 	{
 #endif
-		M_Print (16, 168, "             Use Mouse");
-		M_DrawCheckbox (220, 168, _windowed_mouse.value);
+		M_Print (16, 176, "             Use Mouse");
+		M_DrawCheckbox (220, 176, _windowed_mouse.value);
 #ifdef _WIN32
 	}
 #endif
@@ -767,22 +779,43 @@ void M_Options_Key (int k)
 		break;
 	}
 
-	if (options_cursor == 14 && vid_menudrawfn == NULL)
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Adjusting for new menu options:
+	//if (options_cursor == 14 && vid_menudrawfn == NULL)
+	if (options_cursor == 17 && vid_menudrawfn == NULL)
+// <<< FIX
 	{
 		if (k == K_UPARROW)
-			options_cursor = 13;
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Adjusting for new menu options:
+			//options_cursor = 13;
+			options_cursor = 16;
+// <<< FIX
 		else
-			options_cursor = 0;
-	}
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Adjusting for new menu options:
+	//		options_cursor = 0;
+	//}
+			options_cursor = 18;
+	} else
+// <<< FIX
 
-	if ((options_cursor == 15) 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Adjusting for new menu options:
+	//if ((options_cursor == 15) 
+	if ((options_cursor == 19) 
+// <<< FIX
 #ifdef _WIN32
 	&& (modestate != MS_WINDOWED)
 #endif
 	)
 	{
 		if (k == K_UPARROW)
-			options_cursor = 14;
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Adjusting for new menu options:
+			//options_cursor = 14;
+			options_cursor = 17;
+// <<< FIX
 		else
 			options_cursor = 0;
 	}

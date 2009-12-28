@@ -1036,6 +1036,10 @@ static menuslider_s		s_options_sensitivity_slider;
 static menuslider_s		s_options_wmotespeed_slider;
 static menuslider_s		s_options_gcpadspeed_slider;
 // <<< FIX
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// New menu list for Wii Remote look button invert:
+static menulist_s		s_options_wmotelookbinv_box;
+// <<< FIX
 static menulist_s		s_options_freelook_box;
 static menulist_s		s_options_noalttab_box;
 static menulist_s		s_options_alwaysrun_box;
@@ -1093,6 +1097,14 @@ static void GCPadSpeedFunc( void *unused )
 }
 // <<< FIX
 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// New functions to change Wii Remote look button invert:
+static void WMoteLookBInvFunc( void *unused )
+{
+	Cvar_SetValue( "wmotelookbinv", !wmotelookbinv->value );
+}
+// <<< FIX
+
 static void NoAltTabFunc( void *unused )
 {
 	Cvar_SetValue( "win_noalttab", s_options_noalttab_box.curvalue );
@@ -1115,6 +1127,12 @@ static void ControlsSetMenuItemValues( void )
 // Setting Wii Remote and Gamecube controller speed control:
 	s_options_wmotespeed_slider.curvalue	= ( wmotespeed->value ) * 2;
 	s_options_gcpadspeed_slider.curvalue	= ( gcpadspeed->value ) * 2;
+// <<< FIX
+
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Setting Wii Remote look button invert control:
+	Cvar_SetValue( "wmotelookbinv", ClampCvar( 0, 1, wmotelookbinv->value ) );
+	s_options_wmotelookbinv_box.curvalue		= wmotelookbinv->value;
 // <<< FIX
 
 	Cvar_SetValue( "cl_run", ClampCvar( 0, 1, cl_run->value ) );
@@ -1366,12 +1384,22 @@ void Options_MenuInit( void )
 	s_options_lookstrafe_box.generic.callback = LookstrafeFunc;
 	s_options_lookstrafe_box.itemnames = yesno_names;
 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Placing the controls that set the Wii Remote look button invert mode:
+	s_options_wmotelookbinv_box.generic.type = MTYPE_SPINCONTROL;
+	s_options_wmotelookbinv_box.generic.x	= 0;
+	s_options_wmotelookbinv_box.generic.y	= 120;
+	s_options_wmotelookbinv_box.generic.name	= "Invert Wiimote look bt";
+	s_options_wmotelookbinv_box.generic.callback = WMoteLookBInvFunc;
+	s_options_wmotelookbinv_box.itemnames = yesno_names;
+// <<< FIX
+
 	s_options_freelook_box.generic.type = MTYPE_SPINCONTROL;
 	s_options_freelook_box.generic.x	= 0;
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Making room for new controls:
 	//s_options_freelook_box.generic.y	= 100;
-	s_options_freelook_box.generic.y	= 120;
+	s_options_freelook_box.generic.y	= 130;
 // <<< FIX
 	s_options_freelook_box.generic.name	= "free look";
 	s_options_freelook_box.generic.callback = FreeLookFunc;
@@ -1382,7 +1410,7 @@ void Options_MenuInit( void )
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Making room for new controls:
 	//s_options_crosshair_box.generic.y	= 110;
-	s_options_crosshair_box.generic.y	= 130;
+	s_options_crosshair_box.generic.y	= 140;
 // <<< FIX
 	s_options_crosshair_box.generic.name	= "crosshair";
 	s_options_crosshair_box.generic.callback = CrosshairFunc;
@@ -1393,7 +1421,7 @@ void Options_MenuInit( void )
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Making room for new controls:
 	//s_options_noalttab_box.generic.y	= 110;
-	s_options_noalttab_box.generic.y	= 120;
+	s_options_noalttab_box.generic.y	= 140;
 // <<< FIX
 	s_options_noalttab_box.generic.name	= "disable alt-tab";
 	s_options_noalttab_box.generic.callback = NoAltTabFunc;
@@ -1404,7 +1432,7 @@ void Options_MenuInit( void )
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Making room for new controls:
 	//s_options_joystick_box.generic.y	= 120;
-	s_options_joystick_box.generic.y	= 140;
+	s_options_joystick_box.generic.y	= 150;
 // <<< FIX
 	s_options_joystick_box.generic.name	= "use joystick";
 	s_options_joystick_box.generic.callback = JoystickFunc;
@@ -1415,7 +1443,7 @@ void Options_MenuInit( void )
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Making room for new controls:
 	//s_options_customize_options_action.generic.y		= 140;
-	s_options_customize_options_action.generic.y		= 160;
+	s_options_customize_options_action.generic.y		= 170;
 // <<< FIX
 	s_options_customize_options_action.generic.name	= "customize controls";
 	s_options_customize_options_action.generic.callback = CustomizeControlsFunc;
@@ -1425,7 +1453,7 @@ void Options_MenuInit( void )
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Making room for new controls:
 	//s_options_defaults_action.generic.y		= 150;
-	s_options_defaults_action.generic.y		= 170;
+	s_options_defaults_action.generic.y		= 180;
 // <<< FIX
 	s_options_defaults_action.generic.name	= "reset defaults";
 	s_options_defaults_action.generic.callback = ControlsResetDefaultsFunc;
@@ -1435,7 +1463,7 @@ void Options_MenuInit( void )
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Making room for new controls:
 	//s_options_console_action.generic.y		= 160;
-	s_options_console_action.generic.y		= 180;
+	s_options_console_action.generic.y		= 190;
 // <<< FIX
 	s_options_console_action.generic.name	= "go to console";
 	s_options_console_action.generic.callback = ConsoleFunc;
@@ -1456,6 +1484,10 @@ void Options_MenuInit( void )
 	Menu_AddItem( &s_options_menu, ( void * ) &s_options_invertmouse_box );
 	Menu_AddItem( &s_options_menu, ( void * ) &s_options_lookspring_box );
 	Menu_AddItem( &s_options_menu, ( void * ) &s_options_lookstrafe_box );
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// New menu items for Wii Remote look button invert:
+	Menu_AddItem( &s_options_menu, ( void * ) &s_options_wmotelookbinv_box );
+// <<< FIX
 	Menu_AddItem( &s_options_menu, ( void * ) &s_options_freelook_box );
 	Menu_AddItem( &s_options_menu, ( void * ) &s_options_crosshair_box );
 	Menu_AddItem( &s_options_menu, ( void * ) &s_options_joystick_box );
