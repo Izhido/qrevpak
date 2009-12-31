@@ -380,7 +380,7 @@ void M_Main_Key (int key)
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Including new menu options for the platform:
 //#define	OPTIONS_ITEMS	16
-#define	OPTIONS_ITEMS	19
+#define	OPTIONS_ITEMS	20
 // <<< FIX
 
 #define	SLIDER_RANGE	10
@@ -504,7 +504,15 @@ void M_AdjustSliders (int dir)
 			gcpadspeed.value = 11;
 		Cvar_SetValue ("gcpadspeed", gcpadspeed.value);
 		break;
-	case 8:	// music volume
+	case 8:	// Classic controller speed
+		clsctspeed.value += dir * 0.5;
+		if (clsctspeed.value < 1)
+			clsctspeed.value = 1;
+		if (clsctspeed.value > 11)
+			clsctspeed.value = 11;
+		Cvar_SetValue ("clsctspeed", clsctspeed.value);
+		break;
+	case 9:	// music volume
 #ifdef _WIN32
 		bgmvolume.value += dir * 1.0;
 #else
@@ -516,7 +524,7 @@ void M_AdjustSliders (int dir)
 			bgmvolume.value = 1;
 		Cvar_SetValue ("bgmvolume", bgmvolume.value);
 		break;
-	case 9:	// sfx volume
+	case 10:	// sfx volume
 		volume.value += dir * 0.1;
 		if (volume.value < 0)
 			volume.value = 0;
@@ -525,7 +533,7 @@ void M_AdjustSliders (int dir)
 		Cvar_SetValue ("volume", volume.value);
 		break;
 		
-	case 10:	// allways run
+	case 11:	// allways run
 		if (cl_forwardspeed.value > 200)
 		{
 			Cvar_SetValue ("cl_forwardspeed", 200);
@@ -538,31 +546,31 @@ void M_AdjustSliders (int dir)
 		}
 		break;
 	
-	case 11:	// invert mouse
+	case 12:	// invert mouse
 		Cvar_SetValue ("m_pitch", -m_pitch.value);
 		break;
 	
-	case 12:	// lookspring
+	case 13:	// lookspring
 		Cvar_SetValue ("lookspring", !lookspring.value);
 		break;
 	
-	case 13:	// lookstrafe
+	case 14:	// lookstrafe
 		Cvar_SetValue ("lookstrafe", !lookstrafe.value);
 		break;
 
-	case 14:	// Wii Remote look button invert
+	case 15:	// Wii Remote look button invert
 		Cvar_SetValue ("wmotelookbinv", !wmotelookbinv.value);
 		break;
 
-	case 15:
+	case 16:
 		Cvar_SetValue ("cl_sbar", !cl_sbar.value);
 		break;
 
-	case 16:
+	case 17:
 		Cvar_SetValue ("cl_hudswap", !cl_hudswap.value);
 		break;
 
-	case 18:	// _windowed_mouse
+	case 19:	// _windowed_mouse
 		Cvar_SetValue ("_windowed_mouse", !_windowed_mouse.value);
 		break;
 	}
@@ -673,44 +681,48 @@ void M_Options_Draw (void)
 	r = (gcpadspeed.value - 1)/10;
 	M_DrawSlider (220, 88, r);
 
-	M_Print (16, 96, "       CD Music Volume");
-	r = bgmvolume.value;
+	M_Print (16, 96, "    Classic ctl. Speed");
+	r = (clsctspeed.value - 1)/10;
 	M_DrawSlider (220, 96, r);
 
-	M_Print (16, 104, "          Sound Volume");
-	r = volume.value;
+	M_Print (16, 104, "       CD Music Volume");
+	r = bgmvolume.value;
 	M_DrawSlider (220, 104, r);
 
-	M_Print (16, 112,  "            Always Run");
-	M_DrawCheckbox (220, 112, cl_forwardspeed.value > 200);
+	M_Print (16, 112, "          Sound Volume");
+	r = volume.value;
+	M_DrawSlider (220, 112, r);
 
-	M_Print (16, 120, "          Invert Mouse");
-	M_DrawCheckbox (220, 120, m_pitch.value < 0);
+	M_Print (16, 120,  "            Always Run");
+	M_DrawCheckbox (220, 120, cl_forwardspeed.value > 200);
 
-	M_Print (16, 128, "            Lookspring");
-	M_DrawCheckbox (220, 128, lookspring.value);
+	M_Print (16, 128, "          Invert Mouse");
+	M_DrawCheckbox (220, 128, m_pitch.value < 0);
 
-	M_Print (16, 136, "            Lookstrafe");
-	M_DrawCheckbox (220, 136, lookstrafe.value);
+	M_Print (16, 136, "            Lookspring");
+	M_DrawCheckbox (220, 136, lookspring.value);
 
-	M_Print (16, 144, "Invert Wiimote look bt");
-	M_DrawCheckbox (220, 144, wmotelookbinv.value);
+	M_Print (16, 144, "            Lookstrafe");
+	M_DrawCheckbox (220, 144, lookstrafe.value);
 
-	M_Print (16, 152, "    Use old status bar");
+	M_Print (16, 152, "Invert Wiimote look bt");
+	M_DrawCheckbox (220, 152, wmotelookbinv.value);
+
+	M_Print (16, 160, "    Use old status bar");
 	M_DrawCheckbox (220, 152, cl_sbar.value);
 
 	M_Print (16, 160, "      HUD on left side");
 	M_DrawCheckbox (220, 160, cl_hudswap.value);
 
 	if (vid_menudrawfn)
-		M_Print (16, 168, "         Video Options");
+		M_Print (16, 176, "         Video Options");
 
 #ifdef _WIN32
 	if (modestate == MS_WINDOWED)
 	{
 #endif
-		M_Print (16, 176, "             Use Mouse");
-		M_DrawCheckbox (220, 176, _windowed_mouse.value);
+		M_Print (16, 184, "             Use Mouse");
+		M_DrawCheckbox (220, 184, _windowed_mouse.value);
 #ifdef _WIN32
 	}
 #endif
@@ -782,28 +794,28 @@ void M_Options_Key (int k)
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Adjusting for new menu options:
 	//if (options_cursor == 14 && vid_menudrawfn == NULL)
-	if (options_cursor == 17 && vid_menudrawfn == NULL)
+	if (options_cursor == 18 && vid_menudrawfn == NULL)
 // <<< FIX
 	{
 		if (k == K_UPARROW)
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Adjusting for new menu options:
 			//options_cursor = 13;
-			options_cursor = 16;
+			options_cursor = 17;
 // <<< FIX
 		else
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Adjusting for new menu options:
 	//		options_cursor = 0;
 	//}
-			options_cursor = 18;
+			options_cursor = 19;
 	} else
 // <<< FIX
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Adjusting for new menu options:
 	//if ((options_cursor == 15) 
-	if ((options_cursor == 19) 
+	if ((options_cursor == 20) 
 // <<< FIX
 #ifdef _WIN32
 	&& (modestate != MS_WINDOWED)
@@ -814,7 +826,7 @@ void M_Options_Key (int k)
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Adjusting for new menu options:
 			//options_cursor = 14;
-			options_cursor = 17;
+			options_cursor = 18;
 // <<< FIX
 		else
 			options_cursor = 0;

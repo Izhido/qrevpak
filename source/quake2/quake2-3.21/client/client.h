@@ -277,9 +277,10 @@ extern	cvar_t	*lookspring;
 extern	cvar_t	*lookstrafe;
 extern	cvar_t	*sensitivity;
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// New cvars for Wii Remote / Gamecube controller speed:
+// New cvars for speed on the various controllers:
 extern	cvar_t	*wmotespeed;
 extern	cvar_t	*gcpadspeed;
+extern	cvar_t	*clsctspeed;
 // <<< FIX
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // New cvar for Wii Remote look button invert:

@@ -35,9 +35,10 @@ cvar_t	lookspring = {"lookspring","0", true};
 cvar_t	lookstrafe = {"lookstrafe","0", true};
 cvar_t	sensitivity = {"sensitivity","3", true};
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// New cvars for Wii Remote / Gamecube controller speed:
+// New cvars for speed on the various controllers:
 cvar_t	wmotespeed = {"wmotespeed","3", true};
 cvar_t	gcpadspeed = {"gcpadspeed","3", true};
+cvar_t	clsctspeed = {"clsctspeed","3", true};
 // <<< FIX
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // New cvar for Wii Remote look button invert:
@@ -779,9 +780,10 @@ void CL_Init (void)
 	Cvar_RegisterVariable (&lookstrafe);
 	Cvar_RegisterVariable (&sensitivity);
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Registering new cvars for Wii Remote / Gamecube controller speed:
+// Registering new cvars for speed on the various controllers:
 	Cvar_RegisterVariable (&wmotespeed);
 	Cvar_RegisterVariable (&gcpadspeed);
+	Cvar_RegisterVariable (&clsctspeed);
 // <<< FIX
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Registering new cvar for Wii Remote look button invert:

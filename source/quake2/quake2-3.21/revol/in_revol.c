@@ -44,6 +44,8 @@ cvar_t	*in_wmote;
 
 cvar_t	*in_gcpad;
 
+cvar_t	*in_clsct;
+
 cvar_t	*in_joystick;
 
 cvar_t	*in_osk;
@@ -62,6 +64,10 @@ qboolean	gcpadactive;	// false when not focus app
 
 qboolean	gcpadinitialized;
 
+qboolean	clsctactive;	// false when not focus app
+
+qboolean	clsctinitialized;
+
 incursorcoords_t current_pos;
 
 int			mouse_x, mouse_y, old_mouse_x, old_mouse_y;
@@ -77,6 +83,8 @@ int			wmote_adjust_x, wmote_adjust_y;
 u8			in_previous_mouse_buttons;
 
 int			gcpad_x, gcpad_y, old_gcpad_x, old_gcpad_y;
+
+int			clsct_x, clsct_y, old_clsct_x, old_clsct_y;
 
 void IN_StartupMouse (void)
 {
@@ -118,6 +126,17 @@ void IN_StartupGCPad (void)
 		return; 
 
 	gcpadinitialized = true;
+}
+
+void IN_StartupClsCt (void)
+{
+	cvar_t		*cv;
+
+	cv = Cvar_Get ("in_initclsct", "1", CVAR_NOSET);
+	if ( !cv->value ) 
+		return; 
+
+	clsctinitialized = true;
 }
 
 void IN_MLookDown (void)
@@ -304,7 +323,7 @@ void IN_NunchukMove (usercmd_t *cmd)
 	WPAD_Expansion(WPAD_CHAN_0, &e);
 	
 	cmd->sidemove += m_side->value * (e.nunchuk.js.pos.x - e.nunchuk.js.center.x) * wmotespeed->value;
-	cmd->forwardmove -= m_forward->value * (e.nunchuk.js.center.y - e.nunchuk.js.pos.y) * wmotespeed->value;
+	cmd->forwardmove += m_forward->value * (e.nunchuk.js.pos.y - e.nunchuk.js.center.y) * wmotespeed->value;
 }
 
 qboolean IN_GetGCPadCursorPos(incursorcoords_t* p)
@@ -369,6 +388,74 @@ void IN_GCPadMove (usercmd_t *cmd)
 	cl.viewangles[PITCH] += m_pitch->value * gcpad_y;
 }
 
+qboolean IN_GetClsCtCursorPos(incursorcoords_t* p)
+{
+	qboolean valid;
+	expansion_t e;
+
+	valid = false;
+	WPAD_ScanPads();
+	WPAD_Expansion(WPAD_CHAN_0, &e);
+	p->x = window_center_x + (e.classic.rjs.pos.x - e.classic.rjs.center.x);
+	p->y = window_center_y + (e.classic.rjs.pos.x - e.classic.rjs.center.x);
+	if((p->x != window_center_x)||(p->y != window_center_y))
+		valid = true;
+	return valid;
+}
+
+void IN_ClsCtLeftStickMove (usercmd_t *cmd)
+{
+	expansion_t e;
+
+	WPAD_ScanPads();
+	WPAD_Expansion(WPAD_CHAN_0, &e);
+	
+	cmd->sidemove += m_side->value * (e.classic.ljs.pos.x - e.classic.ljs.center.x) * clsctspeed->value;
+	cmd->forwardmove += m_forward->value * (e.classic.ljs.pos.y - e.classic.ljs.center.y) * clsctspeed->value;
+}
+
+void IN_ClsCtMove (usercmd_t *cmd)
+{
+	int		cx, cy;
+
+	if (!clsctactive)
+		return;
+
+	// find Right Stick movement
+	if (!IN_GetClsCtCursorPos (&current_pos))
+		return;
+
+	cx = current_pos.x - window_center_x;
+	cy = current_pos.y - window_center_y;
+
+#if 0
+	if (!cx && !cy)
+		return;
+#endif
+
+	if (m_filter->value)
+	{
+		clsct_x = (cx + old_clsct_x) * 0.5;
+		clsct_y = (cy + old_clsct_y) * 0.5;
+	}
+	else
+	{
+		clsct_x = cx;
+		clsct_y = cy;
+	}
+
+	old_clsct_x = cx;
+	old_clsct_y = cy;
+
+	clsct_x *= clsctspeed->value;
+	clsct_y *= clsctspeed->value;
+	
+// add Right Stick X/Y movement to cmd
+	cl.viewangles[YAW] -= m_yaw->value * clsct_x;
+
+	cl.viewangles[PITCH] += m_pitch->value * clsct_y;
+}
+
 void IN_Init (void)
 {
 	// mouse variables
@@ -380,6 +467,9 @@ void IN_Init (void)
 
 	// Gamecube controller variables
 	in_gcpad				= Cvar_Get ("in_gcpad",					"1",		CVAR_ARCHIVE);
+
+	// Classic controller variables
+	in_clsct				= Cvar_Get ("in_clsct",					"1",		CVAR_ARCHIVE);
 
 	// joystick variables
 	in_joystick				= Cvar_Get ("in_joystick",				"0",		CVAR_ARCHIVE);
@@ -393,6 +483,7 @@ void IN_Init (void)
 	IN_StartupMouse ();
 	IN_StartupWmote ();
 	IN_StartupGCPad ();
+	IN_StartupClsCt ();
 
 	IN_Activate(true);
 }
@@ -408,6 +499,8 @@ void IN_Move (usercmd_t *cmd)
 	IN_NunchukMove (cmd);
 	IN_GCPadMove (cmd);
 	IN_GCPadMainStickMove (cmd);
+	IN_ClsCtMove (cmd);
+	IN_ClsCtLeftStickMove (cmd);
 }
 
 void IN_Activate (qboolean active)
@@ -416,6 +509,7 @@ void IN_Activate (qboolean active)
 	mouseactive = !active;		// force a new window check or turn off
 	wmoteactive = !active;
 	gcpadactive = !active;
+	clsctactive = !active;
 }
 
 void IN_ActivateMouse (void)
@@ -489,6 +583,29 @@ void IN_ActivateGCPad (void)
 	window_center_y = height/2;
 }
 
+void IN_ActivateClsCt (void)
+{
+	int		width, height;
+
+	if (!clsctinitialized)
+		return;
+	if (!in_clsct->value)
+	{
+		clsctactive = false;
+		return;
+	}
+	if (clsctactive)
+		return;
+
+	clsctactive = true;
+
+	width = sys_rmode->viWidth;
+	height = sys_rmode->viHeight;
+
+	window_center_x = width/2;
+	window_center_y = height/2;
+}
+
 void IN_DeactivateMouse (void)
 {
 	if (!mouseinitialized)
@@ -517,6 +634,16 @@ void IN_DeactivateGCPad (void)
 		return;
 
 	gcpadactive = false;
+}
+
+void IN_DeactivateClsCt (void)
+{
+	if (!clsctinitialized)
+		return;
+	if (!clsctactive)
+		return;
+
+	clsctactive = false;
 }
 
 void IN_MouseFrame(void)
@@ -578,7 +705,9 @@ void IN_WmoteFrame(void)
 
 	WPAD_ScanPads();
 	k = WPAD_ButtonsHeld(WPAD_CHAN_0);
-	if((k & WPAD_BUTTON_A) != WPAD_BUTTON_A)
+	if((((k & WPAD_BUTTON_A) != WPAD_BUTTON_A)&&(wmotelookbinv->value == 0))
+	 ||(((k & WPAD_BUTTON_A) == WPAD_BUTTON_A)&&(wmotelookbinv->value != 0))
+	 ||(in_osk->value != 0))
 	{
 		IN_DeactivateWmote ();
 		return;
@@ -613,15 +742,43 @@ void IN_GCPadFrame(void)
 	IN_ActivateGCPad ();
 }
 
+void IN_ClsCtFrame(void)
+{
+	if (!clsctinitialized)
+		return;
+
+	if (!in_clsct || !in_appactive)
+	{
+		IN_DeactivateClsCt ();
+		return;
+	}
+
+	if ( !cl.refresh_prepped
+		|| cls.key_dest == key_console
+		|| cls.key_dest == key_menu)
+	{
+		// temporarily deactivate if in fullscreen
+		if (Cvar_VariableValue ("vid_fullscreen") == 0)
+		{
+			IN_DeactivateClsCt ();
+			return;
+		}
+	}
+
+	IN_ActivateClsCt ();
+}
+
 void IN_Frame (void)
 {
 	IN_MouseFrame();
 	IN_WmoteFrame();
 	IN_GCPadFrame();
+	IN_ClsCtFrame();
 }
 
 void IN_Shutdown (void)
 {
+	IN_DeactivateClsCt ();
 	IN_DeactivateGCPad ();
 	IN_DeactivateWmote ();
 	IN_DeactivateMouse ();

@@ -182,7 +182,9 @@ void VID_DrawWmoteGuide(void)
 	if(p.valid)
 	{
 		k = WPAD_ButtonsHeld(WPAD_CHAN_0);
-		if((k & WPAD_BUTTON_A) != WPAD_BUTTON_A)
+		if((((k & WPAD_BUTTON_A) != WPAD_BUTTON_A)&&(wmotelookbinv.value == 0))
+		 ||(((k & WPAD_BUTTON_A) == WPAD_BUTTON_A)&&(wmotelookbinv.value != 0))
+		 ||(in_osk.value != 0))
 		{
 			r = 12 * vid.width / 320;
 			a = 0;

@@ -31,6 +31,10 @@ qboolean	gcpadinitialized;
 
 qboolean	gcpadactive;
 
+qboolean	clsctinitialized;
+
+qboolean	clsctactive;
+
 incursorcoords_t current_pos;
 
 int			window_center_x, window_center_y;
@@ -42,6 +46,8 @@ int			mouse_x, mouse_y, old_mouse_x, old_mouse_y;
 int			wmote_x, wmote_y, old_wmote_x, old_wmote_y;
 
 int			gcpad_x, gcpad_y, old_gcpad_x, old_gcpad_y;
+
+int			clsct_x, clsct_y, old_clsct_x, old_clsct_y;
 
 u8			in_previous_mouse_buttons;
 
@@ -87,7 +93,9 @@ qboolean IN_GetWmoteCursorPos(incursorcoords_t* p)
 	valid = false;
 	WPAD_ScanPads();
 	k = WPAD_ButtonsHeld(WPAD_CHAN_0);
-	if((k & WPAD_BUTTON_A) == WPAD_BUTTON_A)
+	if(((((k & WPAD_BUTTON_A) == WPAD_BUTTON_A)&&(wmotelookbinv.value == 0))
+	  ||(((k & WPAD_BUTTON_A) != WPAD_BUTTON_A)&&(wmotelookbinv.value != 0)))
+	  &&(in_osk.value == 0))
 	{
 		WPAD_IR(WPAD_CHAN_0, &w);
 		if(w.valid)
@@ -121,6 +129,21 @@ qboolean IN_GetGCPadCursorPos(incursorcoords_t* p)
 	PAD_ScanPads();
 	p->x = window_center_x + PAD_SubStickX(0);
 	p->y = window_center_y + PAD_SubStickY(0);
+	if((p->x != window_center_x)||(p->y != window_center_y))
+		valid = true;
+	return valid;
+}
+
+qboolean IN_GetClsCtCursorPos(incursorcoords_t* p)
+{
+	qboolean valid;
+	expansion_t e;
+
+	valid = false;
+	WPAD_ScanPads();
+	WPAD_Expansion(WPAD_CHAN_0, &e);
+	p->x = window_center_x + (e.classic.rjs.pos.x - e.classic.rjs.center.x);
+	p->y = window_center_y + (e.classic.rjs.pos.x - e.classic.rjs.center.x);
 	if((p->x != window_center_x)||(p->y != window_center_y))
 		valid = true;
 	return valid;
@@ -182,6 +205,24 @@ void IN_ActivateGCPad (void)
 	window_center_y = height/2;
 }
 
+void IN_ActivateClsCt (void)
+{
+	int		width, height;
+
+	if (!clsctinitialized)
+		return;
+	if (clsctactive)
+		return;
+
+	clsctactive = true;
+
+	width = sys_rmode->viWidth;
+	height = sys_rmode->viHeight;
+
+	window_center_x = width/2;
+	window_center_y = height/2;
+}
+
 void IN_DeactivateMouse (void)
 {
 	if (!mouseinitialized)
@@ -212,6 +253,16 @@ void IN_DeactivateGCPad (void)
 	gcpadactive = false;
 }
 
+void IN_DeactivateClsCt (void)
+{
+	if (!clsctinitialized)
+		return;
+	if (!clsctactive)
+		return;
+
+	clsctactive = false;
+}
+
 void IN_StartupMouse (void)
 {
 	if (MOUSE_Init() != 0)
@@ -240,6 +291,13 @@ void IN_StartupGCPad (void)
 	gcpadinitialized = true;
 
 	IN_ActivateGCPad();
+}
+
+void IN_StartupClsCt (void)
+{
+	clsctinitialized = true;
+
+	IN_ActivateClsCt();
 }
 
 void IN_MouseMove (usercmd_t *cmd)
@@ -360,7 +418,7 @@ void IN_NunchukMove (usercmd_t *cmd)
 	WPAD_Expansion(WPAD_CHAN_0, &e);
 	
 	cmd->sidemove += m_side.value * (e.nunchuk.js.pos.x - e.nunchuk.js.center.x) * wmotespeed.value;
-	cmd->forwardmove -= m_forward.value * (e.nunchuk.js.center.y - e.nunchuk.js.pos.y) * wmotespeed.value;
+	cmd->forwardmove += m_forward.value * (e.nunchuk.js.pos.y - e.nunchuk.js.center.y) * wmotespeed.value;
 }
 
 void IN_GCPadMove (usercmd_t *cmd)
@@ -413,6 +471,60 @@ void IN_GCPadMainStickMove (usercmd_t *cmd)
 	cmd->forwardmove += m_forward.value * PAD_StickY(0) * gcpadspeed.value;
 }
 
+void IN_ClsCtMove (usercmd_t *cmd)
+{
+	int		cx, cy;
+
+	if (!clsctactive)
+		return;
+
+	// find Right Stick movement
+	if (!IN_GetClsCtCursorPos (&current_pos))
+		return;
+
+	cx = current_pos.x - window_center_x;
+	cy = current_pos.y - window_center_y;
+
+	if (m_filter.value)
+	{
+		clsct_x = (cx + old_clsct_x) * 0.5;
+		clsct_y = (cy + old_clsct_y) * 0.5;
+	}
+	else
+	{
+		clsct_x = cx;
+		clsct_y = cy;
+	}
+
+	old_clsct_x = cx;
+	old_clsct_y = cy;
+
+	clsct_x *= clsctspeed.value;
+	clsct_y *= clsctspeed.value;
+	
+// add Wii Remote X/Y movement to cmd
+	cl.viewangles[YAW] -= m_yaw.value * clsct_x;
+
+	V_StopPitchDrift ();
+		
+	cl.viewangles[PITCH] += m_yaw.value * clsct_y;
+	if (cl.viewangles[PITCH] > 80)
+		cl.viewangles[PITCH] = 80;
+	if (cl.viewangles[PITCH] < -70)
+		cl.viewangles[PITCH] = -70;
+}
+
+void IN_ClsCtLeftStickMove (usercmd_t *cmd)
+{
+	expansion_t e;
+
+	WPAD_ScanPads();
+	WPAD_Expansion(WPAD_CHAN_0, &e);
+	
+	cmd->sidemove += m_side.value * (e.classic.ljs.pos.x - e.classic.ljs.center.x) * clsctspeed.value;
+	cmd->forwardmove += m_forward.value * (e.classic.ljs.pos.y - e.classic.ljs.center.y) * clsctspeed.value;
+}
+
 void IN_Init (void)
 {
 	// mouse variables
@@ -422,6 +534,7 @@ void IN_Init (void)
 	IN_StartupMouse ();
 	IN_StartupWmote ();
 	IN_StartupGCPad ();
+	IN_StartupClsCt ();
 }
 
 void IN_Commands (void)
@@ -435,6 +548,8 @@ void IN_Move (usercmd_t *cmd)
 	IN_NunchukMove (cmd);
 	IN_GCPadMove (cmd);
 	IN_GCPadMainStickMove (cmd);
+	IN_ClsCtMove (cmd);
+	IN_ClsCtLeftStickMove (cmd);
 }
 
 /*
@@ -448,6 +563,7 @@ void IN_ModeChanged (void)
 
 void IN_Shutdown (void)
 {
+	IN_DeactivateClsCt ();
 	IN_DeactivateGCPad ();
 	IN_DeactivateWmote ();
 	IN_DeactivateMouse ();
