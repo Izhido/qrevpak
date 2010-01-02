@@ -38,6 +38,22 @@ cvar_t m_filter = {"m_filter","0"};
 
 cvar_t in_osk = {"in_osk","0"};
 
+cvar_t in_wmotemovscale = {"in_wmotemovscale","2.5"};
+
+cvar_t in_wmotevangscale = {"in_wmotevangscale","3"};
+
+cvar_t in_wmotemovmin = {"in_wmotemovmin","8"};
+
+cvar_t in_gcpadmovscale = {"in_gcpadmovscale","2.5"};
+
+cvar_t in_gcpadmovmin = {"in_gcpadmovmin","0"};
+
+cvar_t in_clsctmovscale = {"in_clsctmovscale","5"};
+
+cvar_t in_clsctvangscale = {"in_clsctvangscale","3"};
+
+cvar_t in_clsctmovmin = {"in_clsctmovmin","0"};
+
 qboolean	mouseinitialized;
 
 qboolean	mouseactive;
@@ -131,7 +147,6 @@ void IN_SetWmoteCursorPos(int x, int y)
 {
 	ir_t w;
 
-	WPAD_ScanPads();
 	WPAD_IR(WPAD_CHAN_0, &w);
 	if(w.valid)
 	{
@@ -155,17 +170,18 @@ qboolean IN_GetGCPadCursorPos(incursorcoords_t* p)
 
 qboolean IN_GetClsCtCursorPos(incursorcoords_t* p)
 {
-	qboolean valid;
 	expansion_t e;
 
-	valid = false;
-	WPAD_ScanPads();
 	WPAD_Expansion(WPAD_CHAN_0, &e);
+	if(e.type != WPAD_EXP_CLASSIC)
+		return false;		
+
 	p->x = window_center_x + (e.classic.rjs.pos.x - e.classic.rjs.center.x);
-	p->y = window_center_y + (e.classic.rjs.pos.x - e.classic.rjs.center.x);
-	if((p->x != window_center_x)||(p->y != window_center_y))
-		valid = true;
-	return valid;
+	p->y = window_center_y + (e.classic.rjs.pos.y - e.classic.rjs.center.y);
+	if((p->x == window_center_x)&&(p->y == window_center_y))
+		return false;
+
+	return true;
 }
 
 void IN_ActivateMouse (void)
@@ -407,8 +423,8 @@ void IN_WmoteMove (usercmd_t *cmd)
 	old_wmote_x = wx;
 	old_wmote_y = wy;
 
-	wmote_x *= wmotespeed.value * 3;
-	wmote_y *= wmotespeed.value * 3;
+	wmote_x *= wmotespeed.value * in_wmotevangscale.value;
+	wmote_y *= wmotespeed.value * in_wmotevangscale.value;
 	
 // add Wii Remote X/Y movement to cmd
 	cl.viewangles[YAW] -= m_yaw.value * wmote_x;
@@ -432,12 +448,24 @@ void IN_WmoteMove (usercmd_t *cmd)
 void IN_NunchukMove (usercmd_t *cmd)
 {
 	expansion_t e;
+	int nx;
+	int ny;
 
-	WPAD_ScanPads();
 	WPAD_Expansion(WPAD_CHAN_0, &e);
-	
-	cmd->sidemove += m_side.value * (e.nunchuk.js.pos.x - e.nunchuk.js.center.x) * wmotespeed.value;
-	cmd->forwardmove += m_forward.value * (e.nunchuk.js.pos.y - e.nunchuk.js.center.y) * wmotespeed.value;
+	if(e.type != WPAD_EXP_NUNCHUK)
+		return;
+
+	nx = e.nunchuk.js.pos.x - e.nunchuk.js.center.x;
+	ny = e.nunchuk.js.pos.y - e.nunchuk.js.center.y;
+	if((nx > -in_wmotemovmin.value)&&(nx < in_wmotemovmin.value))
+		nx = 0;
+	if((ny > -in_wmotemovmin.value)&&(ny < in_wmotemovmin.value))
+		ny = 0;
+	if((nx == 0)&&(ny == 0))
+		return;
+
+	cmd->sidemove += m_side.value * nx * in_wmotemovscale.value;
+	cmd->forwardmove += m_forward.value * ny * in_wmotemovscale.value;
 }
 
 void IN_GCPadMove (usercmd_t *cmd)
@@ -485,9 +513,22 @@ void IN_GCPadMove (usercmd_t *cmd)
 
 void IN_GCPadMainStickMove (usercmd_t *cmd)
 {
+	int gx;
+	int gy;
+
 	PAD_ScanPads();
-	cmd->sidemove += m_side.value * PAD_StickX(0) * gcpadspeed.value;
-	cmd->forwardmove += m_forward.value * PAD_StickY(0) * gcpadspeed.value;
+
+	gx = PAD_StickX(0);
+	gy = PAD_StickY(0);
+	if((gx > -in_gcpadmovmin.value)&&(gx < in_gcpadmovmin.value))
+		gx = 0;
+	if((gy > -in_gcpadmovmin.value)&&(gy < in_gcpadmovmin.value))
+		gy = 0;
+	if((gx == 0)&&(gy == 0))
+		return;
+
+	cmd->sidemove += m_side.value * gx * in_gcpadmovscale.value;
+	cmd->forwardmove += m_forward.value * gy * in_gcpadmovscale.value;
 }
 
 void IN_ClsCtMove (usercmd_t *cmd)
@@ -518,8 +559,8 @@ void IN_ClsCtMove (usercmd_t *cmd)
 	old_clsct_x = cx;
 	old_clsct_y = cy;
 
-	clsct_x *= clsctspeed.value;
-	clsct_y *= clsctspeed.value;
+	clsct_x *= clsctspeed.value * in_clsctvangscale.value;
+	clsct_y *= clsctspeed.value * in_clsctvangscale.value;
 	
 // add Wii Remote X/Y movement to cmd
 	cl.viewangles[YAW] -= m_yaw.value * clsct_x;
@@ -536,19 +577,47 @@ void IN_ClsCtMove (usercmd_t *cmd)
 void IN_ClsCtLeftStickMove (usercmd_t *cmd)
 {
 	expansion_t e;
+	int cx;
+	int cy;
 
-	WPAD_ScanPads();
 	WPAD_Expansion(WPAD_CHAN_0, &e);
-	
-	cmd->sidemove += m_side.value * (e.classic.ljs.pos.x - e.classic.ljs.center.x) * clsctspeed.value;
-	cmd->forwardmove += m_forward.value * (e.classic.ljs.pos.y - e.classic.ljs.center.y) * clsctspeed.value;
+	if(e.type != WPAD_EXP_CLASSIC)
+		return;
+
+	cx = e.classic.ljs.pos.x - e.classic.ljs.center.x;
+	cy = e.classic.ljs.pos.y - e.classic.ljs.center.y;
+	if((cx > -in_clsctmovmin.value)&&(cx < in_clsctmovmin.value))
+		cx = 0;
+	if((cy > -in_clsctmovmin.value)&&(cy < in_clsctmovmin.value))
+		cy = 0;
+	if((cx == 0)&&(cy == 0))
+		return;
+
+	cmd->sidemove += m_side.value * cx * in_clsctmovscale.value;
+	cmd->forwardmove += m_forward.value * cy * in_clsctmovscale.value;
 }
 
 void IN_Init (void)
 {
 	// mouse variables
 	Cvar_RegisterVariable (&m_filter);
+
+	// on-screen keyboard variables
 	Cvar_RegisterVariable(&in_osk);
+
+	// Wii Remote variables
+	Cvar_RegisterVariable(&in_wmotemovscale);
+	Cvar_RegisterVariable(&in_wmotevangscale);
+	Cvar_RegisterVariable(&in_wmotemovmin);
+
+	// Gamecube controller variables
+	Cvar_RegisterVariable(&in_gcpadmovscale);
+	Cvar_RegisterVariable(&in_gcpadmovmin);
+
+	// Classic controller variables
+	Cvar_RegisterVariable(&in_clsctmovscale);
+	Cvar_RegisterVariable(&in_clsctvangscale);
+	Cvar_RegisterVariable(&in_clsctmovmin);
 
 	IN_StartupMouse ();
 	IN_StartupWmote ();

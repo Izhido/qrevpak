@@ -355,10 +355,12 @@ void Sys_SendKeyEvents (void)
 	u32 k;
 	u32 g;
 	keyboard_event e;
+	expansion_t ex;
 	int osk_key;
 
 	WPAD_ScanPads();
 	k = WPAD_ButtonsHeld(WPAD_CHAN_0);
+	WPAD_Expansion(WPAD_CHAN_0, &ex);
 	if((sys_previous_keys & WPAD_BUTTON_1) != (k & WPAD_BUTTON_1))
 	{
 		Key_Event(K_ENTER, ((k & WPAD_BUTTON_1) == WPAD_BUTTON_1), Sys_Milliseconds());
@@ -387,10 +389,6 @@ void Sys_SendKeyEvents (void)
 	{
 		Key_Event(K_MOUSE1, ((k & WPAD_BUTTON_B) == WPAD_BUTTON_B), Sys_Milliseconds());
 	};
-	if((sys_previous_keys & WPAD_NUNCHUK_BUTTON_Z) != (k & WPAD_NUNCHUK_BUTTON_Z))
-	{
-		Key_Event(' ', ((k & WPAD_NUNCHUK_BUTTON_Z) == WPAD_NUNCHUK_BUTTON_Z), Sys_Milliseconds());
-	};
 	if((sys_previous_keys & WPAD_BUTTON_UP) != (k & WPAD_BUTTON_UP))
 	{
 		Key_Event(K_UPARROW, ((k & WPAD_BUTTON_UP) == WPAD_BUTTON_UP), Sys_Milliseconds());
@@ -406,20 +404,6 @@ void Sys_SendKeyEvents (void)
 	if((sys_previous_keys & WPAD_BUTTON_RIGHT) != (k & WPAD_BUTTON_RIGHT))
 	{
 		Key_Event(K_RIGHTARROW, ((k & WPAD_BUTTON_RIGHT) == WPAD_BUTTON_RIGHT), Sys_Milliseconds());
-	};
-	if((sys_previous_keys & WPAD_NUNCHUK_BUTTON_C) != (k & WPAD_NUNCHUK_BUTTON_C))
-	{
-		Key_Event('c', ((k & WPAD_NUNCHUK_BUTTON_C) == WPAD_NUNCHUK_BUTTON_C), Sys_Milliseconds());
-		if((sys_previous_keys & WPAD_NUNCHUK_BUTTON_C) == WPAD_NUNCHUK_BUTTON_C)
-		{
-			if(in_osk->value)
-			{
-				Cvar_SetValue("in_osk", 0);
-			} else
-			{
-				Cvar_SetValue("in_osk", 1);
-			};
-		};
 	};
 	if((sys_previous_keys & WPAD_BUTTON_HOME) != (k & WPAD_BUTTON_HOME))
 	{
@@ -437,64 +421,99 @@ void Sys_SendKeyEvents (void)
 			};
 		};
 	};
-	if((sys_previous_keys & WPAD_CLASSIC_BUTTON_A) != (k & WPAD_CLASSIC_BUTTON_A))
+	if(ex.type == WPAD_EXP_NUNCHUK)
 	{
-		Key_Event(K_ENTER, ((k & WPAD_CLASSIC_BUTTON_A) == WPAD_CLASSIC_BUTTON_A), Sys_Milliseconds());
-	};
-	if((sys_previous_keys & WPAD_CLASSIC_BUTTON_B) != (k & WPAD_CLASSIC_BUTTON_B))
-	{
-		Key_Event(K_ESCAPE, ((k & WPAD_CLASSIC_BUTTON_B) == WPAD_CLASSIC_BUTTON_B), Sys_Milliseconds());
-	};
-	if((sys_previous_keys & WPAD_CLASSIC_BUTTON_X) != (k & WPAD_CLASSIC_BUTTON_X))
-	{
-		if(((k & WPAD_CLASSIC_BUTTON_X) == WPAD_CLASSIC_BUTTON_X)&&(sys_current_weapon < 8))
+		if((sys_previous_keys & WPAD_NUNCHUK_BUTTON_Z) != (k & WPAD_NUNCHUK_BUTTON_Z))
 		{
-			sys_current_weapon++;
+			Key_Event(' ', ((k & WPAD_NUNCHUK_BUTTON_Z) == WPAD_NUNCHUK_BUTTON_Z), Sys_Milliseconds());
 		};
-		Key_Event('0' + sys_current_weapon, ((k & WPAD_CLASSIC_BUTTON_X) == WPAD_CLASSIC_BUTTON_X), Sys_Milliseconds());
-	};
-	if((sys_previous_keys & WPAD_CLASSIC_BUTTON_Y) != (k & WPAD_CLASSIC_BUTTON_Y))
-	{
-		if(((k & WPAD_CLASSIC_BUTTON_Y) == WPAD_CLASSIC_BUTTON_Y)&&(sys_current_weapon > 0))
+		if((sys_previous_keys & WPAD_NUNCHUK_BUTTON_C) != (k & WPAD_NUNCHUK_BUTTON_C))
 		{
-			sys_current_weapon--;
+			Key_Event('c', ((k & WPAD_NUNCHUK_BUTTON_C) == WPAD_NUNCHUK_BUTTON_C), Sys_Milliseconds());
+			if((sys_previous_keys & WPAD_NUNCHUK_BUTTON_C) == WPAD_NUNCHUK_BUTTON_C)
+			{
+				if(in_osk->value)
+				{
+					Cvar_SetValue("in_osk", 0);
+				} else
+				{
+					Cvar_SetValue("in_osk", 1);
+				};
+			};
 		};
-		Key_Event('0' + sys_current_weapon, ((k & WPAD_CLASSIC_BUTTON_Y) == WPAD_CLASSIC_BUTTON_Y), Sys_Milliseconds());
 	};
-	if((sys_previous_keys & WPAD_CLASSIC_BUTTON_FULL_L) != (k & WPAD_CLASSIC_BUTTON_FULL_L))
+	if(ex.type == WPAD_EXP_CLASSIC)
 	{
-		Key_Event(K_MOUSE1, ((k & WPAD_CLASSIC_BUTTON_FULL_L) == WPAD_CLASSIC_BUTTON_FULL_L), Sys_Milliseconds());
-	};
-	if((sys_previous_keys & WPAD_CLASSIC_BUTTON_FULL_R) != (k & WPAD_CLASSIC_BUTTON_FULL_R))
-	{
-		Key_Event(' ', ((k & WPAD_CLASSIC_BUTTON_FULL_R) == WPAD_CLASSIC_BUTTON_FULL_R), Sys_Milliseconds());
-	};
-	if((sys_previous_keys & WPAD_CLASSIC_BUTTON_UP) != (k & WPAD_CLASSIC_BUTTON_UP))
-	{
-		Key_Event(K_UPARROW, ((k & WPAD_CLASSIC_BUTTON_UP) == WPAD_CLASSIC_BUTTON_UP), Sys_Milliseconds());
-	};
-	if(((sys_previous_keys & WPAD_CLASSIC_BUTTON_ZL) != (k & WPAD_CLASSIC_BUTTON_ZL))
-	 ||((sys_previous_keys & WPAD_CLASSIC_BUTTON_ZR) != (k & WPAD_CLASSIC_BUTTON_ZR)))
-	{
-		Key_Event('c', ((k & WPAD_CLASSIC_BUTTON_ZL) == WPAD_CLASSIC_BUTTON_ZL) 
-		            || ((k & WPAD_CLASSIC_BUTTON_ZR) == WPAD_CLASSIC_BUTTON_ZR), Sys_Milliseconds());
-	};
-	if((sys_previous_keys & WPAD_CLASSIC_BUTTON_DOWN) != (k & WPAD_CLASSIC_BUTTON_DOWN))
-	{
-		Key_Event(K_DOWNARROW, ((k & WPAD_CLASSIC_BUTTON_DOWN) == WPAD_CLASSIC_BUTTON_DOWN), Sys_Milliseconds());
-	};
-	if((sys_previous_keys & WPAD_CLASSIC_BUTTON_LEFT) != (k & WPAD_CLASSIC_BUTTON_LEFT))
-	{
-		Key_Event(K_LEFTARROW, ((k & WPAD_CLASSIC_BUTTON_LEFT) == WPAD_CLASSIC_BUTTON_LEFT), Sys_Milliseconds());
-	};
-	if((sys_previous_keys & WPAD_CLASSIC_BUTTON_RIGHT) != (k & WPAD_CLASSIC_BUTTON_RIGHT))
-	{
-		Key_Event(K_RIGHTARROW, ((k & WPAD_CLASSIC_BUTTON_RIGHT) == WPAD_CLASSIC_BUTTON_RIGHT), Sys_Milliseconds());
-	};
-	if((sys_previous_keys & WPAD_CLASSIC_BUTTON_HOME) != (k & WPAD_CLASSIC_BUTTON_HOME))
-	{
-		Key_Event('y', ((k & WPAD_CLASSIC_BUTTON_HOME) == WPAD_CLASSIC_BUTTON_HOME), Sys_Milliseconds());
-		Key_Event(K_F1, ((k & WPAD_CLASSIC_BUTTON_HOME) == WPAD_CLASSIC_BUTTON_HOME), Sys_Milliseconds());
+		if((sys_previous_keys & WPAD_CLASSIC_BUTTON_A) != (k & WPAD_CLASSIC_BUTTON_A))
+		{
+			Key_Event(K_ENTER, ((k & WPAD_CLASSIC_BUTTON_A) == WPAD_CLASSIC_BUTTON_A), Sys_Milliseconds());
+		};
+		if((sys_previous_keys & WPAD_CLASSIC_BUTTON_B) != (k & WPAD_CLASSIC_BUTTON_B))
+		{
+			Key_Event(K_ESCAPE, ((k & WPAD_CLASSIC_BUTTON_B) == WPAD_CLASSIC_BUTTON_B), Sys_Milliseconds());
+		};
+		if((sys_previous_keys & WPAD_CLASSIC_BUTTON_X) != (k & WPAD_CLASSIC_BUTTON_X))
+		{
+			if(((k & WPAD_CLASSIC_BUTTON_X) == WPAD_CLASSIC_BUTTON_X)&&(sys_current_weapon < 8))
+			{
+				sys_current_weapon++;
+			};
+			Key_Event('0' + sys_current_weapon, ((k & WPAD_CLASSIC_BUTTON_X) == WPAD_CLASSIC_BUTTON_X), Sys_Milliseconds());
+		};
+		if((sys_previous_keys & WPAD_CLASSIC_BUTTON_Y) != (k & WPAD_CLASSIC_BUTTON_Y))
+		{
+			if(((k & WPAD_CLASSIC_BUTTON_Y) == WPAD_CLASSIC_BUTTON_Y)&&(sys_current_weapon > 0))
+			{
+				sys_current_weapon--;
+			};
+			Key_Event('0' + sys_current_weapon, ((k & WPAD_CLASSIC_BUTTON_Y) == WPAD_CLASSIC_BUTTON_Y), Sys_Milliseconds());
+		};
+		if((sys_previous_keys & WPAD_CLASSIC_BUTTON_FULL_L) != (k & WPAD_CLASSIC_BUTTON_FULL_L))
+		{
+			Key_Event(K_MOUSE1, ((k & WPAD_CLASSIC_BUTTON_FULL_L) == WPAD_CLASSIC_BUTTON_FULL_L), Sys_Milliseconds());
+		};
+		if((sys_previous_keys & WPAD_CLASSIC_BUTTON_FULL_R) != (k & WPAD_CLASSIC_BUTTON_FULL_R))
+		{
+			Key_Event(' ', ((k & WPAD_CLASSIC_BUTTON_FULL_R) == WPAD_CLASSIC_BUTTON_FULL_R), Sys_Milliseconds());
+		};
+		if((sys_previous_keys & WPAD_CLASSIC_BUTTON_ZL) != (k & WPAD_CLASSIC_BUTTON_ZL))
+		{
+			if((k & WPAD_CLASSIC_BUTTON_ZL) == WPAD_CLASSIC_BUTTON_ZL)
+			{
+				if(in_osk->value)
+				{
+					Cvar_SetValue("in_osk", 0);
+				} else
+				{
+					Cvar_SetValue("in_osk", 1);
+				};
+			};
+		};
+		if((sys_previous_keys & WPAD_CLASSIC_BUTTON_ZR) != (k & WPAD_CLASSIC_BUTTON_ZR))
+		{
+			Key_Event('c', ((k & WPAD_CLASSIC_BUTTON_ZR) == WPAD_CLASSIC_BUTTON_ZR), Sys_Milliseconds());
+		};
+		if((sys_previous_keys & WPAD_CLASSIC_BUTTON_UP) != (k & WPAD_CLASSIC_BUTTON_UP))
+		{
+			Key_Event(K_UPARROW, ((k & WPAD_CLASSIC_BUTTON_UP) == WPAD_CLASSIC_BUTTON_UP), Sys_Milliseconds());
+		};
+		if((sys_previous_keys & WPAD_CLASSIC_BUTTON_DOWN) != (k & WPAD_CLASSIC_BUTTON_DOWN))
+		{
+			Key_Event(K_DOWNARROW, ((k & WPAD_CLASSIC_BUTTON_DOWN) == WPAD_CLASSIC_BUTTON_DOWN), Sys_Milliseconds());
+		};
+		if((sys_previous_keys & WPAD_CLASSIC_BUTTON_LEFT) != (k & WPAD_CLASSIC_BUTTON_LEFT))
+		{
+			Key_Event(K_LEFTARROW, ((k & WPAD_CLASSIC_BUTTON_LEFT) == WPAD_CLASSIC_BUTTON_LEFT), Sys_Milliseconds());
+		};
+		if((sys_previous_keys & WPAD_CLASSIC_BUTTON_RIGHT) != (k & WPAD_CLASSIC_BUTTON_RIGHT))
+		{
+			Key_Event(K_RIGHTARROW, ((k & WPAD_CLASSIC_BUTTON_RIGHT) == WPAD_CLASSIC_BUTTON_RIGHT), Sys_Milliseconds());
+		};
+		if((sys_previous_keys & WPAD_CLASSIC_BUTTON_HOME) != (k & WPAD_CLASSIC_BUTTON_HOME))
+		{
+			Key_Event('y', ((k & WPAD_CLASSIC_BUTTON_HOME) == WPAD_CLASSIC_BUTTON_HOME), Sys_Milliseconds());
+			Key_Event(K_F1, ((k & WPAD_CLASSIC_BUTTON_HOME) == WPAD_CLASSIC_BUTTON_HOME), Sys_Milliseconds());
+		};
 	};
 	sys_previous_keys = k;
 	PAD_ScanPads();

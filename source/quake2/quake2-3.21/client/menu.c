@@ -1346,13 +1346,13 @@ void Options_MenuInit( void )
 	s_options_gcpadspeed_slider.minvalue		= 2;
 	s_options_gcpadspeed_slider.maxvalue		= 22;
 
-	s_options_gcpadspeed_slider.generic.type	= MTYPE_SLIDER;
-	s_options_gcpadspeed_slider.generic.x		= 0;
-	s_options_gcpadspeed_slider.generic.y		= 80;
-	s_options_gcpadspeed_slider.generic.name	= "Classic ctl. speed";
-	s_options_gcpadspeed_slider.generic.callback = GCPadSpeedFunc;
-	s_options_gcpadspeed_slider.minvalue		= 2;
-	s_options_gcpadspeed_slider.maxvalue		= 22;
+	s_options_clsctspeed_slider.generic.type	= MTYPE_SLIDER;
+	s_options_clsctspeed_slider.generic.x		= 0;
+	s_options_clsctspeed_slider.generic.y		= 80;
+	s_options_clsctspeed_slider.generic.name	= "Classic ctl. speed";
+	s_options_clsctspeed_slider.generic.callback = ClsCtSpeedFunc;
+	s_options_clsctspeed_slider.minvalue		= 2;
+	s_options_clsctspeed_slider.maxvalue		= 22;
 // <<< FIX
 
 	s_options_alwaysrun_box.generic.type = MTYPE_SPINCONTROL;

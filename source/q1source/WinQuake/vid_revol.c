@@ -529,7 +529,6 @@ void VID_UpdateFullScreenStatus(void)
 {
 	ir_t p;
 
-	WPAD_ScanPads();
 	WPAD_IR(WPAD_CHAN_0, &p);
 	scr_copyeverything = (p.valid) || (in_osk.value);
 }
