@@ -524,19 +524,19 @@ void IN_Init (void)
 
 	// Wii Remote variables
 	in_wmote				= Cvar_Get ("in_wmote",					"1",		CVAR_ARCHIVE);
-	in_wmotemovscale		= Cvar_Get ("in_wmotemovscale",			"2.5",		CVAR_ARCHIVE);
+	in_wmotemovscale		= Cvar_Get ("in_wmotemovscale",			"3",		CVAR_ARCHIVE);
 	in_wmotevangscale		= Cvar_Get ("in_wmotevangscale",		"3",		CVAR_ARCHIVE);
-	in_wmotemovmin			= Cvar_Get ("in_wmotemovmin",			"8",		CVAR_ARCHIVE);
+	in_wmotemovmin			= Cvar_Get ("in_wmotemovmin",			"4",		CVAR_ARCHIVE);
 
 	// Gamecube controller variables
 	in_gcpad				= Cvar_Get ("in_gcpad",					"1",		CVAR_ARCHIVE);
-	in_gcpadmovscale		= Cvar_Get ("in_gcpadmovscale",			"2.5",		CVAR_ARCHIVE);
+	in_gcpadmovscale		= Cvar_Get ("in_gcpadmovscale",			"3",		CVAR_ARCHIVE);
 	in_gcpadmovmin			= Cvar_Get ("in_gcpadmovmin",			"0",		CVAR_ARCHIVE);
 
 	// Classic controller variables
 	in_clsct				= Cvar_Get ("in_clsct",					"1",		CVAR_ARCHIVE);
-	in_clsctmovscale		= Cvar_Get ("in_clsctmovscale",			"5",		CVAR_ARCHIVE);
-	in_clsctvangscale		= Cvar_Get ("in_clsctvangscale",		"3",		CVAR_ARCHIVE);
+	in_clsctmovscale		= Cvar_Get ("in_clsctmovscale",			"9",		CVAR_ARCHIVE);
+	in_clsctvangscale		= Cvar_Get ("in_clsctvangscale",		"9",		CVAR_ARCHIVE);
 	in_clsctmovmin			= Cvar_Get ("in_clsctmovmin",			"0",		CVAR_ARCHIVE);
 
 	// joystick variables

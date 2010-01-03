@@ -38,19 +38,19 @@ cvar_t m_filter = {"m_filter","0"};
 
 cvar_t in_osk = {"in_osk","0"};
 
-cvar_t in_wmotemovscale = {"in_wmotemovscale","2.5"};
+cvar_t in_wmotemovscale = {"in_wmotemovscale","3"};
 
 cvar_t in_wmotevangscale = {"in_wmotevangscale","3"};
 
-cvar_t in_wmotemovmin = {"in_wmotemovmin","8"};
+cvar_t in_wmotemovmin = {"in_wmotemovmin","4"};
 
-cvar_t in_gcpadmovscale = {"in_gcpadmovscale","2.5"};
+cvar_t in_gcpadmovscale = {"in_gcpadmovscale","3"};
 
 cvar_t in_gcpadmovmin = {"in_gcpadmovmin","0"};
 
-cvar_t in_clsctmovscale = {"in_clsctmovscale","5"};
+cvar_t in_clsctmovscale = {"in_clsctmovscale","9"};
 
-cvar_t in_clsctvangscale = {"in_clsctvangscale","3"};
+cvar_t in_clsctvangscale = {"in_clsctvangscale","9"};
 
 cvar_t in_clsctmovmin = {"in_clsctmovmin","0"};
 

@@ -1,64 +1,63 @@
-Q1Rev: A port of the original Quake engine to the Nintendo Wii, compiled using devkitPPC / libogc.
-Release 3
+Q2Rev: A port of the original id Tech 2 engine (Quake II) with ThreeWave's Capture-The-Flag module to the Nintendo Wii, compiled using devkitPPC / libogc.
+Release 1
 
 
 
-The engine is feature-complete, with sound & network play. In that regard, it can be considered as a "unmodified" NetQuake client. Unfortunately, there are next to no servers that let you use unmodified NetQuake clients (as of this release, lab.ihoc.net is still active).
+The engine is feature-complete, with sound & network play. It is mainly intended for network play; while it's possible to play the single-player game with this engine, it becomes somewhat slow doing so.
+Due to the shortage of keys in the original Wii Remote + Nunchuk configuration, it is recommended that you "bind RIGHTARROW use grapple" in order to use the aforementioned weapon.
 
 
 
-New features in this release:
-
-- Classic Controller can now be used to play; controls are similar to those in use by the Gamecube Controller.
-- Pressing [A] to aim is now optional; a Menu Option was provided for such effect.
-- Bug fixes in the way the Nunchuk controller was handled, causing problems when moving on water.
+All features included in Q2Rev, Release 2, have been included in this build.
 
 
 
 Key Assignment:
 
-Wii Remote #1            Keyboard                                      
----------------------------------------------------------------------------
+Wii Remote #1        Keyboard                                      
+--------------------------------------------------------------------------------------
 D-pad                    Arrow keys (*)                                    
 1                        ENTER                                         
 2                        ESC
-+                        1 --> 2 --> 3 --> ... --> 7 --> 1 --> ...
--                        7 --> 6 --> 5 --> ... --> 1 --> 7 --> ...
++                        1 --> 2 --> 3 --> ... --> 8 --> 1 --> ...
+-                        8 --> 7 --> 6 --> ... --> 1 --> 8 --> ...
 B                        Left Mouse Button (Fire, usually)
 A                        Enable Wii Remote Look Mode (see below)
-Home                     {Pause} / "y" key (see below)
+Home                     "F1" / "y" keys (see below)
 
 Nunchuck #1              Keyboard                                      
----------------------------------------------------------------------------
+--------------------------------------------------------------------------------------
 Joystick                 Walk / Sidestep (see below)
 Z                        Space Bar (Jump, usually)
-C                        Enables / disables on-screen keyboard (see below)
+C                        "c" key / Enables or disables on-screen keyboard (see below)
 
 Classic Controller #1    Keyboard                                      
----------------------------------------------------------------------------
-D-pad                    Arrow keys
+--------------------------------------------------------------------------------------
+D-pad                    Arrow keys (*)                                    
 A                        ENTER                                         
 B                        ESC
-X                        1 --> 2 --> 3 --> ... --> 7 --> 1 --> ...
-Y                        7 --> 6 --> 5 --> ... --> 1 --> 7 --> ...
+X                        1 --> 2 --> 3 --> ... --> 8 --> 1 --> ...
+Y                        8 --> 7 --> 6 --> ... --> 1 --> 8 --> ...
 L                        Left Mouse Button (Fire, usually)
 R                        Space Bar (Jump, usually)
 ZL                       Enables / disables on-screen keyboard (see below)
-Home                     {Pause} / "y" key (see below)
+ZR                       "c" key (see below)
+Start/Select             "F1" / "y" keys (see below)
 Left Stick               Walk / Sidestep (see below)
 Right Stick              Free Look Mode (see below)
 
 Gamecube Controller #1   Keyboard                                      
----------------------------------------------------------------------------
+--------------------------------------------------------------------------------------
 Main analog stick        Walk / Sidestep (see below)
-D-pad                    Arrow keys                                    
+D-pad                    Arrow keys (*)                                    
 A                        ENTER                                         
 B                        ESC
-X                        1 --> 2 --> 3 --> ... --> 7 --> 1 --> ...
-Y                        7 --> 6 --> 5 --> ... --> 1 --> 7 --> ...
+X                        1 --> 2 --> 3 --> ... --> 8 --> 1 --> ...
+Y                        8 --> 7 --> 6 --> ... --> 1 --> 8 --> ...
+Z                        "c" key (see below)
 L                        Left Mouse Button (Fire, usually)
 R                        Space Bar (Jump, usually)
-Start/Select             {Pause} / "y" key (see below)
+Start/Select             "F1" / "y" keys (see below)
 C-stick                  Free Look Mode (see below)
 
 
@@ -100,24 +99,28 @@ On-Screen Keyboard:
 Press [C] on the Nunchuck, or [ZL] in the Classic Controller. You will see a white, transparent keyboard covering most of the screen. Move your Wii Remote guide (the dotted circle) over it. You will see keys on the keyboard being selected. By pressing [A] on the Wiimote, the selected key will be "pressed" and sent to the engine as a normal key press. Release [A], and the key will also be "released" on screen as well as a normal key "release" from an actual keyboard. Press [C] again on the Nunchuk (or [ZL] on the Classic controller) to hide the on-screen keyboard. NOTE: if you exit your game while the on-screen keyboard is enabled, you will see it again next time you play.
 
 
+'c' key:
+
+Press [C] on the Nunchuk (yes, it's the same key as the On-Screen Keyboard), the [Z] button on the Gamecube controller, or the [ZR] button on the Classic controller to make the player 'crouch'. As long as any of these keys are held, the player will be down; release it and it will go up again. If you pressed [C] on the Nunchuk, releasing the key will also bring the on-screen keyboard up. Just press [C] again to hide the keyboard & continue playing. 
+
+
 Home / Start-Select button:
 
-When pressed, both generate a PAUSE command to the engine. If, however, you press any of these buttons at the "Quit" screen on the Main Menu, it will emulate instead a press of the "y" key, ending the game. 
+When pressed, any of them will generate simultaneously "F1" and "y" keys for the engine. F1 brings up the teams's score window (or the mission brief window during single-player gameplay); if you're on the "Quit" screen of the Main Menu, pressing these keys will end the game (because of the "y" key).
 
 
 
 
-To run Q1Rev, please do the following:
+To run Q2Rev, please do the following:
 
 1) Copy the contents of this archive into the *root* of your media card (or USB stick);
-2) Copy the contents of the /ID1/ folder from your original Quake game (usually under C:\QUAKE\ for Windows machines) to the /ID1/ folder of your media card;
-3) *Erase* the config.cfg from the /ID1/ folder in your media card, that was copied from the original Quake game folder. This is in order to let the engine create the original bind mappings, plus the new values added for this port.
-4) Boot your Wii, then start the game using your favorite booting method. The game is in /apps/Q1Rev/boot.dol in your media card. IMPORTANT: If you use the Homebrew Channel, be sure to update it to the latest version available.
+2) Copy the contents of the /baseq2/ folder AND subfolders from your original Quake II game to the /baseq2/ folder of your media card;
+3) Copy also the contents of the /ctf/ folder containing all maps you've been downloading from previous sessions to the /ctf/ folder of your media card;
+4) *Erase* the config.cfg from the /baseq2/ folder in your media card, that was copied from the original Quake II game folder. This is in order to let the engine create the original bind mappings, plus the new values added for this port.
+5) Boot your Wii, then start the game using your favorite booting method. The game is in /apps/Q2Rev/boot.dol in your media card. IMPORTANT: If you use the Homebrew Channel, be sure to update it to the latest version available.
 
-If you have not bought Quake yet... um, well, what the hell are you waiting for? Go buy it, and play it at least once in your PC, for goodness's sake! All done? Good. Now, locate the /ID1/ folder in your PC and follow the steps above.
-
-If you don't yet have access to the game, the shareware episode can be obtained free of charge from Id software's web site at http://www.idsoftware.com/  . Install it, locate /ID1/, follow steps above.
-
+If you don't yet have access to the game, the demo can be obtained free of charge from Id software's web site at http://www.idsoftware.com/  . Install it, locate /baseq2/, follow steps above.
+IMPORTANT: By design, you will need the full game before you play with the CTF module; this requirement was left unmodified in Q2CTFRev.
 
 
 
@@ -126,7 +129,7 @@ Any comments about the engine are welcome to heribertod@gmail.com.
 
 
 
-Original source code (C) 1996-1997 Id Software, Inc.
+Original source code (C) 1997-2001 Id Software, Inc.
 Modifications (c) 2009-2010 Heriberto Delgado.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
