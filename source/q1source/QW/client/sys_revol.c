@@ -66,6 +66,12 @@ byte sys_bigstack[BIGSTACK_SIZE];
 int sys_bigstack_cursize;
 // <<< FIX
 
+s32 sys_mouse_valid;
+
+mouse_event sys_mouse_event;
+
+u8 sys_previous_mouse_buttons;
+
 void Sys_GetBaseDir(int argc, char** argv)
 {
 	int i;
@@ -449,6 +455,19 @@ void Sys_SendKeyEvents (void)
 	expansion_t ex;
 	int osk_key;
 
+	if((sys_previous_mouse_buttons & 0x01) != (sys_mouse_event.button & 0x01))
+	{
+		Key_Event(K_MOUSE1, ((sys_mouse_event.button & 0x01) == 0x01));
+	};
+	if((sys_previous_mouse_buttons & 0x02) != (sys_mouse_event.button & 0x02))
+	{
+		Key_Event(K_MOUSE2, ((sys_mouse_event.button & 0x02) == 0x02));
+	};
+	if((sys_previous_mouse_buttons & 0x04) != (sys_mouse_event.button & 0x04))
+	{
+		Key_Event(K_MOUSE3, ((sys_mouse_event.button & 0x04) == 0x04));
+	};
+	sys_previous_mouse_buttons = sys_mouse_event.button;
 	WPAD_ScanPads();
 	k = WPAD_ButtonsHeld(WPAD_CHAN_0);
 	WPAD_Expansion(WPAD_CHAN_0, &ex);
@@ -912,6 +931,16 @@ int main (int argc, char* argv[])
 	while (1)
 	{
 		sys_previous_time = Sys_DoubleTime();
+		if(MOUSE_IsConnected())
+		{
+			sys_mouse_valid = MOUSE_GetEvent(&sys_mouse_event);
+			if(sys_mouse_valid)	MOUSE_FlushEvents();
+		}
+		else
+		{
+			sys_mouse_valid = 0;
+			sys_mouse_event.button = 0;
+		};
 		Host_Frame (1.0/30.0);
 #ifdef GLQUAKE
 		GX_DrawDone();
@@ -928,7 +957,6 @@ int main (int argc, char* argv[])
 		VIDEO_SetNextFramebuffer(sys_framebuffer[sys_currentframebuf]);
 #endif
 		KEYBOARD_FlushEvents();
-		MOUSE_FlushEvents();
 		VIDEO_Flush();
 		VIDEO_WaitVSync();
 		while((Sys_DoubleTime() - sys_previous_time) < (1.0/30.0))

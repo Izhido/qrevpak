@@ -29,6 +29,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 extern GXRModeObj* sys_rmode;
 
+extern s32 sys_mouse_valid;
+
+extern mouse_event sys_mouse_event;
+
 typedef struct
 {
 	int x; 
@@ -174,35 +178,17 @@ void IN_MLookUp (void)
 
 qboolean IN_GetMouseCursorPos(incursorcoords_t* p)
 {
-	qboolean valid;
 	mouse_event m;
 
-	valid = false;
-	if(MOUSE_GetEvent(&m))
+	m = sys_mouse_event;
+	p->x = window_center_x + m.rx;
+	p->y = window_center_y + m.ry;
+	if((p->x < 0)||(p->x > sys_rmode->viWidth)||(p->y < 0)||(p->y > sys_rmode->viHeight))
 	{
-		p->x = window_center_x + m.rx;
-		p->y = window_center_y + m.ry;
-		if((p->x < 0)||(p->x > sys_rmode->viWidth)||(p->y < 0)||(p->y > sys_rmode->viHeight))
-		{
-			p->x = window_center_x;
-			p->y = window_center_y;
-		}
-		if((in_previous_mouse_buttons & 0x01) != (m.button & 0x01))
-		{
-			Key_Event(K_MOUSE1, ((m.button & 0x01) == 0x01), Sys_Milliseconds());
-		};
-		if((in_previous_mouse_buttons & 0x02) != (m.button & 0x02))
-		{
-			Key_Event(K_MOUSE2, ((m.button & 0x02) == 0x02), Sys_Milliseconds());
-		};
-		if((in_previous_mouse_buttons & 0x04) != (m.button & 0x04))
-		{
-			Key_Event(K_MOUSE3, ((m.button & 0x04) == 0x04), Sys_Milliseconds());
-		};
-		in_previous_mouse_buttons = m.button;
-		valid = true;
-	};
-	return valid;
+		p->x = window_center_x;
+		p->y = window_center_y;
+	}
+	return true;
 }
 
 void IN_MouseMove (usercmd_t *cmd)
@@ -734,7 +720,7 @@ void IN_MouseFrame(void)
 		}
 	}
 
-	if(!MOUSE_IsConnected())
+	if(!sys_mouse_valid)
 	{
 		IN_DeactivateMouse ();
 		return;

@@ -29,6 +29,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <ogc/usbmouse.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include <malloc.h>
 #define BOOL_IMPLEMENTED 1
 
 #include "../qcommon/qcommon.h"
@@ -93,6 +94,12 @@ byte sys_bigstack[BIGSTACK_SIZE];
 
 int sys_bigstack_cursize;
 // <<< FIX
+
+s32 sys_mouse_valid;
+
+mouse_event sys_mouse_event;
+
+u8 sys_previous_mouse_buttons;
 
 
 game_export_t *GetGameAPI (game_import_t *import);
@@ -358,6 +365,19 @@ void Sys_SendKeyEvents (void)
 	expansion_t ex;
 	int osk_key;
 
+	if((sys_previous_mouse_buttons & 0x01) != (sys_mouse_event.button & 0x01))
+	{
+		Key_Event(K_MOUSE1, ((sys_mouse_event.button & 0x01) == 0x01), Sys_Milliseconds());
+	};
+	if((sys_previous_mouse_buttons & 0x02) != (sys_mouse_event.button & 0x02))
+	{
+		Key_Event(K_MOUSE2, ((sys_mouse_event.button & 0x02) == 0x02), Sys_Milliseconds());
+	};
+	if((sys_previous_mouse_buttons & 0x04) != (sys_mouse_event.button & 0x04))
+	{
+		Key_Event(K_MOUSE3, ((sys_mouse_event.button & 0x04) == 0x04), Sys_Milliseconds());
+	};
+	sys_previous_mouse_buttons = sys_mouse_event.button;
 	WPAD_ScanPads();
 	k = WPAD_ButtonsHeld(WPAD_CHAN_0);
 	WPAD_Expansion(WPAD_CHAN_0, &ex);
@@ -1078,6 +1098,16 @@ int main (int argc, char **argv)
 
 	while (1)
 	{
+		if(MOUSE_IsConnected())
+		{
+			sys_mouse_valid = MOUSE_GetEvent(&sys_mouse_event);
+			if(sys_mouse_valid)	MOUSE_FlushEvents();
+		}
+		else
+		{
+			sys_mouse_valid = 0;
+			sys_mouse_event.button = 0;
+		};
 		Qcommon_Frame (1000 / 30);
 #ifdef GLIMP
 		GX_DrawDone();
@@ -1094,7 +1124,6 @@ int main (int argc, char **argv)
 		VIDEO_SetNextFramebuffer(sys_framebuffer[sys_currentframebuf]);
 #endif
 		KEYBOARD_FlushEvents();
-		MOUSE_FlushEvents();
 		VIDEO_Flush();
 		VIDEO_WaitVSync();
 	}

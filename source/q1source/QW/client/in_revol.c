@@ -9,6 +9,10 @@
 
 extern GXRModeObj* sys_rmode;
 
+extern s32 sys_mouse_valid;
+
+extern mouse_event sys_mouse_event;
+
 typedef struct
 {
 	int x; 
@@ -65,16 +69,15 @@ int			gcpad_x, gcpad_y, old_gcpad_x, old_gcpad_y;
 
 int			clsct_x, clsct_y, old_clsct_x, old_clsct_y;
 
-u8			in_previous_mouse_buttons;
-
 qboolean IN_GetMouseCursorPos(incursorcoords_t* p)
 {
 	qboolean valid;
 	mouse_event m;
 
 	valid = false;
-	if(MOUSE_GetEvent(&m))
+	if(sys_mouse_valid)
 	{
+		m = sys_mouse_event;
 		p->x = window_center_x + m.rx;
 		p->y = window_center_y + m.ry;
 		if((p->x < 0)||(p->x > sys_rmode->viWidth)||(p->y < 0)||(p->y > sys_rmode->viHeight))
@@ -82,19 +85,6 @@ qboolean IN_GetMouseCursorPos(incursorcoords_t* p)
 			p->x = window_center_x;
 			p->y = window_center_y;
 		}
-		if((in_previous_mouse_buttons & 0x01) != (m.button & 0x01))
-		{
-			Key_Event(K_MOUSE1, ((m.button & 0x01) == 0x01));
-		};
-		if((in_previous_mouse_buttons & 0x02) != (m.button & 0x02))
-		{
-			Key_Event(K_MOUSE2, ((m.button & 0x02) == 0x02));
-		};
-		if((in_previous_mouse_buttons & 0x04) != (m.button & 0x04))
-		{
-			Key_Event(K_MOUSE3, ((m.button & 0x04) == 0x04));
-		};
-		in_previous_mouse_buttons = m.button;
 		valid = true;
 	};
 	return valid;
