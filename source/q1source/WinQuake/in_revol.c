@@ -90,23 +90,18 @@ int			clsct_x, clsct_y, old_clsct_x, old_clsct_y;
 
 qboolean IN_GetMouseCursorPos(incursorcoords_t* p)
 {
-	qboolean valid;
-	mouse_event m;
+	if(!sys_mouse_valid)
+		return false;
 
-	valid = false;
-	if(sys_mouse_valid)
+	p->x = window_center_x + sys_mouse_event.rx;
+	p->y = window_center_y + sys_mouse_event.ry;
+	if((p->x < 0)||(p->x > sys_rmode->viWidth)||(p->y < 0)||(p->y > sys_rmode->viHeight))
 	{
-		m = sys_mouse_event;
-		p->x = window_center_x + sys_mouse_event.rx;
-		p->y = window_center_y + sys_mouse_event.ry;
-		if((p->x < 0)||(p->x > sys_rmode->viWidth)||(p->y < 0)||(p->y > sys_rmode->viHeight))
-		{
-			p->x = window_center_x;
-			p->y = window_center_y;
-		}
-		valid = true;
-	};
-	return valid;
+		p->x = window_center_x;
+		p->y = window_center_y;
+	}
+
+	return true;
 }
 
 qboolean IN_GetWmoteCursorPos(incursorcoords_t* p)
@@ -147,15 +142,13 @@ void IN_SetWmoteCursorPos(int x, int y)
 
 qboolean IN_GetGCPadCursorPos(incursorcoords_t* p)
 {
-	qboolean valid;
-
-	valid = false;
 	PAD_ScanPads();
 	p->x = window_center_x + PAD_SubStickX(0);
 	p->y = window_center_y + PAD_SubStickY(0);
 	if((p->x != window_center_x)||(p->y != window_center_y))
-		valid = true;
-	return valid;
+		return true;
+
+	return false;
 }
 
 qboolean IN_GetClsCtCursorPos(incursorcoords_t* p)

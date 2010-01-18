@@ -56,6 +56,42 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define	K_HOME			151
 #define	K_END			152
 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// New keys for controllers in the platform (part 1):
+#define K_WMOTE_A				153
+#define K_WMOTE_B				154
+#define K_WMOTE_1				155
+#define K_WMOTE_2				156
+#define K_WMOTE_PLUS			157
+#define K_WMOTE_MINUS			158
+#define K_WMOTE_HOME			159
+#define K_WMOTE_UPARROW			175
+#define K_WMOTE_LEFTARROW		176
+#define K_WMOTE_RIGHTARROW		177
+#define K_WMOTE_DOWNARROW		178
+#define K_NUNCHUK_Z				179
+#define K_NUNCHUK_C				180
+#define K_CLASSIC_A				181
+#define K_CLASSIC_B				182
+#define K_CLASSIC_X				183
+#define K_CLASSIC_Y				184
+#define K_CLASSIC_L				185
+#define K_CLASSIC_R				186
+#define K_CLASSIC_ZL			187
+#define K_CLASSIC_ZR			188
+#define K_CLASSIC_PLUS			189
+#define K_CLASSIC_MINUS			190
+#define K_CLASSIC_HOME			191
+#define K_CLASSIC_UPARROW		192
+#define K_CLASSIC_LEFTARROW		193
+#define K_CLASSIC_RIGHTARROW	194
+#define K_CLASSIC_DOWNARROW		195
+#define K_GCUBE_A				196
+#define K_GCUBE_B				197
+#define K_GCUBE_X				198
+#define K_GCUBE_Y				199
+// <<< FIX
+
 #define K_PAUSE			255
 
 //
@@ -115,6 +151,17 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define K_MWHEELUP		239
 #define K_MWHEELDOWN	240
 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// New keys for controllers in the platform (part 2):
+#define K_GCUBE_Z				241
+#define K_GCUBE_L				242
+#define K_GCUBE_R				243
+#define K_GCUBE_START			244
+#define K_GCUBE_UPARROW			245
+#define K_GCUBE_LEFTARROW		246
+#define K_GCUBE_RIGHTARROW		247
+#define K_GCUBE_DOWNARROW		248
+// <<< FIX
 
 
 typedef enum {key_game, key_console, key_message, key_menu} keydest_t;
@@ -122,6 +169,10 @@ typedef enum {key_game, key_console, key_message, key_menu} keydest_t;
 extern keydest_t	key_dest;
 extern char *keybindings[256];
 extern	int		key_repeats[256];
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// New key aliases list for the new controller keys for the platform:
+extern	int		keyaliases[256];
+// <<< FIX
 extern	int		key_count;			// incremented every key event
 extern	int		key_lastpress;
 
@@ -132,6 +183,10 @@ extern	qboolean	chat_team;
 void Key_Event (int key, qboolean down);
 void Key_Init (void);
 void Key_WriteBindings (FILE *f);
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// New function for persisting defined key aliases:
+void Key_WriteAliases (FILE *f);
+// <<< FIX
 void Key_SetBinding (int keynum, char *binding);
 void Key_ClearStates (void);
 

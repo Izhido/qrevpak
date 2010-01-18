@@ -276,6 +276,10 @@ void Host_WriteConfiguration (void)
 		}
 		
 		Key_WriteBindings (f);
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Persisting defined key aliases in the config file:
+		Key_WriteAliases (f);
+// <<< FIX
 		Cvar_WriteVariables (f);
 
 		fclose (f);

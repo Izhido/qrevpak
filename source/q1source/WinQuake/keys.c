@@ -45,6 +45,10 @@ qboolean	menubound[256];	// if true, can't be rebound while in menu
 int		keyshift[256];		// key to map to if shift held down in console
 int		key_repeats[256];	// if > 1, it is autorepeating
 qboolean	keydown[256];
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// New key aliases list for the new controller keys for the platform:
+int keyaliases[256];
+// <<< FIX
 
 typedef struct
 {
@@ -508,6 +512,51 @@ void Key_Bind_f (void)
 // <<< FIX
 }
 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// New command for defining key aliases, useful for the new keys in the controllers in this platform:
+/*
+===================
+Key_Alias_f
+===================
+*/
+void Key_Alias_f (void)
+{
+	int			c, a, k;
+	
+	c = Cmd_Argc();
+
+	if (c != 2 && c != 3)
+	{
+		Con_Printf ("keyalias <alias> [new_key] : make a particular key an alias for another key\n");
+		return;
+	}
+	a = Key_StringToKeynum (Cmd_Argv(1));
+	if (a==-1)
+	{
+		Con_Printf ("\"%s\" isn't a valid key\n", Cmd_Argv(1));
+		return;
+	}
+
+	if (c == 2)
+	{
+		if (keyaliases[a] != a)
+			Con_Printf ("\"%s\" -> \"%s\"\n", Cmd_Argv(1), Key_KeynumToString(keyaliases[a]));
+		else
+			Con_Printf ("\"%s\" is not aliased\n", Cmd_Argv(1) );
+		return;
+	}
+	
+	k = Key_StringToKeynum (Cmd_Argv(2));
+	if (k==-1)
+	{
+		Con_Printf ("\"%s\" isn't a valid key\n", Cmd_Argv(2));
+		return;
+	}
+
+	keyaliases[a] = k;
+}
+// <<< FIX
+
 /*
 ============
 Key_WriteBindings
@@ -524,6 +573,25 @@ void Key_WriteBindings (FILE *f)
 			if (*keybindings[i])
 				fprintf (f, "bind \"%s\" \"%s\"\n", Key_KeynumToString(i), keybindings[i]);
 }
+
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// New function for persisting defined key aliases:
+/*
+============
+Key_WriteAliases
+
+Writes lines containing "keyalias alias new_key"
+============
+*/
+void Key_WriteAliases (FILE *f)
+{
+	int		i;
+
+	for (i=0 ; i<256 ; i++)
+		if (keyaliases[i] != i)
+			fprintf (f, "keyalias \"%s\" \"%s\"\n", Key_KeynumToString(i), Key_KeynumToString(keyaliases[i]));
+}
+// <<< FIX
 
 
 /*
@@ -592,12 +660,23 @@ void Key_Init (void)
 	for (i=0 ; i<12 ; i++)
 		menubound[K_F1+i] = true;
 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Initializing new key aliases list for the new controller keys for the platform:
+// (by, basically, not making any aliases at all):
+	for(i = 0; i < 256; i++)
+		keyaliases[i] = i;
+// <<< FIX
+
 //
 // register our functions
 //
 	Cmd_AddCommand ("bind",Key_Bind_f);
 	Cmd_AddCommand ("unbind",Key_Unbind_f);
 	Cmd_AddCommand ("unbindall",Key_Unbindall_f);
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Adding new command for key aliases:
+	Cmd_AddCommand ("keyalias",Key_Alias_f);
+// <<< FIX
 
 
 }
