@@ -47,6 +47,9 @@ cvar_t	*in_mouse;
 // on-screen keyboard variables
 cvar_t	*in_osk;
 
+// Wii Remote look mode variables
+cvar_t	*in_wlook;
+
 // Wii Remote variables
 cvar_t	*in_wmote;
 
@@ -503,6 +506,9 @@ void IN_Init (void)
 	// on-screen keyboard variables
 	in_osk					= Cvar_Get ("in_osk",					"0",		CVAR_ARCHIVE);
 
+	// Wii Remote look mode variables
+	in_wlook				= Cvar_Get ("in_wlook",					"0",		CVAR_ARCHIVE);
+
 	// Wii Remote variables
 	in_wmote				= Cvar_Get ("in_wmote",					"1",		CVAR_ARCHIVE);
 	in_wmotemovscale		= Cvar_Get ("in_wmotemovscale",			"3",		CVAR_ARCHIVE);
@@ -726,8 +732,6 @@ void IN_MouseFrame(void)
 
 void IN_WmoteFrame(void)
 {
-	u32 k;
-
 	if (!wmoteinitialized)
 		return;
 
@@ -749,11 +753,9 @@ void IN_WmoteFrame(void)
 		}
 	}
 
-	WPAD_ScanPads();
-	k = WPAD_ButtonsHeld(WPAD_CHAN_0);
-	if((((k & WPAD_BUTTON_A) != WPAD_BUTTON_A)&&(wmotelookbinv->value == 0))
-	 ||(((k & WPAD_BUTTON_A) == WPAD_BUTTON_A)&&(wmotelookbinv->value != 0))
-	 ||(in_osk->value != 0))
+	if((((in_wlook->value == 0)&&(wmotelookbinv->value == 0))
+	  ||((in_wlook->value != 0)&&(wmotelookbinv->value != 0)))
+	  ||(in_osk->value != 0))
 	{
 		IN_DeactivateWmote ();
 		return;

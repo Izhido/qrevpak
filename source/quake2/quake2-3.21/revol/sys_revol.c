@@ -74,6 +74,8 @@ char sys_resolution_description[MAX_STRING_CHARS + 1];
 
 extern cvar_t* in_osk;
 
+extern cvar_t* in_wlook;
+
 u32 sys_previous_keys;
 
 u32 sys_previous_pad_keys;
@@ -357,6 +359,53 @@ char Sys_FindKey(u16 symbol)
 	};
 }
 
+void Sys_DefaultAliases (void)
+{
+	Cbuf_AddText("bind WLOOK wlook\n");
+	Cbuf_AddText("bind OSK osk\n");
+	Cbuf_AddText("bind INVPREV invprev\n");
+	Cbuf_AddText("bind INVNEXT invnext\n");
+	Cbuf_AddText("keyalias WMOTE_A WLOOK\n");
+	Cbuf_AddText("keyalias WMOTE_UPARROW UPARROW\n");
+	Cbuf_AddText("keyalias WMOTE_LEFTARROW LEFTARROW\n");
+	Cbuf_AddText("keyalias WMOTE_RIGHTARROW RIGHTARROW\n");
+	Cbuf_AddText("keyalias WMOTE_DOWNARROW DOWNARROW\n");
+	Cbuf_AddText("keyalias WMOTE_1 ENTER\n");
+	Cbuf_AddText("keyalias WMOTE_2 ESCAPE\n");
+	Cbuf_AddText("keyalias WMOTE_PLUS INVNEXT\n");
+	Cbuf_AddText("keyalias WMOTE_MINUS INVPREV\n");
+	Cbuf_AddText("keyalias WMOTE_B MOUSE1\n");
+	Cbuf_AddText("keyalias WMOTE_HOME F1_Y\n");
+	Cbuf_AddText("keyalias NUNCHUK_Z SPACE\n");
+	Cbuf_AddText("keyalias NUNCHUK_C OSK_C\n");
+	Cbuf_AddText("keyalias CLASSIC_UPARROW UPARROW\n");
+	Cbuf_AddText("keyalias CLASSIC_LEFTARROW LEFTARROW\n");
+	Cbuf_AddText("keyalias CLASSIC_RIGHTARROW RIGHTARROW\n");
+	Cbuf_AddText("keyalias CLASSIC_DOWNARROW DOWNARROW\n");
+	Cbuf_AddText("keyalias CLASSIC_A ENTER\n");
+	Cbuf_AddText("keyalias CLASSIC_B ESCAPE\n");
+	Cbuf_AddText("keyalias CLASSIC_X INVNEXT\n");
+	Cbuf_AddText("keyalias CLASSIC_Y INVPREV\n");
+	Cbuf_AddText("keyalias CLASSIC_L MOUSE1\n");
+	Cbuf_AddText("keyalias CLASSIC_R SPACE\n");
+	Cbuf_AddText("keyalias CLASSIC_ZL OSK\n");
+	Cbuf_AddText("keyalias CLASSIC_ZR c\n");
+	Cbuf_AddText("keyalias CLASSIC_HOME F1_Y\n");
+	Cbuf_AddText("keyalias GCUBE_UPARROW UPARROW\n");
+	Cbuf_AddText("keyalias GCUBE_LEFTARROW LEFTARROW\n");
+	Cbuf_AddText("keyalias GCUBE_RIGHTARROW RIGHTARROW\n");
+	Cbuf_AddText("keyalias GCUBE_DOWNARROW DOWNARROW\n");
+	Cbuf_AddText("keyalias GCUBE_A ENTER\n");
+	Cbuf_AddText("keyalias GCUBE_B ESCAPE\n");
+	Cbuf_AddText("keyalias GCUBE_X INVNEXT\n");
+	Cbuf_AddText("keyalias GCUBE_Y INVPREV\n");
+	Cbuf_AddText("keyalias GCUBE_Z c\n");
+	Cbuf_AddText("keyalias GCUBE_L MOUSE1\n");
+	Cbuf_AddText("keyalias GCUBE_R SPACE\n");
+	Cbuf_AddText("keyalias GCUBE_START F1_Y\n");
+	key_alias_invoked = true;
+}
+
 void Sys_SendKeyEvents (void)
 {
 	u32 k;
@@ -365,6 +414,8 @@ void Sys_SendKeyEvents (void)
 	expansion_t ex;
 	int osk_key;
 
+	if(!key_alias_invoked)
+		Sys_DefaultAliases();
 	if((sys_previous_mouse_buttons & 0x01) != (sys_mouse_event.button & 0x01))
 	{
 		Key_Event(K_MOUSE1, ((sys_mouse_event.button & 0x01) == 0x01), Sys_Milliseconds());
@@ -404,6 +455,16 @@ void Sys_SendKeyEvents (void)
 			sys_current_weapon--;
 		};
 		Key_Event('0' + sys_current_weapon, ((k & WPAD_BUTTON_MINUS) == WPAD_BUTTON_MINUS), Sys_Milliseconds());
+	};
+	if((sys_previous_keys & WPAD_BUTTON_A) != (k & WPAD_BUTTON_A))
+	{
+		if((k & WPAD_BUTTON_A) == WPAD_BUTTON_A)
+		{
+			Cvar_SetValue("in_wlook", 1);
+		} else
+		{
+			Cvar_SetValue("in_wlook", 0);
+		};
 	};
 	if((sys_previous_keys & WPAD_BUTTON_B) != (k & WPAD_BUTTON_B))
 	{

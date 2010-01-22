@@ -42,6 +42,8 @@ cvar_t m_filter = {"m_filter","0"};
 
 cvar_t in_osk = {"in_osk","0"};
 
+cvar_t in_wlook = {"in_wlook","0"};
+
 cvar_t in_wmotemovscale = {"in_wmotemovscale","3"};
 
 cvar_t in_wmotevangscale = {"in_wmotevangscale","3"};
@@ -106,15 +108,12 @@ qboolean IN_GetMouseCursorPos(incursorcoords_t* p)
 
 qboolean IN_GetWmoteCursorPos(incursorcoords_t* p)
 {
-	u32 k;
 	ir_t w;
 	qboolean valid;
 
 	valid = false;
-	WPAD_ScanPads();
-	k = WPAD_ButtonsHeld(WPAD_CHAN_0);
-	if(((((k & WPAD_BUTTON_A) == WPAD_BUTTON_A)&&(wmotelookbinv.value == 0))
-	  ||(((k & WPAD_BUTTON_A) != WPAD_BUTTON_A)&&(wmotelookbinv.value != 0)))
+	if((((in_wlook.value != 0)&&(wmotelookbinv.value == 0))
+	  ||((in_wlook.value == 0)&&(wmotelookbinv.value != 0)))
 	  &&(in_osk.value == 0))
 	{
 		WPAD_IR(WPAD_CHAN_0, &w);
@@ -587,6 +586,9 @@ void IN_Init (void)
 
 	// on-screen keyboard variables
 	Cvar_RegisterVariable(&in_osk);
+
+	// Wii Remote look mode variables
+	Cvar_RegisterVariable(&in_wlook);
 
 	// Wii Remote variables
 	Cvar_RegisterVariable(&in_wmotemovscale);

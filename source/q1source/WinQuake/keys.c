@@ -48,6 +48,7 @@ qboolean	keydown[256];
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // New key aliases list for the new controller keys for the platform:
 int keyaliases[256];
+qboolean key_alias_invoked;
 // <<< FIX
 
 typedef struct
@@ -133,6 +134,55 @@ keyname_t keynames[] =
 	{"AUX30", K_AUX30},
 	{"AUX31", K_AUX31},
 	{"AUX32", K_AUX32},
+
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Names of new keys (real and virtual) for controllers in the platform:
+	{"WMOTE_A", K_WMOTE_A},
+	{"WMOTE_B", K_WMOTE_B},
+	{"WMOTE_1", K_WMOTE_1},
+	{"WMOTE_2", K_WMOTE_2},
+	{"WMOTE_PLUS", K_WMOTE_PLUS},
+	{"WMOTE_MINUS", K_WMOTE_MINUS},
+	{"WMOTE_HOME", K_WMOTE_HOME},
+	{"WMOTE_UPARROW", K_WMOTE_UPARROW},
+	{"WMOTE_LEFTARROW", K_WMOTE_LEFTARROW},
+	{"WMOTE_RIGHTARROW", K_WMOTE_RIGHTARROW},
+	{"WMOTE_DOWNARROW", K_WMOTE_DOWNARROW},
+	{"NUNCHUK_Z", K_NUNCHUK_Z},
+	{"NUNCHUK_C", K_NUNCHUK_C},
+	{"CLASSIC_A", K_CLASSIC_A},
+	{"CLASSIC_B", K_CLASSIC_B},
+	{"CLASSIC_X", K_CLASSIC_X},
+	{"CLASSIC_Y", K_CLASSIC_Y},
+	{"CLASSIC_L", K_CLASSIC_L},
+	{"CLASSIC_R", K_CLASSIC_R},
+	{"CLASSIC_ZL", K_CLASSIC_ZL},
+	{"CLASSIC_ZR", K_CLASSIC_ZR},
+	{"CLASSIC_PLUS", K_CLASSIC_PLUS},
+	{"CLASSIC_MINUS", K_CLASSIC_MINUS},
+	{"CLASSIC_HOME", K_CLASSIC_HOME},
+	{"CLASSIC_UPARROW", K_CLASSIC_UPARROW},
+	{"CLASSIC_LEFTARROW", K_CLASSIC_LEFTARROW},
+	{"CLASSIC_RIGHTARROW", K_CLASSIC_RIGHTARROW},
+	{"CLASSIC_DOWNARROW", K_CLASSIC_DOWNARROW},
+	{"GCUBE_A", K_GCUBE_A},
+	{"GCUBE_B", K_GCUBE_B},
+	{"GCUBE_X", K_GCUBE_X},
+	{"GCUBE_Y", K_GCUBE_Y},
+	{"GCUBE_Z", K_GCUBE_Z},
+	{"GCUBE_L", K_GCUBE_L},
+	{"GCUBE_R", K_GCUBE_R},
+	{"GCUBE_START", K_GCUBE_START},
+	{"GCUBE_UPARROW", K_GCUBE_UPARROW},
+	{"GCUBE_LEFTARROW", K_GCUBE_LEFTARROW},
+	{"GCUBE_RIGHTARROW", K_GCUBE_RIGHTARROW},
+	{"GCUBE_DOWNARROW", K_GCUBE_DOWNARROW},
+	{"WLOOK", K_WLOOK},
+	{"OSK", K_OSK},
+	{"INVPREV", K_INVPREV},
+	{"INVNEXT", K_INVNEXT},
+	{"PAUSE_Y", K_PAUSE_Y},
+// <<< FIX
 
 	{"PAUSE", K_PAUSE},
 
@@ -554,6 +604,7 @@ void Key_Alias_f (void)
 	}
 
 	keyaliases[a] = k;
+	key_alias_invoked = true;
 }
 // <<< FIX
 
@@ -665,6 +716,7 @@ void Key_Init (void)
 // (by, basically, not making any aliases at all):
 	for(i = 0; i < 256; i++)
 		keyaliases[i] = i;
+	key_alias_invoked = false;
 // <<< FIX
 
 //

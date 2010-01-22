@@ -50,6 +50,8 @@ extern GXRModeObj* sys_rmode;
 
 extern cvar_t in_osk;
 
+extern cvar_t in_wlook;
+
 byte*	vid_buffer;
 
 short*	zbuffer;

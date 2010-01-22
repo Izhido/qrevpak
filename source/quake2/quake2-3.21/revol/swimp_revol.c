@@ -36,6 +36,8 @@ extern void* sys_framebuffer[3];
 
 extern cvar_t* in_osk;
 
+extern cvar_t* in_wlook;
+
 extern cvar_t* wmotelookbinv;
 
 int swimp_outerwidthborder;

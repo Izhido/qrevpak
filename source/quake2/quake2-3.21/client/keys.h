@@ -180,12 +180,23 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define K_GCUBE_RIGHTARROW		247
 #define K_GCUBE_DOWNARROW		248
 // <<< FIX
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// New virtual keys for special functionality for this platform:
+#define K_WLOOK					249
+#define K_OSK					250
+#define K_INVPREV				251
+#define K_INVNEXT				252
+#define K_F1_Y					253
+#define K_OSK_C					254
+// <<< FIX
+
 
 extern char		*keybindings[256];
 extern	int		key_repeats[256];
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // New key aliases list for the new controller keys for the platform:
 extern	int		keyaliases[256];
+extern qboolean	key_alias_invoked;
 // <<< FIX
 
 extern	int	anykeydown;
