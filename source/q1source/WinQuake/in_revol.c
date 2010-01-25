@@ -86,6 +86,8 @@ int			mouse_x, mouse_y, old_mouse_x, old_mouse_y;
 
 int			wmote_x, wmote_y, old_wmote_x, old_wmote_y;
 
+int			wmote_validcount, wmote_curr_x, wmote_curr_y, wmote_prev_x, wmote_prev_y;
+
 int			gcpad_x, gcpad_y, old_gcpad_x, old_gcpad_y;
 
 int			clsct_x, clsct_y, old_clsct_x, old_clsct_y;
@@ -106,12 +108,79 @@ qboolean IN_GetMouseCursorPos(incursorcoords_t* p)
 	return true;
 }
 
+void IN_CalcWmoteOutMove(ir_t w)
+{
+	int dif_l;
+	int dif_r;
+	int dif_t;
+	int dif_b;
+
+	if(w.smooth_valid)
+	{
+		wmote_prev_x = wmote_curr_x;
+		wmote_prev_y = wmote_curr_y;
+		wmote_curr_x = w.sx;
+		wmote_curr_y = w.sy;
+	} else
+	{
+		dif_l = wmote_curr_x;
+		dif_r = sys_rmode->viWidth - 1 - wmote_curr_x;
+		dif_t = wmote_curr_y;
+		dif_b = sys_rmode->viHeight - 1 - wmote_curr_y;
+		if(dif_l < dif_r)
+		{
+			if(dif_t < dif_b)
+			{
+				if(dif_l < dif_t)
+				{
+					wmote_curr_x = 0;
+				} else
+				{
+					wmote_curr_y = 0;
+				};
+			} else
+			{
+				if(dif_l < dif_b)
+				{
+					wmote_curr_x = 0;
+				} else
+				{
+					wmote_curr_y = sys_rmode->viHeight - 1;
+				};
+			};
+		} else
+		{
+			if(dif_t < dif_b)
+			{
+				if(dif_r < dif_t)
+				{
+					wmote_curr_x = sys_rmode->viWidth - 1;
+				} else
+				{
+					wmote_curr_y = 0;
+				};
+			} else
+			{
+				if(dif_r < dif_b)
+				{
+					wmote_curr_x = sys_rmode->viWidth - 1;
+				} else
+				{
+					wmote_curr_y = sys_rmode->viHeight - 1;
+				};
+			};
+		};
+		wmote_curr_x = wmote_curr_x + wmote_curr_x - wmote_prev_x;
+		wmote_curr_y = wmote_curr_y + wmote_curr_y - wmote_prev_y;
+	};
+}
+
 qboolean IN_GetWmoteCursorPos(incursorcoords_t* p)
 {
 	ir_t w;
-	qboolean valid;
+	int wdest_x;
+	int wdest_y;
 
-	valid = false;
 	if((((in_wlook.value != 0)&&(wmotelookbinv.value == 0))
 	  ||((in_wlook.value == 0)&&(wmotelookbinv.value != 0)))
 	  &&(in_osk.value == 0))
@@ -119,24 +188,48 @@ qboolean IN_GetWmoteCursorPos(incursorcoords_t* p)
 		WPAD_IR(WPAD_CHAN_0, &w);
 		if(w.valid)
 		{
-			p->x = w.x - wmote_adjust_x;
-			p->y = w.y - wmote_adjust_y;
-			valid = true;
+			wmote_prev_x = wmote_curr_x;
+			wmote_prev_y = wmote_curr_y;
+			wmote_curr_x = w.x;
+			wmote_curr_y = w.y;
+			wmote_validcount++;
+		} else
+		{
+			if(wmote_validcount == 0)
+			{
+				wmote_prev_x = wmote_curr_x;
+				wmote_prev_y = wmote_curr_y;
+				wmote_curr_x = wmote_curr_x + wmote_curr_x - wmote_prev_x;
+				wmote_curr_y = wmote_curr_y + wmote_curr_y - wmote_prev_y;
+			} else if(wmote_validcount == 1)
+			{
+				IN_CalcWmoteOutMove(w);
+			} else
+			{
+				wdest_x = wmote_curr_x + wmote_curr_x - wmote_prev_x;
+				wdest_y = wmote_curr_y + wmote_curr_y - wmote_prev_y;
+				if((wdest_x > 0)&&(wdest_y > 0)&&(wdest_x < sys_rmode->viWidth)&&(wdest_y < sys_rmode->viHeight))
+				{
+					IN_CalcWmoteOutMove(w);
+				} else
+				{
+					wmote_curr_x = wdest_x;
+					wmote_curr_y = wdest_y;
+				};
+			};
+			wmote_validcount = 0;
 		};
+		p->x = wmote_curr_x - wmote_adjust_x;
+		p->y = wmote_curr_y - wmote_adjust_y;
+		return true;
 	};
-	return valid;
+	return false;
 }
 
 void IN_SetWmoteCursorPos(int x, int y)
 {
-	ir_t w;
-
-	WPAD_IR(WPAD_CHAN_0, &w);
-	if(w.valid)
-	{
-		wmote_adjust_x = w.x - x;
-		wmote_adjust_y = w.y - y;
-	};
+	wmote_adjust_x = wmote_curr_x - x;
+	wmote_adjust_y = wmote_curr_y - y;
 }
 
 qboolean IN_GetGCPadCursorPos(incursorcoords_t* p)
