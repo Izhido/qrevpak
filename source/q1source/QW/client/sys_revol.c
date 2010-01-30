@@ -546,15 +546,28 @@ void Sys_HandleKey(int k, qboolean pressed)
 
 void Sys_SendKeyEvents (void)
 {
+	ir_t p;
 	u32 k;
+	int osk_key;
 	u32 g;
 	keyboard_event e;
 	expansion_t ex;
-	int osk_key;
 
 	if(!key_alias_invoked)
 	{
 		Sys_DefaultAliases();
+	};
+	if(in_osk.value != 0)
+	{
+		WPAD_IR(WPAD_CHAN_0, &p);
+		if(p.valid)
+		{
+			osk_selected = OSK_KeyAt(p.x - ((sys_rmode->viWidth - OSK_WIDTH) / 2),
+				                     p.y - ((sys_rmode->viHeight - OSK_HEIGHT) / 2));
+		} else
+		{
+			osk_selected = 0;
+		};
 	};
 	WPAD_ScanPads();
 	k = WPAD_ButtonsHeld(WPAD_CHAN_0);

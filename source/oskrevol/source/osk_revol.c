@@ -309,35 +309,3 @@ int OSK_HandleKeys(bool KeyPressed)
 	};
 	return k;
 }
-
-bool OSK_ShowInverted(bool KeyPressed, int x, int y)
-{
-	bool inv;
-
-	inv = false;
-	if(osk_selected != 0)
-	{
-		if(KeyPressed)
-		{
-			if((x >= osk_selected->left)&&(x <= osk_selected->right)&&(y >= osk_selected->top)&&(y <= osk_selected->bottom))
-			{
-				inv = true;
-			};
-		};
-	};
-	if(osk_shiftpressed != 0)
-	{
-		if((x >= osk_shiftpressed->left)&&(x <= osk_shiftpressed->right)&&(y >= osk_shiftpressed->top)&&(y <= osk_shiftpressed->bottom))
-		{
-				inv = true;
-		};
-	};
-	if(osk_capspressed != 0)
-	{
-		if((x >= osk_capspressed->left)&&(x <= osk_capspressed->right)&&(y >= osk_capspressed->top)&&(y <= osk_capspressed->bottom))
-		{
-				inv = true;
-		};
-	};
-	return inv;
-}

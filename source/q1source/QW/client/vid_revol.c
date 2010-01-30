@@ -85,63 +85,142 @@ u32 VID_CvtRGB(u8 r1, u8 g1, u8 b1, u8 r2, u8 g2, u8 b2)
 
 void VID_DrawOnScreenKeyboard(void)
 {
-	ir_t p;
-	u32 k;
 	int j;
 	int i;
-	int m;
-	int n;
-	int l;
 	u32* v;
 	u32 vinc;
 	u8 a;
 	u32 c;
 	const u8* img;
+	int m;
+	int n;
+	int imginc;
 
 	if(in_osk.value)
 	{
-		m = 606;
-		n = 300;
-		WPAD_ScanPads();
-		WPAD_IR(WPAD_CHAN_0, &p);
-		if(p.valid)
-		{
-			osk_selected = OSK_KeyAt(p.x - ((sys_rmode->viWidth - m) / 2), p.y - ((sys_rmode->viHeight - n) / 2));
-		} else
-		{
-			osk_selected = 0;
-		};
-		k = WPAD_ButtonsHeld(WPAD_CHAN_0);
-		v = ((u32*)(sys_framebuffer[1])) + ((sys_rmode->viHeight - n) / 4 * sys_rmode->viWidth) + ((sys_rmode->viWidth - m) / 4);
-		vinc = (sys_rmode->viWidth - m) / 2;
-		l = 0;
-		for(j = 0; j < n; j++)
+		v = ((u32*)(sys_framebuffer[1])) + ((sys_rmode->viHeight - OSK_HEIGHT) / 4 * sys_rmode->viWidth) 
+		                                 + ((sys_rmode->viWidth - OSK_WIDTH) / 4);
+		vinc = (sys_rmode->viWidth - OSK_WIDTH) / 2;
+		img = Keyboard_img;
+		for(j = 0; j < OSK_HEIGHT; j++)
 		{
 			i = 0;
-			while(i < m)
+			while(i < OSK_WIDTH)
 			{
-				if(OSK_ShowInverted((k & WPAD_BUTTON_A) != WPAD_BUTTON_A, i, j))
-				{
-					img = KeyboardInverted_img;
-				} else
-				{
-					img = Keyboard_img;
-				};
-				a = img[l];
+				a = (*img);
 				if(a == 0)
 				{
-					l += 5;
+					img += 5;
 				} else
 				{
-					l++;
-					c = *((u32*)(img + l));
-					l += 4;
-					(*v) = c;
+					img++;
+					c = *((u32*)img);
+					img += 4;
+					*v = c;
 				};
 				i += 2;
 				v++;
 			};
 			v += vinc;
+		};
+		if(osk_selected != 0)
+		{
+			i = osk_selected->left & ~1;
+			j = osk_selected->top & ~1;
+			m = (osk_selected->right & ~1) - i;
+			n = (osk_selected->bottom & ~1) - j;
+			v = ((u32*)(sys_framebuffer[1])) + ((sys_rmode->viHeight - OSK_HEIGHT + j) / 4 * sys_rmode->viWidth) 
+			                                 + ((sys_rmode->viWidth - OSK_WIDTH + i) / 4);
+			vinc = (sys_rmode->viWidth - m) / 2;
+			img = KeyboardInverted_img + (j * OSK_WIDTH / 2 * 5) + (i / 2 * 5);
+			imginc = (OSK_WIDTH - m) * 5;
+			for(j = 0; j < n; j++)
+			{
+				i = 0;
+				while(i < m)
+				{
+					a = (*img);
+					if(a == 0)
+					{
+						img += 5;
+					} else
+					{
+						img++;
+						c = *((u32*)img);
+						img += 4;
+						*v = c;
+					};
+					i += 2;
+					v++;
+				};
+				v += vinc;
+			};
+		};
+		if(osk_shiftpressed != 0)
+		{
+			i = osk_shiftpressed->left & ~1;
+			j = osk_shiftpressed->top & ~1;
+			m = (osk_shiftpressed->right & ~1) - i;
+			n = (osk_shiftpressed->bottom & ~1) - j;
+			v = ((u32*)(sys_framebuffer[1])) + ((sys_rmode->viHeight - OSK_HEIGHT + j) / 4 * sys_rmode->viWidth) 
+			                                 + ((sys_rmode->viWidth - OSK_WIDTH + i) / 4);
+			vinc = (sys_rmode->viWidth - m) / 2;
+			img = KeyboardInverted_img + (j * OSK_WIDTH / 2 * 5) + (i / 2 * 5);
+			imginc = (OSK_WIDTH - m) * 5;
+			for(j = 0; j < n; j++)
+			{
+				i = 0;
+				while(i < m)
+				{
+					a = (*img);
+					if(a == 0)
+					{
+						img += 5;
+					} else
+					{
+						img++;
+						c = *((u32*)img);
+						img += 4;
+						*v = c;
+					};
+					i += 2;
+					v++;
+				};
+				v += vinc;
+			};
+		};
+		if(osk_capspressed != 0)
+		{
+			i = osk_capspressed->left & ~1;
+			j = osk_capspressed->top & ~1;
+			m = (osk_capspressed->right & ~1) - i;
+			n = (osk_capspressed->bottom & ~1) - j;
+			v = ((u32*)(sys_framebuffer[1])) + ((sys_rmode->viHeight - OSK_HEIGHT + j) / 4 * sys_rmode->viWidth) 
+			                                 + ((sys_rmode->viWidth - OSK_WIDTH + i) / 4);
+			vinc = (sys_rmode->viWidth - m) / 2;
+			img = KeyboardInverted_img + (j * OSK_WIDTH / 2 * 5) + (i / 2 * 5);
+			imginc = (OSK_WIDTH - m) * 5;
+			for(j = 0; j < n; j++)
+			{
+				i = 0;
+				while(i < m)
+				{
+					a = (*img);
+					if(a == 0)
+					{
+						img += 5;
+					} else
+					{
+						img++;
+						c = *((u32*)img);
+						img += 4;
+						*v = c;
+					};
+					i += 2;
+					v++;
+				};
+				v += vinc;
+			};
 		};
 	};
 }
