@@ -96,10 +96,10 @@ void IN_CalcWmoteOutMove(ir_t w)
 	int dif_t;
 	int dif_b;
 
+	wmote_prev_x = wmote_curr_x;
+	wmote_prev_y = wmote_curr_y;
 	if(w.smooth_valid)
 	{
-		wmote_prev_x = wmote_curr_x;
-		wmote_prev_y = wmote_curr_y;
 		wmote_curr_x = w.sx;
 		wmote_curr_y = w.sy;
 	} else
@@ -114,19 +114,43 @@ void IN_CalcWmoteOutMove(ir_t w)
 			{
 				if(dif_l < dif_t)
 				{
-					wmote_curr_x = 0;
+					if(dif_l < 20)
+					{
+						wmote_curr_x = dif_l - 20;
+					} else
+					{
+						wmote_curr_x = 0;
+					};
 				} else
 				{
-					wmote_curr_y = 0;
+					if(dif_t < 15)
+					{
+						wmote_curr_y = dif_t - 15;
+					} else
+					{
+						wmote_curr_y = 0;
+					};
 				};
 			} else
 			{
 				if(dif_l < dif_b)
 				{
-					wmote_curr_x = 0;
+					if(dif_l < 20)
+					{
+						wmote_curr_x = dif_l - 20;
+					} else
+					{
+						wmote_curr_x = 0;
+					};
 				} else
 				{
-					wmote_curr_y = sys_rmode->viHeight - 1;
+					if(dif_b < 15)
+					{
+						wmote_curr_y = sys_rmode->viHeight + 14 - dif_b;
+					} else
+					{
+						wmote_curr_y = sys_rmode->viHeight - 1;
+					};
 				};
 			};
 		} else
@@ -135,71 +159,97 @@ void IN_CalcWmoteOutMove(ir_t w)
 			{
 				if(dif_r < dif_t)
 				{
-					wmote_curr_x = sys_rmode->viWidth - 1;
+					if(dif_r < 20)
+					{
+						wmote_curr_x = sys_rmode->viWidth + 19 - dif_r;
+					} else
+					{
+						wmote_curr_x = sys_rmode->viWidth - 1;
+					};
 				} else
 				{
-					wmote_curr_y = 0;
+					if(dif_t < 15)
+					{
+						wmote_curr_y = dif_t - 15;
+					} else
+					{
+						wmote_curr_y = 0;
+					};
 				};
 			} else
 			{
 				if(dif_r < dif_b)
 				{
-					wmote_curr_x = sys_rmode->viWidth - 1;
+					if(dif_r < 20)
+					{
+						wmote_curr_x = sys_rmode->viWidth + 19 - dif_r;
+					} else
+					{
+						wmote_curr_x = sys_rmode->viWidth - 1;
+					};
 				} else
 				{
-					wmote_curr_y = sys_rmode->viHeight - 1;
+					if(dif_b < 15)
+					{
+						wmote_curr_y = sys_rmode->viHeight + 14 - dif_b;
+					} else
+					{
+						wmote_curr_y = sys_rmode->viHeight - 1;
+					};
 				};
 			};
 		};
-		wmote_curr_x = wmote_curr_x + wmote_curr_x - wmote_prev_x;
-		wmote_curr_y = wmote_curr_y + wmote_curr_y - wmote_prev_y;
 	};
 }
 
 qboolean IN_GetWmoteCursorPos(incursorcoords_t* p)
 {
 	ir_t w;
-	int wdest_x;
-	int wdest_y;
+	int wx;
+	int wy;
 
-	if((((in_wlook.value != 0)&&(wmotelookbinv.value == 0))
-	  ||((in_wlook.value == 0)&&(wmotelookbinv.value != 0)))
-	  &&(in_osk.value == 0))
+	WPAD_IR(WPAD_CHAN_0, &w);
+	if(w.valid)
 	{
-		WPAD_IR(WPAD_CHAN_0, &w);
-		if(w.valid)
+		wmote_prev_x = wmote_curr_x;
+		wmote_prev_y = wmote_curr_y;
+		wmote_curr_x = w.x;
+		wmote_curr_y = w.y;
+		wmote_validcount++;
+	} else
+	{
+		if(wmote_validcount == 0)
 		{
+			wx = wmote_curr_x + wmote_curr_x - wmote_prev_x;
+			wy = wmote_curr_y + wmote_curr_y - wmote_prev_y;
 			wmote_prev_x = wmote_curr_x;
 			wmote_prev_y = wmote_curr_y;
-			wmote_curr_x = w.x;
-			wmote_curr_y = w.y;
-			wmote_validcount++;
+			wmote_curr_x = wx;
+			wmote_curr_y = wy;
+		} else if(wmote_validcount == 1)
+		{
+			IN_CalcWmoteOutMove(w);
 		} else
 		{
-			if(wmote_validcount == 0)
-			{
-				wmote_prev_x = wmote_curr_x;
-				wmote_prev_y = wmote_curr_y;
-				wmote_curr_x = wmote_curr_x + wmote_curr_x - wmote_prev_x;
-				wmote_curr_y = wmote_curr_y + wmote_curr_y - wmote_prev_y;
-			} else if(wmote_validcount == 1)
+			wx = wmote_curr_x + wmote_curr_x - wmote_prev_x;
+			wy = wmote_curr_y + wmote_curr_y - wmote_prev_y;
+			if((wx > 0)&&(wy > 0)&&(wx < sys_rmode->viWidth)&&(wy < sys_rmode->viHeight))
 			{
 				IN_CalcWmoteOutMove(w);
 			} else
 			{
-				wdest_x = wmote_curr_x + wmote_curr_x - wmote_prev_x;
-				wdest_y = wmote_curr_y + wmote_curr_y - wmote_prev_y;
-				if((wdest_x > 0)&&(wdest_y > 0)&&(wdest_x < sys_rmode->viWidth)&&(wdest_y < sys_rmode->viHeight))
-				{
-					IN_CalcWmoteOutMove(w);
-				} else
-				{
-					wmote_curr_x = wdest_x;
-					wmote_curr_y = wdest_y;
-				};
+				wmote_prev_x = wmote_curr_x;
+				wmote_prev_y = wmote_curr_y;
+				wmote_curr_x = wx;
+				wmote_curr_y = wy;
 			};
-			wmote_validcount = 0;
 		};
+		wmote_validcount = 0;
+	};
+	if((((in_wlook.value != 0)&&(wmotelookbinv.value == 0))
+	  ||((in_wlook.value == 0)&&(wmotelookbinv.value != 0)))
+	  &&(in_osk.value == 0))
+	{
 		p->x = wmote_curr_x - wmote_adjust_x;
 		p->y = wmote_curr_y - wmote_adjust_y;
 		return true;

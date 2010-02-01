@@ -67,6 +67,8 @@ u32 sys_previous_keys;
 
 u32 sys_previous_pad_keys;
 
+int sys_previous_unaliased_key;
+
 double sys_previous_time;
 
 int sys_netinit_error;
@@ -533,6 +535,7 @@ void Sys_DefaultAliases (void)
 
 void Sys_HandleKey(int k, qboolean pressed)
 {
+	sys_previous_unaliased_key = k;
 	k = keyaliases[k];
 	if(k == K_INVNEXT)
 	{

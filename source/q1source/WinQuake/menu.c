@@ -23,6 +23,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "winquake.h"
 #endif
 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Holder for the unaliased version of the most recent key press:
+extern int sys_previous_unaliased_key;
+// <<< FIX
+
 void (*vid_menudrawfn)(void);
 void (*vid_menukeyfn)(int key);
 
@@ -1673,6 +1678,10 @@ void M_Keys_Key (int k)
 		}
 		else if (k != '`')
 		{
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Using the unaliased key instead for this particular action:
+			k = sys_previous_unaliased_key;
+// <<< FIX
 			sprintf (cmd, "bind \"%s\" \"%s\"\n", Key_KeynumToString (k), bindnames[keys_cursor][0]);
 			Cbuf_InsertText (cmd);
 		}

@@ -80,6 +80,8 @@ u32 sys_previous_keys;
 
 u32 sys_previous_pad_keys;
 
+int sys_previous_unaliased_key;
+
 int sys_current_weapon;
 
 byte *membase;
@@ -404,6 +406,7 @@ void Sys_DefaultAliases (void)
 
 void Sys_HandleKey(int k, qboolean pressed)
 {
+	sys_previous_unaliased_key = k;
 	k = keyaliases[k];
 	if(k == K_INVNEXT)
 	{
@@ -426,8 +429,9 @@ void Sys_HandleKey(int k, qboolean pressed)
 		{
 			Cvar_SetValue("in_wlook", 0);
 		};
-	} else if(k == K_OSK)
+	} else if(k == K_OSK_C)
 	{
+		Key_Event('c', pressed, Sys_Milliseconds());
 		if(pressed)
 		{
 			if(in_osk->value == 0)

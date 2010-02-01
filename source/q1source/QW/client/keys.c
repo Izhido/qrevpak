@@ -632,6 +632,11 @@ void Key_Bind_f (void)
 			strcat (cmd, " ");
 	}
 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Unaliasing the newly bound key:
+	keyaliases[b] = b;
+// <<< FIX
+
 	Key_SetBinding (b, cmd);
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc

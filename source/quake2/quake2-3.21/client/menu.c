@@ -24,6 +24,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "client.h"
 #include "../client/qmenu.h"
 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Holder for the unaliased version of the most recent key press:
+extern int sys_previous_unaliased_key;
+// <<< FIX
+
 static int	m_main_cursor;
 
 #define NUM_CURSOR_FRAMES 15
@@ -971,6 +976,10 @@ static const char *Keys_MenuKey( int key )
 	{	
 		if ( key != K_ESCAPE && key != '`' )
 		{
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Using the unaliased key instead for this particular action:
+			key = sys_previous_unaliased_key;
+// <<< FIX
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Allocating in big stack. Stack in this device is pretty small:
 			//char cmd[1024];
