@@ -146,10 +146,10 @@ void VID_DrawOnScreenKeyboard(void)
 			j = osk_selected->top & ~1;
 			m = (osk_selected->right & ~1) - i;
 			n = (osk_selected->bottom & ~1) - j;
-			v = ((u32*)(sys_framebuffer[1])) + ((sys_rmode->viHeight - OSK_HEIGHT + j) / 4 * sys_rmode->viWidth) 
-			                                 + ((sys_rmode->viWidth - OSK_WIDTH + i) / 4);
+			v = ((u32*)(sys_framebuffer[1])) + ((sys_rmode->viHeight - OSK_HEIGHT + j + j) / 4 * sys_rmode->viWidth) 
+			                                 + ((sys_rmode->viWidth - OSK_WIDTH + i + i) / 4);
 			vinc = (sys_rmode->viWidth - m) / 2;
-			img = KeyboardInverted_img + (j * OSK_WIDTH / 2 * 5) + (i / 2 * 5);
+			img = KeyboardInverted_img + (j * OSK_WIDTH * 5) + (i * 5);
 			imginc = (OSK_WIDTH - m) * 5;
 			for(j = 0; j < n; j++)
 			{
@@ -171,6 +171,7 @@ void VID_DrawOnScreenKeyboard(void)
 					v++;
 				};
 				v += vinc;
+				img += imginc;
 			};
 		};
 		if(osk_shiftpressed != 0)
@@ -179,10 +180,10 @@ void VID_DrawOnScreenKeyboard(void)
 			j = osk_shiftpressed->top & ~1;
 			m = (osk_shiftpressed->right & ~1) - i;
 			n = (osk_shiftpressed->bottom & ~1) - j;
-			v = ((u32*)(sys_framebuffer[1])) + ((sys_rmode->viHeight - OSK_HEIGHT + j) / 4 * sys_rmode->viWidth) 
-			                                 + ((sys_rmode->viWidth - OSK_WIDTH + i) / 4);
+			v = ((u32*)(sys_framebuffer[1])) + ((sys_rmode->viHeight - OSK_HEIGHT + j + j) / 4 * sys_rmode->viWidth) 
+			                                 + ((sys_rmode->viWidth - OSK_WIDTH + i + i) / 4);
 			vinc = (sys_rmode->viWidth - m) / 2;
-			img = KeyboardInverted_img + (j * OSK_WIDTH / 2 * 5) + (i / 2 * 5);
+			img = KeyboardInverted_img + (j * OSK_WIDTH * 5) + (i * 5);
 			imginc = (OSK_WIDTH - m) * 5;
 			for(j = 0; j < n; j++)
 			{
@@ -204,6 +205,7 @@ void VID_DrawOnScreenKeyboard(void)
 					v++;
 				};
 				v += vinc;
+				img += imginc;
 			};
 		};
 		if(osk_capspressed != 0)
@@ -212,10 +214,10 @@ void VID_DrawOnScreenKeyboard(void)
 			j = osk_capspressed->top & ~1;
 			m = (osk_capspressed->right & ~1) - i;
 			n = (osk_capspressed->bottom & ~1) - j;
-			v = ((u32*)(sys_framebuffer[1])) + ((sys_rmode->viHeight - OSK_HEIGHT + j) / 4 * sys_rmode->viWidth) 
-			                                 + ((sys_rmode->viWidth - OSK_WIDTH + i) / 4);
+			v = ((u32*)(sys_framebuffer[1])) + ((sys_rmode->viHeight - OSK_HEIGHT + j + j) / 4 * sys_rmode->viWidth) 
+			                                 + ((sys_rmode->viWidth - OSK_WIDTH + i + i) / 4);
 			vinc = (sys_rmode->viWidth - m) / 2;
-			img = KeyboardInverted_img + (j * OSK_WIDTH / 2 * 5) + (i / 2 * 5);
+			img = KeyboardInverted_img + (j * OSK_WIDTH * 5) + (i * 5);
 			imginc = (OSK_WIDTH - m) * 5;
 			for(j = 0; j < n; j++)
 			{
@@ -237,6 +239,7 @@ void VID_DrawOnScreenKeyboard(void)
 					v++;
 				};
 				v += vinc;
+				img += imginc;
 			};
 		};
 	};
