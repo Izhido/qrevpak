@@ -1,6 +1,8 @@
 #include "osk_revol.h"
 #include <malloc.h>
 #include <string.h>
+#include "Keyboard_img.h"
+#include "KeyboardInverted_img.h"
 
 oskkey_t** osk_allkeys = 0;
 
@@ -308,4 +310,102 @@ int OSK_HandleKeys(bool KeyPressed)
 		};
 	};
 	return k;
+}
+
+void OSK_DrawKeyboard(GXRModeObj* rmode, void* dest)
+{
+	u32* v;
+	u32 vinc;
+	const u8* img;
+	int j;
+	int i;
+	u8 a;
+	u32 c;
+
+	v = ((u32*)(dest)) + ((rmode->viHeight - OSK_HEIGHT) / 4 * rmode->viWidth) + ((rmode->viWidth - OSK_WIDTH) / 4);
+	vinc = (rmode->viWidth - OSK_WIDTH) / 2;
+	img = Keyboard_img;
+	for(j = 0; j < OSK_HEIGHT; j++)
+	{
+		i = 0;
+		while(i < OSK_WIDTH)
+		{
+			a = (*img);
+			if(a == 0)
+			{
+				img += 5;
+			} else
+			{
+				img++;
+				c = *((u32*)img);
+				img += 4;
+				*v = c;
+			};
+			i += 2;
+			v++;
+		};
+		v += vinc;
+	};
+}
+
+void OSK_DrawKey(GXRModeObj* rmode, void* dest, oskkey_t* key)
+{
+	int i;
+	int j;
+	int m;
+	int n;
+	u32* v;
+	u32 vinc;
+	const u8* img;
+	int imginc;
+	u8 a;
+	u32 c;
+
+	i = key->left & ~1;
+	j = key->top & ~1;
+	m = (key->right & ~1) - i;
+	n = (key->bottom & ~1) - j;
+	v = ((u32*)(dest)) + ((rmode->viHeight - OSK_HEIGHT + j + j) / 4 * rmode->viWidth) + ((rmode->viWidth - OSK_WIDTH + i + i) / 4);
+	vinc = (rmode->viWidth - m) / 2;
+	img = KeyboardInverted_img + (j * OSK_WIDTH / 2 * 5) + (i / 2 * 5);
+	imginc = (OSK_WIDTH - m) / 2 * 5;
+	for(j = 0; j < n; j++)
+	{
+		i = 0;
+		while(i < m)
+		{
+			a = (*img);
+			if(a == 0)
+			{
+				img += 5;
+			} else
+			{
+				img++;
+				c = *((u32*)img);
+				img += 4;
+				*v = c;
+			};
+			i += 2;
+			v++;
+		};
+		v += vinc;
+		img += imginc;
+	};
+}
+
+void OSK_Draw(GXRModeObj* rmode, void* dest)
+{
+	OSK_DrawKeyboard(rmode, dest);
+	if(osk_selected != 0)
+	{
+		OSK_DrawKey(rmode, dest, osk_selected);
+	};
+	if(osk_shiftpressed != 0)
+	{
+		OSK_DrawKey(rmode, dest, osk_shiftpressed);
+	};
+	if(osk_capspressed != 0)
+	{
+		OSK_DrawKey(rmode, dest, osk_capspressed);
+	};
 }

@@ -234,6 +234,10 @@ qboolean IN_GetWmoteCursorPos(incursorcoords_t* p)
 		wmote_prev_y = wmote_curr_y;
 		wmote_curr_x = w.x;
 		wmote_curr_y = w.y;
+		if(wmote_validcount == 0)
+		{
+			IN_SetWmoteCursorPos (window_center_x, window_center_y);
+		};
 		wmote_validcount++;
 	} else
 	{

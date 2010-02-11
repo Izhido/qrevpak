@@ -19,13 +19,10 @@ typedef struct
 
 extern oskkey_t* osk_selected;
 
-extern oskkey_t* osk_shiftpressed;
-
-extern oskkey_t* osk_capspressed;
-
 void OSK_LoadKeys(const u8* keys, int len);
 
 oskkey_t* OSK_KeyAt(int x, int y);
 
 int OSK_HandleKeys(bool KeyPressed);
 
+void OSK_Draw(GXRModeObj* rmode, void* dest);

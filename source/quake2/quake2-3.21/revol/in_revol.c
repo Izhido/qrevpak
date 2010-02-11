@@ -141,9 +141,6 @@ void IN_StartupWmote (void)
 	if ( !cv->value ) 
 		return; 
 
-	wmote_adjust_x = 0;
-	wmote_adjust_y = 0;
-
 	wmoteinitialized = true;
 }
 
@@ -371,6 +368,10 @@ qboolean IN_GetWmoteCursorPos(incursorcoords_t* p)
 		wmote_prev_y = wmote_curr_y;
 		wmote_curr_x = w.x;
 		wmote_curr_y = w.y;
+		if(wmote_validcount == 0)
+		{
+			IN_SetWmoteCursorPos (window_center_x, window_center_y);
+		};
 		wmote_validcount++;
 	} else
 	{
@@ -402,9 +403,15 @@ qboolean IN_GetWmoteCursorPos(incursorcoords_t* p)
 		};
 		wmote_validcount = 0;
 	};
-	p->x = wmote_curr_x - wmote_adjust_x;
-	p->y = wmote_curr_y - wmote_adjust_y;
-	return true;
+	if((((in_wlook->value != 0)&&(wmotelookbinv->value == 0))
+	  ||((in_wlook->value == 0)&&(wmotelookbinv->value != 0)))
+	  &&(in_osk->value == 0))
+	{
+		p->x = wmote_curr_x - wmote_adjust_x;
+		p->y = wmote_curr_y - wmote_adjust_y;
+		return true;
+	};
+	return false;
 }
 
 void IN_SetWmoteCursorPos(int x, int y)
@@ -894,14 +901,6 @@ void IN_WmoteFrame(void)
 			return;
 		}
 	}
-
-	if((((in_wlook->value == 0)&&(wmotelookbinv->value == 0))
-	  ||((in_wlook->value != 0)&&(wmotelookbinv->value != 0)))
-	  ||(in_osk->value != 0))
-	{
-		IN_DeactivateWmote ();
-		return;
-	};
 
 	IN_ActivateWmote ();
 }

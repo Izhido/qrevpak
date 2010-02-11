@@ -30,8 +30,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "quakedef.h"
 #include "d_local.h"
-#include "Keyboard_img.h"
-#include "KeyboardInverted_img.h"
 #include "osk_revol.h"
 
 struct y1cby2cr_palentry_t
@@ -98,151 +96,6 @@ u32 VID_CvtRGB(u8 r1, u8 g1, u8 b1, u8 r2, u8 g2, u8 b2)
 	cr = (cr1 + cr2) >> 1;
 
 	return (y1 << 24) | (cb << 16) | (y2 << 8) | cr;
-}
-
-void VID_DrawOnScreenKeyboard(void)
-{
-	int j;
-	int i;
-	u32* v;
-	u32 vinc;
-	u8 a;
-	u32 c;
-	const u8* img;
-	int m;
-	int n;
-	int imginc;
-
-	if(in_osk.value)
-	{
-		v = ((u32*)(sys_framebuffer[1])) + ((sys_rmode->viHeight - OSK_HEIGHT) / 4 * sys_rmode->viWidth) 
-		                                 + ((sys_rmode->viWidth - OSK_WIDTH) / 4);
-		vinc = (sys_rmode->viWidth - OSK_WIDTH) / 2;
-		img = Keyboard_img;
-		for(j = 0; j < OSK_HEIGHT; j++)
-		{
-			i = 0;
-			while(i < OSK_WIDTH)
-			{
-				a = (*img);
-				if(a == 0)
-				{
-					img += 5;
-				} else
-				{
-					img++;
-					c = *((u32*)img);
-					img += 4;
-					*v = c;
-				};
-				i += 2;
-				v++;
-			};
-			v += vinc;
-		};
-		if(osk_selected != 0)
-		{
-			i = osk_selected->left & ~1;
-			j = osk_selected->top & ~1;
-			m = (osk_selected->right & ~1) - i;
-			n = (osk_selected->bottom & ~1) - j;
-			v = ((u32*)(sys_framebuffer[1])) + ((sys_rmode->viHeight - OSK_HEIGHT + j + j) / 4 * sys_rmode->viWidth) 
-			                                 + ((sys_rmode->viWidth - OSK_WIDTH + i + i) / 4);
-			vinc = (sys_rmode->viWidth - m) / 2;
-			img = KeyboardInverted_img + (j * OSK_WIDTH * 5) + (i * 5);
-			imginc = (OSK_WIDTH - m) * 5;
-			for(j = 0; j < n; j++)
-			{
-				i = 0;
-				while(i < m)
-				{
-					a = (*img);
-					if(a == 0)
-					{
-						img += 5;
-					} else
-					{
-						img++;
-						c = *((u32*)img);
-						img += 4;
-						*v = c;
-					};
-					i += 2;
-					v++;
-				};
-				v += vinc;
-				img += imginc;
-			};
-		};
-		if(osk_shiftpressed != 0)
-		{
-			i = osk_shiftpressed->left & ~1;
-			j = osk_shiftpressed->top & ~1;
-			m = (osk_shiftpressed->right & ~1) - i;
-			n = (osk_shiftpressed->bottom & ~1) - j;
-			v = ((u32*)(sys_framebuffer[1])) + ((sys_rmode->viHeight - OSK_HEIGHT + j + j) / 4 * sys_rmode->viWidth) 
-			                                 + ((sys_rmode->viWidth - OSK_WIDTH + i + i) / 4);
-			vinc = (sys_rmode->viWidth - m) / 2;
-			img = KeyboardInverted_img + (j * OSK_WIDTH * 5) + (i * 5);
-			imginc = (OSK_WIDTH - m) * 5;
-			for(j = 0; j < n; j++)
-			{
-				i = 0;
-				while(i < m)
-				{
-					a = (*img);
-					if(a == 0)
-					{
-						img += 5;
-					} else
-					{
-						img++;
-						c = *((u32*)img);
-						img += 4;
-						*v = c;
-					};
-					i += 2;
-					v++;
-				};
-				v += vinc;
-				img += imginc;
-			};
-		};
-		if(osk_capspressed != 0)
-		{
-			i = osk_capspressed->left & ~1;
-			j = osk_capspressed->top & ~1;
-			m = (osk_capspressed->right & ~1) - i;
-			n = (osk_capspressed->bottom & ~1) - j;
-			v = ((u32*)(sys_framebuffer[1])) + ((sys_rmode->viHeight - OSK_HEIGHT + j + j) / 4 * sys_rmode->viWidth) 
-			                                 + ((sys_rmode->viWidth - OSK_WIDTH + i + i) / 4);
-			vinc = (sys_rmode->viWidth - m) / 2;
-			img = KeyboardInverted_img + (j * OSK_WIDTH * 5) + (i * 5);
-			imginc = (OSK_WIDTH - m) * 5;
-			for(j = 0; j < n; j++)
-			{
-				i = 0;
-				while(i < m)
-				{
-					a = (*img);
-					if(a == 0)
-					{
-						img += 5;
-					} else
-					{
-						img++;
-						c = *((u32*)img);
-						img += 4;
-						*v = c;
-					};
-					i += 2;
-					v++;
-				};
-				v += vinc;
-				img += imginc;
-			};
-		};
-	};
 }
 
 void VID_DrawWmoteGuide(void)
@@ -500,7 +353,10 @@ void	VID_Update (vrect_t *rects)
 		};
 		r = r->pnext;
 	};
-	VID_DrawOnScreenKeyboard();
+	if(in_osk.value)
+	{
+		OSK_Draw(sys_rmode, sys_framebuffer[1]);
+	};
 	VID_DrawWmoteGuide();
 }
 
