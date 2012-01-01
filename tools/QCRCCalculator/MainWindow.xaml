@@ -1,0 +1,11 @@
+﻿<Window x:Class="MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="QRevPAK - CRC Calculator" Height="350" Width="525">
+    <Grid>
+        <Label Content="Enter text to CRC:" Height="28" HorizontalAlignment="Left" Margin="12,12,0,0" Name="EnteredLabel" VerticalAlignment="Top" />
+        <TextBox Margin="12,46,12,54" Name="EnteredTextBox" FontFamily="Consolas" FontSize="14" AcceptsReturn="True" AcceptsTab="True" />
+        <Button Content="Get CRC" Height="23" HorizontalAlignment="Left" Margin="12,0,0,25" Name="GetCRCButton" VerticalAlignment="Bottom" Width="75" />
+        <Label Content="" Margin="101,0,12,21" Name="ResultLabel" FontWeight="Bold" Height="28" VerticalAlignment="Bottom" />
+    </Grid>
+</Window>

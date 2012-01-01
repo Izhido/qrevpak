@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GameEntries>
+  <GameEntry crc="15788">
+    <name>Quake</name>
+    <description>
+      <line>Quake</line>
+      <line></line>
+      <line>(Software-rendered graphics)</line>
+    </description>
+    <engine>Q1Rev-soft</engine>
+    <parameters></parameters>
+  </GameEntry>
+  <GameEntry crc="16866">
+    <name>Quake World</name>
+    <description>
+      <line>Quake World</line>
+      <line></line>
+      <line>(Software-rendered graphics)</line>
+    </description>
+    <engine>QWRev-soft</engine>
+    <parameters></parameters>
+  </GameEntry>
+  <GameEntry crc="16133">
+    <name>Quake II</name>
+    <description>
+      <line>Quake II</line>
+      <line></line>
+      <line>(Software-rendered graphics)</line>
+    </description>
+    <engine>Q2Rev-SWimp</engine>
+    <parameters></parameters>
+  </GameEntry>
+  <GameEntry crc="18043">
+    <name>Quake II CTF</name>
+    <description>
+      <line>Quake II - Capture the Flag</line>
+      <line></line>
+      <line>(Software-rendered graphics)</line>
+    </description>
+    <engine>Q2CTFRev-SWimp</engine>
+    <parameters></parameters>
+  </GameEntry>
+</GameEntries>

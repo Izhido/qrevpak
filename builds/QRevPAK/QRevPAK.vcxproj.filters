@@ -16,10 +16,21 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Makefile" />
+    <None Include="..\..\data\xml\QRevPAK.xml">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\qrevpak\source\main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\qrevpak\source\ezxml.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\source\qrevpak\source\ezxml.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
