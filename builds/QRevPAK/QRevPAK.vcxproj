@@ -62,7 +62,9 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="..\..\data\xml\QRevPAK.xml" />
+    <None Include="..\..\data\xml\QRevPAK.xml">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Makefile" />
   </ItemGroup>
   <ItemGroup>

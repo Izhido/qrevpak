@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <gccore.h>
+#include <fat.h>
 #include <wiiuse/wpad.h>
 #include "ezxml.h"
 #include "QRevPAK_xml.h"
@@ -34,6 +35,8 @@ typedef struct
 
 typedef struct
 {
+	int CRCValue;
+	bool FoundInDefault;
 	char* Name;
 	int DescriptionCount;
 	char** Description;
@@ -83,6 +86,17 @@ int main(int argc, char **argv)
 	int rw;
 	int rh;
 	int pl;
+	ezxml_t ent;
+	const char* crcFromDoc;
+	int crcValueFromDoc;
+	int crcValue;
+	char c;
+	ezxml_t dat;
+	ezxml_t lin;
+	bool modified;
+	char num[16];
+	int EntryIndicesCount;
+	int* EntryIndices;
 
 	VIDEO_Init();
 	WPAD_Init();
@@ -107,6 +121,7 @@ int main(int argc, char **argv)
 	wmPosY = -1000;
 	wmPrevPosX = -1000;
 	wmPrevPosY = -1000;
+	fatInitDefault();
 	if(argc == 0)
 	{
 		basedir[0] = '/';
@@ -152,6 +167,7 @@ int main(int argc, char **argv)
 		};
 	};
 	Entries = NULL;
+	EntryIndices = NULL;
 	ErrorLines = NULL;
 	xmlFromFile = NULL;
 	xmlDefault = NULL;
@@ -553,9 +569,8 @@ int main(int argc, char **argv)
 			l = strlen(msg);
 			for(p = 0; p < l; p++)
 			{
-				ScreenCache[i * w + j + p].Foreground = 30;
-				ScreenCache[i * w + j + p].Background = 40;
-				ScreenCache[i * w + j + p].Bold = 0;
+				ScreenCache[i * w + j + p].Foreground = 37;
+				ScreenCache[i * w + j + p].Bold = 1;
 				ScreenCache[i * w + j + p].Char = msg[p];
 			};
 			i = (int)(h / 2) + 2;
@@ -906,6 +921,371 @@ int main(int argc, char **argv)
 						memcpy(xmlDefault, QRevPAK_xml, QRevPAK_xml_size);
 						xmlDefault[QRevPAK_xml_size] = 0;
 						docDefault = ezxml_parse_str(xmlDefault, QRevPAK_xml_size);
+						EntriesCount = 0;
+						ent = ezxml_child(docFromFile, "GameEntry");
+						while(ent != NULL)
+						{
+							EntriesCount++;
+							ent = ent->next;
+						};
+						ent = ezxml_child(docDefault, "GameEntry");
+						while(ent != NULL)
+						{
+							EntriesCount++;
+							ent = ent->next;
+						};
+						Entries = (GameEntry*)malloc(EntriesCount * sizeof(GameEntry));
+						memset(Entries, 0, EntriesCount * sizeof(GameEntry));
+						for(i = 0; i < EntriesCount; i++)
+						{
+							Entries[i].CRCValue = -1;
+						};
+						j = 0;
+						ent = ezxml_child(docFromFile, "GameEntry");
+						while(ent != NULL)
+						{
+							crcValue = -1;
+							crcFromDoc = ezxml_attr(ent, "crc");
+							if(crcFromDoc != NULL)
+							{
+								crcValueFromDoc = atoi(crcFromDoc);
+								msg = ezxml_toxml(ent);
+								m = strlen(msg);
+								i = m - 1;
+								while(i >= 0)
+								{
+									if(msg[i] == '<')
+									{
+										msg[i] = 0;
+										break;
+									} else
+									{
+										i--;
+									};
+								};
+								if(i > 0)
+								{
+									i = 0;
+									while(i < m)
+									{
+										if(msg[i] == 0)
+										{
+											i = m;
+										} else if(msg[i] == '>')
+										{
+											i++;
+											break;
+										} else
+										{
+											i++;
+										};
+									};
+									if(i > 0)
+									{
+										m = strlen(msg);
+										crcValue = 0;
+										for(;i < m; i++)
+										{
+											c = msg[i];
+											if((c > 32) && (c <= 127))
+											{
+												crcValue += c;
+												while(crcValue > 65535)
+												{
+													crcValue = crcValue - 65536;
+												};
+											};
+										};
+										if(crcValue != crcValueFromDoc)
+										{
+											crcValue = -1;
+										};
+									};
+								};
+								free(msg);
+							};
+							if(crcValue >= 0)
+							{
+								Entries[j].CRCValue = crcValue;
+							};
+							dat = ezxml_child(ent, "name");
+							if(dat != NULL)
+							{
+								Entries[j].Name = (char*)malloc(strlen(dat->txt) + 1);
+								strcpy(Entries[j].Name, dat->txt);
+							};
+							dat = ezxml_child(ent, "description");
+							if(dat != NULL)
+							{
+								lin = ezxml_child(dat, "line");
+								while(lin != NULL)
+								{
+									Entries[j].DescriptionCount++;
+									lin = lin->next;
+								};
+								if(Entries[j].DescriptionCount > 0)
+								{
+									Entries[j].Description = (char**)malloc(Entries[j].DescriptionCount * sizeof(char*));
+									pl = 0;
+									lin = ezxml_child(dat, "line");
+									while(lin != NULL)
+									{
+										Entries[j].Description[pl] = (char*)malloc(strlen(lin->txt) + 1);
+										strcpy(Entries[j].Description[pl], lin->txt);
+										pl++;
+										lin = lin->next;
+									};
+								};
+							};
+							dat = ezxml_child(ent, "engine");
+							if(dat != NULL)
+							{
+								Entries[j].Engine = (char*)malloc(strlen(dat->txt) + 1);
+								strcpy(Entries[j].Engine, dat->txt);
+							};
+							dat = ezxml_child(ent, "parameters");
+							if(dat != NULL)
+							{
+								Entries[j].Parameters = (char*)malloc(strlen(dat->txt) + 1);
+								strcpy(Entries[j].Parameters, dat->txt);
+							};
+							j++;
+							ent = ent->next;
+						};
+						modified = false;
+						ent = ezxml_child(docDefault, "GameEntry");
+						while(ent != NULL)
+						{
+							crcFromDoc = ezxml_attr(ent, "crc");
+							crcValueFromDoc = atoi(crcFromDoc);
+							dat = ezxml_child(ent, "name");
+							i = 0;
+							while(i < EntriesCount)
+							{
+								if(Entries[i].CRCValue >= 0)
+								{
+									if(Entries[i].Name != NULL)
+									{
+										if(strcmp(Entries[i].Name, dat->txt) == 0)
+										{
+											break;
+										};
+									};
+								};
+								i++;
+							};
+							if(i < EntriesCount)
+							{
+								Entries[i].FoundInDefault = true;
+								if(Entries[i].CRCValue != crcValueFromDoc)
+								{
+									modified = true;
+									Entries[i].CRCValue = crcValueFromDoc;
+									if(Entries[i].Description != NULL)
+									{
+										for(pl = Entries[i].DescriptionCount - 1; pl >= 0; pl--)
+										{
+											free(Entries[i].Description[pl]); 
+										};
+										free(Entries[i].Description);
+										Entries[i].Description = NULL;
+										Entries[i].DescriptionCount = 0;
+									};
+									dat = ezxml_child(ent, "description");
+									if(dat != NULL)
+									{
+										lin = ezxml_child(dat, "line");
+										while(lin != NULL)
+										{
+											Entries[i].DescriptionCount++;
+											lin = lin->next;
+										};
+										if(Entries[i].DescriptionCount > 0)
+										{
+											Entries[i].Description = (char**)malloc(Entries[i].DescriptionCount * sizeof(char*));
+											pl = 0;
+											lin = ezxml_child(dat, "line");
+											while(lin != NULL)
+											{
+												Entries[i].Description[pl] = (char*)malloc(strlen(lin->txt) + 1);
+												strcpy(Entries[i].Description[pl], lin->txt);
+												pl++;
+												lin = lin->next;
+											};
+										};
+									};
+									free(Entries[i].Engine);
+									dat = ezxml_child(ent, "engine");
+									if(dat != NULL)
+									{
+										Entries[i].Engine = (char*)malloc(strlen(dat->txt) + 1);
+										strcpy(Entries[i].Engine, dat->txt);
+									};
+									free(Entries[i].Parameters);
+									Entries[i].Parameters = NULL;
+									dat = ezxml_child(ent, "parameters");
+									if(dat != NULL)
+									{
+										Entries[i].Parameters = (char*)malloc(strlen(dat->txt) + 1);
+										strcpy(Entries[i].Parameters, dat->txt);
+									};
+								};
+							} else
+							{
+								modified = true;
+								Entries[j].FoundInDefault = true;
+								Entries[j].CRCValue = crcValueFromDoc;
+								dat = ezxml_child(ent, "name");
+								Entries[j].Name = (char*)malloc(strlen(dat->txt) + 1);
+								strcpy(Entries[j].Name, dat->txt);
+								dat = ezxml_child(ent, "description");
+								if(dat != NULL)
+								{
+									lin = ezxml_child(dat, "line");
+									while(lin != NULL)
+									{
+										Entries[j].DescriptionCount++;
+										lin = lin->next;
+									};
+									if(Entries[j].DescriptionCount > 0)
+									{
+										Entries[j].Description = (char**)malloc(Entries[j].DescriptionCount * sizeof(char*));
+										pl = 0;
+										lin = ezxml_child(dat, "line");
+										while(lin != NULL)
+										{
+											Entries[j].Description[pl] = (char*)malloc(strlen(lin->txt) + 1);
+											strcpy(Entries[j].Description[pl], lin->txt);
+											pl++;
+											lin = lin->next;
+										};
+									};
+								};
+								dat = ezxml_child(ent, "engine");
+								Entries[j].Engine = (char*)malloc(strlen(dat->txt) + 1);
+								strcpy(Entries[j].Engine, dat->txt);
+								dat = ezxml_child(ent, "parameters");
+								if(dat != NULL)
+								{
+									Entries[j].Parameters = (char*)malloc(strlen(dat->txt) + 1);
+									strcpy(Entries[j].Parameters, dat->txt);
+								};
+								j++;
+							};
+							ent = ent->next;
+						};
+						EntryIndicesCount = 0;
+						for(i = 0; i < EntriesCount; i++)
+						{
+							if((Entries[i].Name != NULL) && (Entries[i].Engine != NULL))
+							{
+								if((strlen(Entries[i].Name) > 0) && (strlen(Entries[i].Engine) > 0))
+								{
+									if((Entries[i].CRCValue < 0) || ((Entries[i].CRCValue >= 0) && (Entries[i].FoundInDefault)))
+									{
+										EntryIndicesCount++;
+									};
+								}
+							};
+							if((Entries[i].CRCValue >= 0) && (!Entries[i].FoundInDefault))
+							{
+								modified = true;
+							};
+						};
+						EntryIndices = (int*)malloc(EntryIndicesCount * sizeof(int));
+						j = 0;
+						for(i = 0; i < EntriesCount; i++)
+						{
+							if((Entries[i].Name != NULL) && (Entries[i].Engine != NULL))
+							{
+								if((strlen(Entries[i].Name) > 0) && (strlen(Entries[i].Engine) > 0))
+								{
+									if((Entries[i].CRCValue < 0) || ((Entries[i].CRCValue >= 0) && (Entries[i].FoundInDefault)))
+									{
+										EntryIndices[j] = i;
+										j++;
+									};
+								}
+							};
+						};
+						if(modified)
+						{
+							f = fopen(xmlfname, "wb");
+							if(f != NULL)
+							{
+								msg = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<GameEntries>\n";
+								fwrite(msg, 1, strlen(msg), f);
+								for(i = 0; i < EntriesCount; i++)
+								{
+									if((Entries[i].Name != NULL) && (Entries[i].Engine != NULL))
+									{
+										if((strlen(Entries[i].Name) > 0) && (strlen(Entries[i].Engine) > 0))
+										{
+											if((Entries[i].CRCValue < 0) || ((Entries[i].CRCValue >= 0) && (Entries[i].FoundInDefault)))
+											{
+												msg = "  <GameEntry";
+												fwrite(msg, 1, strlen(msg), f);
+												if(Entries[i].CRCValue >= 0)
+												{
+													msg = " crc=\"";
+													fwrite(msg, 1, strlen(msg), f);
+													num[0] = 0;
+													sprintf(num, "%d", Entries[i].CRCValue);
+													fwrite(num, 1, strlen(num), f);
+													msg = "\"";
+													fwrite(msg, 1, strlen(msg), f);
+												};
+												msg = ">\n    <name>";
+												fwrite(msg, 1, strlen(msg), f);
+												msg = Entries[i].Name;
+												fwrite(msg, 1, strlen(msg), f);
+												msg = "</name>\n";
+												fwrite(msg, 1, strlen(msg), f);
+												if(Entries[i].Description != NULL)
+												{
+													msg = "    <description>\n";
+													fwrite(msg, 1, strlen(msg), f);
+													for(pl = 0; pl < Entries[i].DescriptionCount; pl++)
+													{
+														msg = "      <line>";
+														fwrite(msg, 1, strlen(msg), f);
+														msg = Entries[i].Description[pl];
+														fwrite(msg, 1, strlen(msg), f);
+														msg = "</line>\n";
+														fwrite(msg, 1, strlen(msg), f);
+													};
+													msg = "    </description>\n";
+													fwrite(msg, 1, strlen(msg), f);
+												};
+												msg = "    <engine>";
+												fwrite(msg, 1, strlen(msg), f);
+												msg = Entries[i].Engine;
+												fwrite(msg, 1, strlen(msg), f);
+												msg = "</engine>\n";
+												fwrite(msg, 1, strlen(msg), f);
+												msg = "    <parameters>";
+												fwrite(msg, 1, strlen(msg), f);
+												if(Entries[i].Parameters != NULL)
+												{
+													msg = Entries[i].Parameters;
+													fwrite(msg, 1, strlen(msg), f);
+												};
+												msg = "</parameters>\n";
+												fwrite(msg, 1, strlen(msg), f);
+												msg = "  </GameEntry>\n";
+												fwrite(msg, 1, strlen(msg), f);
+											};
+										};
+									};
+								};
+								msg = "</GameEntries>\n";
+								fwrite(msg, 1, strlen(msg), f);
+								fclose(f);
+							};
+						};
+						ezxml_free(docDefault);
+						ezxml_free(docFromFile);
+						free(xmlFromFile);
 					} else
 					{
 						free(xmlFromFile);
@@ -1061,6 +1441,7 @@ int main(int argc, char **argv)
 		};
 		VIDEO_WaitVSync();
 	};
+	free(EntryIndices);
 	free(xmlDefault);
 	free(xmlFromFile);
 	if(ErrorLines != NULL)
@@ -1081,6 +1462,7 @@ int main(int argc, char **argv)
 			{
 				free(Entries[i].Description[j]); 
 			};
+			free(Entries[i].Description);
 			free(Entries[i].Name);
 		};
 		free(Entries);
