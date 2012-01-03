@@ -27,9 +27,15 @@
     <ClCompile Include="..\..\source\qrevpak\source\ezxml.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\qrevpak\source\run_dol.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\qrevpak\source\ezxml.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\qrevpak\source\run_dol.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

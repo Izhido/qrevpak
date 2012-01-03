@@ -70,9 +70,11 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
   <ItemGroup>
     <ClCompile Include="..\..\source\qrevpak\source\ezxml.c" />
     <ClCompile Include="..\..\source\qrevpak\source\main.c" />
+    <ClCompile Include="..\..\source\qrevpak\source\run_dol.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\qrevpak\source\ezxml.h" />
+    <ClInclude Include="..\..\source\qrevpak\source\run_dol.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

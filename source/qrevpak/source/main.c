@@ -6,6 +6,8 @@
 #include <wiiuse/wpad.h>
 #include "ezxml.h"
 #include "QRevPAK_xml.h"
+#include "run_dol.h"
+#include <unistd.h>
 
 typedef enum 
 {
@@ -97,6 +99,7 @@ int main(int argc, char **argv)
 	char num[16];
 	int EntryIndicesCount;
 	int* EntryIndices;
+	char* eng;
 
 	VIDEO_Init();
 	WPAD_Init();
@@ -1341,8 +1344,25 @@ int main(int argc, char **argv)
 		} else if(State == LoadingErrorAReleased)
 		{
 			State = Start;
+		} else if(State == List)
+		{
+			eng = (char*)malloc(MAXPATHLEN);
+			if(getcwd(eng, MAXPATHLEN) == 0)
+			{
+				strcpy(eng, basedir);
+			};
+			if(eng[strlen(eng) - 1] != '/')
+			{
+				strcat(eng, "/");
+			};
+			strcat(eng, Entries[EntryIndices[0]].Engine);
+			strcat(eng, ".dol");
+			i = runDOL(eng, 0, NULL);
+			printf("\x1b[37m\x1b[40m\x1b[6;1mStart failed. Error %i\n", i);for(;;);
+			free(eng);
+			State = Finishing;
 		};
-		if (State != Finishing)
+		if((State != Finishing) && (State != Finished))
 		{
 			WPAD_IR(WPAD_CHAN_0, &wm);
 			if(wm.valid)
