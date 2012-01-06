@@ -6,7 +6,7 @@
 extern "C" {
 #endif
 
-int runDOL (const char* filename, int argc, const char** argv);
+bool runDOL (const char* filename, int argc, const char** argv);
 
 #ifdef __cplusplus
 }

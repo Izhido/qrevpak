@@ -1357,8 +1357,7 @@ int main(int argc, char **argv)
 			};
 			strcat(eng, Entries[EntryIndices[0]].Engine);
 			strcat(eng, ".dol");
-			i = runDOL(eng, 0, NULL);
-			printf("\x1b[37m\x1b[40m\x1b[6;1mStart failed. Error %i\n", i);for(;;);
+			runDOL(eng, 0, NULL);
 			free(eng);
 			State = Finishing;
 		};

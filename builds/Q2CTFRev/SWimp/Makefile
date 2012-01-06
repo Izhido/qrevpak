@@ -15,7 +15,7 @@ include $(DEVKITPPC)/wii_rules
 # SOURCES is a list of directories containing source code
 # INCLUDES is a list of directories containing extra header files
 #---------------------------------------------------------------------------------
-TARGET		:=	$(notdir $(CURDIR))
+TARGET		:=	Q2CTFRev-SWimp
 BUILD		:=	build
 SOURCES		:=	../../../source/quake2/quake2-3.21/revol \
                 ../../../source/quake2/quake2-3.21/qcommon \

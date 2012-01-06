@@ -84,7 +84,7 @@ void setArgv (int argc, const char **argv, char *argStart, struct __argv *dol_ar
 	DCFlushRange ((void *) argStart, argSize);
 }
 
-int runDOL (const char* filename, int argc, const char** argv) {
+bool runDOL (const char* filename, int argc, const char** argv) {
 	struct stat st;
 	char filePath[MAXPATHLEN * 2];
 	int pathLen;
@@ -93,13 +93,13 @@ int runDOL (const char* filename, int argc, const char** argv) {
 
 	
 	if (stat (filename, &st) < 0) {
-		return -1;
+		return false;
 	}
 
 	if (argc <= 0 || !argv) {
 		// Construct a command line if we weren't supplied with one
 		if (!getcwd (filePath, MAXPATHLEN)) {
-			return -2;
+			return false;
 		}
 		pathLen = strlen (filePath);
 		strcpy (filePath + pathLen, filename);
@@ -110,7 +110,7 @@ int runDOL (const char* filename, int argc, const char** argv) {
 	printf("file size is %lld\n", st.st_size);
 	
 	FILE *dolFile = fopen(filename,"rb");
-	if ( dolFile == NULL ) return -3;
+	if ( dolFile == NULL ) return false;
 
 	u32 *entryPoint;
 
@@ -119,6 +119,9 @@ int runDOL (const char* filename, int argc, const char** argv) {
 		if ( loadSections( 7, dolHeader.textFileAddress, dolHeader.textMemAddress, dolHeader.textSize, dolFile ) ) {
 
 			if ( loadSections( 11, dolHeader.dataFileAddress, dolHeader.dataMemAddress, dolHeader.dataSize, dolFile ) ) {
+
+				fclose(dolFile);
+				dolFile = NULL;
 
 				entryPoint = (u32*)dolHeader.entry;
 
@@ -130,11 +133,11 @@ int runDOL (const char* filename, int argc, const char** argv) {
 
 				__lwp_thread_stopmultitasking((entrypoint)entryPoint);
 
-			} else return -7;
-		} else return -6;
-	} else return -5; 
+			}
+		}
+	} 
 
-	fclose(dolFile);
-	return -4;
+	if(dolFile != NULL) fclose(dolFile);
+	return false;
 	
 }
