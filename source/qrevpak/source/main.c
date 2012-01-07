@@ -69,13 +69,10 @@ int main(int argc, char **argv)
 	int wmPosY;
 	int wmPrevPosX;
 	int wmPrevPosY;
-	char basedir[16];
-	char xmlfname[32];
+	char basedir[MAXPATHLEN + 1];
+	char xmlfname[MAXPATHLEN + 1];
 	u32 pressed;
 	FILE* f;
-	char* bd;
-	bool FirstFound;
-	bool AllFound;
 	GameEntry* Entries;
 	int EntriesCount;
 	char** ErrorLines;
@@ -125,49 +122,9 @@ int main(int argc, char **argv)
 	wmPrevPosX = -1000;
 	wmPrevPosY = -1000;
 	fatInitDefault();
-	if(argc == 0)
+	if(getcwd(basedir, MAXPATHLEN) == 0)
 	{
-		basedir[0] = '/';
-		basedir[1] = 0;
-	} else 
-	{
-		bd = argv[0];
-		i = 0;
-		FirstFound = false;
-		AllFound = false;
-		while(i < 16)
-		{
-			if(bd[i] == 0)
-			{
-				break;
-			} else if(bd[i] == ':')
-			{
-				if(FirstFound)
-				{
-					break;
-				} else
-				{
-					FirstFound = true;
-				};
-			} else if(bd[i] == '/')
-			{
-				if(FirstFound)
-				{
-					AllFound = true;
-				};
-				break;
-			};
-			i++;
-		};
-		if(AllFound)
-		{
-			strncpy(basedir, bd, i + 1);
-			basedir[i + 1] = 0;
-		} else
-		{
-			basedir[0] = '/';
-			basedir[1] = 0;
-		};
+		strcpy(basedir, "/");
 	};
 	Entries = NULL;
 	EntryIndices = NULL;
@@ -1347,15 +1304,7 @@ int main(int argc, char **argv)
 		} else if(State == List)
 		{
 			eng = (char*)malloc(MAXPATHLEN);
-			if(getcwd(eng, MAXPATHLEN) == 0)
-			{
-				strcpy(eng, basedir);
-			};
-			if(eng[strlen(eng) - 1] != '/')
-			{
-				strcat(eng, "/");
-			};
-			strcat(eng, Entries[EntryIndices[0]].Engine);
+			strcpy(eng, Entries[EntryIndices[0]].Engine);
 			strcat(eng, ".dol");
 			runDOL(eng, 0, NULL);
 			free(eng);

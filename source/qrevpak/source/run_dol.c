@@ -105,6 +105,7 @@ bool runDOL (const char* filename, int argc, const char** argv) {
 		strcpy (filePath + pathLen, filename);
 		args[0] = filePath;
 		argv = args;
+		argc = 1;
 	}
 	
 	printf("file size is %lld\n", st.st_size);

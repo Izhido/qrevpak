@@ -96,57 +96,6 @@ mouse_event sys_mouse_event;
 
 u8 sys_previous_mouse_buttons;
 
-void Sys_GetBaseDir(int argc, char** argv)
-{
-	int i;
-	char* p;
-	qboolean FirstFound;
-	qboolean AllFound;
-
-	if(argc == 0)
-	{
-		strcpy(sys_basedir, "/");
-	} else 
-	{
-		p = argv[0];
-		i = 0;
-		FirstFound = false;
-		AllFound = false;
-		while(i < MAX_QPATH)
-		{
-			if(p[i] == 0)
-			{
-				break;
-			} else if(p[i] == ':')
-			{
-				if(FirstFound)
-				{
-					break;
-				} else
-				{
-					FirstFound = true;
-				};
-			} else if(p[i] == '/')
-			{
-				if(FirstFound)
-				{
-					AllFound = true;
-				};
-				break;
-			};
-			i++;
-		};
-		if(AllFound)
-		{
-			strncpy(sys_basedir, p, i + 1);
-			sys_basedir[i + 1] = 0;
-		} else
-		{
-			strcpy(sys_basedir, "/");
-		};
-	};
-}
-
 /*
 ===============================================================================
 
@@ -971,7 +920,10 @@ int main (int argc, char* argv[])
 		Sys_Error("Filesystem not enabled");
 	};
 
-	Sys_GetBaseDir(argc, argv);
+	if(getcwd(sys_basedir, MAX_QPATH) == 0)
+	{
+		strcpy(sys_basedir, "/");
+	};
 
 	sys_previous_time = Sys_FloatTime();
 	do 
