@@ -66,8 +66,6 @@ int sys_netinit_error;
 
 char sys_ipaddress_text[16];
 
-char sys_basedir[MAX_QPATH + 1];
-
 char sys_resolution_in_brackets[MAX_STRING_CHARS + 1];
 
 char sys_resolution_description[MAX_STRING_CHARS + 1];
@@ -1082,11 +1080,6 @@ int main (int argc, char **argv)
 	if(!fatInitDefault())
 	{
 		Sys_Error("Filesystem not enabled");
-	};
-
-	if(getcwd(sys_basedir, MAX_QPATH) == 0)
-	{
-		strcpy(sys_basedir, "/");
 	};
 
 	Sys_GetResolutionTexts();

@@ -56,8 +56,6 @@ int sys_netinit_error;
 
 char sys_ipaddress_text[16];
 
-char sys_basedir[MAX_QPATH + 1];
-
 float sys_previous_char_time;
 
 qboolean sys_current_char_count;
@@ -880,11 +878,6 @@ int main (int argc, char* argv[])
 		Sys_Error("Filesystem not enabled");
 	};
 
-	if(getcwd(sys_basedir, MAX_QPATH) == 0)
-	{
-		strcpy(sys_basedir, "/");
-	};
-
 	sys_previous_time = Sys_DoubleTime();
 	do 
 	{
@@ -906,7 +899,7 @@ int main (int argc, char* argv[])
 
 	parms.memsize = 8*1024*1024;
 	parms.membase = malloc (parms.memsize);
-	parms.basedir = sys_basedir;
+	parms.basedir = ".";
 
 	COM_InitArgv (argc, argv);
 

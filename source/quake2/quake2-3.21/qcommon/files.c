@@ -40,11 +40,6 @@ QUAKE FILESYSTEM
 */
 
 
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// New variable containing detected basedir on startup:
-extern char sys_basedir[MAX_QPATH + 1];
-// <<< FIX
-
 //
 // in memory
 //
@@ -918,11 +913,7 @@ void FS_InitFilesystem (void)
 	// basedir <path>
 	// allows the game to run from outside the data tree
 	//
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Remapping default value of "basedir" to the one found at startup:
-	//fs_basedir = Cvar_Get ("basedir", ".", CVAR_NOSET);
-	fs_basedir = Cvar_Get ("basedir", sys_basedir, CVAR_NOSET);
-// <<< FIX
+	fs_basedir = Cvar_Get ("basedir", ".", CVAR_NOSET);
 
 	//
 	// cddir <path>
