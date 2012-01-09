@@ -283,7 +283,7 @@ void Sys_Quit (void)
 	M_PrintWhite (16, 180, "reserved.\n");
 	M_PrintWhite (16, 196, "Modifications for Nintendo Wii using\n");
 	M_PrintWhite (16, 204, "devkitPPC / libogc:\n");
-	M_PrintWhite (16, 212, "(c) 2009 Heriberto Delgado.");
+	M_PrintWhite (16, 212, "(c) 2009, 2012 Heriberto Delgado.");
 	vr.x = vr.y = 0;
 	vr.width = vid.width;
 	vr.height = vid.height;

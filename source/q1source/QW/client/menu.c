@@ -1328,7 +1328,7 @@ void M_Quit_Draw (void)
 	"0All rights reserved.",
 	"1Modifications for Nintendo Wii using",
 	"1devkitPPC / libogc:",
-	"1(c) 2009 Heriberto Delgado.",
+	"1(c) 2009, 2012 Heriberto Delgado.",
 	"0Press y to exit",
 // <<< FIX
 	NULL };

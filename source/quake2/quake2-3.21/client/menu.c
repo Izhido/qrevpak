@@ -4209,7 +4209,7 @@ void M_Quit_Draw (void)
 // Extra text for the quit screen:
 	M_PrintWhite (16, h + 4,  "Modifications for Nintendo Wii using");
 	M_PrintWhite (16, h + 12, "        devkitPPC / libogc:");
-	M_PrintWhite (16, h + 20, "    (c) 2009 Heriberto Delgado.");
+	M_PrintWhite (16, h + 20, " (c) 2009, 2012 Heriberto Delgado.");
 // <<< FIX
 }
 
