@@ -1244,6 +1244,12 @@ int main(int argc, char **argv)
 			ScreenCache[i * w + j].Foreground = 30;
 			ScreenCache[i * w + j].Bold = 0;
 			ScreenCache[i * w + j].Char = 31;
+			//ScrollPosition = h - 11;
+			i = ScrollPosition + 6;
+			printf("\x1b[%d;%dH%c", i, j, 219);
+			ScreenCache[i * w + j].Foreground = 30;
+			ScreenCache[i * w + j].Bold = 0;
+			ScreenCache[i * w + j].Char = 219;
 			msg = "Wiimote=Select A=Launch";
 			i = h - 3;
 			j = w - 26;
