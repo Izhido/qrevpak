@@ -29,6 +29,8 @@ typedef enum
 	ListWait,
 	ListAPressed,
 	ListAReleased,
+	ListBPressed,
+	ListBReleased,
 	Launch,
 	Finishing,
 	Finished
@@ -59,6 +61,7 @@ typedef struct
 	bool Complete;
 	int Start;
 	int Length;
+	int EntryIndex;
 } GameEntryLocation;
 
 typedef enum
@@ -135,6 +138,8 @@ int main(int argc, char **argv)
 	int LineCount;
 	int fg;
 	int bl;
+	bool CursorHasMoved;
+	bool ScrollLatched;
 
 	VIDEO_Init();
 	WPAD_Init();
@@ -159,6 +164,10 @@ int main(int argc, char **argv)
 	wmPosY = -1000;
 	wmPrevPosX = -1000;
 	wmPrevPosY = -1000;
+	ScrollLatched = false;
+	ScrollPosition = 0;
+	SelectedEntryIndex = 0;
+	TopEntryIndex = 0;
 	fatInitDefault();
 	if(getcwd(basedir, MAXPATHLEN) == 0)
 	{
@@ -876,7 +885,7 @@ int main(int argc, char **argv)
 			for(i = 4; i < (h - 4); i++)
 			{
 				printf("\x1b[%d;5H", i);
-				for(j = 4; j < (w - 6); j++)
+				for(j = 5; j < (w - 5); j++)
 				{
 					printf(" ");
 					ScreenCache[i * w + j].Background = 46;
@@ -1212,6 +1221,7 @@ int main(int argc, char **argv)
 						};
 					};
 					EntryLocations[ei].Length = i - EntryLocations[i].Start;
+					EntryLocations[ei].EntryIndex = ei;
 					if(m == 0)
 					{
 						EntryLocations[ei].Complete = true;
@@ -1244,7 +1254,6 @@ int main(int argc, char **argv)
 			ScreenCache[i * w + j].Foreground = 30;
 			ScreenCache[i * w + j].Bold = 0;
 			ScreenCache[i * w + j].Char = 31;
-			//ScrollPosition = h - 11;
 			i = ScrollPosition + 6;
 			printf("\x1b[%d;%dH%c", i, j, 219);
 			ScreenCache[i * w + j].Foreground = 30;
@@ -1262,6 +1271,7 @@ int main(int argc, char **argv)
 				ScreenCache[i * w + j + p].Bold = 1;
 				ScreenCache[i * w + j + p].Char = msg[p];
 			};
+			ScrollLatched = false;
 			State = ListWait;
 		} else if(State == Finishing)
 		{
@@ -1729,25 +1739,59 @@ int main(int argc, char **argv)
 			{
 				State = List;
 			};
-		} else if(State == LoadingErrorAReleased)
+		} else if((State == LoadingErrorAReleased) || (State == ListBReleased))
 		{
+			free(EntryLocations);
+			EntryLocations = NULL;
+			free(EntryIndices);
+			EntryIndices = NULL;
+			free(xmlDefault);
+			xmlDefault = NULL;
+			free(xmlFromFile);
+			xmlFromFile = NULL;
 			for(i = ErrorLinesCount - 1; i >= 0; i--)
 			{
 				free(ErrorLines[i]); 
 			};
 			free(ErrorLines);
 			ErrorLines = NULL;
+			if(Entries != NULL)
+			{
+				for(i = EntriesCount - 1; i >= 0; i--)
+				{
+					free(Entries[i].Parameters); 
+					free(Entries[i].Engine); 
+					for(j = Entries[i].DescriptionCount  - 1; j >= 0; j--)
+					{
+						free(Entries[i].Description[j]); 
+					};
+					free(Entries[i].Description);
+					free(Entries[i].Name);
+				};
+				free(Entries);
+				Entries = NULL;
+			};
 			State = Start;
-		} else if(State == List)
+		} else if(State == Launch)
 		{
-			//eng = (char*)malloc(MAXPATHLEN);
-			//strcpy(eng, Entries[EntryIndices[0]].Engine);
-			//strcat(eng, ".dol");
-			//runDOL(eng, 0, NULL);
-			//free(eng);
+			eng = (char*)malloc(MAXPATHLEN);
+			strcpy(eng, Entries[EntryIndices[SelectedEntryIndex]].Engine);
+			strcat(eng, ".dol");
+			runDOL(eng, 0, NULL);
+			ErrorLinesCount = 2;
+			ErrorLines = (char**)malloc(ErrorLinesCount * sizeof(char*));
+			ErrorLines[0] = (char*)malloc(20 + strlen(eng));
+			strcpy(ErrorLines[0], "Can't launch \"");
+			strcat(ErrorLines[0], eng);
+			strcat(ErrorLines[0], "\".");
+			ErrorLines[1] = (char*)malloc(32);
+			strcpy(ErrorLines[1], "It is not possible to continue.");
+			free(eng);
+			State = LoadingError;
 		};
 		if((State != Finishing) && (State != Finished))
 		{
+			CursorHasMoved = false;
 			WPAD_IR(WPAD_CHAN_0, &wm);
 			if(wm.valid)
 			{
@@ -1758,6 +1802,7 @@ int main(int argc, char **argv)
 					wmPrevPosX = wmPosX;
 					wmPrevPosY = wmPosY;
 					printf("\x1b[40m\x1b[37;0m\x1b[%d;%dH%c", wmPosY, wmPosX, 178);
+					CursorHasMoved = true;
 				} else
 				{
 					wmPosX = (int)(wm.x * w / rmode->fbWidth);
@@ -1776,6 +1821,7 @@ int main(int argc, char **argv)
 						wmPrevPosX = wmPosX;
 						wmPrevPosY = wmPosY;
 						printf("\x1b[40m\x1b[37;0m\x1b[%d;%dH%c", wmPosY, wmPosX, 178);
+						CursorHasMoved = true;
 					};
 				};
 			} else
@@ -1794,6 +1840,32 @@ int main(int argc, char **argv)
 					wmPosX = -1000;
 					wmPosY = -1000;
 				};
+			};
+			if((wmPosX >= 5)&&(wmPosX < (w - 8))&&(wmPosY >= 5)&&(wmPosY < (h - 5)))
+			{
+				i = 0;
+				while(i < EntryIndicesCount)
+				{
+					if(EntryLocations[i].InScreen)
+					{
+						if((wmPosX >= EntryLocations[i].Start)&&(wmPosX < EntryLocations[i].Start + EntryLocations[i].Length))
+						{
+							if(SelectedEntryIndex != EntryLocations[i].EntryIndex)
+							{
+								SelectedEntryIndex = EntryLocations[i].EntryIndex;
+								State = List;
+							};
+							if((CursorHasMoved)&&(!(EntryLocations[i].Complete))&&(TopEntryIndex < EntryIndicesCount - 1))
+							{
+								TopEntryIndex++;
+								ScrollPosition = (h - 11) * TopEntryIndex / (EntryIndicesCount - 1);
+								State = List;
+							};
+							break;
+						};
+					};
+					i++;
+				}
 			};
 			WPAD_ScanPads();
 			pressed = WPAD_ButtonsHeld(0);
@@ -1814,12 +1886,22 @@ int main(int argc, char **argv)
 				} else if(State == LoadingErrorWait)
 				{
 					State = LoadingErrorAPressed;
+				} else if(State == ListWait)
+				{
+					if((wmPosX >= (w - 8))&&(wmPosX <= (w - 4))&&(wmPosY >= (ScrollPosition + 4))&&(wmPosY >= (ScrollPosition + 8)))
+					{
+						ScrollLatched = true;
+					};
+					State = ListAPressed;
 				};
 			} else if((pressed & WPAD_BUTTON_B) != 0)
 			{
 				if(State == StartWait)
 				{
 					State = StartBPressed;
+				} else if(State == ListWait)
+				{
+					State = ListBPressed;
 				};
 			};
 			if((pressed & WPAD_BUTTON_A) == 0)
@@ -1840,6 +1922,9 @@ int main(int argc, char **argv)
 				if((State == StartBPressedWait) && ((pressed & WPAD_BUTTON_A) == 0))
 				{
 					State = StartBReleased;
+				} else if(State == ListBPressed)
+				{
+					State = ListBReleased;
 				};
 			};
 		};
