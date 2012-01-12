@@ -31,6 +31,10 @@ typedef enum
 	ListAReleased,
 	ListBPressed,
 	ListBReleased,
+	ListUpPressed,
+	ListUpReleased,
+	ListDownPressed,
+	ListDownReleased,
 	Launch,
 	Finishing,
 	Finished
@@ -140,6 +144,9 @@ int main(int argc, char **argv)
 	int bl;
 	bool CursorHasMoved;
 	bool ScrollLatched;
+	int TickCount;
+	int ArrowKeysTickCount;
+	AppState DefaultListState;
 
 	VIDEO_Init();
 	WPAD_Init();
@@ -164,6 +171,8 @@ int main(int argc, char **argv)
 	wmPosY = -1000;
 	wmPrevPosX = -1000;
 	wmPrevPosY = -1000;
+	DefaultListState = ListWait;
+	ArrowKeysTickCount = 0;
 	ScrollLatched = false;
 	ScrollPosition = 0;
 	SelectedEntryIndex = 0;
@@ -180,6 +189,7 @@ int main(int argc, char **argv)
 	EntryIndices = NULL;
 	EntryIndicesCount = 0;
 	EntryLocations = NULL;
+	TickCount = 0;
 	State = Start;
 	while(State != Finished) 
 	{
@@ -1271,8 +1281,7 @@ int main(int argc, char **argv)
 				ScreenCache[i * w + j + p].Bold = 1;
 				ScreenCache[i * w + j + p].Char = msg[p];
 			};
-			ScrollLatched = false;
-			State = ListWait;
+			State = DefaultListState;
 		} else if(State == Finishing)
 		{
 			printf("\x1b[30;0m\x1b[40m\x1b[2J");
@@ -1618,6 +1627,8 @@ int main(int argc, char **argv)
 						TopEntryIndex = 0;
 						SelectedEntryIndex = 0;
 						ScrollPosition = 0;
+						ScrollLatched = false;
+						ArrowKeysTickCount = 0;
 						if(modified)
 						{
 							f = fopen(xmlfname, "wb");
@@ -1772,6 +1783,40 @@ int main(int argc, char **argv)
 				Entries = NULL;
 			};
 			State = Start;
+		} else if(State == ListUpPressed)
+		{
+			if(((ArrowKeysTickCount == 0) || (ArrowKeysTickCount == 30) || ((ArrowKeysTickCount > 30) && ((ArrowKeysTickCount % 6) == 0))) && (SelectedEntryIndex > 0))
+			{
+				SelectedEntryIndex--;
+				if(SelectedEntryIndex < TopEntryIndex)
+				{
+					TopEntryIndex--;
+					ScrollPosition = (h - 11) * TopEntryIndex / (EntryIndicesCount - 1);
+				};
+				State = List;
+			};
+			ArrowKeysTickCount++;
+		} else if(State == ListDownPressed)
+		{
+			if(((ArrowKeysTickCount == 0) || (ArrowKeysTickCount == 30) || ((ArrowKeysTickCount > 30) && ((ArrowKeysTickCount % 6) == 0))) && (SelectedEntryIndex < (EntryIndicesCount - 1)))
+			{
+				if(EntryLocations[SelectedEntryIndex].Complete)
+				{
+					SelectedEntryIndex++;
+					if(!(EntryLocations[SelectedEntryIndex].Complete))
+					{
+						TopEntryIndex++;
+						ScrollPosition = (h - 11) * TopEntryIndex / (EntryIndicesCount - 1);
+					};
+					State = List;
+				}
+			};
+			ArrowKeysTickCount++;
+		} else if((State == ListUpReleased) || (State == ListDownReleased))
+		{
+			ArrowKeysTickCount = 0;
+			DefaultListState = ListWait;
+			State = DefaultListState;
 		} else if(State == Launch)
 		{
 			eng = (char*)malloc(MAXPATHLEN);
@@ -1841,7 +1886,7 @@ int main(int argc, char **argv)
 					wmPosY = -1000;
 				};
 			};
-			if((wmPosX >= 5)&&(wmPosX < (w - 8))&&(wmPosY >= 5)&&(wmPosY < (h - 5)))
+			if((State == ListWait)&&(!ScrollLatched)&&(wmPosX >= 5)&&(wmPosX < (w - 8))&&(wmPosY >= 5)&&(wmPosY < (h - 5)))
 			{
 				i = 0;
 				while(i < EntryIndicesCount)
@@ -1888,7 +1933,7 @@ int main(int argc, char **argv)
 					State = LoadingErrorAPressed;
 				} else if(State == ListWait)
 				{
-					if((wmPosX >= (w - 8))&&(wmPosX <= (w - 4))&&(wmPosY >= (ScrollPosition + 4))&&(wmPosY >= (ScrollPosition + 8)))
+					if((wmPosX >= (w - 8))&&(wmPosX <= (w - 4))&&(wmPosY >= 5)&&(wmPosY >= (w - 5)))
 					{
 						ScrollLatched = true;
 					};
@@ -1899,9 +1944,23 @@ int main(int argc, char **argv)
 				if(State == StartWait)
 				{
 					State = StartBPressed;
-				} else if(State == ListWait)
+				} else if((State == ListWait)&&(!ScrollLatched))
 				{
 					State = ListBPressed;
+				};
+			} else if((pressed & WPAD_BUTTON_UP) != 0)
+			{
+				if((State == ListWait)&&(!ScrollLatched))
+				{
+					DefaultListState = ListUpPressed;
+					State = DefaultListState;
+				};
+			} else if((pressed & WPAD_BUTTON_DOWN) != 0)
+			{
+				if((State == ListWait)&&(!ScrollLatched))
+				{
+					DefaultListState = ListDownPressed;
+					State = DefaultListState;
 				};
 			};
 			if((pressed & WPAD_BUTTON_A) == 0)
@@ -1915,6 +1974,9 @@ int main(int argc, char **argv)
 				} else if(State == LoadingErrorAPressedWait)
 				{
 					State = LoadingErrorAReleased;
+				} else if(State == ListAPressed)
+				{
+					ScrollLatched = false;
 				};
 			};
 			if((pressed & WPAD_BUTTON_B) == 0)
@@ -1927,8 +1989,41 @@ int main(int argc, char **argv)
 					State = ListBReleased;
 				};
 			};
+			if((pressed & WPAD_BUTTON_UP) == 0)
+			{
+				if(State == ListUpPressed)
+				{
+					State = ListUpReleased;
+				};
+			};
+			if((pressed & WPAD_BUTTON_DOWN) == 0)
+			{
+				if(State == ListDownPressed)
+				{
+					State = ListDownReleased;
+				};
+			};
+			if((State == ListWait)&&(ScrollLatched)&&(wmPosX >= (w - 8))&&(wmPosX <= (w - 4))&&(wmPosY >= 5)&&(wmPosY >= (w - 5)))
+			{
+				i = wmPosY - 6;
+				if(i < 0)
+				{
+					i = 0;
+				};
+				if(i > (h - 11))
+				{
+					i = h - 11;
+				};
+				if(ScrollPosition != i)
+				{
+					ScrollPosition = i;
+					TopEntryIndex = (EntryIndicesCount - 1) * ScrollPosition / (h - 11);
+					State = List;
+				};
+			};
 		};
 		VIDEO_WaitVSync();
+		TickCount++;
 	};
 	free(EntryLocations);
 	free(EntryIndices);
