@@ -108,7 +108,7 @@ bool runDOL (const char* filename, int argc, const char** argv) {
 		argc = 1;
 	}
 	
-	printf("file size is %lld\n", st.st_size);
+	//printf("file size is %lld\n", st.st_size);
 	
 	FILE *dolFile = fopen(filename,"rb");
 	if ( dolFile == NULL ) return false;

@@ -1036,38 +1036,41 @@ int main(int argc, char **argv)
 					ScreenCache[i * w + j].Bold = bl;
 					ScreenCache[i * w + j].Char = c;
 				};
-				if(ei == TopEntryIndex)
+				if((i == 4) || (i == (h - 5)))
 				{
-					if(ei == SelectedEntryIndex)
+					if(ei == TopEntryIndex)
+					{
+						if(ei == SelectedEntryIndex)
+						{
+							c = 187;
+						} else
+						{
+							c = 191;
+						};
+					} else if(ei == EntryIndicesCount)
+					{
+						if(ei == SelectedEntryIndex + 1)
+						{
+							c = 188;
+						} else
+						{
+							c = 217;
+						};
+					} else if(ei == SelectedEntryIndex)
 					{
 						c = 187;
-					} else
-					{
-						c = 191;
-					};
-				} else if(ei == EntryIndicesCount)
-				{
-					if(ei == SelectedEntryIndex + 1)
+					} else if(ei == SelectedEntryIndex + 1)
 					{
 						c = 188;
 					} else
 					{
-						c = 217;
+						c = 180;
 					};
-				} else if(ei == SelectedEntryIndex)
-				{
-					c = 187;
-				} else if(ei == SelectedEntryIndex + 1)
-				{
-					c = 188;
-				} else
-				{
-					c = 180;
+					printf("\x1b[%d;%dH%c", i, j, c); 
+					ScreenCache[i * w + j].Foreground = fg;
+					ScreenCache[i * w + j].Bold = bl;
+					ScreenCache[i * w + j].Char = c;
 				};
-				printf("\x1b[%d;%dH%c", i, j, c); 
-				ScreenCache[i * w + j].Foreground = fg;
-				ScreenCache[i * w + j].Bold = bl;
-				ScreenCache[i * w + j].Char = c;
 				i++;
 				if(ei == SelectedEntryIndex)
 				{
@@ -1175,16 +1178,20 @@ int main(int argc, char **argv)
 							{
 								c = 179;
 							};
-							printf("\x1b[%d;5H%c\x1b[%d;21H%c\x1b[%d;%dH%c", i, c, i, 179, i, w - 6, c);
+							printf("\x1b[%d;5H%c\x1b[%d;21H%c", i, c, i, 179);
 							ScreenCache[i * w + 5].Foreground = fg;
 							ScreenCache[i * w + 5].Bold = bl;
 							ScreenCache[i * w + 5].Char = c;
 							ScreenCache[i * w + 21].Foreground = fg;
 							ScreenCache[i * w + 21].Bold = bl;
 							ScreenCache[i * w + 21].Char = 179;
-							ScreenCache[i * w + w - 6].Foreground = fg;
-							ScreenCache[i * w + w - 6].Bold = bl;
-							ScreenCache[i * w + w - 6].Char = c;
+							if((i == 4) || (i == (h - 5)))
+							{
+								printf("\x1b[%d;%dH%c", i, w - 6, c);
+								ScreenCache[i * w + w - 6].Foreground = fg;
+								ScreenCache[i * w + w - 6].Bold = bl;
+								ScreenCache[i * w + w - 6].Char = c;
+							};
 							if(p > 0)
 							{
 								if(p <= LineCount)
@@ -1212,7 +1219,7 @@ int main(int argc, char **argv)
 										ScreenCache[i * w + j + 23].Foreground = fg;
 										ScreenCache[i * w + j + 23].Bold = bl;
 										ScreenCache[i * w + j + 23].Char = c;
-										if(j < (w - 6))
+										if(j < (w - 7))
 										{
 											j++;
 										} else
@@ -1230,7 +1237,7 @@ int main(int argc, char **argv)
 							break;
 						};
 					};
-					EntryLocations[ei].Length = i - EntryLocations[i].Start;
+					EntryLocations[ei].Length = i - EntryLocations[ei].Start;
 					EntryLocations[ei].EntryIndex = ei;
 					if(m == 0)
 					{
@@ -1760,12 +1767,15 @@ int main(int argc, char **argv)
 			xmlDefault = NULL;
 			free(xmlFromFile);
 			xmlFromFile = NULL;
-			for(i = ErrorLinesCount - 1; i >= 0; i--)
+			if(ErrorLines != NULL)
 			{
-				free(ErrorLines[i]); 
+				for(i = ErrorLinesCount - 1; i >= 0; i--)
+				{
+					free(ErrorLines[i]); 
+				};
+				free(ErrorLines);
+				ErrorLines = NULL;
 			};
-			free(ErrorLines);
-			ErrorLines = NULL;
 			if(Entries != NULL)
 			{
 				for(i = EntriesCount - 1; i >= 0; i--)
@@ -1886,14 +1896,14 @@ int main(int argc, char **argv)
 					wmPosY = -1000;
 				};
 			};
-			if((State == ListWait)&&(!ScrollLatched)&&(wmPosX >= 5)&&(wmPosX < (w - 8))&&(wmPosY >= 5)&&(wmPosY < (h - 5)))
+			if((State == ListWait)&&(!ScrollLatched)&&(wmPosX >= 5)&&(wmPosX < (w - 8))&&(wmPosY >= 4)&&(wmPosY < (h - 4)))
 			{
 				i = 0;
 				while(i < EntryIndicesCount)
 				{
 					if(EntryLocations[i].InScreen)
 					{
-						if((wmPosX >= EntryLocations[i].Start)&&(wmPosX < EntryLocations[i].Start + EntryLocations[i].Length))
+						if((wmPosY >= EntryLocations[i].Start)&&(wmPosY < EntryLocations[i].Start + EntryLocations[i].Length))
 						{
 							if(SelectedEntryIndex != EntryLocations[i].EntryIndex)
 							{
@@ -1933,7 +1943,7 @@ int main(int argc, char **argv)
 					State = LoadingErrorAPressed;
 				} else if(State == ListWait)
 				{
-					if((wmPosX >= (w - 8))&&(wmPosX <= (w - 4))&&(wmPosY >= 5)&&(wmPosY >= (w - 5)))
+					if((wmPosX >= (w - 8))&&(wmPosX <= (w - 4))&&(wmPosY >= 4)&&(wmPosY < (h - 4)))
 					{
 						ScrollLatched = true;
 					};
@@ -1976,7 +1986,15 @@ int main(int argc, char **argv)
 					State = LoadingErrorAReleased;
 				} else if(State == ListAPressed)
 				{
-					ScrollLatched = false;
+					if(ScrollLatched)
+					{
+						ScrollLatched = false;
+						DefaultListState = ListWait;
+						State = DefaultListState;
+					} else
+					{
+						State = Launch;
+					};
 				};
 			};
 			if((pressed & WPAD_BUTTON_B) == 0)
@@ -2003,7 +2021,7 @@ int main(int argc, char **argv)
 					State = ListDownReleased;
 				};
 			};
-			if((State == ListWait)&&(ScrollLatched)&&(wmPosX >= (w - 8))&&(wmPosX <= (w - 4))&&(wmPosY >= 5)&&(wmPosY >= (w - 5)))
+			if((State == ListAPressed)&&(ScrollLatched)&&(wmPosX >= (w - 8))&&(wmPosX <= (w - 4))&&(wmPosY >= 4)&&(wmPosY < (h - 4)))
 			{
 				i = wmPosY - 6;
 				if(i < 0)
