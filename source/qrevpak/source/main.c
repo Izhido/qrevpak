@@ -35,6 +35,10 @@ typedef enum
 	ListUpReleased,
 	ListDownPressed,
 	ListDownReleased,
+	ListScrollUpPressed,
+	ListScrollUpReleased,
+	ListScrollDownPressed,
+	ListScrollDownReleased,
 	Launch,
 	Finishing,
 	Finished
@@ -141,12 +145,13 @@ int main(int argc, char **argv)
 	LineData* Lines;
 	int LineCount;
 	int fg;
+	int bg;
 	int bl;
 	bool CursorHasMoved;
 	bool ScrollLatched;
 	int TickCount;
-	int ArrowKeysTickCount;
 	AppState DefaultListState;
+	bool KeyInverted;
 
 	VIDEO_Init();
 	WPAD_Init();
@@ -172,11 +177,12 @@ int main(int argc, char **argv)
 	wmPrevPosX = -1000;
 	wmPrevPosY = -1000;
 	DefaultListState = ListWait;
-	ArrowKeysTickCount = 0;
+	TickCount = 0;
 	ScrollLatched = false;
 	ScrollPosition = 0;
 	SelectedEntryIndex = 0;
 	TopEntryIndex = 0;
+	KeyInverted = false;
 	fatInitDefault();
 	if(getcwd(basedir, MAXPATHLEN) == 0)
 	{
@@ -189,7 +195,6 @@ int main(int argc, char **argv)
 	EntryIndices = NULL;
 	EntryIndicesCount = 0;
 	EntryLocations = NULL;
-	TickCount = 0;
 	State = Start;
 	while(State != Finished) 
 	{
@@ -1635,7 +1640,7 @@ int main(int argc, char **argv)
 						SelectedEntryIndex = 0;
 						ScrollPosition = 0;
 						ScrollLatched = false;
-						ArrowKeysTickCount = 0;
+						TickCount = 0;
 						if(modified)
 						{
 							f = fopen(xmlfname, "wb");
@@ -1793,22 +1798,33 @@ int main(int argc, char **argv)
 				Entries = NULL;
 			};
 			State = Start;
+		} else if(State == ListAReleased)
+		{
+			if(ScrollLatched)
+			{
+				ScrollLatched = false;
+				DefaultListState = ListWait;
+				State = DefaultListState;
+			} else
+			{
+				State = Launch;
+			};
 		} else if(State == ListUpPressed)
 		{
-			if(((ArrowKeysTickCount == 0) || (ArrowKeysTickCount == 30) || ((ArrowKeysTickCount > 30) && ((ArrowKeysTickCount % 6) == 0))) && (SelectedEntryIndex > 0))
+			if(((TickCount == 0) || (TickCount == 30) || ((TickCount > 30) && ((TickCount % 6) == 0))) && (SelectedEntryIndex > 0))
 			{
 				SelectedEntryIndex--;
 				if(SelectedEntryIndex < TopEntryIndex)
 				{
 					TopEntryIndex--;
-					ScrollPosition = (h - 11) * TopEntryIndex / (EntryIndicesCount - 1);
+					ScrollPosition = (h - 12) * TopEntryIndex / (EntryIndicesCount - 1);
 				};
 				State = List;
 			};
-			ArrowKeysTickCount++;
+			TickCount++;
 		} else if(State == ListDownPressed)
 		{
-			if(((ArrowKeysTickCount == 0) || (ArrowKeysTickCount == 30) || ((ArrowKeysTickCount > 30) && ((ArrowKeysTickCount % 6) == 0))) && (SelectedEntryIndex < (EntryIndicesCount - 1)))
+			if(((TickCount == 0) || (TickCount == 30) || ((TickCount > 30) && ((TickCount % 6) == 0))) && (SelectedEntryIndex < (EntryIndicesCount - 1)))
 			{
 				if(EntryLocations[SelectedEntryIndex].Complete)
 				{
@@ -1816,15 +1832,93 @@ int main(int argc, char **argv)
 					if(!(EntryLocations[SelectedEntryIndex].Complete))
 					{
 						TopEntryIndex++;
-						ScrollPosition = (h - 11) * TopEntryIndex / (EntryIndicesCount - 1);
+						ScrollPosition = (h - 12) * TopEntryIndex / (EntryIndicesCount - 1);
 					};
 					State = List;
 				}
 			};
-			ArrowKeysTickCount++;
+			TickCount++;
 		} else if((State == ListUpReleased) || (State == ListDownReleased))
 		{
-			ArrowKeysTickCount = 0;
+			TickCount = 0;
+			DefaultListState = ListWait;
+			State = DefaultListState;
+		} else if(State == ListScrollUpPressed)
+		{
+			if(((TickCount == 0) || (TickCount == 30) || ((TickCount > 30) && ((TickCount % 6) == 0))) && (ScrollPosition > 0) && (wmPosX >= (w - 8)) && (wmPosX <= (w - 4)) && (wmPosY >= 4) && (wmPosY < 7))
+			{
+				ScrollPosition--;
+				TopEntryIndex = (EntryIndicesCount - 1) * ScrollPosition / (h - 12);
+				fg = ScreenCache[5 * w + w - 6].Foreground;
+				bg = ScreenCache[5 * w + w - 6].Background;
+				c = ScreenCache[5 * w + w - 6].Char;
+				i = fg - 30;
+				j = bg - 40;
+				fg = 30 + j;
+				bg = 40 + i;
+				printf("\x1b[%dm\x1b[%d;0m\x1b[%d;%dH%c", fg, bg, 5, w - 6, c);
+				ScreenCache[5 * w + w - 6].Foreground = fg;
+				ScreenCache[5 * w + w - 6].Background = bg;
+				KeyInverted = !KeyInverted;
+				State = List;
+			};
+			TickCount++;
+		} else if(State == ListScrollDownPressed)
+		{
+			if(((TickCount == 0) || (TickCount == 30) || ((TickCount > 30) && ((TickCount % 6) == 0))) && (ScrollPosition < (h - 12)) && (wmPosX >= (w - 8)) && (wmPosX <= (w - 4)) && (wmPosY >= (h - 7)) && (wmPosY < (h - 4)))
+			{
+				ScrollPosition++;
+				TopEntryIndex = (EntryIndicesCount - 1) * ScrollPosition / (h - 12);
+				fg = ScreenCache[(h - 6) * w + w - 6].Foreground;
+				bg = ScreenCache[(h - 6) * w + w - 6].Background;
+				c = ScreenCache[(h - 6) * w + w - 6].Char;
+				i = fg - 30;
+				j = bg - 40;
+				fg = 30 + j;
+				bg = 40 + i;
+				printf("\x1b[%dm\x1b[%d;0m\x1b[%d;%dH%c", fg, bg, h - 6, w - 6, c);
+				ScreenCache[(h - 6) * w + w - 6].Foreground = fg;
+				ScreenCache[(h - 6) * w + w - 6].Background = bg;
+				KeyInverted = !KeyInverted;
+				State = List;
+			};
+			TickCount++;
+		} else if(State == ListScrollUpReleased)
+		{
+			if(KeyInverted)
+			{
+				fg = ScreenCache[5 * w + w - 6].Foreground;
+				bg = ScreenCache[5 * w + w - 6].Background;
+				c = ScreenCache[5 * w + w - 6].Char;
+				i = fg - 30;
+				j = bg - 40;
+				fg = 30 + j;
+				bg = 40 + i;
+				printf("\x1b[%dm\x1b[%d;0m\x1b[%d;%dH%c", fg, bg, 5, w - 6, c);
+				ScreenCache[5 * w + w - 6].Foreground = fg;
+				ScreenCache[5 * w + w - 6].Background = bg;
+				KeyInverted = !KeyInverted;
+			};
+			TickCount = 0;
+			DefaultListState = ListWait;
+			State = DefaultListState;
+		} else if(State == ListScrollDownReleased)
+		{
+			if(KeyInverted)
+			{
+				fg = ScreenCache[(h - 6) * w + w - 6].Foreground;
+				bg = ScreenCache[(h - 6) * w + w - 6].Background;
+				c = ScreenCache[(h - 6) * w + w - 6].Char;
+				i = fg - 30;
+				j = bg - 40;
+				fg = 30 + j;
+				bg = 40 + i;
+				printf("\x1b[%dm\x1b[%d;0m\x1b[%d;%dH%c", fg, bg, h - 6, w - 6, c);
+				ScreenCache[(h - 6) * w + w - 6].Foreground = fg;
+				ScreenCache[(h - 6) * w + w - 6].Background = bg;
+				KeyInverted = !KeyInverted;
+			}
+			TickCount = 0;
 			DefaultListState = ListWait;
 			State = DefaultListState;
 		} else if(State == Launch)
@@ -1913,7 +2007,7 @@ int main(int argc, char **argv)
 							if((CursorHasMoved)&&(!(EntryLocations[i].Complete))&&(TopEntryIndex < EntryIndicesCount - 1))
 							{
 								TopEntryIndex++;
-								ScrollPosition = (h - 11) * TopEntryIndex / (EntryIndicesCount - 1);
+								ScrollPosition = (h - 12) * TopEntryIndex / (EntryIndicesCount - 1);
 								State = List;
 							};
 							break;
@@ -1943,11 +2037,25 @@ int main(int argc, char **argv)
 					State = LoadingErrorAPressed;
 				} else if(State == ListWait)
 				{
-					if((wmPosX >= (w - 8))&&(wmPosX <= (w - 4))&&(wmPosY >= 4)&&(wmPosY < (h - 4)))
+					if((wmPosX >= (w - 8))&&(wmPosX <= (w - 4)))
 					{
-						ScrollLatched = true;
+						if((wmPosY >= 7)&&(wmPosY < (h - 7)))
+						{
+							ScrollLatched = true;
+							State = ListAPressed;
+						} else if((wmPosY >= 4)&&(wmPosY < 7))
+						{
+							DefaultListState = ListScrollUpPressed;
+							State = DefaultListState;
+						} else if((wmPosY >= (h - 7))&&(wmPosY < (h - 4)))
+						{
+							DefaultListState = ListScrollDownPressed;
+							State = DefaultListState;
+						}
+					} else
+					{
+						State = ListAPressed;
 					};
-					State = ListAPressed;
 				};
 			} else if((pressed & WPAD_BUTTON_B) != 0)
 			{
@@ -1986,15 +2094,13 @@ int main(int argc, char **argv)
 					State = LoadingErrorAReleased;
 				} else if(State == ListAPressed)
 				{
-					if(ScrollLatched)
-					{
-						ScrollLatched = false;
-						DefaultListState = ListWait;
-						State = DefaultListState;
-					} else
-					{
-						State = Launch;
-					};
+					State = ListAReleased;
+				} else if(State == ListScrollUpPressed)
+				{
+					State = ListScrollUpReleased;
+				} else if(State == ListScrollDownPressed)
+				{
+					State = ListScrollDownReleased;
 				};
 			};
 			if((pressed & WPAD_BUTTON_B) == 0)
@@ -2028,20 +2134,19 @@ int main(int argc, char **argv)
 				{
 					i = 0;
 				};
-				if(i > (h - 11))
+				if(i > (h - 12))
 				{
-					i = h - 11;
+					i = h - 12;
 				};
 				if(ScrollPosition != i)
 				{
 					ScrollPosition = i;
-					TopEntryIndex = (EntryIndicesCount - 1) * ScrollPosition / (h - 11);
+					TopEntryIndex = (EntryIndicesCount - 1) * ScrollPosition / (h - 12);
 					State = List;
 				};
 			};
 		};
 		VIDEO_WaitVSync();
-		TickCount++;
 	};
 	free(EntryLocations);
 	free(EntryIndices);
