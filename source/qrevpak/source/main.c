@@ -151,7 +151,7 @@ int main(int argc, char **argv)
 	bool ScrollLatched;
 	int TickCount;
 	AppState DefaultListState;
-	bool KeyInverted;
+	bool ScrollButtonInverted;
 
 	VIDEO_Init();
 	WPAD_Init();
@@ -182,7 +182,7 @@ int main(int argc, char **argv)
 	ScrollPosition = 0;
 	SelectedEntryIndex = 0;
 	TopEntryIndex = 0;
-	KeyInverted = false;
+	ScrollButtonInverted = false;
 	fatInitDefault();
 	if(getcwd(basedir, MAXPATHLEN) == 0)
 	{
@@ -1258,13 +1258,26 @@ int main(int argc, char **argv)
 					break;
 				};
 			};
-			printf("\x1b[30;0m");
+			if((ScrollButtonInverted) && (DefaultListState == ListScrollUpPressed))
+			{
+				printf("\x1b[40m\x1b[36;0m");
+				bg = 40;
+			} else
+			{
+				printf("\x1b[30;0m");
+				bg = 46;
+			};
 			i = 5;
 			j = w - 6;
 			printf("\x1b[%d;%dH%c", i, j, 30);
 			ScreenCache[i * w + j].Foreground = 30;
+			ScreenCache[i * w + j].Background = bg;
 			ScreenCache[i * w + j].Bold = 0;
 			ScreenCache[i * w + j].Char = 30;
+			if((ScrollButtonInverted) && (DefaultListState == ListScrollUpPressed))
+			{
+				printf("\x1b[46m\x1b[30;0m");
+			};
 			for(i++; i < (h - 6); i++)
 			{
 				printf("\x1b[%d;%dH%c", i, j, 176);
@@ -1272,10 +1285,23 @@ int main(int argc, char **argv)
 				ScreenCache[i * w + j].Bold = 0;
 				ScreenCache[i * w + j].Char = 176;
 			};
+			if((ScrollButtonInverted) && (DefaultListState == ListScrollDownPressed))
+			{
+				printf("\x1b[40m\x1b[36;0m");
+				bg = 40;
+			} else
+			{
+				bg = 46;
+			};
 			printf("\x1b[%d;%dH%c", i, j, 31);
 			ScreenCache[i * w + j].Foreground = 30;
+			ScreenCache[i * w + j].Background = bg;
 			ScreenCache[i * w + j].Bold = 0;
 			ScreenCache[i * w + j].Char = 31;
+			if((ScrollButtonInverted) && (DefaultListState == ListScrollDownPressed))
+			{
+				printf("\x1b[46m\x1b[30;0m");
+			};
 			i = ScrollPosition + 6;
 			printf("\x1b[%d;%dH%c", i, j, 219);
 			ScreenCache[i * w + j].Foreground = 30;
@@ -1294,6 +1320,159 @@ int main(int argc, char **argv)
 				ScreenCache[i * w + j + p].Char = msg[p];
 			};
 			State = DefaultListState;
+		} else if(State == Launch)
+		{
+			m = strlen(Entries[EntryIndices[SelectedEntryIndex]].Name) + 14;
+			printf("\x1b[30;0m\x1b[44m");
+			for(i = (int)(h / 2) - 1; i < (h / 2) + 2; i++)
+			{
+				j = (int)(w / 2) - ((m / 2) + 1);
+				printf("\x1b[%d;%dH", i, j);
+				for(; j < (int)(w / 2) + ((m / 2) + 1); j++)
+				{
+					printf(" ");
+					ScreenCache[i * w + j].Foreground = 30;
+					ScreenCache[i * w + j].Background = 44;
+					ScreenCache[i * w + j].Bold = 0;
+					ScreenCache[i * w + j].Char = 32;
+				};
+			};
+			i = (int)(h / 2) - 1;
+			j = (int)(w / 2) - ((m / 2) + 1);
+			printf("\x1b[37;1m\x1b[%d;%dH%c\x1b[%d;%dH", i, j, 201, i, j + 1);
+			ScreenCache[i * w + j].Foreground = 37;
+			ScreenCache[i * w + j].Bold = 1;
+			ScreenCache[i * w + j].Char = 201;
+			for(j = j + 1; j < (int)(w / 2) - 5; j++)
+			{
+				printf("%c", 205);
+				ScreenCache[i * w + j].Foreground = 37;
+				ScreenCache[i * w + j].Bold = 1;
+				ScreenCache[i * w + j].Char = 205;
+			};
+			printf("\x1b[%d;%dH%c", i, j, 181); 
+			ScreenCache[i * w + j].Foreground = 37;
+			ScreenCache[i * w + j].Bold = 1;
+			ScreenCache[i * w + j].Char = 181;
+			j++;
+			msg = "Launching";
+			printf("\x1b[%d;%dH%s", i, j, msg);
+			l = strlen(msg);
+			for(p = 0; p < l; p++)
+			{
+				ScreenCache[i * w + j + p].Foreground = 37;
+				ScreenCache[i * w + j + p].Bold = 1;
+				ScreenCache[i * w + j + p].Char = msg[p];
+			};
+			j = j + strlen(msg);
+			printf("\x1b[%d;%dH%c", i, j, 198); 
+			ScreenCache[i * w + j].Foreground = 37;
+			ScreenCache[i * w + j].Bold = 1;
+			ScreenCache[i * w + j].Char = 198;
+			for(j = j + 1; j < (int)(w / 2) + (m / 2); j++)
+			{
+				printf("%c", 205);
+				ScreenCache[i * w + j].Foreground = 37;
+				ScreenCache[i * w + j].Bold = 1;
+				ScreenCache[i * w + j].Char = 205;
+			};
+			printf("\x1b[%d;%dH%c", i, j, 187); 
+			ScreenCache[i * w + j].Foreground = 37;
+			ScreenCache[i * w + j].Bold = 1;
+			ScreenCache[i * w + j].Char = 187;
+			i = (int)(h / 2) + 1;
+			j = (int)(w / 2) - ((m / 2) + 1);
+			printf("\x1b[%d;%dH%c\x1b[%d;%dH", i, j, 200, i, j + 1);
+			ScreenCache[i * w + j].Foreground = 37;
+			ScreenCache[i * w + j].Bold = 1;
+			ScreenCache[i * w + j].Char = 200;
+			for(j = j + 1; j < (int)(w / 2) + (m / 2); j++)
+			{
+				printf("%c", 205);
+				ScreenCache[i * w + j].Foreground = 37;
+				ScreenCache[i * w + j].Bold = 1;
+				ScreenCache[i * w + j].Char = 205;
+			};
+			printf("\x1b[%d;%dH%c", i, j, 188); 
+			ScreenCache[i * w + j].Foreground = 37;
+			ScreenCache[i * w + j].Bold = 1;
+			ScreenCache[i * w + j].Char = 188;
+			i = (int)(h / 2);
+			j = (int)(w / 2) - ((m / 2) + 1);
+			printf("\x1b[%d;%dH%c", i, j, 186);
+			ScreenCache[i * w + j].Foreground = 37;
+			ScreenCache[i * w + j].Bold = 1;
+			ScreenCache[i * w + j].Char = 186;
+			j = j + ((m / 2) + 1) + ((m / 2) + 1) - 1;
+			printf("\x1b[%d;%dH%c", i, j, 186);
+			ScreenCache[i * w + j].Foreground = 37;
+			ScreenCache[i * w + j].Bold = 1;
+			ScreenCache[i * w + j].Char = 186;
+			msg = "Launching ";
+			j = (int)(w / 2) - (m / 2);
+			printf("\x1b[%d;%dH%s", i, j, msg);
+			l = strlen(msg);
+			for(p = 0; p < l; p++)
+			{
+				ScreenCache[i * w + j + p].Foreground = 37;
+				ScreenCache[i * w + j + p].Bold = 1;
+				ScreenCache[i * w + j + p].Char = msg[p];
+			};
+			j += p;
+			msg = Entries[EntryIndices[SelectedEntryIndex]].Name;
+			printf("\x1b[%d;%dH%s", i, j, msg);
+			l = strlen(msg);
+			for(p = 0; p < l; p++)
+			{
+				ScreenCache[i * w + j + p].Foreground = 37;
+				ScreenCache[i * w + j + p].Bold = 1;
+				ScreenCache[i * w + j + p].Char = msg[p];
+			};
+			j += p;
+			msg = "...";
+			printf("\x1b[%d;%dH%s", i, j, msg);
+			l = strlen(msg);
+			for(p = 0; p < l; p++)
+			{
+				ScreenCache[i * w + j + p].Foreground = 37;
+				ScreenCache[i * w + j + p].Bold = 1;
+				ScreenCache[i * w + j + p].Char = msg[p];
+			};
+			i = (int)(h / 2) + 2;
+			j = (int)(w / 2) - (m / 2);
+			printf("\x1b[46m\x1b[30;0m\x1b[%d;%dH", i, j);
+			for(; j < (int)(w / 2) + ((m / 2) + 2); j++)
+			{
+				printf("%c", 223);
+				ScreenCache[i * w + j].Foreground = 30;
+				ScreenCache[i * w + j].Background = 46;
+				ScreenCache[i * w + j].Char = 223;
+			};
+			j--;
+			i = (int)(h / 2) - 1;
+			printf("\x1b[%d;%dH%c", i, j, 220);
+			ScreenCache[i * w + j].Foreground = 30;
+			ScreenCache[i * w + j].Background = 46;
+			ScreenCache[i * w + j].Char = 220;
+			for(i++; i < (int)(h / 2) + 2; i++)
+			{
+				printf("\x1b[%d;%dH%c", i, j, 219);
+				ScreenCache[i * w + j].Foreground = 30;
+				ScreenCache[i * w + j].Background = 44;
+				ScreenCache[i * w + j].Char = 219;
+			};
+			msg = "                  ";
+			i = h - 3;
+			j = w - 21;
+			printf("\x1b[40m\x1b[30;0m\x1b[%d;%dH%s", i, j, msg);
+			l = strlen(msg);
+			for(p = 0; p < l; p++)
+			{
+				ScreenCache[i * w + j + p].Foreground = 30;
+				ScreenCache[i * w + j + p].Background = 40;
+				ScreenCache[i * w + j + p].Bold = 0;
+				ScreenCache[i * w + j + p].Char = msg[p];
+			};
 		} else if(State == Finishing)
 		{
 			printf("\x1b[30;0m\x1b[40m\x1b[2J");
@@ -1817,7 +1996,7 @@ int main(int argc, char **argv)
 				if(SelectedEntryIndex < TopEntryIndex)
 				{
 					TopEntryIndex--;
-					ScrollPosition = (h - 12) * TopEntryIndex / (EntryIndicesCount - 1);
+					ScrollPosition = (h - 13) * TopEntryIndex / (EntryIndicesCount - 1);
 				};
 				State = List;
 			};
@@ -1832,7 +2011,7 @@ int main(int argc, char **argv)
 					if(!(EntryLocations[SelectedEntryIndex].Complete))
 					{
 						TopEntryIndex++;
-						ScrollPosition = (h - 12) * TopEntryIndex / (EntryIndicesCount - 1);
+						ScrollPosition = (h - 13) * TopEntryIndex / (EntryIndicesCount - 1);
 					};
 					State = List;
 				}
@@ -1848,79 +2027,33 @@ int main(int argc, char **argv)
 			if(((TickCount == 0) || (TickCount == 30) || ((TickCount > 30) && ((TickCount % 6) == 0))) && (ScrollPosition > 0) && (wmPosX >= (w - 8)) && (wmPosX <= (w - 4)) && (wmPosY >= 4) && (wmPosY < 7))
 			{
 				ScrollPosition--;
-				TopEntryIndex = (EntryIndicesCount - 1) * ScrollPosition / (h - 12);
-				fg = ScreenCache[5 * w + w - 6].Foreground;
-				bg = ScreenCache[5 * w + w - 6].Background;
-				c = ScreenCache[5 * w + w - 6].Char;
-				i = fg - 30;
-				j = bg - 40;
-				fg = 30 + j;
-				bg = 40 + i;
-				printf("\x1b[%dm\x1b[%d;0m\x1b[%d;%dH%c", fg, bg, 5, w - 6, c);
-				ScreenCache[5 * w + w - 6].Foreground = fg;
-				ScreenCache[5 * w + w - 6].Background = bg;
-				KeyInverted = !KeyInverted;
+				TopEntryIndex = (EntryIndicesCount - 1) * ScrollPosition / (h - 13);
+				ScrollButtonInverted = !ScrollButtonInverted;
 				State = List;
 			};
 			TickCount++;
 		} else if(State == ListScrollDownPressed)
 		{
-			if(((TickCount == 0) || (TickCount == 30) || ((TickCount > 30) && ((TickCount % 6) == 0))) && (ScrollPosition < (h - 12)) && (wmPosX >= (w - 8)) && (wmPosX <= (w - 4)) && (wmPosY >= (h - 7)) && (wmPosY < (h - 4)))
+			if(((TickCount == 0) || (TickCount == 30) || ((TickCount > 30) && ((TickCount % 6) == 0))) && (ScrollPosition < (h - 13)) && (wmPosX >= (w - 8)) && (wmPosX <= (w - 4)) && (wmPosY >= (h - 7)) && (wmPosY < (h - 4)))
 			{
 				ScrollPosition++;
-				TopEntryIndex = (EntryIndicesCount - 1) * ScrollPosition / (h - 12);
-				fg = ScreenCache[(h - 6) * w + w - 6].Foreground;
-				bg = ScreenCache[(h - 6) * w + w - 6].Background;
-				c = ScreenCache[(h - 6) * w + w - 6].Char;
-				i = fg - 30;
-				j = bg - 40;
-				fg = 30 + j;
-				bg = 40 + i;
-				printf("\x1b[%dm\x1b[%d;0m\x1b[%d;%dH%c", fg, bg, h - 6, w - 6, c);
-				ScreenCache[(h - 6) * w + w - 6].Foreground = fg;
-				ScreenCache[(h - 6) * w + w - 6].Background = bg;
-				KeyInverted = !KeyInverted;
+				TopEntryIndex = (EntryIndicesCount - 1) * ScrollPosition / (h - 13);
+				ScrollButtonInverted = !ScrollButtonInverted;
 				State = List;
 			};
 			TickCount++;
-		} else if(State == ListScrollUpReleased)
+		} else if((State == ListScrollUpReleased) || (State == ListScrollDownReleased))
 		{
-			if(KeyInverted)
+			TickCount = 0;
+			DefaultListState = ListWait;
+			if(ScrollButtonInverted)
 			{
-				fg = ScreenCache[5 * w + w - 6].Foreground;
-				bg = ScreenCache[5 * w + w - 6].Background;
-				c = ScreenCache[5 * w + w - 6].Char;
-				i = fg - 30;
-				j = bg - 40;
-				fg = 30 + j;
-				bg = 40 + i;
-				printf("\x1b[%dm\x1b[%d;0m\x1b[%d;%dH%c", fg, bg, 5, w - 6, c);
-				ScreenCache[5 * w + w - 6].Foreground = fg;
-				ScreenCache[5 * w + w - 6].Background = bg;
-				KeyInverted = !KeyInverted;
+				ScrollButtonInverted = !ScrollButtonInverted;
+				State = List;
+			} else
+			{
+				State = DefaultListState;
 			};
-			TickCount = 0;
-			DefaultListState = ListWait;
-			State = DefaultListState;
-		} else if(State == ListScrollDownReleased)
-		{
-			if(KeyInverted)
-			{
-				fg = ScreenCache[(h - 6) * w + w - 6].Foreground;
-				bg = ScreenCache[(h - 6) * w + w - 6].Background;
-				c = ScreenCache[(h - 6) * w + w - 6].Char;
-				i = fg - 30;
-				j = bg - 40;
-				fg = 30 + j;
-				bg = 40 + i;
-				printf("\x1b[%dm\x1b[%d;0m\x1b[%d;%dH%c", fg, bg, h - 6, w - 6, c);
-				ScreenCache[(h - 6) * w + w - 6].Foreground = fg;
-				ScreenCache[(h - 6) * w + w - 6].Background = bg;
-				KeyInverted = !KeyInverted;
-			}
-			TickCount = 0;
-			DefaultListState = ListWait;
-			State = DefaultListState;
 		} else if(State == Launch)
 		{
 			eng = (char*)malloc(MAXPATHLEN);
@@ -2007,7 +2140,7 @@ int main(int argc, char **argv)
 							if((CursorHasMoved)&&(!(EntryLocations[i].Complete))&&(TopEntryIndex < EntryIndicesCount - 1))
 							{
 								TopEntryIndex++;
-								ScrollPosition = (h - 12) * TopEntryIndex / (EntryIndicesCount - 1);
+								ScrollPosition = (h - 13) * TopEntryIndex / (EntryIndicesCount - 1);
 								State = List;
 							};
 							break;
@@ -2039,7 +2172,7 @@ int main(int argc, char **argv)
 				{
 					if((wmPosX >= (w - 8))&&(wmPosX <= (w - 4)))
 					{
-						if((wmPosY >= 7)&&(wmPosY < (h - 7)))
+						if((wmPosY >= 7)&&(wmPosY < (h - 6)))
 						{
 							ScrollLatched = true;
 							State = ListAPressed;
@@ -2047,7 +2180,7 @@ int main(int argc, char **argv)
 						{
 							DefaultListState = ListScrollUpPressed;
 							State = DefaultListState;
-						} else if((wmPosY >= (h - 7))&&(wmPosY < (h - 4)))
+						} else if((wmPosY >= (h - 6))&&(wmPosY < (h - 3)))
 						{
 							DefaultListState = ListScrollDownPressed;
 							State = DefaultListState;
@@ -2134,14 +2267,14 @@ int main(int argc, char **argv)
 				{
 					i = 0;
 				};
-				if(i > (h - 12))
+				if(i > (h - 13))
 				{
-					i = h - 12;
+					i = h - 13;
 				};
 				if(ScrollPosition != i)
 				{
 					ScrollPosition = i;
-					TopEntryIndex = (EntryIndicesCount - 1) * ScrollPosition / (h - 12);
+					TopEntryIndex = (EntryIndicesCount - 1) * ScrollPosition / (h - 13);
 					State = List;
 				};
 			};
