@@ -1993,9 +1993,9 @@ int main(int argc, char **argv)
 			if(((TickCount == 0) || (TickCount == 30) || ((TickCount > 30) && ((TickCount % 6) == 0))) && (SelectedEntryIndex > 0))
 			{
 				SelectedEntryIndex--;
-				if(SelectedEntryIndex < TopEntryIndex)
+				if(!(EntryLocations[SelectedEntryIndex].InScreen))
 				{
-					TopEntryIndex--;
+					TopEntryIndex = SelectedEntryIndex;
 					ScrollPosition = (h - 13) * TopEntryIndex / (EntryIndicesCount - 1);
 				};
 				State = List;
@@ -2014,7 +2014,11 @@ int main(int argc, char **argv)
 						ScrollPosition = (h - 13) * TopEntryIndex / (EntryIndicesCount - 1);
 					};
 					State = List;
-				}
+				} else
+				{
+					TopEntryIndex = SelectedEntryIndex;
+					ScrollPosition = (h - 13) * TopEntryIndex / (EntryIndicesCount - 1);
+				};
 			};
 			TickCount++;
 		} else if((State == ListUpReleased) || (State == ListDownReleased))
@@ -2091,7 +2095,7 @@ int main(int argc, char **argv)
 					wmPosY = (int)(wm.y * h / rmode->xfbHeight);
 					if((wmPosX != wmPrevPosX)||(wmPosY != wmPrevPosY))
 					{
-						if((wmPrevPosX >= 0)&&(wmPrevPosY >= 0)&&(wmPrevPosX < w)&&(wmPrevPosY < h))
+						if((wmPrevPosX >= 0)&&(wmPrevPosY >= 0)&&(wmPrevPosX < w)&&(wmPrevPosY < h)&&(!((wmPrevPosX >= (w - 1))&&(wmPrevPosY >= (h-1)))))
 						{
 							printf("\x1b[%d;%dm\x1b[%dm\x1b[%d;%dH%c", ScreenCache[wmPrevPosY * w + wmPrevPosX].Foreground, 
 																	   ScreenCache[wmPrevPosY * w + wmPrevPosX].Bold,
@@ -2110,7 +2114,7 @@ int main(int argc, char **argv)
 			{
 				if((wmPosX != -1000)&&(wmPosY != -1000))
 				{
-					if((wmPosX >= 0)&&(wmPosY >= 0)&&(wmPosX < w)&&(wmPosY < h))
+					if((wmPrevPosX >= 0)&&(wmPrevPosY >= 0)&&(wmPrevPosX < w)&&(wmPrevPosY < h)&&(!((wmPrevPosX >= (w - 1))&&(wmPrevPosY >= (h-1)))))
 					{
 						printf("\x1b[%d;%dm\x1b[%dm\x1b[%d;%dH%c", ScreenCache[wmPrevPosY * w + wmPrevPosX].Foreground, 
 																   ScreenCache[wmPrevPosY * w + wmPrevPosX].Bold,
@@ -2175,7 +2179,8 @@ int main(int argc, char **argv)
 						if((wmPosY >= 7)&&(wmPosY < (h - 6)))
 						{
 							ScrollLatched = true;
-							State = ListAPressed;
+							DefaultListState = ListAPressed;
+							State = DefaultListState;
 						} else if((wmPosY >= 4)&&(wmPosY < 7))
 						{
 							DefaultListState = ListScrollUpPressed;
@@ -2187,7 +2192,8 @@ int main(int argc, char **argv)
 						}
 					} else
 					{
-						State = ListAPressed;
+						DefaultListState = ListAPressed;
+						State = DefaultListState;
 					};
 				};
 			} else if((pressed & WPAD_BUTTON_B) != 0)
