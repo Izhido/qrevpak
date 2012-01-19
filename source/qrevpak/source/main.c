@@ -141,6 +141,9 @@ int main(int argc, char **argv)
 	int ScrollPosition;
 	int ei;
 	char* eng;
+	char* engFullPath;
+	int newArgc;
+	char** newArgv;
 	TextParseState t;
 	LineData* Lines;
 	int LineCount;
@@ -937,7 +940,7 @@ int main(int argc, char **argv)
 			ei = TopEntryIndex;
 			while(ei <= EntryIndicesCount)
 			{
-				if((ei == SelectedEntryIndex) || (ei == SelectedEntryIndex + 1))
+				if((ei == SelectedEntryIndex) || ((ei == SelectedEntryIndex + 1) && (ei != TopEntryIndex)))
 				{
 					printf("\x1b[37;1m");
 					fg = 37;
@@ -970,7 +973,7 @@ int main(int argc, char **argv)
 				} else if(ei == SelectedEntryIndex)
 				{
 					c = 201;
-				} else if(ei == SelectedEntryIndex + 1)
+				} else if((ei == SelectedEntryIndex + 1) && (ei != TopEntryIndex))
 				{
 					c = 200;
 				} else
@@ -981,7 +984,7 @@ int main(int argc, char **argv)
 				ScreenCache[i * w + j].Foreground = fg;
 				ScreenCache[i * w + j].Bold = bl;
 				ScreenCache[i * w + j].Char = c;
-				if((ei == SelectedEntryIndex) || (ei == SelectedEntryIndex + 1))
+				if((ei == SelectedEntryIndex) || ((ei == SelectedEntryIndex + 1) && (ei != TopEntryIndex)))
 				{
 					c = 205;
 				} else
@@ -1016,7 +1019,7 @@ int main(int argc, char **argv)
 				} else if(ei == SelectedEntryIndex)
 				{
 					c = 209;
-				} else if(ei == SelectedEntryIndex + 1)
+				} else if((ei == SelectedEntryIndex + 1) && (ei != TopEntryIndex))
 				{
 					c = 207;
 				} else
@@ -1027,7 +1030,7 @@ int main(int argc, char **argv)
 				ScreenCache[i * w + j].Foreground = fg;
 				ScreenCache[i * w + j].Bold = bl;
 				ScreenCache[i * w + j].Char = c;
-				if((ei == SelectedEntryIndex) || (ei == SelectedEntryIndex + 1))
+				if((ei == SelectedEntryIndex) || ((ei == SelectedEntryIndex + 1) && (ei != TopEntryIndex)))
 				{
 					c = 205;
 				} else
@@ -1064,7 +1067,7 @@ int main(int argc, char **argv)
 					} else if(ei == SelectedEntryIndex)
 					{
 						c = 187;
-					} else if(ei == SelectedEntryIndex + 1)
+					} else if((ei == SelectedEntryIndex + 1) && (ei != TopEntryIndex))
 					{
 						c = 188;
 					} else
@@ -1106,13 +1109,10 @@ int main(int argc, char **argv)
 							{
 								t = AtWhitespace;
 							};
-						} else
+						} else if(t != AtText)
 						{
-							if(t != AtText)
-							{
-								pl = j;
-								t = AtText;
-							};
+							pl = j;
+							t = AtText;
 						};
 						j++;
 						if((j - p) > 15)
@@ -1139,13 +1139,10 @@ int main(int argc, char **argv)
 							{
 								t = AtWhitespace;
 							};
-						} else
+						} else if(t != AtText)
 						{
-							if(t != AtText)
-							{
-								pl = j;
-								t = AtText;
-							};
+							pl = j;
+							t = AtText;
 						};
 						j++;
 						if((j - p) > 15)
@@ -1990,22 +1987,26 @@ int main(int argc, char **argv)
 			};
 		} else if(State == ListUpPressed)
 		{
-			if(((TickCount == 0) || (TickCount == 30) || ((TickCount > 30) && ((TickCount % 6) == 0))) && (SelectedEntryIndex > 0))
+			if((TickCount == 0) || (TickCount == 30) || ((TickCount > 30) && ((TickCount % 6) == 0)))
 			{
-				SelectedEntryIndex--;
+				if((EntryLocations[SelectedEntryIndex].InScreen) && (SelectedEntryIndex > 0))
+				{
+					SelectedEntryIndex--;
+					State = List;
+				};
 				if(!(EntryLocations[SelectedEntryIndex].InScreen))
 				{
 					TopEntryIndex = SelectedEntryIndex;
 					ScrollPosition = (h - 13) * TopEntryIndex / (EntryIndicesCount - 1);
+					State = List;
 				};
-				State = List;
 			};
 			TickCount++;
 		} else if(State == ListDownPressed)
 		{
-			if(((TickCount == 0) || (TickCount == 30) || ((TickCount > 30) && ((TickCount % 6) == 0))) && (SelectedEntryIndex < (EntryIndicesCount - 1)))
+			if((TickCount == 0) || (TickCount == 30) || ((TickCount > 30) && ((TickCount % 6) == 0)))
 			{
-				if(EntryLocations[SelectedEntryIndex].Complete)
+				if((EntryLocations[SelectedEntryIndex].InScreen) && (SelectedEntryIndex < (EntryIndicesCount - 1)))
 				{
 					SelectedEntryIndex++;
 					if(!(EntryLocations[SelectedEntryIndex].Complete))
@@ -2014,10 +2015,11 @@ int main(int argc, char **argv)
 						ScrollPosition = (h - 13) * TopEntryIndex / (EntryIndicesCount - 1);
 					};
 					State = List;
-				} else
+				} else if(SelectedEntryIndex < (EntryIndicesCount - 1))
 				{
 					TopEntryIndex = SelectedEntryIndex;
 					ScrollPosition = (h - 13) * TopEntryIndex / (EntryIndicesCount - 1);
+					State = List;
 				};
 			};
 			TickCount++;
@@ -2063,7 +2065,65 @@ int main(int argc, char **argv)
 			eng = (char*)malloc(MAXPATHLEN);
 			strcpy(eng, Entries[EntryIndices[SelectedEntryIndex]].Engine);
 			strcat(eng, ".dol");
-			runDOL(eng, 0, NULL);
+			newArgc = 0;
+			newArgv = NULL;
+			msg = Entries[EntryIndices[SelectedEntryIndex]].Parameters;
+			if(msg != NULL)
+			{
+				m = strlen(basedir) + strlen(eng);
+				engFullPath = (char*)malloc(m + 1);
+				strcpy(engFullPath, basedir);
+				strcat(engFullPath, eng);
+				m = strlen(msg);
+				msg = (char*)malloc(m + 1);
+				strcpy(msg, Entries[EntryIndices[SelectedEntryIndex]].Parameters);
+				t = AtBeginning;
+				newArgc = 1;
+				j = 0;
+				while(msg[j] != 0)
+				{
+					if(msg[j] <= 32)
+					{
+						if(t != AtWhitespace)
+						{
+							t = AtWhitespace;
+						};
+					} else if(t != AtText)
+					{
+						newArgc++;
+						t = AtText;
+					};
+					j++;
+				};
+				newArgv = (char**)malloc(newArgc * sizeof(char*));
+				newArgv[0] = engFullPath;
+				i = 1;
+				j = 0;
+				while(msg[j] != 0)
+				{
+					if(msg[j] <= 32)
+					{
+						if(t != AtWhitespace)
+						{
+							t = AtWhitespace;
+							msg[j] = 0;
+						};
+					} else if(t != AtText)
+					{
+						newArgv[i] = msg + j;
+						i++;
+						t = AtText;
+					};
+					j++;
+				};
+			};
+			runDOL(eng, newArgc, (const char**)newArgv);
+			if(newArgv != NULL)
+			{
+				free(newArgv);
+				free(msg);
+				free(engFullPath);
+			};
 			ErrorLinesCount = 2;
 			ErrorLines = (char**)malloc(ErrorLinesCount * sizeof(char*));
 			ErrorLines[0] = (char*)malloc(20 + strlen(eng));
@@ -2087,7 +2147,10 @@ int main(int argc, char **argv)
 					wmPosY = (int)(wm.y * h / rmode->xfbHeight);
 					wmPrevPosX = wmPosX;
 					wmPrevPosY = wmPosY;
-					printf("\x1b[40m\x1b[37;0m\x1b[%d;%dH%c", wmPosY, wmPosX, 178);
+					if(!((wmPrevPosX >= (w - 1))&&(wmPrevPosY >= (h-1))))
+					{
+						printf("\x1b[40m\x1b[37;0m\x1b[%d;%dH%c", wmPosY, wmPosX, 178);
+					};
 					CursorHasMoved = true;
 				} else
 				{
@@ -2106,7 +2169,10 @@ int main(int argc, char **argv)
 						};
 						wmPrevPosX = wmPosX;
 						wmPrevPosY = wmPosY;
-						printf("\x1b[40m\x1b[37;0m\x1b[%d;%dH%c", wmPosY, wmPosX, 178);
+						if(!((wmPrevPosX >= (w - 1))&&(wmPrevPosY >= (h-1))))
+						{
+							printf("\x1b[40m\x1b[37;0m\x1b[%d;%dH%c", wmPosY, wmPosX, 178);
+						};
 						CursorHasMoved = true;
 					};
 				};
@@ -2176,12 +2242,12 @@ int main(int argc, char **argv)
 				{
 					if((wmPosX >= (w - 8))&&(wmPosX <= (w - 4)))
 					{
-						if((wmPosY >= 7)&&(wmPosY < (h - 6)))
+						if((wmPosY >= 6)&&(wmPosY < (h - 6)))
 						{
 							ScrollLatched = true;
 							DefaultListState = ListAPressed;
 							State = DefaultListState;
-						} else if((wmPosY >= 4)&&(wmPosY < 7))
+						} else if((wmPosY >= 3)&&(wmPosY < 6))
 						{
 							DefaultListState = ListScrollUpPressed;
 							State = DefaultListState;
@@ -2190,7 +2256,7 @@ int main(int argc, char **argv)
 							DefaultListState = ListScrollDownPressed;
 							State = DefaultListState;
 						}
-					} else
+					} else if(EntryLocations[SelectedEntryIndex].InScreen) 
 					{
 						DefaultListState = ListAPressed;
 						State = DefaultListState;
