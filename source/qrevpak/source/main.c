@@ -2009,11 +2009,6 @@ int main(int argc, char **argv)
 				if((EntryLocations[SelectedEntryIndex].InScreen) && (SelectedEntryIndex < (EntryIndicesCount - 1)))
 				{
 					SelectedEntryIndex++;
-					if(!(EntryLocations[SelectedEntryIndex].Complete))
-					{
-						TopEntryIndex++;
-						ScrollPosition = (h - 13) * TopEntryIndex / (EntryIndicesCount - 1);
-					};
 					State = List;
 				} else if(SelectedEntryIndex < (EntryIndicesCount - 1))
 				{
@@ -2023,6 +2018,11 @@ int main(int argc, char **argv)
 				};
 			};
 			TickCount++;
+			if((!(EntryLocations[SelectedEntryIndex].Complete)) && (SelectedEntryIndex > TopEntryIndex))
+			{
+				TopEntryIndex++;
+				ScrollPosition = (h - 13) * TopEntryIndex / (EntryIndicesCount - 1);
+			};
 		} else if((State == ListUpReleased) || (State == ListDownReleased))
 		{
 			TickCount = 0;
