@@ -52,11 +52,26 @@ typedef struct
 	char Char;
 } CharInScreen;
 
+typedef enum
+{
+	AtBeginning,
+	AtWhitespace,
+	AtText
+} TextParseState;
+
+typedef struct
+{
+	int Start;
+	int Length;
+} LineData;
+
 typedef struct
 {
 	int CRCValue;
 	bool FoundInDefault;
 	char* Name;
+	LineData* NameLines;
+	int NameLineCount;
 	int DescriptionCount;
 	char** Description;
 	char* Engine;
@@ -71,19 +86,6 @@ typedef struct
 	int Length;
 	int EntryIndex;
 } GameEntryLocation;
-
-typedef enum
-{
-	AtBeginning,
-	AtWhitespace,
-	AtText
-} TextParseState;
-
-typedef struct
-{
-	int Start;
-	int Length;
-} LineData;
 
 void ShutDown(s32 chan)
 {	
@@ -145,8 +147,6 @@ int main(int argc, char **argv)
 	int newArgc;
 	char** newArgv;
 	TextParseState t;
-	LineData* Lines;
-	int LineCount;
 	int fg;
 	int bg;
 	int bl;
@@ -1095,74 +1095,7 @@ int main(int argc, char **argv)
 				{
 					EntryLocations[ei].InScreen = true;
 					EntryLocations[ei].Start = i;
-					msg = Entries[EntryIndices[ei]].Name;
-					t = AtBeginning;
-					m = 1;
-					p = 0;
-					pl = 0;
-					j = 0;
-					while(msg[j] != 0)
-					{
-						if(msg[j] <= 32)
-						{
-							if(t != AtWhitespace)
-							{
-								t = AtWhitespace;
-							};
-						} else if(t != AtText)
-						{
-							pl = j;
-							t = AtText;
-						};
-						j++;
-						if((j - p) > 15)
-						{
-							if(p < pl)
-							{
-								p = pl;
-							} else
-							{
-								p = j;
-							};
-							m++;
-						};
-					};
-					Lines = (LineData*)malloc(m * sizeof(LineData));
-					m = 0;
-					p = 0;
-					j = 0;
-					while(msg[j] != 0)
-					{
-						if(msg[j] <= 32)
-						{
-							if(t != AtWhitespace)
-							{
-								t = AtWhitespace;
-							};
-						} else if(t != AtText)
-						{
-							pl = j;
-							t = AtText;
-						};
-						j++;
-						if((j - p) > 15)
-						{
-							Lines[m].Start = p;
-							if(p < pl)
-							{
-								p = pl;
-							} else
-							{
-								p = j;
-							};
-							Lines[m].Length = p - Lines[m].Start;
-							m++;
-						};
-					};
-					Lines[m].Start = p;
-					Lines[m].Length = j - Lines[m].Start;
-					m++;
-					LineCount = m;
+					m = Entries[EntryIndices[ei]].NameLineCount;
 					if(m < Entries[EntryIndices[ei]].DescriptionCount)
 					{
 						m = Entries[EntryIndices[ei]].DescriptionCount; 
@@ -1196,13 +1129,13 @@ int main(int argc, char **argv)
 							};
 							if(p > 0)
 							{
-								if(p <= LineCount)
+								if(p <= Entries[EntryIndices[ei]].NameLineCount)
 								{
 									msg = Entries[EntryIndices[ei]].Name;
 									printf("\x1b[%d;7H", i);
-									for(j = 0; j < Lines[p - 1].Length; j++)
+									for(j = 0; j < Entries[EntryIndices[ei]].NameLines[p - 1].Length; j++)
 									{
-										c = msg[Lines[p - 1].Start + j];
+										c = msg[Entries[EntryIndices[ei]].NameLines[p - 1].Start + j];
 										printf("%c", c);
 										ScreenCache[i * w + j + 7].Foreground = fg;
 										ScreenCache[i * w + j + 7].Bold = bl;
@@ -1245,7 +1178,6 @@ int main(int argc, char **argv)
 					{
 						EntryLocations[ei].Complete = true;
 					};
-					free(Lines);
 				};
 				if(i < (h - 4))
 				{
@@ -1811,6 +1743,80 @@ int main(int argc, char **argv)
 								}
 							};
 						};
+						for(i = 0; i < EntriesCount; i++)
+						{
+							if(Entries[i].Name != NULL)
+							{
+								msg = Entries[i].Name;
+								t = AtBeginning;
+								m = 1;
+								p = 0;
+								pl = 0;
+								j = 0;
+								while(msg[j] != 0)
+								{
+									if(msg[j] <= 32)
+									{
+										if(t != AtWhitespace)
+										{
+											t = AtWhitespace;
+										};
+									} else if(t != AtText)
+									{
+										pl = j;
+										t = AtText;
+									};
+									j++;
+									if((j - p) > 15)
+									{
+										if(p < pl)
+										{
+											p = pl;
+										} else
+										{
+											p = j;
+										};
+										m++;
+									};
+								};
+								Entries[i].NameLines = (LineData*)malloc(m * sizeof(LineData));
+								m = 0;
+								p = 0;
+								j = 0;
+								while(msg[j] != 0)
+								{
+									if(msg[j] <= 32)
+									{
+										if(t != AtWhitespace)
+										{
+											t = AtWhitespace;
+										};
+									} else if(t != AtText)
+									{
+										pl = j;
+										t = AtText;
+									};
+									j++;
+									if((j - p) > 15)
+									{
+										Entries[i].NameLines[m].Start = p;
+										if(p < pl)
+										{
+											p = pl;
+										} else
+										{
+											p = j;
+										};
+										Entries[i].NameLines[m].Length = p - Entries[i].NameLines[m].Start;
+										m++;
+									};
+								};
+								Entries[i].NameLines[m].Start = p;
+								Entries[i].NameLines[m].Length = j - Entries[i].NameLines[m].Start;
+								m++;
+								Entries[i].NameLineCount = m;
+							};
+						};
 						EntryLocations = (GameEntryLocation*)malloc(EntryIndicesCount * sizeof(GameEntryLocation));
 						TopEntryIndex = 0;
 						SelectedEntryIndex = 0;
@@ -1968,6 +1974,7 @@ int main(int argc, char **argv)
 						free(Entries[i].Description[j]); 
 					};
 					free(Entries[i].Description);
+					free(Entries[i].NameLines);
 					free(Entries[i].Name);
 				};
 				free(Entries);
@@ -2376,6 +2383,7 @@ int main(int argc, char **argv)
 				free(Entries[i].Description[j]); 
 			};
 			free(Entries[i].Description);
+			free(Entries[i].NameLines);
 			free(Entries[i].Name);
 		};
 		free(Entries);
