@@ -1,41 +1,70 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <GameEntries>
-  <GameEntry crc="15011">
+  <GameEntry crc="49186">
     <name>Quake</name>
     <description>
-      <line>Quake</line>
-      <line></line>
-      <line>(Software rendering)</line>
+      <line>From id Software's web site:</line>
+      <line>"Rage through 32 single player levels and 6</line>
+      <line>deathmatch levels of sheer terror and fully</line>
+      <line>immersive sound and lighting. Arm yourself against</line>
+      <line>the cannibalistic Ogre, fiendish Vore and</line>
+      <line>indestructible Schambler using letal nails, fierce</line>
+      <line>Thunderbolts and abominable Rocket and Grenade</line>
+      <line>Launchers." (Software rendered version.)</line>
     </description>
     <engine>Q1Rev-soft</engine>
     <parameters></parameters>
   </GameEntry>
-  <GameEntry crc="16089">
-    <name>Quake World</name>
+  <GameEntry crc="26655">
+    <name>QuakeWorld</name>
     <description>
-      <line>Quake World</line>
-      <line></line>
-      <line>(Software rendering)</line>
+      <line>From QuakeWorld.net:</line>
+      <line>"QuakeWorld is an Internet multi-player specific</line>
+      <line>version of Quake.  While the original version of</line>
+      <line>Quake can be played over the Internet, modem users</line>
+      <line> - the majority of players, had less than</line>
+      <line>satisfactory play. (...) After realizing how many</line>
+      <line>people played Quake on the internet, and how many</line>
+      <line>wanted to, but couldn't due to the play being</line>
+      <line>unsatisfactory, John Carmack of id Software</line>
+      <line>decided to create a version of Quake that was</line>
+      <line>optimized for the average modem Internet player.</line>
+      <line>This Internet specific version does only 1 thing,</line>
+      <line>play deathmatch games over a TCP/IP network such</line>
+      <line>as the Internet. It has no support for solo play,</line>
+      <line>and you can't do anything with out connecting to</line>
+      <line>a special server." (Software rendered version.)</line>
     </description>
     <engine>QWRev-soft</engine>
     <parameters></parameters>
   </GameEntry>
-  <GameEntry crc="15356">
+  <GameEntry crc="54193">
     <name>Quake II</name>
     <description>
-      <line>Quake II</line>
+      <line>From id Software's web site:</line>
+      <line>"Shortly after landing on an alien surface, you</line>
+      <line>learn that hundreds of your men have been reduced</line>
+      <line>to just a few. Now you must fight your way through</line>
+      <line>heavily fortified military installations, lower</line>
+      <line>the city's defenses and shut down the enemy's war</line>
+      <line>machine. Only then will the fate of humanity</line>
+      <line>be known." (Software rendered version.)</line>
       <line></line>
       <line>(Software rendering)</line>
     </description>
     <engine>Q2Rev-SWimp</engine>
     <parameters></parameters>
   </GameEntry>
-  <GameEntry crc="17835">
-    <name>Quake II CTF</name>
+  <GameEntry crc="44284">
+    <name>Quake II ThreeWave Capture The Flag</name>
     <description>
-      <line>Quake II Capture The Flag module</line>
-      <line></line>
-      <line>(Software rendering)</line>
+      <line>From the game's documentation:</line>
+      <line>"Quake II Capture The Flag (Q2CTF) is a multiplayer</line>
+      <line>addon for Quake2 that features a simple set of</line>
+      <line>rules for team based play. It features five unique</line>
+      <line>maps and special powerups to enhance and make the</line>
+      <line>gameplay more exciting." (Software rendered</line>
+      <line>version.)</line>
     </description>
     <engine>Q2CTFRev-SWimp</engine>
     <parameters></parameters>
