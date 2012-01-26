@@ -19,12 +19,12 @@ typedef enum
 	StartBPressed,
 	StartBPressedWait,
 	StartBReleased,
-	Loading,
-	LoadingError,
-	LoadingErrorWait,
-	LoadingErrorAPressed,
-	LoadingErrorAPressedWait,
-	LoadingErrorAReleased,
+	Load,
+	LoadError,
+	LoadErrorWait,
+	LoadErrorAPressed,
+	LoadErrorAPressedWait,
+	LoadErrorAReleased,
 	List,
 	ListWait,
 	ListAPressed,
@@ -505,7 +505,7 @@ int main(int argc, char **argv)
 			ScreenCache[i * w + j].Foreground = 30;
 			ScreenCache[i * w + j].Background = 46;
 			ScreenCache[i * w + j].Char = 32;
-		} else if(State == Loading)
+		} else if(State == Load)
 		{
 			printf("\x1b[30;0m\x1b[44m");
 			for(i = (int)(h / 2) - 1; i < (h / 2) + 2; i++)
@@ -637,7 +637,7 @@ int main(int argc, char **argv)
 				ScreenCache[i * w + j + p].Bold = 0;
 				ScreenCache[i * w + j + p].Char = msg[p];
 			};
-		} else if(State == LoadingError)
+		} else if(State == LoadError)
 		{
 			m = 0;
 			for(i = 0; i < ErrorLinesCount; i++)
@@ -838,8 +838,8 @@ int main(int argc, char **argv)
 				ScreenCache[i * w + j + p].Bold = 1;
 				ScreenCache[i * w + j + p].Char = msg[p];
 			};
-			State = LoadingErrorWait;
-		} else if(State == LoadingErrorAPressed)
+			State = LoadErrorWait;
+		} else if(State == LoadErrorAPressed)
 		{
 			msg = " (A) Back ";
 			i = (int)(h / 2) + (int)(ErrorLinesCount / 2) + rh;
@@ -866,8 +866,8 @@ int main(int argc, char **argv)
 				ScreenCache[i * w + j].Background = 44;
 				ScreenCache[i * w + j].Char = 32;
 			};
-			State = LoadingErrorAPressedWait;
-		} else if(State == LoadingErrorAReleased)
+			State = LoadErrorAPressedWait;
+		} else if(State == LoadErrorAReleased)
 		{
 			msg = " (A) Back ";
 			i = (int)(h / 2) + (int)(ErrorLinesCount / 2) + rh;
@@ -1409,11 +1409,11 @@ int main(int argc, char **argv)
 		};
 		if(State == StartAReleased)
 		{
-			State = Loading;
+			State = Load;
 		} else if(State == StartBReleased)
 		{
 			State = Finishing;
-		} else if(State == Loading)
+		} else if(State == Load)
 		{
 			strcpy(xmlfname, basedir);
 			strcat(xmlfname, "QRevPAK.xml");
@@ -1817,12 +1817,6 @@ int main(int argc, char **argv)
 								Entries[i].NameLineCount = m;
 							};
 						};
-						EntryLocations = (GameEntryLocation*)malloc(EntryIndicesCount * sizeof(GameEntryLocation));
-						TopEntryIndex = 0;
-						SelectedEntryIndex = 0;
-						ScrollPosition = 0;
-						ScrollLatched = false;
-						TickCount = 0;
 						if(modified)
 						{
 							f = fopen(xmlfname, "wb");
@@ -1901,6 +1895,89 @@ int main(int argc, char **argv)
 						ezxml_free(docDefault);
 						ezxml_free(docFromFile);
 						free(xmlFromFile);
+						EntryLocations = (GameEntryLocation*)malloc(EntryIndicesCount * sizeof(GameEntryLocation));
+						ScrollLatched = false;
+						TickCount = 0;
+						TopEntryIndex = -1;
+						SelectedEntryIndex = -1;
+						strcpy(xmlfname, basedir);
+						strcat(xmlfname, "QRevPAK.ini");
+						f = fopen(xmlfname, "rb");
+						if(f != NULL)
+						{
+							xmlFromFile = NULL;
+							fseek(f, 0, SEEK_END);
+							m = ftell(f);
+							fseek(f, 0, SEEK_SET);
+							if((m > 8)&&(m < (1024*1024)))
+							{
+								xmlFromFile = (char*)malloc(m + 1);
+								i = fread(xmlFromFile, 1, m, f);
+								if(i == m)
+								{
+									xmlFromFile[m] = 0;
+								} else
+								{
+									free(xmlFromFile);
+									xmlFromFile = NULL;
+								};
+							};
+							fclose(f);
+							if(xmlFromFile != NULL)
+							{
+								docFromFile = ezxml_parse_str(xmlFromFile, m);
+								if(docFromFile != NULL)
+								{
+									msg = NULL;
+									dat = ezxml_child(docFromFile, "SelectedEntryIndex");
+									if(dat != NULL)
+									{
+										i = atoi(dat->txt);
+									};
+									dat = ezxml_child(docFromFile, "SelectedEntry");
+									if(dat != NULL)
+									{
+										msg = dat->txt;
+									};
+									if((msg != NULL) && (i >= 0) && (i < EntryIndicesCount))
+									{
+										if(Entries[EntryIndices[i]].Name != NULL)
+										{
+											if(strcmp(msg, Entries[EntryIndices[i]].Name) == 0)
+											{
+												TopEntryIndex = i;
+												SelectedEntryIndex = i;
+											};
+										};
+									};
+									if((TopEntryIndex < 0) && (msg != NULL))
+									{
+										i = 0;
+										while(i < EntryIndicesCount)
+										{
+											if(Entries[EntryIndices[i]].Name != NULL)
+											{
+												if(strcmp(msg, Entries[EntryIndices[i]].Name) == 0)
+												{
+													TopEntryIndex = i;
+													SelectedEntryIndex = i;
+													break;
+												};
+											};
+											i++;
+										};
+									};
+									ezxml_free(docFromFile);
+								};
+							};
+							free(xmlFromFile);
+						};
+						if(TopEntryIndex < 0)
+						{
+							TopEntryIndex = 0;
+							SelectedEntryIndex = 0;
+						};
+						ScrollPosition = (h - 13) * TopEntryIndex / (EntryIndicesCount - 1);
 					} else
 					{
 						free(xmlFromFile);
@@ -1939,12 +2016,12 @@ int main(int argc, char **argv)
 			};
 			if(ErrorLines != NULL)
 			{
-				State = LoadingError;
+				State = LoadError;
 			} else
 			{
 				State = List;
 			};
-		} else if((State == LoadingErrorAReleased) || (State == ListBReleased))
+		} else if((State == LoadErrorAReleased) || (State == ListBReleased))
 		{
 			free(EntryLocations);
 			EntryLocations = NULL;
@@ -2069,6 +2146,26 @@ int main(int argc, char **argv)
 			};
 		} else if(State == Launch)
 		{
+			strcpy(xmlfname, basedir);
+			strcat(xmlfname, "QRevPAK.ini");
+			f = fopen(xmlfname, "wb");
+			if(f != NULL)
+			{
+				msg = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Configuration>\n  <SelectedEntryIndex>";
+				fwrite(msg, 1, strlen(msg), f);
+				sprintf(num, "%d", SelectedEntryIndex);
+				fwrite(num, 1, strlen(num), f);
+				msg = "</SelectedEntryIndex>\n  <SelectedEntry>";
+				fwrite(msg, 1, strlen(msg), f);
+				msg = Entries[EntryIndices[SelectedEntryIndex]].Name;
+				if(msg != NULL)
+				{
+					fwrite(msg, 1, strlen(msg), f);
+				};
+				msg = "</SelectedEntry>\n</Configuration>\n";
+				fwrite(msg, 1, strlen(msg), f);
+				fclose(f);
+			};
 			eng = (char*)malloc(MAXPATHLEN);
 			strcpy(eng, Entries[EntryIndices[SelectedEntryIndex]].Engine);
 			strcat(eng, ".dol");
@@ -2140,7 +2237,7 @@ int main(int argc, char **argv)
 			ErrorLines[1] = (char*)malloc(32);
 			strcpy(ErrorLines[1], "It is not possible to continue.");
 			free(eng);
-			State = LoadingError;
+			State = LoadError;
 		};
 		if((State != Finishing) && (State != Finished))
 		{
@@ -2242,9 +2339,9 @@ int main(int argc, char **argv)
 					{
 						State = StartAPressed;
 					};
-				} else if(State == LoadingErrorWait)
+				} else if(State == LoadErrorWait)
 				{
-					State = LoadingErrorAPressed;
+					State = LoadErrorAPressed;
 				} else if(State == ListWait)
 				{
 					if((wmPosX >= (w - 8))&&(wmPosX <= (w - 4)))
@@ -2301,9 +2398,9 @@ int main(int argc, char **argv)
 				} else if((State == StartBPressedWait) && ((pressed & WPAD_BUTTON_B) == 0))
 				{
 					State = StartBReleased;
-				} else if(State == LoadingErrorAPressedWait)
+				} else if(State == LoadErrorAPressedWait)
 				{
-					State = LoadingErrorAReleased;
+					State = LoadErrorAReleased;
 				} else if(State == ListAPressed)
 				{
 					State = ListAReleased;
