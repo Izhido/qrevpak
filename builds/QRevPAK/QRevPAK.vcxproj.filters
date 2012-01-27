@@ -13,6 +13,18 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="Header Files\run_dol">
+      <UniqueIdentifier>{1bff67dd-ed10-45b6-b07d-f225b529d29b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ezxml">
+      <UniqueIdentifier>{1ac8bb8b-5741-40fc-8c96-bb922e2bafb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ezxml">
+      <UniqueIdentifier>{47e761d2-67c6-49b0-b4cc-f2f3da5c49b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\run_dol">
+      <UniqueIdentifier>{2c7fb392-cfb8-4dba-9913-db85b20387b5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="Makefile" />
@@ -24,19 +36,19 @@
     <ClCompile Include="..\..\source\qrevpak\source\main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\qrevpak\source\ezxml.c">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\source\ezxml\source\ezxml.c">
+      <Filter>Source Files\ezxml</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\qrevpak\source\run_dol.c">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\source\run_dol\source\run_dol.c">
+      <Filter>Source Files\run_dol</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\source\qrevpak\source\ezxml.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\source\ezxml\include\ezxml.h">
+      <Filter>Header Files\ezxml</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\qrevpak\source\run_dol.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\source\run_dol\include\run_dol.h">
+      <Filter>Header Files\run_dol</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

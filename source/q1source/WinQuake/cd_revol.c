@@ -19,6 +19,20 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 #include "quakedef.h"
 
+extern	cvar_t	bgmvolume;
+
+static qboolean cdValid = false;
+static qboolean	playing = false;
+static qboolean	wasPlaying = false;
+static qboolean	initialized = false;
+static qboolean	enabled = false;
+static qboolean playLooping = false;
+static float	cdvolume;
+static byte 	remap[100];
+static byte		cdrom;
+static byte		playTrack;
+static byte		maxTrack;
+
 void CDAudio_Play(byte track, qboolean looping)
 {
 }

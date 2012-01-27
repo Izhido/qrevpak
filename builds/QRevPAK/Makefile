@@ -17,7 +17,9 @@ include $(DEVKITPPC)/wii_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	boot
 BUILD		:=	build
-SOURCES		:=	../../source/qrevpak/source
+SOURCES		:=	../../source/qrevpak/source \
+                ../../source/ezxml/source \
+                ../../source/run_dol/source
 DATA		:=	../../data/xml 
 INCLUDES	:=  
 
@@ -39,7 +41,8 @@ LIBS	:= -lfat -lwiiuse -lbte -logc -lm
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:=
+LIBDIRS	:= $(CURDIR)/../../source/ezxml \
+           $(CURDIR)/../../source/run_dol
 
 #---------------------------------------------------------------------------------
 # no real need to edit anything past this point unless you need to add additional
