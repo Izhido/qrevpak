@@ -177,16 +177,12 @@ int Sys_FileWrite (int handle, void *data, int count)
 
 int     Sys_FileTime (char *path)
 {
-	FILE    *f;
+	struct	stat	buf;
 	
-	f = fopen(path, "rb");
-	if (f)
-	{
-		fclose(f);
-		return 1;
-	}
+	if (stat (path,&buf) == -1)
+		return -1;
 	
-	return -1;
+	return buf.st_mtime;
 }
 
 void Sys_mkdir (char *path)

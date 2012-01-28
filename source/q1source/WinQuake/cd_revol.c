@@ -60,6 +60,52 @@ void CDAudio_Update(void)
 
 int CDAudio_Init(void)
 {
+	int				n;
+
+	if (cls.state == ca_dedicated)
+		return -1;
+
+	if (COM_CheckParm("-nocdaudio"))
+		return -1;
+
+	if(!snd_initialized)
+		return -1;
+
+	if(fakedma)
+		return -1;
+
+	/*mciOpenParms.lpstrDeviceType = "cdaudio";
+	if (dwReturn = mciSendCommand(0, MCI_OPEN, MCI_OPEN_TYPE | MCI_OPEN_SHAREABLE, (DWORD) (LPVOID) &mciOpenParms))
+	{
+		Con_Printf("CDAudio_Init: MCI_OPEN failed (%i)\n", dwReturn);
+		return -1;
+	}
+	wDeviceID = mciOpenParms.wDeviceID;
+
+    // Set the time format to track/minute/second/frame (TMSF).
+    mciSetParms.dwTimeFormat = MCI_FORMAT_TMSF;
+    if (dwReturn = mciSendCommand(wDeviceID, MCI_SET, MCI_SET_TIME_FORMAT, (DWORD)(LPVOID) &mciSetParms))
+    {
+		Con_Printf("MCI_SET_TIME_FORMAT failed (%i)\n", dwReturn);
+        mciSendCommand(wDeviceID, MCI_CLOSE, 0, (DWORD)NULL);
+		return -1;
+    }
+
+	for (n = 0; n < 100; n++)
+		remap[n] = n;
+	initialized = true;
+	enabled = true;
+
+	if (CDAudio_GetAudioDiskInfo())
+	{
+		Con_Printf("CDAudio_Init: No CD in player.\n");
+		cdValid = false;
+	}
+
+	Cmd_AddCommand ("cd", CD_f);
+	*/
+	Con_Printf("CD Audio Initialized\n");
+
 	return 0;
 }
 
