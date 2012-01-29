@@ -38,7 +38,7 @@
     <engine>QWRev-soft</engine>
     <parameters></parameters>
   </GameEntry>
-  <GameEntry crc="54193">
+  <GameEntry crc="50033">
     <name>Quake II</name>
     <description>
       <line>From id Software's web site:</line>
@@ -49,8 +49,6 @@
       <line>the city's defenses and shut down the enemy's war</line>
       <line>machine. Only then will the fate of humanity</line>
       <line>be known." (Software rendered version.)</line>
-      <line></line>
-      <line>(Software rendering)</line>
     </description>
     <engine>Q2Rev-SWimp</engine>
     <parameters></parameters>

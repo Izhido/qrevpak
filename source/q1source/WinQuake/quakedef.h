@@ -35,11 +35,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifdef QUAKE2
 #define	GAMENAME	"id1"		// directory to look in by default
 #else
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Making it uppercase. When using libfilesystem, filenames are case-sensitive:
-//#define	GAMENAME	"id1"
-#define	GAMENAME	"ID1"
-// <<< FIX
+#define	GAMENAME	"id1"
 #endif
 
 #include <math.h>

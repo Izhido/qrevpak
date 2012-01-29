@@ -1769,11 +1769,7 @@ void COM_AddGameDirectory (char *dir)
 //
 	for (i=0 ; ; i++)
 	{
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Making it uppercase. When using libfilesystem, filenames are case-sensitive:
-		//sprintf (pakfile, "%s/pak%i.pak", dir, i);
-		sprintf (pakfile, "%s/PAK%i.PAK", dir, i);
-// <<< FIX
+		sprintf (pakfile, "%s/pak%i.pak", dir, i);
 		pak = COM_LoadPackFile (pakfile);
 		if (!pak)
 			break;

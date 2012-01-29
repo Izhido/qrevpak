@@ -355,6 +355,12 @@ void IN_CalcWmoteOutMove(ir_t w)
 	};
 }
 
+void IN_SetWmoteCursorPos(int x, int y)
+{
+	wmote_adjust_x = wmote_curr_x - x;
+	wmote_adjust_y = wmote_curr_y - y;
+}
+
 qboolean IN_GetWmoteCursorPos(incursorcoords_t* p)
 {
 	ir_t w;
@@ -412,12 +418,6 @@ qboolean IN_GetWmoteCursorPos(incursorcoords_t* p)
 		return true;
 	};
 	return false;
-}
-
-void IN_SetWmoteCursorPos(int x, int y)
-{
-	wmote_adjust_x = wmote_curr_x - x;
-	wmote_adjust_y = wmote_curr_y - y;
 }
 
 void IN_WmoteMove (usercmd_t *cmd)

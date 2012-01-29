@@ -19,6 +19,12 @@
     <Filter Include="Source Files\oskrevol">
       <UniqueIdentifier>{ab598964-9125-43f3-af04-83de96ecfce5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\oggplayer">
+      <UniqueIdentifier>{7227ddd3-8730-451b-a8ef-58a4cb1b18db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\oggplayer">
+      <UniqueIdentifier>{c14d3554-4ef7-410d-a911-f98e0b9d463b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\oskrevol\source\osk_revol.c">
@@ -273,6 +279,9 @@
     <ClCompile Include="..\..\..\source\q1source\WinQuake\zone.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\oggplayer\source\oggplayer.c">
+      <Filter>Source Files\oggplayer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\oskrevol\include\osk_revol.h">
@@ -481,6 +490,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\q1source\WinQuake\zone.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\oggplayer\include\oggplayer.h">
+      <Filter>Header Files\oggplayer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
