@@ -23,7 +23,8 @@ SOURCES		:=	../../../source/quake2/quake2-3.21/revol \
                 ../../../source/quake2/quake2-3.21/server \
                 ../../../source/quake2/quake2-3.21/client \
                 ../../../source/quake2/quake2-3.21/ref_soft \
-                ../../../source/oskrevol/source
+                ../../../source/oskrevol/source \
+                ../../../source/oggplayer/source
 DATA		:=	../../../data  
 INCLUDES	:=  ../../../source/quake2/quake2-3.21/revol \
                 ../../../source/quake2/quake2-3.21/qcommon \
@@ -46,13 +47,15 @@ LDFLAGS	=	-g $(MACHDEP) -Wl,-Map,$(notdir $@).map
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
 #---------------------------------------------------------------------------------
-LIBS	:=	 -lwiikeyboard -lasnd -lwiiuse -lbte -lfat -logc -lm
+LIBS	:=	 -lwiikeyboard -lvorbisidec -lasnd -lwiiuse -lbte -lfat -logc -lm
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:= $(CURDIR)/../../../source/oskrevol
+LIBDIRS	:= $(PORTLIBS) \
+           $(CURDIR)/../../../source/oskrevol \
+           $(CURDIR)/../../../source/oggplayer
 
 #---------------------------------------------------------------------------------
 # no real need to edit anything past this point unless you need to add additional

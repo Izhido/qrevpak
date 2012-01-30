@@ -18,7 +18,8 @@ include $(DEVKITPPC)/wii_rules
 TARGET		:=	QWRev-soft
 BUILD		:=	build
 SOURCES		:=	../../../source/q1source/QW/client \
-                ../../../source/oskrevol/source
+                ../../../source/oskrevol/source \
+                ../../../source/oggplayer/source
 DATA		:=	../../../data  
 INCLUDES	:=  ../../../source/q1source/QW/client
 
@@ -34,13 +35,15 @@ LDFLAGS	=	-g $(MACHDEP) -Wl,-Map,$(notdir $@).map
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
 #---------------------------------------------------------------------------------
-LIBS	:=	 -lwiikeyboard -lasnd -lwiiuse -lbte -lfat -logc -lm
+LIBS	:=	 -lwiikeyboard -lvorbisidec -lasnd -lwiiuse -lbte -lfat -logc -lm
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:= $(CURDIR)/../../../source/oskrevol
+LIBDIRS	:= $(PORTLIBS) \
+           $(CURDIR)/../../../source/oskrevol \
+           $(CURDIR)/../../../source/oggplayer
 
 #---------------------------------------------------------------------------------
 # no real need to edit anything past this point unless you need to add additional

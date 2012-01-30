@@ -61,6 +61,12 @@
     <Filter Include="Source Files\server">
       <UniqueIdentifier>{f1c268bf-9d37-4623-aae9-5de9383ab3e5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\oggplayer">
+      <UniqueIdentifier>{1603fbff-3de8-4490-ba26-05a7938cb92e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\oggplayer">
+      <UniqueIdentifier>{863ae5c9-d90c-4e9c-a39c-541a4b5a83d0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\glrevol\source\glrevol.c">
@@ -378,6 +384,9 @@
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\client\x86.c">
       <Filter>Source Files\client</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\oggplayer\source\oggplayer.c">
+      <Filter>Source Files\oggplayer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\glrevol\include\GL\gl.h">
@@ -544,6 +553,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\client\vid.h">
       <Filter>Header Files\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\oggplayer\include\oggplayer.h">
+      <Filter>Header Files\oggplayer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

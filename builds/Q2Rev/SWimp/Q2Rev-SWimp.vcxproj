@@ -62,6 +62,7 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\source\oggplayer\source\oggplayer.c" />
     <ClCompile Include="..\..\..\source\oskrevol\source\osk_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\cd_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\glimp_revol.c" />
@@ -176,6 +177,7 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_surf.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\source\oggplayer\include\oggplayer.h" />
     <ClInclude Include="..\..\..\source\oskrevol\include\osk_revol.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\g_local.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\game\game.h" />

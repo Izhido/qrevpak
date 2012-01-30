@@ -28,6 +28,12 @@
     <Filter Include="Source Files\oskrevol">
       <UniqueIdentifier>{a094d064-f8a8-4944-b9a6-b596a56b830c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\oggplayer">
+      <UniqueIdentifier>{f89dc833-cad8-4a07-882a-131ba4722049}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\oggplayer">
+      <UniqueIdentifier>{cc93a0c7-4627-4e29-b657-f5235f167d44}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\glrevol\source\glrevol.c">
@@ -267,6 +273,9 @@
     <ClCompile Include="..\..\..\source\q1source\QW\client\zone.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\oggplayer\source\oggplayer.c">
+      <Filter>Source Files\oggplayer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\glrevol\include\GL\gl.h">
@@ -424,6 +433,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\q1source\QW\client\zone.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\oggplayer\include\oggplayer.h">
+      <Filter>Header Files\oggplayer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

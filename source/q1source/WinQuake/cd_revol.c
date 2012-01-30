@@ -17,6 +17,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
+// cd_revol.c -- CD music tracks player for the Nintendo Wii using devkitPPC / libogc
+// (based on cd_null.c)
+
 #include <gccore.h>
 
 #include "oggplayer.h"
@@ -25,24 +28,107 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 extern	cvar_t	bgmvolume;
 
+typedef struct trackinfo_s
+{
+	char* track;
+	struct trackinfo_s *prev, *next;
+} trackinfo_t;
+
 cvar_t cd_tracks = {"cd_tracks", "%s/cdtracks", true};
 
 cvar_t cd_nofirst = {"cd_nofirst", "1", true};
 
-static char trackDir[MAX_OSPATH];
-static char tracks[MAX_OSPATH];
-static qboolean cdValid = false;
-static qboolean	playing = false;
-static qboolean	wasPlaying = false;
-static qboolean	initialized = false;
-static qboolean	enabled = false;
-static qboolean playLooping = false;
-static float	cdvolume;
-static byte 	remap[100];
-static byte		playTrack;
-static byte		maxTrack;
-static byte* trackData = NULL;
-static int trackDataLength = 0;
+static char         trackDir[MAX_OSPATH];
+static char         tracks[MAX_OSPATH];
+static qboolean     cdValid = false;
+static qboolean	    playing = false;
+static qboolean	    wasPlaying = false;
+static qboolean	    initialized = false;
+static qboolean	    enabled = false;
+static qboolean     playLooping = false;
+static float	    cdvolume;
+static byte 	    remap[100];
+static byte		    playTrack;
+static byte		    maxTrack;
+static byte*        trackData = NULL;
+static int          trackDataLength = 0;
+static trackinfo_t* trackList = NULL;
+
+
+static void CDAudio_AddTrack(trackinfo_t* nod, char* track)
+{
+	int ord;
+	trackinfo_t* tnew;
+
+	ord = strcmp(track, nod->track);
+	if(ord != 0)
+	{
+		if(((ord < 0) && (nod->prev == NULL)) || ((ord > 0) && (nod->next == NULL)))
+		{
+			tnew = Sys_Malloc(sizeof(trackinfo_t), "CDAudio_GetAudioDiskInfo");
+			tnew->track = Sys_Malloc(strlen(track) + 1, "CDAudio_GetAudioDiskInfo");
+			strcpy(tnew->track, track);
+			tnew->prev = NULL;
+			tnew->next = NULL;
+			if(ord < 0)
+			{
+				nod->prev = tnew;
+			} else
+			{
+				nod->next = tnew;
+			};
+		} else if(ord < 0)
+		{
+			CDAudio_AddTrack(nod->prev, track);
+		} else
+		{
+			CDAudio_AddTrack(nod->next, track);
+		};
+	};
+}
+
+
+static trackinfo_t* CDAudio_GetTrack(trackinfo_t* nod, int index, int* lastfound)
+{
+	trackinfo_t* ret = NULL;
+
+	if(nod->prev != NULL)
+	{
+		ret = CDAudio_GetTrack(nod->prev, index, lastfound);
+	};
+
+	if(ret != NULL)
+		return ret;
+
+	(*lastfound)++;
+	if(index == (*lastfound))
+	{
+		return nod;
+	};
+
+	if(nod->next != NULL)
+	{
+		ret = CDAudio_GetTrack(nod->next, index, lastfound);
+	};
+
+	return ret;
+}
+
+
+static void CDAudio_DeleteTracks(trackinfo_t* nod)
+{
+	if(nod->next != NULL)
+	{
+		CDAudio_DeleteTracks(nod->next);
+		free(nod->next);
+	};
+	if(nod->next != NULL)
+	{
+		CDAudio_DeleteTracks(nod->prev);
+		free(nod->prev);
+	};
+	free(nod->track);
+}
 
 
 static void CDAudio_CloseDoor(void)
@@ -57,24 +143,45 @@ static void CDAudio_Eject(void)
 
 static int CDAudio_GetAudioDiskInfo(void)
 {
+	char* t;
 
 	cdValid = false;
 
+	if(trackList != NULL)
+	{
+		CDAudio_DeleteTracks(trackList);
+		free(trackList);
+		trackList = NULL;
+	};
+	maxTrack = 0;
+
 	sprintf(trackDir, cd_tracks.string, com_gamedir);
 	sprintf(tracks, "%s/*.ogg", trackDir);
-	if(!Sys_FindFirst(tracks, 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM))
+	t = Sys_FindFirst(tracks, 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM);
+	if(t == NULL)
 	{
 		Sys_FindClose();
 		return -1;
 	}
 
 	cdValid = true;
-	maxTrack = 1;
 
-	while(Sys_FindNext(0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM))
+	do
 	{
+		if(trackList == NULL)
+		{
+			trackList = Sys_Malloc(sizeof(trackinfo_t), "CDAudio_GetAudioDiskInfo");
+			trackList->track = Sys_Malloc(strlen(t) + 1, "CDAudio_GetAudioDiskInfo");
+			strcpy(trackList->track, t);
+			trackList->prev = NULL;
+			trackList->next = NULL;
+		} else
+		{
+			CDAudio_AddTrack(trackList, t);
+		};
 		maxTrack++;
-	};
+		t = Sys_FindNext(0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM);
+	} while(t != NULL);
 
 	if(cd_nofirst.value)
 		maxTrack++;
@@ -96,9 +203,9 @@ void CDAudio_SetVolume (float newvolume)
 
 void CDAudio_Play(byte track, qboolean looping)
 {
-	char* trackFile;
+	int i, lf;
+	trackinfo_t* tnod;
 	int trackHdl;
-	int m;
 
 	if (!enabled)
 		return;
@@ -118,11 +225,11 @@ void CDAudio_Play(byte track, qboolean looping)
 		return;
 	}
 
-	m = track;
+	i = track;
 
 	if(cd_nofirst.value)
-		m--;
-
+		i--;
+	
 	if (playing)
 	{
 		if (playTrack == track)
@@ -130,29 +237,24 @@ void CDAudio_Play(byte track, qboolean looping)
 		CDAudio_Stop();
 	}
 
-	trackFile = Sys_FindFirst(tracks, 0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM);
-	m--;
-	while((trackFile != NULL) && (m > 0))
-	{
-		trackFile = Sys_FindNext(0, SFF_SUBDIR | SFF_HIDDEN | SFF_SYSTEM);
-		m--;
-	};
+	lf = -1;
+	tnod = CDAudio_GetTrack(trackList, i - 1, &lf); 
 
-	Sys_FindClose();
-
-	if(trackFile == NULL)
+	if(tnod == NULL)
 	{
 		Con_Printf("CDAudio: Can't locate track %i\n", track);
 		return;
 	}
 
 	free(trackData);
+	trackData = NULL;
 
-	trackDataLength = Sys_FileOpenRead(trackFile, &trackHdl);
+	trackDataLength = Sys_FileOpenRead(tnod->track, &trackHdl);
 	if(trackDataLength <= 0)
 	{
 		trackDataLength = 0;
 		Con_Printf("CDAudio: Can't open track %i\n", track);
+		return;
 	};
 
 	trackData = Sys_Malloc(trackDataLength, "CDAudio_Play");
@@ -169,7 +271,7 @@ void CDAudio_Play(byte track, qboolean looping)
 	playTrack = track;
 	playing = true;
 
-	Con_Printf("Now playing: %s\n", trackFile);
+	Con_Printf("Now playing: %s\n", tnod->track);
 
 	if (cdvolume == 0.0)
 		CDAudio_Pause ();
@@ -243,6 +345,14 @@ void CDAudio_Update(void)
 				CDAudio_Pause ();
 		}
 	}
+
+	if(StatusOgg() == OGG_STATUS_EOF)
+	{
+		if(playing)
+		{
+			playing = false;
+		};
+	};
 }
 
 

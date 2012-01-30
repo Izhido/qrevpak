@@ -63,6 +63,7 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\glrevol\source\glrevol.c" />
+    <ClCompile Include="..\..\..\source\oggplayer\source\oggplayer.c" />
     <ClCompile Include="..\..\..\source\oskrevol\source\osk_revol.c" />
     <ClCompile Include="..\..\..\source\q1source\WinQuake\cd_revol.c" />
     <ClCompile Include="..\..\..\source\q1source\WinQuake\chase.c" />
@@ -151,6 +152,7 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
   <ItemGroup>
     <ClInclude Include="..\..\..\source\glrevol\include\GL\gl.h" />
     <ClInclude Include="..\..\..\source\glrevol\include\GL\glu.h" />
+    <ClInclude Include="..\..\..\source\oggplayer\include\oggplayer.h" />
     <ClInclude Include="..\..\..\source\oskrevol\include\osk_revol.h" />
     <ClInclude Include="..\..\..\source\q1source\WinQuake\adivtab.h" />
     <ClInclude Include="..\..\..\source\q1source\WinQuake\anorm_dots.h" />

@@ -1061,10 +1061,7 @@ void Sys_BigStackFree(int size, char* purpose)
 
 void Sys_PowerOff(s32 chan)
 {
-	if(chan == WPAD_CHAN_0)
-	{
-		SYS_ResetSystem(SYS_POWEROFF, 0, 0);
-	};
+	SYS_ResetSystem(SYS_POWEROFF, 0, 0);
 }
 
 int main (int argc, char* argv[])

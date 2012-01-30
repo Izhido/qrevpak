@@ -89,119 +89,6 @@ qboolean IN_GetMouseCursorPos(incursorcoords_t* p)
 	return true;
 }
 
-void IN_CalcWmoteOutMove(ir_t w)
-{
-	int dif_l;
-	int dif_r;
-	int dif_t;
-	int dif_b;
-
-	wmote_prev_x = wmote_curr_x;
-	wmote_prev_y = wmote_curr_y;
-	if(w.smooth_valid)
-	{
-		wmote_curr_x = w.sx;
-		wmote_curr_y = w.sy;
-	} else
-	{
-		dif_l = wmote_curr_x;
-		dif_r = sys_rmode->viWidth - 1 - wmote_curr_x;
-		dif_t = wmote_curr_y;
-		dif_b = sys_rmode->viHeight - 1 - wmote_curr_y;
-		if(dif_l < dif_r)
-		{
-			if(dif_t < dif_b)
-			{
-				if(dif_l < dif_t)
-				{
-					if(dif_l < 20)
-					{
-						wmote_curr_x = dif_l - 20;
-					} else
-					{
-						wmote_curr_x = 0;
-					};
-				} else
-				{
-					if(dif_t < 15)
-					{
-						wmote_curr_y = dif_t - 15;
-					} else
-					{
-						wmote_curr_y = 0;
-					};
-				};
-			} else
-			{
-				if(dif_l < dif_b)
-				{
-					if(dif_l < 20)
-					{
-						wmote_curr_x = dif_l - 20;
-					} else
-					{
-						wmote_curr_x = 0;
-					};
-				} else
-				{
-					if(dif_b < 15)
-					{
-						wmote_curr_y = sys_rmode->viHeight + 14 - dif_b;
-					} else
-					{
-						wmote_curr_y = sys_rmode->viHeight - 1;
-					};
-				};
-			};
-		} else
-		{
-			if(dif_t < dif_b)
-			{
-				if(dif_r < dif_t)
-				{
-					if(dif_r < 20)
-					{
-						wmote_curr_x = sys_rmode->viWidth + 19 - dif_r;
-					} else
-					{
-						wmote_curr_x = sys_rmode->viWidth - 1;
-					};
-				} else
-				{
-					if(dif_t < 15)
-					{
-						wmote_curr_y = dif_t - 15;
-					} else
-					{
-						wmote_curr_y = 0;
-					};
-				};
-			} else
-			{
-				if(dif_r < dif_b)
-				{
-					if(dif_r < 20)
-					{
-						wmote_curr_x = sys_rmode->viWidth + 19 - dif_r;
-					} else
-					{
-						wmote_curr_x = sys_rmode->viWidth - 1;
-					};
-				} else
-				{
-					if(dif_b < 15)
-					{
-						wmote_curr_y = sys_rmode->viHeight + 14 - dif_b;
-					} else
-					{
-						wmote_curr_y = sys_rmode->viHeight - 1;
-					};
-				};
-			};
-		};
-	};
-}
-
 void IN_SetWmoteCursorPos(int x, int y)
 {
 	wmote_adjust_x = wmote_curr_x - x;
@@ -212,7 +99,11 @@ qboolean IN_GetWmoteCursorPos(incursorcoords_t* p)
 {
 	ir_t w;
 	int wx;
-	int wy;
+	float l;
+	float r;
+	float t;
+	float b;
+	float m;
 
 	WPAD_IR(WPAD_CHAN_0, &w);
 	if(w.valid)
@@ -228,32 +119,63 @@ qboolean IN_GetWmoteCursorPos(incursorcoords_t* p)
 		wmote_validcount++;
 	} else
 	{
-		if(wmote_validcount == 0)
+		if(wmote_validcount == 1)
 		{
-			wx = wmote_curr_x + wmote_curr_x - wmote_prev_x;
-			wy = wmote_curr_y + wmote_curr_y - wmote_prev_y;
-			wmote_prev_x = wmote_curr_x;
-			wmote_prev_y = wmote_curr_y;
-			wmote_curr_x = wx;
-			wmote_curr_y = wy;
-		} else if(wmote_validcount == 1)
-		{
-			IN_CalcWmoteOutMove(w);
+			if(w.smooth_valid)
+			{
+				wx = wmote_curr_x + wmote_curr_x - w.sx;
+			} else
+			{
+				if(wmote_curr_x != wmote_prev_x)
+				{
+					l = (float)(-wmote_curr_x) / (float)(wmote_prev_x - wmote_curr_x);
+					r = (float)(sys_rmode->viWidth - 1 - wmote_curr_x) / (float)(wmote_prev_x - wmote_curr_x);
+				} else
+				{
+					l = -1;
+					r = -1;
+				};
+				if(wmote_curr_y != wmote_prev_y)
+				{
+					t = (float)(-wmote_curr_y) / (float)(wmote_prev_y - wmote_curr_y);
+					b = (float)(sys_rmode->viHeight - 1 - wmote_curr_y) / (float)(wmote_prev_y - wmote_curr_y);
+				} else
+				{
+					t = -1;
+					b = -1;
+				};
+				if(l >= 0)
+				{
+					m = l;
+				} else
+				{
+					m = t;
+				};
+				if((l >= 0) && (m > l))
+				{
+					m = l;
+				};
+				if((r >= 0) && (m > r))
+				{
+					m = r;
+				};
+				if((t >= 0) && (m > t))
+				{
+					m = t;
+				};
+				if((b >= 0) && (m > b))
+				{
+					m = b;
+				};
+				wx = wmote_curr_x + (int)(m * (float)(wmote_prev_y - wmote_curr_y));
+			};
 		} else
 		{
 			wx = wmote_curr_x + wmote_curr_x - wmote_prev_x;
-			wy = wmote_curr_y + wmote_curr_y - wmote_prev_y;
-			if((wx > 0)&&(wy > 0)&&(wx < sys_rmode->viWidth)&&(wy < sys_rmode->viHeight))
-			{
-				IN_CalcWmoteOutMove(w);
-			} else
-			{
-				wmote_prev_x = wmote_curr_x;
-				wmote_prev_y = wmote_curr_y;
-				wmote_curr_x = wx;
-				wmote_curr_y = wy;
-			};
 		};
+		wmote_prev_x = wmote_curr_x;
+		wmote_prev_y = wmote_curr_y;
+		wmote_curr_x = wx;
 		wmote_validcount = 0;
 	};
 	if((((in_wlook.value != 0)&&(wmotelookbinv.value == 0))

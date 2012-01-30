@@ -40,6 +40,25 @@ int Sys_FileWrite (int handle, void *data, int count);
 int	Sys_FileTime (char *path);
 void Sys_mkdir (char *path);
 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// New functions for file searching:
+
+// directory searching
+#define SFF_ARCH    0x01
+#define SFF_HIDDEN  0x02
+#define SFF_RDONLY  0x04
+#define SFF_SUBDIR  0x08
+#define SFF_SYSTEM  0x10
+
+/*
+** pass in an attribute mask of things you wish to REJECT
+*/
+char	*Sys_FindFirst (char *path, unsigned musthave, unsigned canthave );
+char	*Sys_FindNext ( unsigned musthave, unsigned canthave );
+void	Sys_FindClose (void);
+
+// <<< FIX
+
 //
 // memory protection
 //

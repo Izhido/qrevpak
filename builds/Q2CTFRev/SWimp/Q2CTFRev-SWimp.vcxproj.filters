@@ -52,6 +52,12 @@
     <Filter Include="Source Files\server">
       <UniqueIdentifier>{f1c268bf-9d37-4623-aae9-5de9383ab3e5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\oggplayer">
+      <UniqueIdentifier>{5771a099-1584-46ef-b432-412c2ea87ccd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\oggplayer">
+      <UniqueIdentifier>{b0d3b07d-cd7e-45c1-a203-cb10a979f8a4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\oskrevol\source\osk_revol.c">
@@ -330,6 +336,9 @@
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_soft\r_surf.c">
       <Filter>Source Files\ref_soft</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\oggplayer\source\oggplayer.c">
+      <Filter>Source Files\oggplayer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\oskrevol\include\osk_revol.h">
@@ -433,6 +442,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_soft\rand1k.h">
       <Filter>Header Files\ref_soft</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\oggplayer\include\oggplayer.h">
+      <Filter>Header Files\oggplayer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

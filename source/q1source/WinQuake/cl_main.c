@@ -173,13 +173,6 @@ void CL_EstablishConnection (char *host)
 	cls.demonum = -1;			// not in the demo loop now
 	cls.state = ca_connected;
 	cls.signon = 0;				// need all the signon messages before playing
-	// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-	// Many servers nowadays require that the client send something first before they start sending commands.
-	// For now, send a NOP to the client:
-	//MSG_WriteByte(&cls.message, clc_nop);
-	//NET_SendMessage(cls.netcon, &cls.message);
-	//SZ_Clear(&cls.message);
-	// <<< FIX
 }
 
 /*

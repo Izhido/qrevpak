@@ -19,7 +19,8 @@ TARGET		:=	Q1Rev-GL
 BUILD		:=	build
 SOURCES		:=	../../../source/q1source/WinQuake \
                 ../../../source/oskrevol/source \
-                ../../../source/glrevol/source
+                ../../../source/glrevol/source \
+                ../../../source/oggplayer/source
 DATA		:=	../../../data  
 INCLUDES	:=  ../../../source/q1source/WinQuake
 
@@ -36,14 +37,16 @@ LDFLAGS	=	-g $(MACHDEP) -Wl,-Map,$(notdir $@).map
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
 #---------------------------------------------------------------------------------
-LIBS	:=	 -lwiikeyboard -lasnd -lwiiuse -lbte -lfat -logc -lm
+LIBS	:=	 -lwiikeyboard -lvorbisidec -lasnd -lwiiuse -lbte -lfat -logc -lm
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:= $(CURDIR)/../../../source/oskrevol \
-           $(CURDIR)/../../../source/glrevol
+LIBDIRS	:= $(PORTLIBS) \
+           $(CURDIR)/../../../source/oskrevol \
+           $(CURDIR)/../../../source/glrevol \
+           $(CURDIR)/../../../source/oggplayer
 
 #---------------------------------------------------------------------------------
 # no real need to edit anything past this point unless you need to add additional
