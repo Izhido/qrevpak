@@ -349,9 +349,12 @@ void IN_WmoteMove (usercmd_t *cmd)
 	if (!wmoteactive)
 		return;
 
-	// find Wii Remote movement
+	// find Wii Remote movement (if not available, reset to center before exiting)
 	if (!IN_GetWmoteCursorPos (&current_pos))
+	{
+		IN_SetWmoteCursorPos (window_center_x, window_center_y);
 		return;
+	};
 
 	wx = current_pos.x - window_center_x;
 	wy = current_pos.y - window_center_y;
