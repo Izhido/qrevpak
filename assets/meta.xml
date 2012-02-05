@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<app version="Release 1">
+<app version="Release 2">
   <name>Quake Rev PAK</name>
   <coder>Izhido</coder>
-  <version>Release 1</version>
-  <release_date>201201221724</release_date>
+  <version>Release 2</version>
+  <release_date>201202051601</release_date>
   <short_description>Quake Rev PAK</short_description>
   <long_description>
     Original source code (C) 1996-2012 Id Software, Inc.&#x000A;&#x000D;
