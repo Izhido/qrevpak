@@ -1220,12 +1220,20 @@ int Q_strcasecmp (char *s1, char *s2)
 }
 
 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// The following buffer has no need to be dynamically created.
+// Moving out of Com_sprintf:
+char bigbuffer[0x10000];
+// <<< FIX
 
 void Com_sprintf (char *dest, int size, char *fmt, ...)
 {
 	int		len;
 	va_list		argptr;
-	char	bigbuffer[0x10000];
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Removing non-needed buffer:
+	//char	bigbuffer[0x10000];
+// <<< FIX
 
 	va_start (argptr,fmt);
 	len = vsprintf (bigbuffer,fmt,argptr);

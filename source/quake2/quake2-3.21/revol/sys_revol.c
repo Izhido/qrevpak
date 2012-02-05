@@ -43,6 +43,19 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define SYS_FIFO_SIZE (256*1024)
 
 
+
+typedef struct hunkblock_s
+{
+	byte* block;
+	int size;
+	int topUsed;
+	int topAllocated;
+	int refCount;
+	struct hunkblock_s *next;
+} hunkblock_t;
+
+
+
 int	curtime;
 
 unsigned	sys_frame_time;
@@ -74,6 +87,8 @@ extern cvar_t* in_osk;
 
 extern cvar_t* in_wlook;
 
+int sys_osk_timeout_base;
+
 u32 sys_previous_keys;
 
 u32 sys_previous_pad_keys;
@@ -82,20 +97,21 @@ int sys_previous_unaliased_key;
 
 int sys_current_weapon;
 
-byte *membase;
+void* membase;
 
 int maxhunksize;
 
 int curhunksize;
 
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// New data structures for big stack handling:
+hunkblock_t* hunk_blocks = NULL;
+
+hunkblock_t* cur_block;
+
 #define BIGSTACK_SIZE 2 * 1024 * 1024
 
 byte sys_bigstack[BIGSTACK_SIZE];
 
 int sys_bigstack_cursize;
-// <<< FIX
 
 s32 sys_mouse_valid;
 
@@ -116,19 +132,32 @@ void Sys_GetResolutionTexts()
 void Sys_Error (char *error, ...)
 {
 	va_list		argptr;
+	FILE* f;
+	time_t rawtime;
+	struct tm * timeinfo;
+	char stime[32];
 
+	f= fopen("QRevPAK.err", "ab");
+	if(f != NULL)
+	{
+		time(&rawtime);
+		timeinfo = localtime (&rawtime);
+		strftime(stime, 32, "%Y/%m/%d %H:%M:%S",timeinfo);
+		fprintf(f, "%s : Sys_Error: ", stime);
+		va_start(argptr, error);
+		vfprintf(f, error, argptr);
+		va_end(argptr);
+		fprintf(f, "\n\n");
+		fclose(f);
+	};
 	printf ("Sys_Error: ");	
 	va_start (argptr,error);
 	vprintf (error,argptr);
 	va_end (argptr);
 	printf ("\n");
-	printf ("\n");
-	printf ("\n");
-	printf ("\n");
-	printf ("\n");
-	printf ("\n");
-	printf ("\n");
-	printf ("\n");
+
+	VIDEO_SetNextFramebuffer(sys_framebuffer[0]);
+	VIDEO_WaitVSync();
 
 	exit (1);
 }
@@ -381,12 +410,18 @@ void Sys_HandleKey(int k, qboolean pressed)
 		Key_Event('c', pressed, Sys_Milliseconds());
 		if(pressed)
 		{
-			if(in_osk->value == 0)
+			sys_osk_timeout_base = Sys_Milliseconds();
+		} else
+		{
+			if((Sys_Milliseconds() - sys_osk_timeout_base) < 500)
 			{
-				Cvar_SetValue("in_osk", 1);
-			} else
-			{
-				Cvar_SetValue("in_osk", 0);
+				if(in_osk->value == 0)
+				{
+					Cvar_SetValue("in_osk", 1);
+				} else
+				{
+					Cvar_SetValue("in_osk", 0);
+				};
 			};
 		};
 	} else if(k == K_F1_Y)
@@ -645,12 +680,62 @@ char *Sys_GetClipboardData( void )
 void *Hunk_Begin (int maxsize)
 {
 	// reserve a huge chunk of memory, but don't commit any yet
+	hunkblock_t* h;
+	hunkblock_t* hprev;
+
 	maxhunksize = maxsize;
 	curhunksize = 0;
-	membase = malloc(maxhunksize);
-	if (membase == NULL)
-		Sys_Error("unable to allocate %d bytes", maxsize);
-	memset (membase, 0, maxsize);
+	hprev = NULL;
+	h = hunk_blocks;
+	while(h != NULL)
+	{
+		if((h->size - h->topUsed) > maxsize)
+		{
+			break;
+		} else
+		{
+			hprev = h;
+			h = h->next;
+		};
+	};
+	if(h == NULL)
+	{
+		if(maxhunksize > 65536)
+		{
+			membase = malloc(maxhunksize);
+			if (membase == NULL)
+				Sys_Error("unable to allocate %d bytes", maxsize);
+			memset (membase, 0, maxsize);
+			h = malloc(sizeof(hunkblock_t));
+			if (h == NULL)
+				Sys_Error("unable to allocate %d bytes", sizeof(hunkblock_t));
+			h->block = membase;
+			h->size = maxhunksize;
+			h->topUsed = maxhunksize;
+			h->topAllocated = 0;
+			h->refCount = 0;
+			h->next = NULL;
+			if(hprev == NULL)
+			{
+				hunk_blocks = h;
+			} else
+			{
+				hprev->next = h;
+			};
+		} else
+		{
+			membase = malloc(maxhunksize);
+			if (membase == NULL)
+				Sys_Error("unable to allocate %d bytes", maxsize);
+			memset (membase, 0, maxsize);
+		};
+	} else
+	{
+		membase = h->block + h->topUsed;
+		h->topUsed += maxhunksize;
+		memset (membase, 0, maxsize);
+	};
+	cur_block = h;
 	return membase;
 }
 
@@ -664,6 +749,8 @@ void *Hunk_Alloc (int size)
 		Sys_Error("Hunk_Alloc overflow");
 	buf = membase + curhunksize;
 	curhunksize += size;
+	if(cur_block != NULL)
+		cur_block->topAllocated += size;
 	return buf;
 }
 
@@ -671,17 +758,63 @@ int Hunk_End (void)
 {
 	byte *n;
 
-	n = realloc(membase, curhunksize);
-	if (n != membase)
-		Sys_Error("Hunk_End:  Could not remap virtual block (%d)", errno);
-	
+	if(cur_block != NULL)
+	{
+		cur_block->topUsed = cur_block->topAllocated;
+		cur_block->refCount++;
+		cur_block = NULL;
+	} else
+	{
+		n = realloc(membase, curhunksize);
+		if (n != membase)
+			Sys_Error("Hunk_End:  Could not remap virtual block (%d)", errno);
+	};
 	return curhunksize;
 }
 
 void Hunk_Free (void *base)
 {
-	if (base)
-		free(base);
+	hunkblock_t* hprev;
+	hunkblock_t* h;
+	int bpos;
+	qboolean hFound;
+	int hpos;
+
+	hprev = NULL;
+	h = hunk_blocks;
+	bpos = (int)base;
+	hFound = false;
+	while(h != NULL)
+	{
+		hpos = (int)(h->block);
+		if((bpos >= hpos) && (bpos < (hpos + h->size)))
+		{
+			h->refCount--;
+			if(h->refCount == 0)
+			{
+				free(h->block);
+				if(hprev == NULL)
+				{
+					hunk_blocks = h->next;
+				} else
+				{
+					hprev->next = h->next;
+				};
+				free(h);
+			};
+			hFound = true;
+			break;
+		} else
+		{
+			hprev = h;
+			h = h->next;
+		};
+	};
+	if(!hFound)
+	{
+		if (base)
+			free(base);
+	};
 }
 
 int Sys_Milliseconds (void)
@@ -955,8 +1088,6 @@ void	Sys_Init (void)
 
 //=============================================================================
 
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// New functions for big stack handling:
 void Sys_BigStackRewind(void)
 {
 	sys_bigstack_cursize = 0;
@@ -988,7 +1119,6 @@ void Sys_BigStackFree(int size, char* purpose)
 		Sys_Error ("Sys_BigStackFree: %s - underflow on %i bytes", purpose, sys_bigstack_cursize - size);
 	};
 }
-// <<< FIX
 
 void Sys_PowerOff(s32 chan)
 {

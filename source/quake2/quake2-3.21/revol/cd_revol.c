@@ -42,11 +42,11 @@ static qboolean	    initialized = false;
 static qboolean	    enabled = false;
 static qboolean     playLooping = false;
 static byte 	    remap[100];
-static byte		    cdrom;
 static byte		    playTrack;
 static byte		    maxTrack;
 static byte*        trackData = NULL;
 static int          trackDataLength = 0;
+static int          trackDataSize = 0;
 static trackinfo_t* trackList = NULL;
 
 cvar_t *cd_nocd;
@@ -215,6 +215,8 @@ void CDAudio_Play2(int track, qboolean looping)
 	int i, lf;
 	trackinfo_t* tnod;
 	FILE* trackFile;
+	int newTrackDataLength;
+	byte* newTrackData;
 
 	if (!enabled)
 		return;
@@ -262,27 +264,45 @@ void CDAudio_Play2(int track, qboolean looping)
 		return;
 	};
 
-	free(trackData);
-	trackData = NULL;
-
 	fseek(trackFile, 0, SEEK_END);
-	trackDataLength = ftell(trackFile);
+	newTrackDataLength = ftell(trackFile);
 	fseek(trackFile, 0, SEEK_SET);
 
-	if(trackDataLength <= 0)
+	if(newTrackDataLength <= 0)
 	{
-		trackDataLength = 0;
 		fclose(trackFile);
 		Com_Printf("CDAudio: Can't open track %i\n", track);
 		return;
 	};
 
-	trackData = malloc(trackDataLength);
-	if(trackList == 0)
+	if(trackData == NULL)
 	{
-		fclose(trackFile);
-		Com_Error(ERR_DROP, "CDAudio_GetAudioDiskInfo: can't allocate %i for track data\n", trackDataLength);
+		trackData = malloc(newTrackDataLength);
+		if(trackData == 0)
+		{
+			fclose(trackFile);
+			Com_Error(ERR_DROP, "CDAudio_GetAudioDiskInfo: can't allocate %i for track data\n", trackDataLength);
+		};
+		trackDataSize = newTrackDataLength;
+	} else if(trackDataSize < newTrackDataLength)
+	{
+		newTrackData = realloc(trackData, newTrackDataLength);
+		if(newTrackData == NULL)
+		{
+			free(trackData);
+			trackData = malloc(newTrackDataLength);
+			if(trackData == 0)
+			{
+				fclose(trackFile);
+				Com_Error(ERR_DROP, "CDAudio_GetAudioDiskInfo: can't reallocate %i for track data\n", trackDataLength);
+			};
+		} else
+		{
+			trackData = newTrackData;
+		};
+		trackDataSize = newTrackDataLength;
 	};
+	trackDataLength = newTrackDataLength;
 
 	fread(trackData, 1, trackDataLength, trackFile);
 	fclose(trackFile);
@@ -297,7 +317,7 @@ void CDAudio_Play2(int track, qboolean looping)
 	playTrack = track;
 	playing = true;
 
-	Com_Printf("Now playing: %s\n", tnod->track);
+	//Com_Printf("Now playing: %s\n", tnod->track);
 
 	if ( Cvar_VariableValue( "cd_nocd" ) )
 		CDAudio_Pause ();
@@ -548,5 +568,6 @@ void CDAudio_Shutdown(void)
 {
 	if (!initialized)
 		return;
+	free(trackData);
 	CDAudio_Stop();
 }

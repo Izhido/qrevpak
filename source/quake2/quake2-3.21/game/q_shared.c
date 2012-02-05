@@ -1219,14 +1219,19 @@ int Q_strcasecmp (char *s1, char *s2)
 }
 
 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// The following buffer has no need to be dynamically created.
+// Moving out of Com_sprintf:
+char bigbuffer[0x10000];
+// <<< FIX
+
 void Com_sprintf (char *dest, int size, char *fmt, ...)
 {
 	int		len;
 	va_list		argptr;
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Allocating in big stack. Stack in this device is pretty small:
+// Removing non-needed buffer:
 	//char	bigbuffer[0x10000];
-	char*	bigbuffer = Sys_BigStackAlloc(0x10000, "Com_sprintf");
 // <<< FIX
 
 	va_start (argptr,fmt);
@@ -1235,11 +1240,6 @@ void Com_sprintf (char *dest, int size, char *fmt, ...)
 	if (len >= size)
 		Com_Printf ("Com_sprintf: overflow of %i in %i\n", len, size);
 	strncpy (dest, bigbuffer, size-1);
-
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Deallocating from previous fix:
-	Sys_BigStackFree(0x10000, "Com_sprintf");
-// <<< FIX
 }
 
 /*

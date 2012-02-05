@@ -33,6 +33,7 @@ static byte		    playTrack;
 static byte		    maxTrack;
 static byte*        trackData = NULL;
 static int          trackDataLength = 0;
+static int          trackDataSize = 0;
 static trackinfo_t* trackList = NULL;
 
 
@@ -187,6 +188,8 @@ void CDAudio_Play(byte track, qboolean looping)
 	int i, lf;
 	trackinfo_t* tnod;
 	int trackHdl;
+	int newTrackDataLength;
+	byte* newTrackData;
 
 	if (!enabled)
 		return;
@@ -227,18 +230,32 @@ void CDAudio_Play(byte track, qboolean looping)
 		return;
 	}
 
-	free(trackData);
-	trackData = NULL;
-
-	trackDataLength = Sys_FileOpenRead(tnod->track, &trackHdl);
-	if(trackDataLength <= 0)
+	newTrackDataLength = Sys_FileOpenRead(tnod->track, &trackHdl);
+	if(newTrackDataLength <= 0)
 	{
-		trackDataLength = 0;
 		Con_Printf("CDAudio: Can't open track %i\n", track);
 		return;
 	};
 
-	trackData = Sys_Malloc(trackDataLength, "CDAudio_Play");
+	if(trackData == NULL)
+	{
+		trackData = Sys_Malloc(newTrackDataLength, "CDAudio_Play");
+		trackDataSize = newTrackDataLength;
+	} else if(trackDataSize < newTrackDataLength)
+	{
+		newTrackData = realloc(trackData, newTrackDataLength);
+		if(newTrackData == NULL)
+		{
+			free(trackData);
+			trackData = Sys_Malloc(newTrackDataLength, "CDAudio_Play");
+		} else
+		{
+			trackData = newTrackData;
+		};
+		trackDataSize = newTrackDataLength;
+	};
+	trackDataLength = newTrackDataLength;
+
 	Sys_FileRead(trackHdl, trackData, trackDataLength);
 	Sys_FileClose(trackHdl);
 
@@ -252,7 +269,7 @@ void CDAudio_Play(byte track, qboolean looping)
 	playTrack = track;
 	playing = true;
 
-	Con_Printf("Now playing: %s\n", tnod->track);
+	//Con_Printf("Now playing: %s\n", tnod->track);
 
 	if (cdvolume == 0.0)
 		CDAudio_Pause ();
@@ -493,5 +510,6 @@ void CDAudio_Shutdown(void)
 {
 	if (!initialized)
 		return;
+	free(trackData);
 	CDAudio_Stop();
 }

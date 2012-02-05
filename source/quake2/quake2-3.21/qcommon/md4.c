@@ -276,7 +276,11 @@ unsigned Com_BlockChecksum (void *buffer, int length)
 	MD4Update (&ctx, (unsigned char *)buffer, length);
 	MD4Final ( (unsigned char *)digest, &ctx);
 	
-	val = digest[0] ^ digest[1] ^ digest[2] ^ digest[3];
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Bug - values may be incorrect for non little-endian platforms. Replacing:
+	//val = digest[0] ^ digest[1] ^ digest[2] ^ digest[3];
+	val = LittleLong(digest[0]) ^ LittleLong(digest[1]) ^ LittleLong(digest[2]) ^ LittleLong(digest[3]);
+// <<< FIX
 
 	return val;
 }

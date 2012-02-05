@@ -461,7 +461,24 @@ void Sys_DebugLog(char *file, char *fmt, ...)
 void Sys_Error (char *error, ...)
 {
 	va_list         argptr;
+	FILE* f;
+	time_t rawtime;
+	struct tm * timeinfo;
+	char stime[32];
 
+	f= fopen("QRevPAK.err", "ab");
+	if(f != NULL)
+	{
+		time(&rawtime);
+		timeinfo = localtime (&rawtime);
+		strftime(stime, 32, "%Y/%m/%d %H:%M:%S",timeinfo);
+		fprintf(f, "%s : Sys_Error: ", stime);
+		va_start(argptr, error);
+		vfprintf(f, error, argptr);
+		va_end(argptr);
+		fprintf(f, "\n\n");
+		fclose(f);
+	};
 	printf ("Sys_Error: ");   
 	va_start (argptr,error);
 	vprintf (error,argptr);
