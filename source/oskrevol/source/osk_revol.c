@@ -295,7 +295,7 @@ int OSK_HandleKeys(bool KeyPressed)
 		} else
 		{
 			k = osk_selected->key;
-			if(KeyPressed)
+			if(!KeyPressed)
 			{
 				if(osk_layout == okl_shift)
 				{
@@ -327,8 +327,7 @@ void OSK_DrawKeyboard(GXRModeObj* rmode, void* dest)
 	img = Keyboard_img;
 	for(j = 0; j < OSK_HEIGHT; j++)
 	{
-		i = 0;
-		while(i < OSK_WIDTH)
+		for(i = 0; i < OSK_WIDTH; i += 2)
 		{
 			a = (*img);
 			if(a == 0)
@@ -341,7 +340,6 @@ void OSK_DrawKeyboard(GXRModeObj* rmode, void* dest)
 				img += 4;
 				*v = c;
 			};
-			i += 2;
 			v++;
 		};
 		v += vinc;
@@ -371,8 +369,7 @@ void OSK_DrawKey(GXRModeObj* rmode, void* dest, oskkey_t* key)
 	imginc = (OSK_WIDTH - m) / 2 * 5;
 	for(j = 0; j < n; j++)
 	{
-		i = 0;
-		while(i < m)
+		for(i = 0; i < m; i += 2)
 		{
 			a = (*img);
 			if(a == 0)
@@ -385,7 +382,6 @@ void OSK_DrawKey(GXRModeObj* rmode, void* dest, oskkey_t* key)
 				img += 4;
 				*v = c;
 			};
-			i += 2;
 			v++;
 		};
 		v += vinc;
