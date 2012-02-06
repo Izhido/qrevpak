@@ -1,17 +1,18 @@
 Q1Rev: A port of the original Quake engine to the Nintendo Wii, compiled using devkitPPC / libogc.
-Release 3
 
+
+IMPORTANT: Q1Rev is now part of Quake Rev PAK.
 
 
 The engine is feature-complete, with sound & network play. In that regard, it can be considered as a "unmodified" NetQuake client. Unfortunately, there are next to no servers that let you use unmodified NetQuake clients (as of this release, lab.ihoc.net is still active).
 
 
 
-New features in this release:
+New features since Release 2 of Quake Rev PAK:
 
-- Classic Controller can now be used to play; controls are similar to those in use by the Gamecube Controller.
-- Pressing [A] to aim is now optional; a Menu Option was provided for such effect.
-- Bug fixes in the way the Nunchuk controller was handled, causing problems when moving on water.
+- CD Music track playback is now available!
+- Key aliases. With the new "keyalias" command, you can map any key in your controller to any other one, letting you customize your controls any way you like.
+- If a game crashes, and the engine is able to tell, it will create a "QRevPAK.err" file containing the date/time and the cause of the crash.
 
 
 
@@ -107,7 +108,7 @@ When pressed, both generate a PAUSE command to the engine. If, however, you pres
 
 
 
-To run Q1Rev, please do the following:
+To run Q1Rev as a standalone application (which we do not recommend, please use Quake Rev PAK), please do the following:
 
 1) Copy the contents of this archive into the *root* of your media card (or USB stick);
 2) Copy the contents of the /ID1/ folder from your original Quake game (usually under C:\QUAKE\ for Windows machines) to the /ID1/ folder of your media card;
@@ -127,7 +128,7 @@ Any comments about the engine are welcome to heribertod@gmail.com.
 
 
 Original source code (C) 1996-1997 Id Software, Inc.
-Modifications (c) 2009-2010 Heriberto Delgado.
+Modifications (c) 2009-2012 Heriberto Delgado.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 

@@ -1,16 +1,20 @@
 Q2Rev: A port of the original id Tech 2 engine (Quake II) to the Nintendo Wii, compiled using devkitPPC / libogc.
-Release 2
+
+
+IMPORTANT: Q2Rev is now part of Quake Rev PAK.
+
+
+The engine is feature-complete, with sound, network play and CD Music track playback. For technical reasons, the Capture-The-Flag module is not included in this engine; you will need to play Q2CTFRev for that purpose.
 
 
 
-The engine is feature-complete, with sound & network play. For technical reasons, the Capture-The-Flag module is not included in this engine; you will need to play Q2CTFRev for that purpose.
+New features since Release 2 of Quake Rev PAK:
 
-
-
-New features in this release:
-
-- Classic Controller can now be used to play; controls are similar to those in use by the Gamecube Controller.
-- Pressing [A] to aim is now optional; a Menu Option was provided for such effect.
+- CD Music track playback is now available! 
+- Key aliases. With the new "keyalias" command, you can map any key in your controller to any other one, letting you customize your controls any way you like.
+- If a game crashes, and the engine is able to tell, it will create a "QRevPAK.err" file containing the date/time and the cause of the crash.
+- The [+] and [-] buttons now move through your inventory, instead of going with fixed keys. Remember to press [1] ( = Enter key, if unaliased) to activate the selected item.
+- The "c" / On-screen Keyboard combo button now behaves differently. The "c" key command (Crouch) is sent immediately; the On-Screen keyboard is shown upon key release. However, if the key is held for more than 0.5 seconds, the On-Screen keyboard won't appear at all. 
 
 
 
@@ -21,8 +25,8 @@ Wii Remote #1        Keyboard
 D-pad                    Arrow keys (*)                                    
 1                        ENTER                                         
 2                        ESC
-+                        1 --> 2 --> 3 --> ... --> 8 --> 1 --> ...
--                        8 --> 7 --> 6 --> ... --> 1 --> 8 --> ...
++                        Next item in inventory
+-                        Previous item in inventory
 B                        Left Mouse Button (Fire, usually)
 A                        Enable Wii Remote Look Mode (see below)
 Home                     "F1" / "y" keys (see below)
@@ -31,15 +35,16 @@ Nunchuck #1              Keyboard
 --------------------------------------------------------------------------------------
 Joystick                 Walk / Sidestep (see below)
 Z                        Space Bar (Jump, usually)
-C                        "c" key / Enables or disables on-screen keyboard (see below)
+C                        "c" key / Enables or disables on-screen keyboard, if held 
+                                   less than 0.5 seconds
 
 Classic Controller #1    Keyboard                                      
 --------------------------------------------------------------------------------------
 D-pad                    Arrow keys (*)                                    
 A                        ENTER                                         
 B                        ESC
-X                        1 --> 2 --> 3 --> ... --> 8 --> 1 --> ...
-Y                        8 --> 7 --> 6 --> ... --> 1 --> 8 --> ...
+X                        Next item in inventory
+Y                        Previous item in inventory
 L                        Left Mouse Button (Fire, usually)
 R                        Space Bar (Jump, usually)
 ZL                       Enables / disables on-screen keyboard (see below)
@@ -54,8 +59,8 @@ Main analog stick        Walk / Sidestep (see below)
 D-pad                    Arrow keys (*)                                    
 A                        ENTER                                         
 B                        ESC
-X                        1 --> 2 --> 3 --> ... --> 8 --> 1 --> ...
-Y                        8 --> 7 --> 6 --> ... --> 1 --> 8 --> ...
+X                        Next item in inventory
+Y                        Previous item in inventory
 Z                        "c" key (see below)
 L                        Left Mouse Button (Fire, usually)
 R                        Space Bar (Jump, usually)
@@ -98,12 +103,12 @@ The Left stick of the Classic Controller connected to the Wii Remote #1, or the 
 
 On-Screen Keyboard:
 
-Press [C] on the Nunchuck, or [ZL] in the Classic Controller. You will see a white, transparent keyboard covering most of the screen. Move your Wii Remote guide (the dotted circle) over it. You will see keys on the keyboard being selected. By pressing [A] on the Wiimote, the selected key will be "pressed" and sent to the engine as a normal key press. Release [A], and the key will also be "released" on screen as well as a normal key "release" from an actual keyboard. Press [C] again on the Nunchuk (or [ZL] on the Classic controller) to hide the on-screen keyboard. NOTE: if you exit your game while the on-screen keyboard is enabled, you will see it again next time you play.
+Press and release [C] on the Nunchuck, for less than 0.5 seconds, or [ZL] in the Classic Controller. You will see a white, transparent keyboard covering most of the screen. Move your Wii Remote guide (the dotted circle) over it. You will see keys on the keyboard being selected. By pressing [A] on the Wiimote, the selected key will be "pressed" and sent to the engine as a normal key press. Release [A], and the key will also be "released" on screen as well as a normal key "release" from an actual keyboard. Press [C] again on the Nunchuk (or [ZL] on the Classic controller) to hide the on-screen keyboard. NOTE: if you exit your game while the on-screen keyboard is enabled, you will see it again next time you play.
 
 
 'c' key:
 
-Press [C] on the Nunchuk (yes, it's the same key as the On-Screen Keyboard), the [Z] button on the Gamecube controller, or the [ZR] button on the Classic controller to make the player 'crouch'. As long as any of these keys are held, the player will be down; release it and it will go up again. If you pressed [C] on the Nunchuk, releasing the key will also bring the on-screen keyboard up. Just press [C] again to hide the keyboard & continue playing. 
+Press [C] on the Nunchuk (yes, it's the same key as the On-Screen Keyboard), the [Z] button on the Gamecube controller, or the [ZR] button on the Classic controller to make the player 'crouch'. As long as any of these keys are held, the player will be down; release it and it will go up again. If you pressed [C] on the Nunchuk, releasing the key (if done in less than 0.5 seconds) will also bring the on-screen keyboard up. Just press [C] again to hide the keyboard & continue playing. 
 
 
 Home / Start-Select button:
@@ -113,7 +118,7 @@ When pressed, any of them will generate simultaneously "F1" and "y" keys for the
 
 
 
-To run Q2Rev, please do the following:
+To run Q2Rev as a standalone application (which we do not recommend, please use Quake Rev PAK), please do the following:
 
 1) Copy the contents of this archive into the *root* of your media card (or USB stick);
 2) Copy the contents of the /baseq2/ folder AND subfolders from your original Quake II game to the /baseq2/ folder of your media card;
@@ -131,7 +136,7 @@ Any comments about the engine are welcome to heribertod@gmail.com.
 
 
 Original source code (C) 1997-2001 Id Software, Inc.
-Modifications (c) 2009-2010 Heriberto Delgado.
+Modifications (c) 2009-2012 Heriberto Delgado.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 
