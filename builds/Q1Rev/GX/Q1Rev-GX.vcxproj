@@ -12,8 +12,9 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{B8DB2596-9EF6-43C5-B456-AF4CF8EB1199}</ProjectGuid>
-    <RootNamespace>Q1Rev-GL</RootNamespace>
+    <RootNamespace>Q1Rev-GX</RootNamespace>
     <Keyword>MakeFileProj</Keyword>
+    <ProjectName>Q1Rev-GX</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -41,7 +42,7 @@
 make</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">make clean</NMakeCleanCommandLine>
     <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
-    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">GLQUAKE;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">GXQUAKE;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
     <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
     <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
@@ -62,7 +63,6 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\source\glrevol\source\glrevol.c" />
     <ClCompile Include="..\..\..\source\oggplayer\source\oggplayer.c" />
     <ClCompile Include="..\..\..\source\oskrevol\source\osk_revol.c" />
     <ClCompile Include="..\..\..\source\q1source\WinQuake\cd_revol.c" />
@@ -89,18 +89,6 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
     <ClCompile Include="..\..\..\source\q1source\WinQuake\d_vars.c" />
     <ClCompile Include="..\..\..\source\q1source\WinQuake\d_zpoint.c" />
     <ClCompile Include="..\..\..\source\q1source\WinQuake\draw.c" />
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_draw.c" />
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_mesh.c" />
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_model.c" />
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_refrag.c" />
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_rlight.c" />
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_rmain.c" />
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_rmisc.c" />
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_rsurf.c" />
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_screen.c" />
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_test.c" />
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_vidrevol.c" />
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_warp.c" />
     <ClCompile Include="..\..\..\source\q1source\WinQuake\host.c" />
     <ClCompile Include="..\..\..\source\q1source\WinQuake\host_cmd.c" />
     <ClCompile Include="..\..\..\source\q1source\WinQuake\in_revol.c" />
@@ -150,8 +138,6 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
     <ClCompile Include="..\..\..\source\q1source\WinQuake\zone.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\source\glrevol\include\GL\gl.h" />
-    <ClInclude Include="..\..\..\source\glrevol\include\GL\glu.h" />
     <ClInclude Include="..\..\..\source\oggplayer\include\oggplayer.h" />
     <ClInclude Include="..\..\..\source\oskrevol\include\osk_revol.h" />
     <ClInclude Include="..\..\..\source\q1source\WinQuake\adivtab.h" />

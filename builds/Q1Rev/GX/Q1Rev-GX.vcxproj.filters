@@ -5,12 +5,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Header Files\glrevol">
-      <UniqueIdentifier>{cd810628-2079-4abf-ad13-734e1dffd779}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\glrevol\GL">
-      <UniqueIdentifier>{9f79d04b-a1d9-4e18-a375-b806879bc781}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\oskrevol">
       <UniqueIdentifier>{2d33e1aa-e719-40d1-924c-bed25b2a9158}</UniqueIdentifier>
     </Filter>
@@ -21,9 +15,6 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Source Files\glrevol">
-      <UniqueIdentifier>{8c943263-503b-42f7-8a3d-74e29808c35b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\oskrevol">
       <UniqueIdentifier>{45103e7e-696f-4a7c-8646-f7a373e08907}</UniqueIdentifier>
@@ -36,9 +27,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\source\glrevol\source\glrevol.c">
-      <Filter>Source Files\glrevol</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\oskrevol\source\osk_revol.c">
       <Filter>Source Files\oskrevol</Filter>
     </ClCompile>
@@ -112,42 +100,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\q1source\WinQuake\d_zpoint.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_draw.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_mesh.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_model.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_refrag.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_rlight.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_rmain.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_rmisc.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_rsurf.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_screen.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_test.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_vidrevol.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\gl_warp.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\q1source\WinQuake\host.c">
@@ -296,12 +248,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\source\glrevol\include\GL\gl.h">
-      <Filter>Header Files\glrevol\GL</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\glrevol\include\GL\glu.h">
-      <Filter>Header Files\glrevol\GL</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\source\oskrevol\include\osk_revol.h">
       <Filter>Header Files\oskrevol</Filter>
     </ClInclude>

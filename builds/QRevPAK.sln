@@ -1,9 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual C++ Express 2010
+# Visual Studio 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Q1Rev-soft", "Q1Rev\soft\Q1Rev-soft.vcxproj", "{5DE58189-B9F0-48EB-BBA3-8B9B71A58D6A}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Q1Rev-GL", "Q1Rev\GL\Q1Rev-GL.vcxproj", "{B8DB2596-9EF6-43C5-B456-AF4CF8EB1199}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QWRev-soft", "QWRev\soft\QWRev-soft.vcxproj", "{699B9057-F457-400B-9882-2D213832581D}"
 EndProject
@@ -19,6 +17,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Q2CTFRev-GLimp", "Q2CTFRev\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QRevPAK", "QRevPAK\QRevPAK.vcxproj", "{7A3081F1-6297-40E4-8CD2-1F24EACEF332}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Q1Rev-GX", "Q1Rev\GX\Q1Rev-GX.vcxproj", "{B8DB2596-9EF6-43C5-B456-AF4CF8EB1199}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -29,10 +29,6 @@ Global
 		{5DE58189-B9F0-48EB-BBA3-8B9B71A58D6A}.Debug|Win32.Build.0 = Debug|Win32
 		{5DE58189-B9F0-48EB-BBA3-8B9B71A58D6A}.Release|Win32.ActiveCfg = Release|Win32
 		{5DE58189-B9F0-48EB-BBA3-8B9B71A58D6A}.Release|Win32.Build.0 = Release|Win32
-		{B8DB2596-9EF6-43C5-B456-AF4CF8EB1199}.Debug|Win32.ActiveCfg = Debug|Win32
-		{B8DB2596-9EF6-43C5-B456-AF4CF8EB1199}.Debug|Win32.Build.0 = Debug|Win32
-		{B8DB2596-9EF6-43C5-B456-AF4CF8EB1199}.Release|Win32.ActiveCfg = Release|Win32
-		{B8DB2596-9EF6-43C5-B456-AF4CF8EB1199}.Release|Win32.Build.0 = Release|Win32
 		{699B9057-F457-400B-9882-2D213832581D}.Debug|Win32.ActiveCfg = Debug|Win32
 		{699B9057-F457-400B-9882-2D213832581D}.Debug|Win32.Build.0 = Debug|Win32
 		{699B9057-F457-400B-9882-2D213832581D}.Release|Win32.ActiveCfg = Release|Win32
@@ -61,6 +57,10 @@ Global
 		{7A3081F1-6297-40E4-8CD2-1F24EACEF332}.Debug|Win32.Build.0 = Debug|Win32
 		{7A3081F1-6297-40E4-8CD2-1F24EACEF332}.Release|Win32.ActiveCfg = Release|Win32
 		{7A3081F1-6297-40E4-8CD2-1F24EACEF332}.Release|Win32.Build.0 = Release|Win32
+		{B8DB2596-9EF6-43C5-B456-AF4CF8EB1199}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B8DB2596-9EF6-43C5-B456-AF4CF8EB1199}.Debug|Win32.Build.0 = Debug|Win32
+		{B8DB2596-9EF6-43C5-B456-AF4CF8EB1199}.Release|Win32.ActiveCfg = Release|Win32
+		{B8DB2596-9EF6-43C5-B456-AF4CF8EB1199}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

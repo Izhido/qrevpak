@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Include only for the software renderer builds (part 1):
-#ifndef GLQUAKE
+#if !defined(GXQUAKE) && !defined(GLQUAKE)
 // <<< FIX
 
 #if	!id386

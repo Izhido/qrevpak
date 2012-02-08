@@ -656,7 +656,13 @@ void R_DrawParticles (void)
 	float			dvel;
 	float			frametime;
 	
-#ifdef GLQUAKE
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Support for GX hardware:
+//#ifdef GLQUAKE
+#ifdef GXQUAKE
+	GX code goes here
+#elif GLQUAKE
+// <<< FIX
 	vec3_t			up, right;
 	float			scale;
 
@@ -709,7 +715,13 @@ void R_DrawParticles (void)
 			break;
 		}
 
-#ifdef GLQUAKE
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Support for GX hardware:
+//#ifdef GLQUAKE
+#ifdef GXQUAKE
+	GX code goes here
+#elif GLQUAKE
+// <<< FIX
 		// hack a scale up to keep particles from disapearing
 		scale = (p->org[0] - r_origin[0])*vpn[0] + (p->org[1] - r_origin[1])*vpn[1]
 			+ (p->org[2] - r_origin[2])*vpn[2];
@@ -789,7 +801,13 @@ void R_DrawParticles (void)
 		}
 	}
 
-#ifdef GLQUAKE
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Support for GX hardware:
+//#ifdef GLQUAKE
+#ifdef GXQUAKE
+	GX code goes here
+#elif GLQUAKE
+// <<< FIX
 	glEnd ();
 	glDisable (GL_BLEND);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);

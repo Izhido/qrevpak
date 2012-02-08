@@ -459,7 +459,11 @@ if (bits&(1<<i))
 		}
 		else
 			forcelink = true;	// hack to make null model players work
-#ifdef GLQUAKE
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Support for GX hardware:
+//#ifdef GLQUAKE
+#if defined(GXQUAKE) || defined(GLQUAKE)
+// <<< FIX
 		if (num > 0 && num <= cl.maxclients)
 			R_TranslatePlayerSkin (num - 1);
 #endif
@@ -483,7 +487,11 @@ if (bits&(1<<i))
 		ent->colormap = cl.scores[i-1].translations;
 	}
 
-#ifdef GLQUAKE
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Support for GX hardware:
+//#ifdef GLQUAKE
+#if defined(GXQUAKE) || defined(GLQUAKE)
+// <<< FIX
 	if (bits & U_SKIN)
 		skin = MSG_ReadByte();
 	else
@@ -708,7 +716,11 @@ void CL_NewTranslation (int slot)
 	memcpy (dest, vid.colormap, sizeof(cl.scores[slot].translations));
 	top = cl.scores[slot].colors & 0xf0;
 	bottom = (cl.scores[slot].colors &15)<<4;
-#ifdef GLQUAKE
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Support for GX hardware:
+//#ifdef GLQUAKE
+#if defined(GXQUAKE) || defined(GLQUAKE)
+// <<< FIX
 	R_TranslatePlayerSkin (slot);
 #endif
 

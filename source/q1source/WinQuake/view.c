@@ -260,7 +260,11 @@ cvar_t		v_gamma = {"gamma", "1", true};
 
 byte		gammatable[256];	// palette is sent through this
 
-#ifdef	GLQUAKE
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Support for GX hardware:
+//#ifdef	GLQUAKE
+#if defined(GXQUAKE) || defined(GLQUAKE)
+// <<< FIX
 byte		ramps[3][256];
 float		v_blend[4];		// rgba 0.0 - 1.0
 #endif	// GLQUAKE
@@ -478,7 +482,13 @@ void V_CalcPowerupCshift (void)
 V_CalcBlend
 =============
 */
-#ifdef	GLQUAKE
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Support for GX hardware:
+//#ifdef	GLQUAKE
+#ifdef GXQUAKE
+	GX code goes here
+#elif GLQUAKE
+// <<< FIX
 void V_CalcBlend (void)
 {
 	float	r, g, b, a, a2;
@@ -523,7 +533,11 @@ void V_CalcBlend (void)
 V_UpdatePalette
 =============
 */
-#ifdef	GLQUAKE
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Support for GX hardware:
+//#ifdef	GLQUAKE
+#if defined(GXQUAKE) || defined(GLQUAKE)
+// <<< FIX
 void V_UpdatePalette (void)
 {
 	int		i, j;
@@ -1068,7 +1082,11 @@ void V_RenderView (void)
 		R_RenderView ();
 	}
 
-#ifndef GLQUAKE
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Support for GX hardware:
+//#ifndef GLQUAKE
+#if !defined(GXQUAKE) && !defined(GLQUAKE)
+// <<< FIX
 	if (crosshair.value)
 		Draw_Character (scr_vrect.x + scr_vrect.width/2 + cl_crossx.value, 
 			scr_vrect.y + scr_vrect.height/2 + cl_crossy.value, '+');

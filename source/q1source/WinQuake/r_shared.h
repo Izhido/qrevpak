@@ -17,7 +17,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
-#ifndef GLQUAKE
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Support for GX hardware:
+//#ifndef GLQUAKE
+#if !defined(GXQUAKE) && !defined(GLQUAKE)
+// <<< FIX
 // r_shared.h: general refresh-related stuff shared between the refresh and the
 // driver
 

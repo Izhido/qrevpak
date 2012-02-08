@@ -958,7 +958,10 @@ void Host_Init (quakeparms_t *parms)
 
 #ifdef	GLQUAKE
 	// FIXME: doesn't use the new one-window approach yet
-		S_Init ();
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// This would initialize audio support twice on GL builds. Removing:
+//		S_Init ();
+// <<< FIX
 #endif
 
 #endif	// _WIN32
