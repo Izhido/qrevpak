@@ -1190,7 +1190,7 @@ int main (int argc, char* argv[])
 
 	parms.memsize = 8*1024*1024;
 	parms.membase = malloc (parms.memsize);
-	parms.basedir = ".";
+	parms.basedir = "sd:/";
 
 	COM_InitArgv (argc, argv);
 
@@ -1223,6 +1223,33 @@ int main (int argc, char* argv[])
 		};
 		Host_Frame (1.0/30.0);
 #ifdef GXQUAKE
+	/*Mtx	modelView;
+	Mtx view;
+	guVector camera =	{0.0F, 0.0F, 0.0F};
+	guVector up =	{0.0F, 1.0F, 0.0F};
+	guVector look	= {0.0F, 0.0F, -1.0F};
+
+	guLookAt(view, &camera,	&up, &look);
+	GX_SetViewport(0,0,sys_rmode->fbWidth,sys_rmode->efbHeight,0,1);
+	GX_InvVtxCache();
+	GX_InvalidateTexAll();
+	guMtxIdentity(modelView);
+	guMtxTransApply(modelView, modelView, 0.0F,	0.0F, -50.0F);
+	guMtxConcat(view,modelView,modelView);
+	
+	GX_LoadPosMtxImm(modelView,	GX_PNMTX0);
+
+	GX_Begin(GX_TRIANGLES, GX_VTXFMT0, 3);
+
+	GX_Position1x8(0);
+	GX_Color1x8(0);
+	GX_Position1x8(1);
+	GX_Color1x8(1);
+	GX_Position1x8(2);
+	GX_Color1x8(2);
+	
+	GX_End();
+	*/
 		GX_DrawDone();
 		if(sys_currentframebuf == 1)
 		{

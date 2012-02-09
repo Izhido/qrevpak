@@ -63,6 +63,10 @@ cvar_t	cl_crossx = {"cl_crossx", "0", false};
 cvar_t	cl_crossy = {"cl_crossy", "0", false};
 
 cvar_t	gl_cshiftpercent = {"gl_cshiftpercent", "100", false};
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// New cvar for the GX hardware:
+cvar_t	gx_cshiftpercent = {"gx_cshiftpercent", "100", false};
+// <<< FIX
 
 float	v_dmg_time, v_dmg_roll, v_dmg_pitch;
 
@@ -486,7 +490,43 @@ V_CalcBlend
 // Support for GX hardware:
 //#ifdef	GLQUAKE
 #ifdef GXQUAKE
-	GX code goes here
+void V_CalcBlend (void)
+{
+	float	r, g, b, a, a2;
+	int		j;
+
+	r = 0;
+	g = 0;
+	b = 0;
+	a = 0;
+
+	for (j=0 ; j<NUM_CSHIFTS ; j++)	
+	{
+		if (!gx_cshiftpercent.value)
+			continue;
+
+		a2 = ((cl.cshifts[j].percent * gx_cshiftpercent.value) / 100.0) / 255.0;
+
+//		a2 = cl.cshifts[j].percent/255.0;
+		if (!a2)
+			continue;
+		a = a + a2*(1-a);
+//Con_Printf ("j:%i a:%f\n", j, a);
+		a2 = a2/a;
+		r = r*(1-a2) + cl.cshifts[j].destcolor[0]*a2;
+		g = g*(1-a2) + cl.cshifts[j].destcolor[1]*a2;
+		b = b*(1-a2) + cl.cshifts[j].destcolor[2]*a2;
+	}
+
+	v_blend[0] = r/255.0;
+	v_blend[1] = g/255.0;
+	v_blend[2] = b/255.0;
+	v_blend[3] = a;
+	if (v_blend[3] > 1)
+		v_blend[3] = 1;
+	if (v_blend[3] < 0)
+		v_blend[3] = 0;
+}
 #elif GLQUAKE
 // <<< FIX
 void V_CalcBlend (void)
@@ -1125,6 +1165,10 @@ void V_Init (void)
 	Cvar_RegisterVariable (&cl_crossx);
 	Cvar_RegisterVariable (&cl_crossy);
 	Cvar_RegisterVariable (&gl_cshiftpercent);
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Registering new cvar for the GX hardware:
+	Cvar_RegisterVariable (&gx_cshiftpercent);
+// <<< FIX
 
 	Cvar_RegisterVariable (&scr_ofsx);
 	Cvar_RegisterVariable (&scr_ofsy);
