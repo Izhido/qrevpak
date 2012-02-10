@@ -42,7 +42,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 qboolean isDedicated;
 
-void* sys_framebuffer[3] = {NULL, NULL, NULL};
+void* sys_framebuffer[2] = {NULL, NULL};
 
 GXRModeObj* sys_rmode;
 
@@ -1092,23 +1092,16 @@ int main (int argc, char* argv[])
 	PAD_Init();
 
 	sys_rmode = VIDEO_GetPreferredMode(NULL);
-	VIDEO_Configure(sys_rmode);
 
 	sys_framebuffer[0] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(sys_rmode));
 	sys_framebuffer[1] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(sys_rmode));
-#ifdef GXQUAKE
-	sys_framebuffer[2] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(sys_rmode));
-#endif
 
-	VIDEO_ClearFrameBuffer(sys_rmode, sys_framebuffer[0], COLOR_BLACK);
+	sys_currentframebuf = 0;
 
 	CON_Init(sys_framebuffer[0], 20, 20, sys_rmode->fbWidth, sys_rmode->xfbHeight, sys_rmode->fbWidth * VI_DISPLAY_PIX_SZ);
 
-#ifndef GXQUAKE
-	VIDEO_ClearFrameBuffer(sys_rmode, sys_framebuffer[1], COLOR_BLACK);
-#endif
-
-	VIDEO_SetNextFramebuffer(sys_framebuffer[0]);
+	VIDEO_Configure(sys_rmode);
+	VIDEO_SetNextFramebuffer(sys_framebuffer[sys_currentframebuf]);
 	VIDEO_SetBlack(FALSE);
 	VIDEO_Flush();
 	VIDEO_WaitVSync();
@@ -1118,47 +1111,79 @@ int main (int argc, char* argv[])
 	};
 
 #ifdef GXQUAKE
+	f32 yscale;
+
+	u32 xfbHeight;
+
+	Mtx view;
+	Mtx44 perspective;
+	Mtx model, modelview;
+
 	GXColor background = {0, 0, 0, 0xff};
-	sys_currentframebuf = 1;
-	sys_gpfifo = memalign(32, SYS_FIFO_SIZE);
-	memset(sys_gpfifo, 0, SYS_FIFO_SIZE);
-	GX_Init(sys_gpfifo, SYS_FIFO_SIZE);
+
+	// setup the fifo and then init the flipper
+	void *gp_fifo = NULL;
+	gp_fifo = memalign(32,SYS_FIFO_SIZE);
+	memset(gp_fifo,0,SYS_FIFO_SIZE);
+ 
+	GX_Init(gp_fifo,SYS_FIFO_SIZE);
+ 
+	// clears the bg to color and clears the z buffer
 	GX_SetCopyClear(background, 0x00ffffff);
-	GX_SetViewport(0, 0, sys_rmode->fbWidth, sys_rmode->efbHeight, 0, 1);
-	sys_yscale = GX_GetYScaleFactor(sys_rmode->efbHeight, sys_rmode->xfbHeight);
-	sys_xfbHeight = GX_SetDispCopyYScale(sys_yscale);
-	GX_SetScissor(0, 0, sys_rmode->fbWidth, sys_rmode->efbHeight);
-	GX_SetDispCopySrc(0, 0, sys_rmode->fbWidth, sys_rmode->efbHeight);
-	GX_SetDispCopyDst(sys_rmode->fbWidth, sys_xfbHeight);
-	GX_SetCopyFilter(sys_rmode->aa, sys_rmode->sample_pattern, GX_TRUE, sys_rmode->vfilter);
-	if(sys_rmode->viHeight == 2 * sys_rmode->xfbHeight)
-	{
-		GX_SetFieldMode(sys_rmode->field_rendering, GX_ENABLE);
-	} else
-	{
-		GX_SetFieldMode(sys_rmode->field_rendering, GX_DISABLE);
-	};
-	if(sys_rmode->aa)
-	{
-        GX_SetPixelFmt(GX_PF_RGB565_Z16, GX_ZC_LINEAR);
-	} else
-	{
-        GX_SetPixelFmt(GX_PF_RGB8_Z24, GX_ZC_LINEAR);
-	};
+ 
+	// other gx setup
+	GX_SetViewport(0,0,sys_rmode->fbWidth,sys_rmode->efbHeight,0,1);
+	yscale = GX_GetYScaleFactor(sys_rmode->efbHeight,sys_rmode->xfbHeight);
+	xfbHeight = GX_SetDispCopyYScale(yscale);
+	GX_SetScissor(0,0,sys_rmode->fbWidth,sys_rmode->efbHeight);
+	GX_SetDispCopySrc(0,0,sys_rmode->fbWidth,sys_rmode->efbHeight);
+	GX_SetDispCopyDst(sys_rmode->fbWidth,xfbHeight);
+	GX_SetCopyFilter(sys_rmode->aa,sys_rmode->sample_pattern,GX_TRUE,sys_rmode->vfilter);
+	GX_SetFieldMode(sys_rmode->field_rendering,((sys_rmode->viHeight==2*sys_rmode->xfbHeight)?GX_ENABLE:GX_DISABLE));
+ 
 	GX_SetCullMode(GX_CULL_NONE);
-	GX_SetBlendMode(GX_BM_BLEND, GX_BL_SRCALPHA, GX_BL_INVSRCALPHA, GX_LO_CLEAR);
-	GX_SetAlphaUpdate(GX_ENABLE);
-	GX_CopyDisp(sys_framebuffer[sys_currentframebuf], GX_TRUE);
+	GX_CopyDisp(sys_framebuffer[sys_currentframebuf],GX_TRUE);
 	GX_SetDispCopyGamma(GX_GM_1_0);
+ 
+
+	// setup the vertex descriptor
+	// tells the flipper to expect direct data
 	GX_ClearVtxDesc();
 	GX_SetVtxDesc(GX_VA_POS, GX_DIRECT);
  	GX_SetVtxDesc(GX_VA_CLR0, GX_DIRECT);
+ 
+	// setup the vertex attribute table
+	// describes the data
+	// args: vat location 0-7, type of data, data format, size, scale
+	// so for ex. in the first call we are sending position data with
+	// 3 values X,Y,Z of size F32. scale sets the number of fractional
+	// bits for non float data.
 	GX_SetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_POS_XYZ, GX_F32, 0);
-	GX_SetVtxAttrFmt (GX_VTXFMT0, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8, 0);
+	GX_SetVtxAttrFmt(GX_VTXFMT0, GX_VA_CLR0, GX_CLR_RGBA, GX_RGB8, 0);
+ 
 	GX_SetNumChans(1);
 	GX_SetNumTexGens(0);
 	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
 	GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
+
+	// setup our camera at the origin
+	// looking down the -z axis with y up
+	guVector cam = {0.0F, 0.0F, 0.0F},
+			up = {0.0F, 1.0F, 0.0F},
+		  look = {0.0F, 0.0F, -1.0F};
+	guLookAt(view, &cam, &up, &look);
+ 
+
+	// setup our projection matrix
+	// this creates a perspective matrix with a view angle of 90,
+	// and aspect ratio based on the display resolution
+    f32 w = sys_rmode->viWidth;
+    f32 h = sys_rmode->viHeight;
+	guPerspective(perspective, 45, (f32)w/h, 0.1F, 300.0F);
+	GX_LoadProjectionMtx(perspective, GX_PERSPECTIVE);
+#else
+	VIDEO_ClearFrameBuffer(sys_rmode, sys_framebuffer[1], COLOR_BLACK);
+	VIDEO_SetNextFramebuffer(sys_framebuffer[1]);
 #endif
 
 	WPAD_SetDataFormat(WPAD_CHAN_0, WPAD_FMT_BTNS_ACC_IR);
@@ -1190,7 +1215,7 @@ int main (int argc, char* argv[])
 
 	parms.memsize = 8*1024*1024;
 	parms.membase = malloc (parms.memsize);
-	parms.basedir = "sd:/";
+	parms.basedir = ".";
 
 	COM_InitArgv (argc, argv);
 
@@ -1201,12 +1226,6 @@ int main (int argc, char* argv[])
 	Host_Init (&parms);
 
 	WPAD_SetPowerButtonCallback(Sys_PowerOff);
-
-#ifdef GXQUAKE
-	VIDEO_SetNextFramebuffer(sys_framebuffer[sys_currentframebuf]);
-#else
-	VIDEO_SetNextFramebuffer(sys_framebuffer[1]);
-#endif
 
 	while (1)
 	{
@@ -1223,44 +1242,52 @@ int main (int argc, char* argv[])
 		};
 		Host_Frame (1.0/30.0);
 #ifdef GXQUAKE
-	/*Mtx	modelView;
-	Mtx view;
-	guVector camera =	{0.0F, 0.0F, 0.0F};
-	guVector up =	{0.0F, 1.0F, 0.0F};
-	guVector look	= {0.0F, 0.0F, -1.0F};
+		WPAD_ScanPads();
 
-	guLookAt(view, &camera,	&up, &look);
-	GX_SetViewport(0,0,sys_rmode->fbWidth,sys_rmode->efbHeight,0,1);
-	GX_InvVtxCache();
-	GX_InvalidateTexAll();
-	guMtxIdentity(modelView);
-	guMtxTransApply(modelView, modelView, 0.0F,	0.0F, -50.0F);
-	guMtxConcat(view,modelView,modelView);
-	
-	GX_LoadPosMtxImm(modelView,	GX_PNMTX0);
+		if (WPAD_ButtonsDown(0) & WPAD_BUTTON_HOME) exit(0);
 
-	GX_Begin(GX_TRIANGLES, GX_VTXFMT0, 3);
+		// do this before drawing
+		GX_SetViewport(0,0,sys_rmode->fbWidth,sys_rmode->efbHeight,0,1);
 
-	GX_Position1x8(0);
-	GX_Color1x8(0);
-	GX_Position1x8(1);
-	GX_Color1x8(1);
-	GX_Position1x8(2);
-	GX_Color1x8(2);
-	
-	GX_End();
-	*/
+		guMtxIdentity(model);
+		guMtxTransApply(model, model, -1.5f,0.0f,-6.0f);
+		guMtxConcat(view,model,modelview);
+		// load the modelview matrix into matrix memory
+		GX_LoadPosMtxImm(modelview, GX_PNMTX0);
+
+		GX_Begin(GX_TRIANGLES, GX_VTXFMT0, 3);
+			GX_Position3f32( 0.0f, 1.0f, 0.0f);		// Top
+			GX_Color3f32(1.0f,0.0f,0.0f);			// Set The Color To Red
+			GX_Position3f32(-1.0f,-1.0f, 0.0f);	// Bottom Left
+			GX_Color3f32(0.0f,1.0f,0.0f);			// Set The Color To Green
+			GX_Position3f32( 1.0f,-1.0f, 0.0f);	// Bottom Right
+			GX_Color3f32(0.0f,0.0f,1.0f);			// Set The Color To Blue
+		GX_End();
+
+		guMtxTransApply(model, model, 3.0f,0.0f,0.0f);
+		guMtxConcat(view,model,modelview);
+		// load the modelview matrix into matrix memory
+		GX_LoadPosMtxImm(modelview, GX_PNMTX0);
+
+		GX_Begin(GX_QUADS, GX_VTXFMT0, 4);			// Draw A Quad
+			GX_Position3f32(-1.0f, 1.0f, 0.0f);	// Top Left
+			GX_Color3f32(0.5f,0.5f,1.0f);			// Set The Color To Blue
+			GX_Position3f32( 1.0f, 1.0f, 0.0f);		// Top Right
+			GX_Color3f32(0.5f,0.5f,1.0f);			// Set The Color To Blue
+			GX_Position3f32( 1.0f,-1.0f, 0.0f);	// Bottom Right
+			GX_Color3f32(0.5f,0.5f,1.0f);			// Set The Color To Blue
+			GX_Position3f32(-1.0f,-1.0f, 0.0f);	// Bottom Left
+			GX_Color3f32(0.5f,0.5f,1.0f);			// Set The Color To Blue
+		GX_End();									// Done Drawing The Quad 
+
+		// do this stuff after drawing
 		GX_DrawDone();
-		if(sys_currentframebuf == 1)
-		{
-			sys_currentframebuf = 2;
-		} else
-		{
-			sys_currentframebuf = 1;
-		};
+		
+		sys_currentframebuf ^= 1;		// flip framebuffer
 		GX_SetZMode(GX_TRUE, GX_LEQUAL, GX_TRUE);
 		GX_SetColorUpdate(GX_TRUE);
-		GX_CopyDisp(sys_framebuffer[sys_currentframebuf], GX_TRUE);
+		GX_CopyDisp(sys_framebuffer[sys_currentframebuf],GX_TRUE);
+
 		VIDEO_SetNextFramebuffer(sys_framebuffer[sys_currentframebuf]);
 #endif
 		KEYBOARD_FlushEvents();
