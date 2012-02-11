@@ -99,7 +99,7 @@ int UDP_Init (void)
 // Signal as uninitialized if if_config() failed previously:
 	if(sys_netinit_error < 0)
 	{
-		Con_Printf("UDP_Init: if_config() failed with %i", sys_netinit_error);
+		Con_Printf("UDP_Init: if_config() failed with %i\n", sys_netinit_error);
 		return -1;
 	};
 // <<< FIX

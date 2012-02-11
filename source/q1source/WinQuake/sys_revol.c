@@ -1166,21 +1166,6 @@ int main (int argc, char* argv[])
 	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
 	GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
 
-	// setup our camera at the origin
-	// looking down the -z axis with y up
-	guVector cam = {0.0F, 0.0F, 0.0F},
-			up = {0.0F, 1.0F, 0.0F},
-		  look = {0.0F, 0.0F, -1.0F};
-	guLookAt(view, &cam, &up, &look);
- 
-
-	// setup our projection matrix
-	// this creates a perspective matrix with a view angle of 90,
-	// and aspect ratio based on the display resolution
-    f32 w = sys_rmode->viWidth;
-    f32 h = sys_rmode->viHeight;
-	guPerspective(perspective, 45, (f32)w/h, 0.1F, 300.0F);
-	GX_LoadProjectionMtx(perspective, GX_PERSPECTIVE);
 #else
 	VIDEO_ClearFrameBuffer(sys_rmode, sys_framebuffer[1], COLOR_BLACK);
 	VIDEO_SetNextFramebuffer(sys_framebuffer[1]);
@@ -1242,44 +1227,6 @@ int main (int argc, char* argv[])
 		};
 		Host_Frame (1.0/30.0);
 #ifdef GXQUAKE
-		WPAD_ScanPads();
-
-		if (WPAD_ButtonsDown(0) & WPAD_BUTTON_HOME) exit(0);
-
-		// do this before drawing
-		GX_SetViewport(0,0,sys_rmode->fbWidth,sys_rmode->efbHeight,0,1);
-
-		guMtxIdentity(model);
-		guMtxTransApply(model, model, -1.5f,0.0f,-6.0f);
-		guMtxConcat(view,model,modelview);
-		// load the modelview matrix into matrix memory
-		GX_LoadPosMtxImm(modelview, GX_PNMTX0);
-
-		GX_Begin(GX_TRIANGLES, GX_VTXFMT0, 3);
-			GX_Position3f32( 0.0f, 1.0f, 0.0f);		// Top
-			GX_Color3f32(1.0f,0.0f,0.0f);			// Set The Color To Red
-			GX_Position3f32(-1.0f,-1.0f, 0.0f);	// Bottom Left
-			GX_Color3f32(0.0f,1.0f,0.0f);			// Set The Color To Green
-			GX_Position3f32( 1.0f,-1.0f, 0.0f);	// Bottom Right
-			GX_Color3f32(0.0f,0.0f,1.0f);			// Set The Color To Blue
-		GX_End();
-
-		guMtxTransApply(model, model, 3.0f,0.0f,0.0f);
-		guMtxConcat(view,model,modelview);
-		// load the modelview matrix into matrix memory
-		GX_LoadPosMtxImm(modelview, GX_PNMTX0);
-
-		GX_Begin(GX_QUADS, GX_VTXFMT0, 4);			// Draw A Quad
-			GX_Position3f32(-1.0f, 1.0f, 0.0f);	// Top Left
-			GX_Color3f32(0.5f,0.5f,1.0f);			// Set The Color To Blue
-			GX_Position3f32( 1.0f, 1.0f, 0.0f);		// Top Right
-			GX_Color3f32(0.5f,0.5f,1.0f);			// Set The Color To Blue
-			GX_Position3f32( 1.0f,-1.0f, 0.0f);	// Bottom Right
-			GX_Color3f32(0.5f,0.5f,1.0f);			// Set The Color To Blue
-			GX_Position3f32(-1.0f,-1.0f, 0.0f);	// Bottom Left
-			GX_Color3f32(0.5f,0.5f,1.0f);			// Set The Color To Blue
-		GX_End();									// Done Drawing The Quad 
-
 		// do this stuff after drawing
 		GX_DrawDone();
 		

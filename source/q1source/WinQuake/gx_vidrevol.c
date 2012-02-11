@@ -271,10 +271,10 @@ typedef struct
 	f32 x;
 	f32 y;
 	f32 z;
-	u8 r;
-	u8 g;
-	u8 b;
-	u8 a;
+	f32 r;
+	f32 g;
+	f32 b;
+	f32 a;
 } gl_vertex_t;
 
 GLenum gl_primitive_mode = -1;
@@ -297,7 +297,7 @@ void glTexParameterf(GLenum target, GLenum pname, GLfloat param)
 
 void glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
 {
-	//GX_SetViewport(x, y, width, height, 0, 1);
+	GX_SetViewport(x, y, width, height, 0, 1);
 }
 
 void glMatrixMode(GLenum mode)
@@ -311,8 +311,8 @@ void glLoadIdentity(void)
 	{
 		case GL_MODELVIEW:
 		{
-			//guMtxIdentity(gl_modelview_matrices[gl_modelview_matrix]);
-			//GX_LoadPosMtxImm(gl_modelview_matrices[gl_modelview_matrix], GX_PNMTX0);
+			guMtxIdentity(gl_modelview_matrices[gl_modelview_matrix]);
+			GX_LoadPosMtxImm(gl_modelview_matrices[gl_modelview_matrix], GX_PNMTX0);
 			break;
 		};
 		case GL_PROJECTION:
@@ -333,7 +333,7 @@ void glLoadIdentity(void)
 			gl_projection_matrices[gl_projection_matrix][3][1] = 0;
 			gl_projection_matrices[gl_projection_matrix][3][2] = 0;
 			gl_projection_matrices[gl_projection_matrix][3][3] = 1;
-			//GX_LoadProjectionMtx(gl_projection_matrices[gl_projection_matrix], GX_PERSPECTIVE);
+			GX_LoadProjectionMtx(gl_projection_matrices[gl_projection_matrix], GX_PERSPECTIVE);
 			break;
 		};
 	};
@@ -345,8 +345,8 @@ void glOrtho(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdou
 	{
 		case GL_PROJECTION:
 		{
-			//guOrtho(gl_projection_matrices[gl_projection_matrix], top, bottom, left, right, nearVal, farVal);
-			//GX_LoadProjectionMtx(gl_projection_matrices[gl_projection_matrix], GX_PERSPECTIVE);
+			guOrtho(gl_projection_matrices[gl_projection_matrix], top, bottom, left, right, nearVal, farVal);
+			GX_LoadProjectionMtx(gl_projection_matrices[gl_projection_matrix], GX_PERSPECTIVE);
 			break;
 		};
 	};
@@ -362,7 +362,26 @@ void glDisable(GLenum cap)
 
 void glColor4f(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
 {
-	//glColor4ub(red * 255.0, green * 255.0, blue * 255.0, alpha * 255.0);
+	int newsize;
+	gl_vertex_t* newlist;
+
+	if(gl_vertex_count >= gl_vertices_size)
+	{
+		newsize = gl_vertices_size + 1024;
+		newlist = malloc(newsize * sizeof(gl_vertex_t));
+		memset(newlist, 0, newsize * sizeof(gl_vertex_t));
+		if(gl_vertices != 0)
+		{
+			memcpy(newlist, gl_vertices, gl_vertices_size);
+			free(gl_vertices);
+		};
+		gl_vertices = newlist;
+		gl_vertices_size = newsize;
+	};
+	gl_vertices[gl_vertex_count].r = red;
+	gl_vertices[gl_vertex_count].g = green;
+	gl_vertices[gl_vertex_count].b = blue;
+	gl_vertices[gl_vertex_count].a = alpha;
 }
 
 void glBegin(GLenum mode)
@@ -389,13 +408,13 @@ void glEnd(void)
 			if(m > 0)
 			{
 				m = m * 4;
-				//GX_Begin(GX_QUADS, GX_VTXFMT0, m);
-				//for(i = 0; i < m; i++)
-				//{
-				//	GX_Position3f32(gl_vertices[i].x, gl_vertices[i].y, gl_vertices[i].z);
-				//	GX_Color4u8(gl_vertices[i].r, gl_vertices[i].g, gl_vertices[i].b, gl_vertices[i].a);
-				//};
-				//GX_End();
+				GX_Begin(GX_QUADS, GX_VTXFMT0, m);
+				for(i = 0; i < m; i++)
+				{
+					GX_Position3f32(gl_vertices[i].x, gl_vertices[i].y, gl_vertices[i].z);
+					GX_Color3f32(gl_vertices[i].r, gl_vertices[i].g, gl_vertices[i].b);
+				};
+				GX_End();
 			};
 			break;
 		};
@@ -405,13 +424,13 @@ void glEnd(void)
 			m = gl_vertex_count;
 			if(m >= 3)
 			{
-				//GX_Begin(GX_TRIANGLEFAN, GX_VTXFMT0, m);
-				//for(i = 0; i < m; i++)
-				//{
-				//	GX_Position3f32(gl_vertices[i].x, gl_vertices[i].y, gl_vertices[i].z);
-				//	GX_Color4u8(gl_vertices[i].r, gl_vertices[i].g, gl_vertices[i].b, gl_vertices[i].a);
-				//};
-				//GX_End();
+				GX_Begin(GX_TRIANGLEFAN, GX_VTXFMT0, m);
+				for(i = 0; i < m; i++)
+				{
+					GX_Position3f32(gl_vertices[i].x, gl_vertices[i].y, gl_vertices[i].z);
+					GX_Color3f32(gl_vertices[i].r, gl_vertices[i].g, gl_vertices[i].b);
+				};
+				GX_End();
 			};
 			break;
 		};
@@ -420,13 +439,13 @@ void glEnd(void)
 			m = gl_vertex_count;
 			if(m >= 3)
 			{
-				//GX_Begin(GX_TRIANGLESTRIP, GX_VTXFMT0, m);
-				//for(i = 0; i < m; i++)
-				//{
-				//	GX_Position3f32(gl_vertices[i].x, gl_vertices[i].y, gl_vertices[i].z);
-				//	GX_Color4u8(gl_vertices[i].r, gl_vertices[i].g, gl_vertices[i].b, gl_vertices[i].a);
-				//};
-				//GX_End();
+				GX_Begin(GX_TRIANGLESTRIP, GX_VTXFMT0, m);
+				for(i = 0; i < m; i++)
+				{
+					GX_Position3f32(gl_vertices[i].x, gl_vertices[i].y, gl_vertices[i].z);
+					GX_Color3f32(gl_vertices[i].r, gl_vertices[i].g, gl_vertices[i].b);
+				};
+				GX_End();
 			};
 			break;
 		};
@@ -436,13 +455,13 @@ void glEnd(void)
 			if(m > 0)
 			{
 				m = m * 3;
-				//GX_Begin(GX_TRIANGLES, GX_VTXFMT0, m);
-				//for(i = 0; i < m; i++)
-				//{
-				//	GX_Position3f32(gl_vertices[i].x, gl_vertices[i].y, gl_vertices[i].z);
-				//	GX_Color4u8(gl_vertices[i].r, gl_vertices[i].g, gl_vertices[i].b, gl_vertices[i].a);
-				//};
-				//GX_End();
+				GX_Begin(GX_TRIANGLES, GX_VTXFMT0, m);
+				for(i = 0; i < m; i++)
+				{
+					GX_Position3f32(gl_vertices[i].x, gl_vertices[i].y, gl_vertices[i].z);
+					GX_Color3f32(gl_vertices[i].r, gl_vertices[i].g, gl_vertices[i].b);
+				};
+				GX_End();
 			};
 			break;
 		};
@@ -452,7 +471,7 @@ void glEnd(void)
 
 void glColor3f(GLfloat red, GLfloat green, GLfloat blue)
 {
-	glColor4ub(red * 255.0, green * 255.0, blue * 255.0, 255);
+	glColor4f(red, green, blue, 1);
 }
 
 void glBindTexture(GLenum target, GLuint texture)
@@ -487,10 +506,10 @@ void glTranslatef(GLfloat x, GLfloat y, GLfloat z)
 	{
 		case GL_MODELVIEW:
 		{
-			//guMtxIdentity(m);
-			//guMtxTrans(m, x, y, z);
-			//guMtxConcat(gl_modelview_matrices[gl_modelview_matrix], m, gl_modelview_matrices[gl_modelview_matrix]);
-			//GX_LoadPosMtxImm(gl_modelview_matrices[gl_modelview_matrix], GX_PNMTX0);
+			guMtxIdentity(m);
+			guMtxTrans(m, x, y, z);
+			guMtxConcat(gl_modelview_matrices[gl_modelview_matrix], m, gl_modelview_matrices[gl_modelview_matrix]);
+			GX_LoadPosMtxImm(gl_modelview_matrices[gl_modelview_matrix], GX_PNMTX0);
 			break;
 		};
 	};
@@ -508,9 +527,9 @@ void glRotatef(GLfloat angle, GLfloat x, GLfloat y, GLfloat z)
 			a.x = x;
 			a.y = y;
 			a.z = z;
-			//guMtxRotAxisDeg(m, &a, angle);
-			//guMtxConcat(gl_modelview_matrices[gl_modelview_matrix], m, gl_modelview_matrices[gl_modelview_matrix]);
-			//GX_LoadPosMtxImm(gl_modelview_matrices[gl_modelview_matrix], GX_PNMTX0);
+			guMtxRotAxisDeg(m, &a, angle);
+			guMtxConcat(gl_modelview_matrices[gl_modelview_matrix], m, gl_modelview_matrices[gl_modelview_matrix]);
+			GX_LoadPosMtxImm(gl_modelview_matrices[gl_modelview_matrix], GX_PNMTX0);
 			break;
 		};
 	};
@@ -522,8 +541,8 @@ void glFrustum(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLd
 	{
 		case GL_PROJECTION:
 		{
-			//guFrustum(gl_projection_matrices[gl_projection_matrix], top, bottom, left, right, nearVal, farVal);
-			//GX_LoadProjectionMtx(gl_projection_matrices[gl_projection_matrix], GX_PERSPECTIVE);
+			guFrustum(gl_projection_matrices[gl_projection_matrix], top, bottom, left, right, nearVal, farVal);
+			GX_LoadProjectionMtx(gl_projection_matrices[gl_projection_matrix], GX_PERSPECTIVE);
 			break;
 		};
 	};
@@ -537,9 +556,9 @@ void glScalef(GLfloat x, GLfloat y, GLfloat z)
 	{
 		case GL_MODELVIEW:
 		{
-			//guMtxScale(m, x, y, z);
-			//guMtxConcat(gl_modelview_matrices[gl_modelview_matrix], m, gl_modelview_matrices[gl_modelview_matrix]);
-			//GX_LoadPosMtxImm(gl_modelview_matrices[gl_modelview_matrix], GX_PNMTX0);
+			guMtxScale(m, x, y, z);
+			guMtxConcat(gl_modelview_matrices[gl_modelview_matrix], m, gl_modelview_matrices[gl_modelview_matrix]);
+			GX_LoadPosMtxImm(gl_modelview_matrices[gl_modelview_matrix], GX_PNMTX0);
 			break;
 		};
 	};
@@ -578,7 +597,7 @@ void glGetFloatv(GLenum pname, GLfloat* params)
 
 void glColor4fv(const GLfloat* v)
 {
-	glColor4ub((*(v)) * 255.0, (*(v + 1)) * 255.0, (*(v + 2)) * 255.0, (*(v + 3)) * 255.0);
+	glColor4f((*(v)), (*(v + 1)), (*(v + 2)), (*(v + 3)));
 }
 
 void glVertex3f(GLfloat x, GLfloat y, GLfloat z)
@@ -602,20 +621,6 @@ void glVertex3f(GLfloat x, GLfloat y, GLfloat z)
 	gl_vertices[gl_vertex_count].x = x;
 	gl_vertices[gl_vertex_count].y = y;
 	gl_vertices[gl_vertex_count].z = z;
-
-
-
-
-
-	GLfloat t = abs(x) + abs(y) + abs(z); if(t == 0) t = 1;
-
-	gl_vertices[gl_vertex_count].r = abs(x) * 255.0 / t;
-	gl_vertices[gl_vertex_count].g = abs(y) * 255.0 / t;
-	gl_vertices[gl_vertex_count].b = abs(z) * 255.0 / t;
-	gl_vertices[gl_vertex_count].a = 127;
-
-
-
 	gl_vertex_count++;
 }
 
@@ -684,13 +689,13 @@ void glPopMatrix(void)
 		case GL_MODELVIEW:
 		{
 			gl_modelview_matrix--;
-			//GX_LoadPosMtxImm(gl_modelview_matrices[gl_modelview_matrix], GX_PNMTX0);
+			GX_LoadPosMtxImm(gl_modelview_matrices[gl_modelview_matrix], GX_PNMTX0);
 			break;
 		};
 		case GL_PROJECTION:
 		{
 			gl_projection_matrix--;
-			//GX_LoadProjectionMtx(gl_projection_matrices[gl_projection_matrix], GX_PERSPECTIVE);
+			GX_LoadProjectionMtx(gl_projection_matrices[gl_projection_matrix], GX_PERSPECTIVE);
 			break;
 		};
 	};
@@ -718,7 +723,7 @@ void glLoadMatrixf(const GLfloat* m)
 			gl_modelview_matrices[gl_modelview_matrix][2][1] = m[9];
 			gl_modelview_matrices[gl_modelview_matrix][2][2] = m[10];
 			gl_modelview_matrices[gl_modelview_matrix][2][3] = m[11];
-			//GX_LoadPosMtxImm(gl_modelview_matrices[gl_modelview_matrix], GX_PNMTX0);
+			GX_LoadPosMtxImm(gl_modelview_matrices[gl_modelview_matrix], GX_PNMTX0);
 			break;
 		};
 		case GL_PROJECTION:
@@ -739,7 +744,7 @@ void glLoadMatrixf(const GLfloat* m)
 			gl_projection_matrices[gl_projection_matrix][3][1] = m[13];
 			gl_projection_matrices[gl_projection_matrix][3][2] = m[14];
 			gl_projection_matrices[gl_projection_matrix][3][3] = m[15];
-			//GX_LoadProjectionMtx(gl_projection_matrices[gl_projection_matrix], GX_PERSPECTIVE);
+			GX_LoadProjectionMtx(gl_projection_matrices[gl_projection_matrix], GX_PERSPECTIVE);
 			break;
 		};
 	};
@@ -814,12 +819,12 @@ void glPolygonMode(GLenum face, GLenum mode)
 
 void glColor3ubv(const GLubyte* v)
 {
-	glColor4ub(*(v), *(v + 1), *(v + 2), 255);
+	glColor4f((*(v)) / 255.0, (*(v + 1)) / 255.0, (*(v + 2)) / 255.0, 1);
 }
 
 void glColor4ubv(const GLubyte* v)
 {
-	glColor4f(*(v), *(v + 1), *(v + 2), *(v + 3));
+	glColor4f((*(v)) / 255.0, (*(v + 1)) / 255.0, (*(v + 2)) / 255.0, (*(v + 3)) / 255.0);
 }
 
 GLboolean glIsEnabled(GLenum cap)
@@ -829,26 +834,7 @@ GLboolean glIsEnabled(GLenum cap)
 
 void glColor4ub(GLubyte red, GLubyte green, GLubyte blue, GLubyte alpha)
 {
-	int newsize;
-	gl_vertex_t* newlist;
-
-	if(gl_vertex_count >= gl_vertices_size)
-	{
-		newsize = gl_vertices_size + 1024;
-		newlist = malloc(newsize * sizeof(gl_vertex_t));
-		memset(newlist, 0, newsize * sizeof(gl_vertex_t));
-		if(gl_vertices != 0)
-		{
-			memcpy(newlist, gl_vertices, gl_vertices_size);
-			free(gl_vertices);
-		};
-		gl_vertices = newlist;
-		gl_vertices_size = newsize;
-	};
-	gl_vertices[gl_vertex_count].r = red;
-	gl_vertices[gl_vertex_count].g = green;
-	gl_vertices[gl_vertex_count].b = blue;
-	gl_vertices[gl_vertex_count].a = alpha;
+	glColor4f(red / 255.0, green / 255.0, blue / 255.0, alpha / 255.0);
 }
 
 /************************************************************************************************************************/
