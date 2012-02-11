@@ -217,6 +217,8 @@ void glTexImage2D(GLenum target, GLint level, GLint internalFormat, GLsizei widt
 
 void glTexParameterf(GLenum target, GLenum pname, GLfloat param);
 
+void glViewport(GLint x, GLint y, GLsizei width, GLsizei height);
+
 void glMatrixMode(GLenum mode);
 
 void glLoadIdentity(void);
