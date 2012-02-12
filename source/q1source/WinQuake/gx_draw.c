@@ -23,11 +23,19 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #ifdef GXQUAKE
 
+#include <gccore.h>
+
 #include "quakedef.h"
 
 #define GL_COLOR_INDEX8_EXT     0x80E5
 
 extern unsigned char d_15to8table[65536];
+
+extern Mtx44 gx_projection_matrix;
+
+extern Mtx gx_modelview_matrices[32];
+
+extern int gx_cur_modelview_matrix;
 
 cvar_t		gx_nobind = {"gx_nobind", "0"};
 cvar_t		gx_max_size = {"gx_max_size", "1024"};
@@ -826,14 +834,13 @@ Setup as if the screen was 320*200
 */
 void GX_Set2D (void)
 {
-	glViewport (gxx, gxy, gxwidth, gxheight);
+	GX_SetViewport(gxx, gxy, gxwidth, gxheight, 0, 1);
 
-	glMatrixMode(GL_PROJECTION);
-    glLoadIdentity ();
-	glOrtho  (0, vid.width, vid.height, 0, -99999, 99999);
+	guOrtho(gx_projection_matrix, 0, vid.height, 0, vid.width, -99999, 99999);
+	GX_LoadProjectionMtx(gx_projection_matrix, GX_PERSPECTIVE);
 
-	glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity ();
+	guMtxIdentity(gx_modelview_matrices[gx_cur_modelview_matrix]);
+	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
 
 	glDisable (GL_DEPTH_TEST);
 	glDisable (GL_CULL_FACE);

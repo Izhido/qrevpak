@@ -81,10 +81,6 @@ typedef unsigned short GLushort;
 
 #define GL_BACK 16
 
-#define GL_PROJECTION 17
-
-#define GL_MODELVIEW 18
-
 #define GL_DEPTH_TEST 19
 
 #define GL_CULL_FACE 20
@@ -118,8 +114,6 @@ typedef unsigned short GLushort;
 #define GL_FLAT 34
 
 #define GL_NICEST 35
-
-#define GL_MODELVIEW_MATRIX 36
 
 #define GL_COLOR_BUFFER_BIT 1024
 
@@ -164,8 +158,6 @@ typedef unsigned short GLushort;
 #define GL_REPEAT 55
 
 #define GL_TEXTURE_WRAP_T 56
-
-#define GL_COLOR_INDEX8_EXT 57
 
 #define GL_RGBA8 58
 
@@ -217,14 +209,6 @@ void glTexImage2D(GLenum target, GLint level, GLint internalFormat, GLsizei widt
 
 void glTexParameterf(GLenum target, GLenum pname, GLfloat param);
 
-void glViewport(GLint x, GLint y, GLsizei width, GLsizei height);
-
-void glMatrixMode(GLenum mode);
-
-void glLoadIdentity(void);
-
-void glOrtho(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble nearVal, GLdouble farVal);
-
 void glEnable(GLenum cap);
 
 void glDisable(GLenum cap);
@@ -245,21 +229,11 @@ void glTexCoord2f(GLfloat s, GLfloat t);
 
 void glDrawBuffer(GLenum mode);
 
-void glDrawBuffer(GLenum mode);
-
 void glClear(GLbitfield mask);
 
 void glDepthFunc(GLenum func);
 
 void glDepthRange(GLclampd nearVal, GLclampd farVal);
-
-void glTranslatef(GLfloat x, GLfloat y, GLfloat z);
-
-void glRotatef(GLfloat angle, GLfloat x, GLfloat y, GLfloat z);
-
-void glFrustum(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble nearVal, GLdouble farVal);
-
-void glScalef(GLfloat x, GLfloat y, GLfloat z);
 
 void glCullFace(GLenum mode);
 
@@ -271,17 +245,11 @@ void glVertex3f(GLfloat x, GLfloat y, GLfloat z);
 
 void glVertex3fv(const GLfloat* v);
 
-void glPushMatrix(void);
-
 void glTexEnvf(GLenum target, GLenum pname, GLfloat param);
 
 void glShadeModel(GLenum mode);
 
-void glPopMatrix(void);
-
 void glHint(GLenum target, GLenum mode);
-
-void glLoadMatrixf(const GLfloat* m);
 
 void glFinish(void);
 
@@ -296,8 +264,6 @@ void glTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, G
 void glBlendFunc(GLenum sfactor, GLenum dfactor);
 
 void glFlush(void);
-
-const GLubyte* glGetString(GLenum name);
 
 void glClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
 
@@ -504,11 +470,6 @@ extern	qboolean	mirror;
 extern	mplane_t	*mirror_plane;
 
 extern	float	r_world_matrix[16];
-
-extern	const char *gx_vendor;
-extern	const char *gx_renderer;
-extern	const char *gx_version;
-extern	const char *gx_extensions;
 
 void R_TranslatePlayerSkin (int playernum);
 void GX_Bind (int texnum);

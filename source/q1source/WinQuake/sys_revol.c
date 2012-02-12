@@ -95,6 +95,8 @@ mouse_event sys_mouse_event;
 
 u8 sys_previous_mouse_buttons;
 
+float sys_frame_length;
+
 /*
 ===============================================================================
 
@@ -1115,10 +1117,6 @@ int main (int argc, char* argv[])
 
 	u32 xfbHeight;
 
-	Mtx view;
-	Mtx44 perspective;
-	Mtx model, modelview;
-
 	GXColor background = {0, 0, 0, 0xff};
 
 	// setup the fifo and then init the flipper
@@ -1159,16 +1157,21 @@ int main (int argc, char* argv[])
 	// 3 values X,Y,Z of size F32. scale sets the number of fractional
 	// bits for non float data.
 	GX_SetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_POS_XYZ, GX_F32, 0);
-	GX_SetVtxAttrFmt(GX_VTXFMT0, GX_VA_CLR0, GX_CLR_RGBA, GX_RGB8, 0);
+	GX_SetVtxAttrFmt(GX_VTXFMT0, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8, 0);
  
 	GX_SetNumChans(1);
 	GX_SetNumTexGens(0);
 	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
 	GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
 
+	sys_frame_length = 1.0 / 60.0;
+
 #else
 	VIDEO_ClearFrameBuffer(sys_rmode, sys_framebuffer[1], COLOR_BLACK);
 	VIDEO_SetNextFramebuffer(sys_framebuffer[1]);
+
+	sys_frame_length = 1.0 / 30.0;
+
 #endif
 
 	WPAD_SetDataFormat(WPAD_CHAN_0, WPAD_FMT_BTNS_ACC_IR);
@@ -1225,7 +1228,7 @@ int main (int argc, char* argv[])
 			sys_mouse_valid = 0;
 			sys_mouse_event.button = 0;
 		};
-		Host_Frame (1.0/30.0);
+		Host_Frame (sys_frame_length);
 #ifdef GXQUAKE
 		// do this stuff after drawing
 		GX_DrawDone();
@@ -1240,7 +1243,8 @@ int main (int argc, char* argv[])
 		KEYBOARD_FlushEvents();
 		VIDEO_Flush();
 		VIDEO_WaitVSync();
-		while((Sys_FloatTime() - sys_previous_time) < (1.0/30.0))
+
+		while((Sys_FloatTime() - sys_previous_time) < sys_frame_length)
 		{
 			LWP_YieldThread();
 		};

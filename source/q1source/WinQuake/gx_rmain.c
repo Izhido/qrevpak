@@ -21,7 +21,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #ifdef GXQUAKE
 
+#include <gccore.h>
+
 #include "quakedef.h"
+
+extern Mtx44 gx_projection_matrix;
+
+extern Mtx gx_modelview_matrices[32];
+
+extern int gx_cur_modelview_matrix;
 
 entity_t	r_worldentity;
 
@@ -120,14 +128,27 @@ qboolean R_CullBox (vec3_t mins, vec3_t maxs)
 	return false;
 }
 
-
+// The results of this rotation aren't applied immediately, since there might be further transformations pending...
 void R_RotateForEntity (entity_t *e)
 {
-    glTranslatef (e->origin[0],  e->origin[1],  e->origin[2]);
+	Mtx m;
+	guVector a;
 
-    glRotatef (e->angles[1],  0, 0, 1);
-    glRotatef (-e->angles[0],  0, 1, 0);
-    glRotatef (e->angles[2],  1, 0, 0);
+	guMtxTrans(m, e->origin[0],  e->origin[1],  e->origin[2]);
+	guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
+	a.x = 0;
+	a.y = 0;
+	a.z = 1;
+	guMtxRotAxisDeg(m, &a, e->angles[1]);
+	guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
+	a.y = 1;
+	a.z = 0;
+	guMtxRotAxisDeg(m, &a, -e->angles[0]);
+	guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
+	a.x = 1;
+	a.y = 0;
+	guMtxRotAxisDeg(m, &a, e->angles[2]);
+	guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
 }
 
 /*
@@ -458,6 +479,7 @@ void R_DrawAliasModel (entity_t *e)
 	int			index;
 	float		s, t, an;
 	int			anim;
+	Mtx			m;
 
 	clmodel = currententity->model;
 
@@ -537,17 +559,27 @@ void R_DrawAliasModel (entity_t *e)
 
 	GX_DisableMultitexture();
 
-    glPushMatrix ();
+	guMtxCopy(gx_modelview_matrices[gx_cur_modelview_matrix], gx_modelview_matrices[gx_cur_modelview_matrix + 1]);
+	gx_cur_modelview_matrix++;
+
 	R_RotateForEntity (e);
 
 	if (!strcmp (clmodel->name, "progs/eyes.mdl") && gx_doubleeyes.value) {
-		glTranslatef (paliashdr->scale_origin[0], paliashdr->scale_origin[1], paliashdr->scale_origin[2] - (22 + 8));
-// double size of eyes, since they are really hard to see in gx
-		glScalef (paliashdr->scale[0]*2, paliashdr->scale[1]*2, paliashdr->scale[2]*2);
+
+		guMtxTrans(m, paliashdr->scale_origin[0], paliashdr->scale_origin[1], paliashdr->scale_origin[2] - (22 + 8));
+		guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
+
+// double size of eyes, since they are really hard to see while hardware rendering
+		guMtxScale(m, paliashdr->scale[0]*2, paliashdr->scale[1]*2, paliashdr->scale[2]*2);
+		guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
 	} else {
-		glTranslatef (paliashdr->scale_origin[0], paliashdr->scale_origin[1], paliashdr->scale_origin[2]);
-		glScalef (paliashdr->scale[0], paliashdr->scale[1], paliashdr->scale[2]);
+		guMtxTrans(m, paliashdr->scale_origin[0], paliashdr->scale_origin[1], paliashdr->scale_origin[2]);
+		guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
+		guMtxScale(m, paliashdr->scale[0], paliashdr->scale[1], paliashdr->scale[2]);
+		guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
 	}
+
+	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
 
 	anim = (int)(cl.time*10) & 3;
     GX_Bind(paliashdr->gx_texturenum[currententity->skinnum][anim]);
@@ -576,12 +608,15 @@ void R_DrawAliasModel (entity_t *e)
 	if (gx_affinemodels.value)
 		glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
-	glPopMatrix ();
+	gx_cur_modelview_matrix--;
+	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
 
 	if (r_shadows.value)
 	{
-		glPushMatrix ();
+		guMtxCopy(gx_modelview_matrices[gx_cur_modelview_matrix], gx_modelview_matrices[gx_cur_modelview_matrix + 1]);
+		gx_cur_modelview_matrix++;
 		R_RotateForEntity (e);
+		GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
 		glDisable (GL_TEXTURE_2D);
 		glEnable (GL_BLEND);
 		glColor4f (0,0,0,0.5);
@@ -589,7 +624,8 @@ void R_DrawAliasModel (entity_t *e)
 		glEnable (GL_TEXTURE_2D);
 		glDisable (GL_BLEND);
 		glColor4f (1,1,1,1);
-		glPopMatrix ();
+		gx_cur_modelview_matrix--;
+		GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
 	}
 
 }
@@ -719,6 +755,9 @@ R_PolyBlend
 */
 void R_PolyBlend (void)
 {
+	guVector a;
+	Mtx m;
+
 	if (!gx_polyblend.value)
 		return;
 	if (!v_blend[3])
@@ -731,10 +770,16 @@ void R_PolyBlend (void)
 	glDisable (GL_DEPTH_TEST);
 	glDisable (GL_TEXTURE_2D);
 
-    glLoadIdentity ();
+	a.x = 1;
+	a.y = 0;
+	a.z = 0;
+	guMtxRotAxisDeg(gx_modelview_matrices[gx_cur_modelview_matrix], &a, -90); // put Z going up
+	a.x = 0;
+	a.z = 1;
+	guMtxRotAxisDeg(m, &a, 90); 
+	guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]); // put Z going up
 
-    glRotatef (-90,  1, 0, 0);	    // put Z going up
-    glRotatef (90,  0, 0, 1);	    // put Z going up
+	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
 
 	glColor4fv (v_blend);
 
@@ -843,21 +888,6 @@ void R_SetupFrame (void)
 }
 
 
-void MYgluPerspective( GLdouble fovy, GLdouble aspect,
-		     GLdouble zNear, GLdouble zFar )
-{
-   GLdouble xmin, xmax, ymin, ymax;
-
-   ymax = zNear * tan( fovy * M_PI / 360.0 );
-   ymin = -ymax;
-
-   xmin = ymin * aspect;
-   xmax = ymax * aspect;
-
-   glFrustum( xmin, xmax, ymin, ymax, zNear, zFar );
-}
-
-
 /*
 =============
 R_SetupGX
@@ -865,17 +895,18 @@ R_SetupGX
 */
 void R_SetupGX (void)
 {
-	float	screenaspect;
-	float	yfov;
-	int		i;
+	float		screenaspect;
+	float		yfov;
+	int			i;
 	extern	int gxwidth, gxheight;
-	int		x, x2, y2, y, w, h;
+	int			x, x2, y2, y, w, h;
+	f32			xmin, xmax, ymin, ymax;
+	Mtx44		m;
+	guVector	a;
 
 	//
 	// set up viewpoint
 	//
-	glMatrixMode(GL_PROJECTION);
-    glLoadIdentity ();
 	x = r_refdef.vrect.x * gxwidth/vid.width;
 	x2 = (r_refdef.vrect.x + r_refdef.vrect.width) * gxwidth/vid.width;
 	y = (vid.height-r_refdef.vrect.y) * gxheight/vid.height;
@@ -900,33 +931,74 @@ void R_SetupGX (void)
 		w = h = 256;
 	}
 
-	glViewport (gxx + x, gxy + y2, w, h);
-    screenaspect = (float)r_refdef.vrect.width/r_refdef.vrect.height;
+	GX_SetViewport(gxx + x, gxy + y2, w, h, 0, 1);
+	
+	screenaspect = (float)r_refdef.vrect.width/r_refdef.vrect.height;
 //	yfov = 2*atan((float)r_refdef.vrect.height/r_refdef.vrect.width)*180/M_PI;
-    MYgluPerspective (r_refdef.fov_y,  screenaspect,  4,  4096);
+	ymax = 4 * tan( r_refdef.fov_y * M_PI / 360.0 );
+	ymin = -ymax;
+
+	xmin = ymin * screenaspect;
+	xmax = ymax * screenaspect;
+
+	guFrustum(gx_projection_matrix, ymax, ymin, xmin, xmax, 4, 4096 );
 
 	if (mirror)
 	{
 		if (mirror_plane->normal[2])
-			glScalef (1, -1, 1);
+			guMtxScale(m, 1, -1, 1);
 		else
-			glScalef (-1, 1, 1);
+			guMtxScale(m, -1, 1, 1);
+
+		guMtxConcat(gx_projection_matrix, m, gx_projection_matrix);
 		glCullFace(GL_BACK);
 	}
 	else
 		glCullFace(GL_FRONT);
 
-	glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity ();
+	GX_LoadProjectionMtx(gx_projection_matrix, GX_PERSPECTIVE);
 
-    glRotatef (-90,  1, 0, 0);	    // put Z going up
-    glRotatef (90,  0, 0, 1);	    // put Z going up
-    glRotatef (-r_refdef.viewangles[2],  1, 0, 0);
-    glRotatef (-r_refdef.viewangles[0],  0, 1, 0);
-    glRotatef (-r_refdef.viewangles[1],  0, 0, 1);
-    glTranslatef (-r_refdef.vieworg[0],  -r_refdef.vieworg[1],  -r_refdef.vieworg[2]);
+	a.x = 1;
+	a.y = 0;
+	a.z = 0;
+	guMtxRotAxisDeg(gx_modelview_matrices[gx_cur_modelview_matrix], &a, -90);
+	a.x = 0;
+	a.z = 1;
+	guMtxRotAxisDeg(m, &a, 90);
+	guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]); // put Z going up
+	a.x = 1;
+	a.z = 0;
+	guMtxRotAxisDeg(m, &a, -r_refdef.viewangles[2]);
+	guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
+	a.x = 0;
+	a.y = 1;
+	guMtxRotAxisDeg(m, &a, -r_refdef.viewangles[0]);
+	guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
+	a.y = 0;
+	a.z = 1;
+	guMtxRotAxisDeg(m, &a, -r_refdef.viewangles[1]);
+	guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
+	guMtxTrans(m, -r_refdef.vieworg[0], -r_refdef.vieworg[1], -r_refdef.vieworg[2]);
+	guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
 
-	glGetFloatv (GL_MODELVIEW_MATRIX, r_world_matrix);
+	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
+
+	r_world_matrix[0] = gx_modelview_matrices[gx_cur_modelview_matrix][0][0];
+	r_world_matrix[1] = gx_modelview_matrices[gx_cur_modelview_matrix][0][1];
+	r_world_matrix[2] = gx_modelview_matrices[gx_cur_modelview_matrix][0][2];
+	r_world_matrix[3] = gx_modelview_matrices[gx_cur_modelview_matrix][0][3];
+	r_world_matrix[4] = gx_modelview_matrices[gx_cur_modelview_matrix][1][0];
+	r_world_matrix[5] = gx_modelview_matrices[gx_cur_modelview_matrix][1][1];
+	r_world_matrix[6] = gx_modelview_matrices[gx_cur_modelview_matrix][1][2];
+	r_world_matrix[7] = gx_modelview_matrices[gx_cur_modelview_matrix][1][3];
+	r_world_matrix[8] = gx_modelview_matrices[gx_cur_modelview_matrix][2][0];
+	r_world_matrix[9] = gx_modelview_matrices[gx_cur_modelview_matrix][2][1];
+	r_world_matrix[10] = gx_modelview_matrices[gx_cur_modelview_matrix][2][2];
+	r_world_matrix[11] = gx_modelview_matrices[gx_cur_modelview_matrix][2][3];
+	r_world_matrix[12] = 0;
+	r_world_matrix[13] = 0;
+	r_world_matrix[14] = 0;
+	r_world_matrix[15] = 1;
 
 	//
 	// set drawing parms
@@ -1039,6 +1111,7 @@ void R_Mirror (void)
 	float		d;
 	msurface_t	*s;
 	entity_t	*ent;
+	Mtx44		sproj;
 
 	if (!mirror)
 		return;
@@ -1077,15 +1150,28 @@ void R_Mirror (void)
 
 	// blend on top
 	glEnable (GL_BLEND);
-	glMatrixMode(GL_PROJECTION);
 	if (mirror_plane->normal[2])
-		glScalef (1,-1,1);
+		guMtxScale(sproj, 1, -1, 1);
 	else
-		glScalef (-1,1,1);
-	glCullFace(GL_FRONT);
-	glMatrixMode(GL_MODELVIEW);
+		guMtxScale(sproj, -1, 1, 1);
+	guMtxConcat(gx_projection_matrix, sproj, gx_projection_matrix);
+	GX_LoadProjectionMtx(gx_projection_matrix, GX_PERSPECTIVE);
 
-	glLoadMatrixf (r_base_world_matrix);
+	glCullFace(GL_FRONT);
+
+	gx_modelview_matrices[gx_cur_modelview_matrix][0][0] = r_base_world_matrix[0];
+	gx_modelview_matrices[gx_cur_modelview_matrix][0][1] = r_base_world_matrix[1];
+	gx_modelview_matrices[gx_cur_modelview_matrix][0][2] = r_base_world_matrix[2];
+	gx_modelview_matrices[gx_cur_modelview_matrix][0][3] = r_base_world_matrix[3];
+	gx_modelview_matrices[gx_cur_modelview_matrix][1][0] = r_base_world_matrix[4];
+	gx_modelview_matrices[gx_cur_modelview_matrix][1][1] = r_base_world_matrix[5];
+	gx_modelview_matrices[gx_cur_modelview_matrix][1][2] = r_base_world_matrix[6];
+	gx_modelview_matrices[gx_cur_modelview_matrix][1][3] = r_base_world_matrix[7];
+	gx_modelview_matrices[gx_cur_modelview_matrix][2][0] = r_base_world_matrix[8];
+	gx_modelview_matrices[gx_cur_modelview_matrix][2][1] = r_base_world_matrix[9];
+	gx_modelview_matrices[gx_cur_modelview_matrix][2][2] = r_base_world_matrix[10];
+	gx_modelview_matrices[gx_cur_modelview_matrix][2][3] = r_base_world_matrix[11];
+	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
 
 	glColor4f (1,1,1,r_mirroralpha.value);
 	s = cl.worldmodel->textures[mirrortexturenum]->texturechain;

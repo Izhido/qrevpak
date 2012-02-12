@@ -21,7 +21,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #ifdef GXQUAKE
 
+#include <gccore.h>
+
 #include "quakedef.h"
+
+extern Mtx gx_modelview_matrices[32];
+
+extern int gx_cur_modelview_matrix;
 
 int			skytexturenum;
 
@@ -916,7 +922,19 @@ void R_DrawWaterSurfaces (void)
 	//
 	// go back to the world matrix
 	//
-    glLoadMatrixf (r_world_matrix);
+	gx_modelview_matrices[gx_cur_modelview_matrix][0][0] = r_world_matrix[0];
+	gx_modelview_matrices[gx_cur_modelview_matrix][0][1] = r_world_matrix[1];
+	gx_modelview_matrices[gx_cur_modelview_matrix][0][2] = r_world_matrix[2];
+	gx_modelview_matrices[gx_cur_modelview_matrix][0][3] = r_world_matrix[3];
+	gx_modelview_matrices[gx_cur_modelview_matrix][1][0] = r_world_matrix[4];
+	gx_modelview_matrices[gx_cur_modelview_matrix][1][1] = r_world_matrix[5];
+	gx_modelview_matrices[gx_cur_modelview_matrix][1][2] = r_world_matrix[6];
+	gx_modelview_matrices[gx_cur_modelview_matrix][1][3] = r_world_matrix[7];
+	gx_modelview_matrices[gx_cur_modelview_matrix][2][0] = r_world_matrix[8];
+	gx_modelview_matrices[gx_cur_modelview_matrix][2][1] = r_world_matrix[9];
+	gx_modelview_matrices[gx_cur_modelview_matrix][2][2] = r_world_matrix[10];
+	gx_modelview_matrices[gx_cur_modelview_matrix][2][3] = r_world_matrix[11];
+	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
 
 	glEnable (GL_BLEND);
 	glColor4f (1,1,1,r_wateralpha.value);
@@ -966,7 +984,19 @@ void R_DrawWaterSurfaces (void)
 	// go back to the world matrix
 	//
 
-    glLoadMatrixf (r_world_matrix);
+	gx_modelview_matrices[gx_cur_modelview_matrix][0][0] = r_world_matrix[0];
+	gx_modelview_matrices[gx_cur_modelview_matrix][0][1] = r_world_matrix[1];
+	gx_modelview_matrices[gx_cur_modelview_matrix][0][2] = r_world_matrix[2];
+	gx_modelview_matrices[gx_cur_modelview_matrix][0][3] = r_world_matrix[3];
+	gx_modelview_matrices[gx_cur_modelview_matrix][1][0] = r_world_matrix[4];
+	gx_modelview_matrices[gx_cur_modelview_matrix][1][1] = r_world_matrix[5];
+	gx_modelview_matrices[gx_cur_modelview_matrix][1][2] = r_world_matrix[6];
+	gx_modelview_matrices[gx_cur_modelview_matrix][1][3] = r_world_matrix[7];
+	gx_modelview_matrices[gx_cur_modelview_matrix][2][0] = r_world_matrix[8];
+	gx_modelview_matrices[gx_cur_modelview_matrix][2][1] = r_world_matrix[9];
+	gx_modelview_matrices[gx_cur_modelview_matrix][2][2] = r_world_matrix[10];
+	gx_modelview_matrices[gx_cur_modelview_matrix][2][3] = r_world_matrix[11];
+	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
 
 	if (r_wateralpha.value < 1.0) {
 		glEnable (GL_BLEND);
@@ -1142,9 +1172,11 @@ void R_DrawBrushModel (entity_t *e)
 		}
 	}
 
-    glPushMatrix ();
+	guMtxCopy(gx_modelview_matrices[gx_cur_modelview_matrix], gx_modelview_matrices[gx_cur_modelview_matrix + 1]);
+	gx_cur_modelview_matrix++;
 e->angles[0] = -e->angles[0];	// stupid quake bug
 	R_RotateForEntity (e);
+	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
 e->angles[0] = -e->angles[0];	// stupid quake bug
 
 	//
@@ -1170,7 +1202,8 @@ e->angles[0] = -e->angles[0];	// stupid quake bug
 
 	R_BlendLightmaps ();
 
-	glPopMatrix ();
+	gx_cur_modelview_matrix--;
+	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
 }
 
 /*
