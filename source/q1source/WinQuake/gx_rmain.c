@@ -31,6 +31,10 @@ extern Mtx gx_modelview_matrices[32];
 
 extern int gx_cur_modelview_matrix;
 
+extern qboolean gx_cull_enabled;
+
+extern u8 gx_cull_mode;
+
 entity_t	r_worldentity;
 
 qboolean	r_cache_thrash;		// compatability
@@ -951,10 +955,15 @@ void R_SetupGX (void)
 			guMtxScale(m, -1, 1, 1);
 
 		guMtxConcat(gx_projection_matrix, m, gx_projection_matrix);
-		glCullFace(GL_BACK);
+		gx_cull_mode = GX_CULL_FRONT;
 	}
 	else
-		glCullFace(GL_FRONT);
+		gx_cull_mode = GX_CULL_BACK;
+
+	if(gx_cull_enabled)
+	{
+		GX_SetCullMode(gx_cull_mode);
+	};
 
 	GX_LoadProjectionMtx(gx_projection_matrix, GX_PERSPECTIVE);
 
@@ -1004,9 +1013,14 @@ void R_SetupGX (void)
 	// set drawing parms
 	//
 	if (gx_cull.value)
-		glEnable(GL_CULL_FACE);
-	else
-		glDisable(GL_CULL_FACE);
+	{
+		gx_cull_enabled = true;
+		GX_SetCullMode(gx_cull_mode);
+	} else
+	{
+		gx_cull_enabled = false;
+		GX_SetCullMode(GX_CULL_NONE);
+	};
 
 	glDisable(GL_BLEND);
 	glDisable(GL_ALPHA_TEST);
@@ -1157,7 +1171,11 @@ void R_Mirror (void)
 	guMtxConcat(gx_projection_matrix, sproj, gx_projection_matrix);
 	GX_LoadProjectionMtx(gx_projection_matrix, GX_PERSPECTIVE);
 
-	glCullFace(GL_FRONT);
+	gx_cull_mode = GX_CULL_BACK;
+	if(gx_cull_enabled)
+	{
+		GX_SetCullMode(gx_cull_mode);
+	};
 
 	gx_modelview_matrices[gx_cur_modelview_matrix][0][0] = r_base_world_matrix[0];
 	gx_modelview_matrices[gx_cur_modelview_matrix][0][1] = r_base_world_matrix[1];

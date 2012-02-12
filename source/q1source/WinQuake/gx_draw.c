@@ -37,6 +37,8 @@ extern Mtx gx_modelview_matrices[32];
 
 extern int gx_cur_modelview_matrix;
 
+extern qboolean gx_cull_enabled;
+
 cvar_t		gx_nobind = {"gx_nobind", "0"};
 cvar_t		gx_max_size = {"gx_max_size", "1024"};
 cvar_t		gx_picmip = {"gx_picmip", "0"};
@@ -574,8 +576,6 @@ void Draw_AlphaPic (int x, int y, qpic_t *pic, float alpha)
 	gx = (gxpic_t *)pic->data;
 	glDisable(GL_ALPHA_TEST);
 	glEnable (GL_BLEND);
-//	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-//	glCullFace(GL_FRONT);
 	glColor4f (1,1,1,alpha);
 	GX_Bind (gx->texnum);
 	glBegin (GL_QUADS);
@@ -843,7 +843,8 @@ void GX_Set2D (void)
 	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
 
 	glDisable (GL_DEPTH_TEST);
-	glDisable (GL_CULL_FACE);
+	gx_cull_enabled = false;
+	GX_SetCullMode(GX_CULL_NONE);
 	glDisable (GL_BLEND);
 	glEnable (GL_ALPHA_TEST);
 //	glDisable (GL_ALPHA_TEST);

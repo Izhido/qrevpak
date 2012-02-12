@@ -52,6 +52,8 @@ f32 sys_yscale;
 
 u32 sys_xfbHeight;
 
+GXColor sys_background_color = {0, 0, 0, 0xff};
+
 u32 sys_currentframebuf;
 
 int sys_current_weapon;
@@ -1113,33 +1115,25 @@ int main (int argc, char* argv[])
 	};
 
 #ifdef GXQUAKE
-	f32 yscale;
-
-	u32 xfbHeight;
-
-	GXColor background = {0, 0, 0, 0xff};
-
 	// setup the fifo and then init the flipper
-	void *gp_fifo = NULL;
-	gp_fifo = memalign(32,SYS_FIFO_SIZE);
-	memset(gp_fifo,0,SYS_FIFO_SIZE);
+	sys_gpfifo = memalign(32,SYS_FIFO_SIZE);
+	memset(sys_gpfifo,0,SYS_FIFO_SIZE);
  
-	GX_Init(gp_fifo,SYS_FIFO_SIZE);
+	GX_Init(sys_gpfifo,SYS_FIFO_SIZE);
  
 	// clears the bg to color and clears the z buffer
-	GX_SetCopyClear(background, 0x00ffffff);
+	GX_SetCopyClear(sys_background_color, 0x00ffffff);
  
 	// other gx setup
 	GX_SetViewport(0,0,sys_rmode->fbWidth,sys_rmode->efbHeight,0,1);
-	yscale = GX_GetYScaleFactor(sys_rmode->efbHeight,sys_rmode->xfbHeight);
-	xfbHeight = GX_SetDispCopyYScale(yscale);
+	sys_yscale = GX_GetYScaleFactor(sys_rmode->efbHeight,sys_rmode->xfbHeight);
+	sys_xfbHeight = GX_SetDispCopyYScale(sys_yscale);
 	GX_SetScissor(0,0,sys_rmode->fbWidth,sys_rmode->efbHeight);
 	GX_SetDispCopySrc(0,0,sys_rmode->fbWidth,sys_rmode->efbHeight);
-	GX_SetDispCopyDst(sys_rmode->fbWidth,xfbHeight);
+	GX_SetDispCopyDst(sys_rmode->fbWidth,sys_xfbHeight);
 	GX_SetCopyFilter(sys_rmode->aa,sys_rmode->sample_pattern,GX_TRUE,sys_rmode->vfilter);
 	GX_SetFieldMode(sys_rmode->field_rendering,((sys_rmode->viHeight==2*sys_rmode->xfbHeight)?GX_ENABLE:GX_DISABLE));
  
-	GX_SetCullMode(GX_CULL_NONE);
 	GX_CopyDisp(sys_framebuffer[sys_currentframebuf],GX_TRUE);
 	GX_SetDispCopyGamma(GX_GM_1_0);
  

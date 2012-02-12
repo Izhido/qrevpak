@@ -83,8 +83,6 @@ typedef unsigned short GLushort;
 
 #define GL_DEPTH_TEST 19
 
-#define GL_CULL_FACE 20
-
 #define GL_COLOR_INDEX 21
 
 #define GL_TRIANGLE_FAN 22
@@ -234,8 +232,6 @@ void glClear(GLbitfield mask);
 void glDepthFunc(GLenum func);
 
 void glDepthRange(GLclampd nearVal, GLclampd farVal);
-
-void glCullFace(GLenum mode);
 
 void glGetFloatv(GLenum pname, GLfloat* params);
 

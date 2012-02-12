@@ -51,6 +51,10 @@ Mtx gx_modelview_matrices[32];
 
 int gx_cur_modelview_matrix = 0;
 
+qboolean gx_cull_enabled = false;
+
+u8 gx_cull_mode;
+
 /*
 ===============
 QGX_Init
@@ -59,7 +63,11 @@ QGX_Init
 void QGX_Init (void)
 {
 	glClearColor (1,0,0,0);
-	glCullFace(GL_FRONT);
+	gx_cull_mode = GL_BACK;
+	if(gx_cull_enabled)
+	{
+		GX_SetCullMode(gx_cull_mode);
+	};
 	glEnable(GL_TEXTURE_2D);
 
 	glEnable(GL_ALPHA_TEST);
@@ -422,10 +430,6 @@ void glDepthFunc(GLenum func)
 }
 
 void glDepthRange(GLclampd nearVal, GLclampd farVal)
-{
-}
-
-void glCullFace(GLenum mode)
 {
 }
 
