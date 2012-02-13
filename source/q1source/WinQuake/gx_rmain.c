@@ -35,6 +35,16 @@ extern qboolean gx_cull_enabled;
 
 extern u8 gx_cull_mode;
 
+extern u8 gx_z_test_enabled;
+
+extern u8 gx_z_write_enabled;
+
+extern qboolean gx_blend_enabled;
+
+extern u8 gx_blend_src_value;
+
+extern u8 gx_blend_dst_value;
+
 entity_t	r_worldentity;
 
 qboolean	r_cache_thrash;		// compatability
@@ -99,8 +109,6 @@ cvar_t	r_wateralpha = {"r_wateralpha","1"};
 cvar_t	r_dynamic = {"r_dynamic","1"};
 cvar_t	r_novis = {"r_novis","0"};
 
-cvar_t	gx_finish = {"gx_finish","0"};
-cvar_t	gx_clear = {"gx_clear","0"};
 cvar_t	gx_cull = {"gx_cull","1"};
 cvar_t	gx_texsort = {"gx_texsort","1"};
 cvar_t	gx_smoothmodels = {"gx_smoothmodels","1"};
@@ -112,8 +120,6 @@ cvar_t	gx_nocolors = {"gx_nocolors","0"};
 cvar_t	gx_keeptjunctions = {"gx_keeptjunctions","0"};
 cvar_t	gx_reporttjunctions = {"gx_reporttjunctions","0"};
 cvar_t	gx_doubleeyes = {"gx_doubleeys", "1"};
-
-extern	cvar_t	gx_ztrick;
 
 /*
 =================
@@ -622,11 +628,13 @@ void R_DrawAliasModel (entity_t *e)
 		R_RotateForEntity (e);
 		GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
 		glDisable (GL_TEXTURE_2D);
-		glEnable (GL_BLEND);
+		gx_blend_enabled = true;
+		GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 		glColor4f (0,0,0,0.5);
 		GX_DrawAliasShadow (paliashdr, lastposenum);
 		glEnable (GL_TEXTURE_2D);
-		glDisable (GL_BLEND);
+		gx_blend_enabled = false;
+		GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 		glColor4f (1,1,1,1);
 		gx_cur_modelview_matrix--;
 		GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
@@ -745,10 +753,7 @@ void R_DrawViewModel (void)
 	ambient[0] = ambient[1] = ambient[2] = ambient[3] = (float)ambientlight / 128;
 	diffuse[0] = diffuse[1] = diffuse[2] = diffuse[3] = (float)shadelight / 128;
 
-	// hack the depth range to prevent view model from poking into walls
-	glDepthRange (gxdepthmin, gxdepthmin + 0.3*(gxdepthmax-gxdepthmin));
 	R_DrawAliasModel (currententity);
-	glDepthRange (gxdepthmin, gxdepthmax);
 }
 
 
@@ -770,8 +775,10 @@ void R_PolyBlend (void)
 	GX_DisableMultitexture();
 
 	glDisable (GL_ALPHA_TEST);
-	glEnable (GL_BLEND);
-	glDisable (GL_DEPTH_TEST);
+	gx_blend_enabled = true;
+	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+	gx_z_test_enabled = GX_FALSE;
+	GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
 	glDisable (GL_TEXTURE_2D);
 
 	a.x = 1;
@@ -795,7 +802,8 @@ void R_PolyBlend (void)
 	glVertex3f (10, 100, -100);
 	glEnd ();
 
-	glDisable (GL_BLEND);
+	gx_blend_enabled = false;
+	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 	glEnable (GL_TEXTURE_2D);
 	glEnable (GL_ALPHA_TEST);
 }
@@ -1022,9 +1030,11 @@ void R_SetupGX (void)
 		GX_SetCullMode(GX_CULL_NONE);
 	};
 
-	glDisable(GL_BLEND);
+	gx_blend_enabled = false;
+	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 	glDisable(GL_ALPHA_TEST);
-	glEnable(GL_DEPTH_TEST);
+	gx_z_test_enabled = GX_TRUE;
+	GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
 }
 
 /*
@@ -1065,58 +1075,6 @@ void R_RenderScene (void)
 
 /*
 =============
-R_Clear
-=============
-*/
-void R_Clear (void)
-{
-	if (r_mirroralpha.value != 1.0)
-	{
-		if (gx_clear.value)
-			glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		else
-			glClear (GL_DEPTH_BUFFER_BIT);
-		gxdepthmin = 0;
-		gxdepthmax = 0.5;
-		glDepthFunc (GL_LEQUAL);
-	}
-	else if (gx_ztrick.value)
-	{
-		static int trickframe;
-
-		if (gx_clear.value)
-			glClear (GL_COLOR_BUFFER_BIT);
-
-		trickframe++;
-		if (trickframe & 1)
-		{
-			gxdepthmin = 0;
-			gxdepthmax = 0.49999;
-			glDepthFunc (GL_LEQUAL);
-		}
-		else
-		{
-			gxdepthmin = 1;
-			gxdepthmax = 0.5;
-			glDepthFunc (GL_GEQUAL);
-		}
-	}
-	else
-	{
-		if (gx_clear.value)
-			glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		else
-			glClear (GL_DEPTH_BUFFER_BIT);
-		gxdepthmin = 0;
-		gxdepthmax = 1;
-		glDepthFunc (GL_LEQUAL);
-	}
-
-	glDepthRange (gxdepthmin, gxdepthmax);
-}
-
-/*
-=============
 R_Mirror
 =============
 */
@@ -1149,21 +1107,12 @@ void R_Mirror (void)
 		cl_numvisedicts++;
 	}
 
-	gxdepthmin = 0.5;
-	gxdepthmax = 1;
-	glDepthRange (gxdepthmin, gxdepthmax);
-	glDepthFunc (GL_LEQUAL);
-
 	R_RenderScene ();
 	R_DrawWaterSurfaces ();
 
-	gxdepthmin = 0;
-	gxdepthmax = 0.5;
-	glDepthRange (gxdepthmin, gxdepthmax);
-	glDepthFunc (GL_LEQUAL);
-
 	// blend on top
-	glEnable (GL_BLEND);
+	gx_blend_enabled = true;
+	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 	if (mirror_plane->normal[2])
 		guMtxScale(sproj, 1, -1, 1);
 	else
@@ -1196,7 +1145,8 @@ void R_Mirror (void)
 	for ( ; s ; s=s->texturechain)
 		R_RenderBrushPoly (s);
 	cl.worldmodel->textures[mirrortexturenum]->texturechain = NULL;
-	glDisable (GL_BLEND);
+	gx_blend_enabled = false;
+	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 	glColor4f (1,1,1,1);
 }
 
@@ -1220,18 +1170,12 @@ void R_RenderView (void)
 
 	if (r_speeds.value)
 	{
-		glFinish ();
 		time1 = Sys_FloatTime ();
 		c_brush_polys = 0;
 		c_alias_polys = 0;
 	}
 
 	mirror = false;
-
-	if (gx_finish.value)
-		glFinish ();
-
-	R_Clear ();
 
 	// render normal view
 
@@ -1258,7 +1202,6 @@ void R_RenderView (void)
 
 	if (r_speeds.value)
 	{
-//		glFinish ();
 		time2 = Sys_FloatTime ();
 		Con_Printf ("%3i ms  %4i wpoly %4i epoly\n", (int)((time2-time1)*1000), c_brush_polys, c_alias_polys); 
 	}

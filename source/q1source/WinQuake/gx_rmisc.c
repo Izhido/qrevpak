@@ -106,7 +106,7 @@ Grab six views for environment mapping tests
 ===============
 */
 void R_Envmap_f (void)
-{
+{/*
 	byte* buffer = Sys_BigStackAlloc(256*256*4 * sizeof(byte), "R_Envmap_f");
 	char* name = Sys_BigStackAlloc(1024, "R_Envmap_f");
 
@@ -164,7 +164,7 @@ void R_Envmap_f (void)
 	glReadBuffer  (GL_BACK);
 	GX_EndRendering ();
 	Sys_BigStackFree(256*256*4 * sizeof(byte) + 1024, "R_Envmap_f");
-}
+*/}
 
 /*
 ===============
@@ -174,7 +174,6 @@ R_Init
 void R_Init (void)
 {	
 	extern byte *hunk_base;
-	extern cvar_t gx_finish;
 
 	Cmd_AddCommand ("timerefresh", R_TimeRefresh_f);	
 	Cmd_AddCommand ("envmap", R_Envmap_f);	
@@ -192,8 +191,6 @@ void R_Init (void)
 	Cvar_RegisterVariable (&r_novis);
 	Cvar_RegisterVariable (&r_speeds);
 
-	Cvar_RegisterVariable (&gx_finish);
-	Cvar_RegisterVariable (&gx_clear);
 	Cvar_RegisterVariable (&gx_texsort);
 
  	if (gx_mtexable)
@@ -431,14 +428,13 @@ For program optimization
 ====================
 */
 void R_TimeRefresh_f (void)
-{
+{/*
 	int			i;
 	float		start, stop, time;
 	int			startangle;
 	vrect_t		vr;
 
 	glDrawBuffer  (GL_FRONT);
-	glFinish ();
 
 	start = Sys_FloatTime ();
 	for (i=0 ; i<128 ; i++)
@@ -447,14 +443,13 @@ void R_TimeRefresh_f (void)
 		R_RenderView ();
 	}
 
-	glFinish ();
 	stop = Sys_FloatTime ();
 	time = stop-start;
 	Con_Printf ("%f seconds (%f fps)\n", time, 128/time);
 
 	glDrawBuffer  (GL_BACK);
 	GX_EndRendering ();
-}
+*/}
 
 void D_FlushCaches (void)
 {

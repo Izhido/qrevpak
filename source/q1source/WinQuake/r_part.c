@@ -18,6 +18,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Support for GX hardware:
+#include <gccore.h>
+// <<< FIX
+
 #include "quakedef.h"
 #include "r_local.h"
 
@@ -37,6 +42,14 @@ int			r_numparticles;
 
 vec3_t			r_pright, r_pup, r_ppn;
 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Support for GX hardware:
+extern qboolean gx_blend_enabled;
+
+extern u8 gx_blend_src_value;
+
+extern u8 gx_blend_dst_value;
+// <<< FIX
 
 /*
 ===============
@@ -664,7 +677,8 @@ void R_DrawParticles (void)
 	float			scale;
 
     GX_Bind(particletexture);
-	glEnable (GL_BLEND);
+	gx_blend_enabled = true;
+	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glBegin (GL_TRIANGLES);
 
@@ -828,7 +842,8 @@ void R_DrawParticles (void)
 //#ifdef GLQUAKE
 #ifdef GXQUAKE
 	glEnd ();
-	glDisable (GL_BLEND);
+	gx_blend_enabled = false;
+	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 #elif GLQUAKE
 // <<< FIX

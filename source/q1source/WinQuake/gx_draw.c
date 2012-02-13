@@ -39,6 +39,17 @@ extern int gx_cur_modelview_matrix;
 
 extern qboolean gx_cull_enabled;
 
+extern u8 gx_z_test_enabled;
+
+extern u8 gx_z_write_enabled;
+
+extern qboolean gx_blend_enabled;
+
+extern u8 gx_blend_src_value;
+
+extern u8 gx_blend_dst_value;
+
+
 cvar_t		gx_nobind = {"gx_nobind", "0"};
 cvar_t		gx_max_size = {"gx_max_size", "1024"};
 cvar_t		gx_picmip = {"gx_picmip", "0"};
@@ -575,7 +586,8 @@ void Draw_AlphaPic (int x, int y, qpic_t *pic, float alpha)
 		Scrap_Upload ();
 	gx = (gxpic_t *)pic->data;
 	glDisable(GL_ALPHA_TEST);
-	glEnable (GL_BLEND);
+	gx_blend_enabled = true;
+	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 	glColor4f (1,1,1,alpha);
 	GX_Bind (gx->texnum);
 	glBegin (GL_QUADS);
@@ -590,7 +602,8 @@ void Draw_AlphaPic (int x, int y, qpic_t *pic, float alpha)
 	glEnd ();
 	glColor4f (1,1,1,1);
 	glEnable(GL_ALPHA_TEST);
-	glDisable (GL_BLEND);
+	gx_blend_enabled = false;
+	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 }
 
 
@@ -775,7 +788,8 @@ Draw_FadeScreen
 */
 void Draw_FadeScreen (void)
 {
-	glEnable (GL_BLEND);
+	gx_blend_enabled = true;
+	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 	glDisable (GL_TEXTURE_2D);
 	glColor4f (0, 0, 0, 0.8);
 	glBegin (GL_QUADS);
@@ -788,7 +802,8 @@ void Draw_FadeScreen (void)
 	glEnd ();
 	glColor4f (1,1,1,1);
 	glEnable (GL_TEXTURE_2D);
-	glDisable (GL_BLEND);
+	gx_blend_enabled = false;
+	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 
 	Sbar_Changed();
 }
@@ -804,13 +819,13 @@ Call before beginning any disc IO.
 ================
 */
 void Draw_BeginDisc (void)
-{
+{/*
 	if (!draw_disc)
 		return;
 	glDrawBuffer  (GL_FRONT);
 	Draw_Pic (vid.width - 24, 0, draw_disc);
 	glDrawBuffer  (GL_BACK);
-}
+*/}
 
 
 /*
@@ -842,10 +857,12 @@ void GX_Set2D (void)
 	guMtxIdentity(gx_modelview_matrices[gx_cur_modelview_matrix]);
 	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
 
-	glDisable (GL_DEPTH_TEST);
+	gx_z_test_enabled = GX_FALSE;
+	GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
 	gx_cull_enabled = false;
 	GX_SetCullMode(GX_CULL_NONE);
-	glDisable (GL_BLEND);
+	gx_blend_enabled = false;
+	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 	glEnable (GL_ALPHA_TEST);
 //	glDisable (GL_ALPHA_TEST);
 

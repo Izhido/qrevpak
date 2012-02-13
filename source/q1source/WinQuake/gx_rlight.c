@@ -21,7 +21,20 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #ifdef GXQUAKE
 
+#include <gccore.h>
+
 #include "quakedef.h"
+
+extern u8 gx_z_test_enabled;
+
+extern u8 gx_z_write_enabled;
+
+extern qboolean gx_blend_enabled;
+
+extern u8 gx_blend_src_value;
+
+extern u8 gx_blend_dst_value;
+
 
 int	r_dlightframecount;
 
@@ -122,12 +135,14 @@ void R_RenderDlights (void)
 
 	r_dlightframecount = r_framecount + 1;	// because the count hasn't
 											//  advanced yet for this frame
-	glDepthMask (0);
+	gx_z_write_enabled = GX_FALSE;
+	GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
 	glDisable (GL_TEXTURE_2D);
 	glShadeModel (GL_SMOOTH);
-	glEnable (GL_BLEND);
-	glBlendFunc (GL_ONE, GL_ONE);
-
+	gx_blend_enabled = true;
+	gx_blend_src_value = GX_BL_ONE;
+	gx_blend_dst_value = GX_BL_ONE;
+	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 	l = cl_dlights;
 	for (i=0 ; i<MAX_DLIGHTS ; i++, l++)
 	{
@@ -135,12 +150,14 @@ void R_RenderDlights (void)
 			continue;
 		R_RenderDlight (l);
 	}
-
 	glColor3f (1,1,1);
-	glDisable (GL_BLEND);
 	glEnable (GL_TEXTURE_2D);
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glDepthMask (1);
+	gx_blend_enabled = false;
+	gx_blend_src_value = GX_BL_SRCALPHA;
+	gx_blend_dst_value = GX_BL_INVSRCALPHA;
+	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+	gx_z_write_enabled = GX_TRUE;
+	GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
 }
 
 

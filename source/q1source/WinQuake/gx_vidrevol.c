@@ -33,10 +33,6 @@ int		texture_mode = GL_LINEAR;
 
 int		texture_extension_number = 1;
 
-float		gxdepthmin, gxdepthmax;
-
-cvar_t	gx_ztrick = {"gx_ztrick","1"};
-
 static float vid_gamma = 1.0;
 
 qboolean is8bit = false;
@@ -55,6 +51,16 @@ qboolean gx_cull_enabled = false;
 
 u8 gx_cull_mode;
 
+u8 gx_z_test_enabled = GX_FALSE;
+
+u8 gx_z_write_enabled = GX_TRUE;
+
+qboolean gx_blend_enabled = false;
+
+u8 gx_blend_src_value = GX_BL_ONE;
+
+u8 gx_blend_dst_value = GX_BL_ZERO;
+
 /*
 ===============
 QGX_Init
@@ -62,7 +68,6 @@ QGX_Init
 */
 void QGX_Init (void)
 {
-	glClearColor (1,0,0,0);
 	gx_cull_mode = GL_BACK;
 	if(gx_cull_enabled)
 	{
@@ -81,7 +86,8 @@ void QGX_Init (void)
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	gx_blend_src_value = GX_BL_SRCALPHA;
+	gx_blend_dst_value = GX_BL_INVSRCALPHA;
 
 //	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
@@ -97,7 +103,7 @@ void GX_BeginRendering (int *x, int *y, int *width, int *height)
 
 void GX_EndRendering (void)
 {
-	glFlush();
+	GX_DrawDone();
 }
 
 void	VID_SetPalette (unsigned char *palette)
@@ -199,8 +205,6 @@ void	VID_Init (unsigned char *palette)
 	int width = sys_rmode->viWidth;
 	int height = 9 * sys_rmode->viHeight / 10;
 
-	Cvar_RegisterVariable (&gx_ztrick);
-	
 	vid.maxwarpwidth = width;
 	vid.maxwarpheight = height;
 	vid.colormap = host_colormap;
@@ -417,22 +421,6 @@ void glTexCoord2f(GLfloat s, GLfloat t)
 {
 }
 
-void glDrawBuffer(GLenum mode)
-{
-}
-
-void glClear(GLbitfield mask)
-{
-}
-
-void glDepthFunc(GLenum func)
-{
-}
-
-void glDepthRange(GLclampd nearVal, GLclampd farVal)
-{
-}
-
 void glColor4fv(const GLfloat* v)
 {
 	glColor4f((*(v)), (*(v + 1)), (*(v + 2)), (*(v + 3)));
@@ -479,35 +467,11 @@ void glHint(GLenum target, GLenum mode)
 {
 }
 
-void glFinish(void)
-{
-}
-
-void glReadBuffer(GLenum mode)
-{
-}
-
-void glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLvoid* data)
-{
-}
-
-void glDepthMask(GLboolean flag)
-{
-}
-
 void glTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid* data)
 {
 }
 
-void glBlendFunc(GLenum sfactor, GLenum dfactor)
-{
-}
-
 void glFlush(void)
-{
-}
-
-void glClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
 {
 }
 

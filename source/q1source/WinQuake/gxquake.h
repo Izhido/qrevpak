@@ -37,18 +37,6 @@ typedef unsigned char GLubyte;
 
 typedef void GLvoid;
 
-typedef unsigned int GLbitfield;
-
-typedef double GLclampd;
-
-typedef double GLdouble;
-
-typedef signed char GLbyte;
-
-typedef short GLshort;
-
-typedef unsigned short GLushort;
-
 #define GL_LINEAR_MIPMAP_NEAREST 1
 
 #define GL_LINEAR 2
@@ -81,8 +69,6 @@ typedef unsigned short GLushort;
 
 #define GL_BACK 16
 
-#define GL_DEPTH_TEST 19
-
 #define GL_COLOR_INDEX 21
 
 #define GL_TRIANGLE_FAN 22
@@ -113,10 +99,6 @@ typedef unsigned short GLushort;
 
 #define GL_NICEST 35
 
-#define GL_COLOR_BUFFER_BIT 1024
-
-#define GL_DEPTH_BUFFER_BIT 2048
-
 #define GL_LEQUAL 37
 
 #define GL_GEQUAL 38
@@ -137,14 +119,6 @@ typedef unsigned short GLushort;
 
 #define GL_TRIANGLES 46
 
-#define GL_VENDOR 47
-
-#define GL_RENDERER 48
-
-#define GL_VERSION 49
-
-#define GL_EXTENSIONS 50
-
 #define GL_GREATER 51
 
 #define GL_FRONT_AND_BACK 52
@@ -157,51 +131,9 @@ typedef unsigned short GLushort;
 
 #define GL_TEXTURE_WRAP_T 56
 
-#define GL_RGBA8 58
-
-#define GL_RGB5_A1 59
-
 #define GL_RGBA4 60
 
-#define GL_RGBA2 61
-
-#define GL_RGB8 62
-
-#define GL_RGB5 63
-
-#define GL_RGB4 64
-
-#define GL_R3_G3_B2 65
-
-#define GL_VERTEX_ARRAY 66
-
-#define GL_FLOAT 67
-
-#define GL_COLOR_ARRAY 68
-
-#define GL_FALSE 0
-
-#define GL_POINTS 69
-
-#define GL_TRUE 1
-
-#define GL_SCISSOR_TEST 70
-
-#define GL_BACK_LEFT 71
-
 #define GL_LINES 72
-
-#define GL_NO_ERROR 0
-
-#define GL_POINT_SMOOTH 73
-
-#define GL_LINE_STRIP 74
-
-#define GL_SRC_COLOR 75
-
-#define GL_INTENSITY8 76
-
-#define GL_LUMINANCE8 77
 
 void glTexImage2D(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid* data);
 
@@ -225,14 +157,6 @@ void glBindTexture(GLenum target, GLuint texture);
 
 void glTexCoord2f(GLfloat s, GLfloat t);
 
-void glDrawBuffer(GLenum mode);
-
-void glClear(GLbitfield mask);
-
-void glDepthFunc(GLenum func);
-
-void glDepthRange(GLclampd nearVal, GLclampd farVal);
-
 void glGetFloatv(GLenum pname, GLfloat* params);
 
 void glColor4fv(const GLfloat* v);
@@ -247,21 +171,9 @@ void glShadeModel(GLenum mode);
 
 void glHint(GLenum target, GLenum mode);
 
-void glFinish(void);
-
-void glReadBuffer(GLenum mode);
-
-void glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLvoid* data);
-
-void glDepthMask(GLboolean flag);
-
 void glTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid* data);
 
-void glBlendFunc(GLenum sfactor, GLenum dfactor);
-
 void glFlush(void);
-
-void glClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
 
 void glAlphaFunc(GLenum func, GLclampf ref);
 
@@ -296,8 +208,6 @@ extern	TEXSUBIMAGEPTR TexSubImage2DFunc;
 
 extern	int texture_extension_number;
 extern	int		texture_mode;
-
-extern	float	gxdepthmin, gxdepthmax;
 
 void GX_Upload32 (unsigned *data, int width, int height,  qboolean mipmap, qboolean alpha);
 void GX_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboolean alpha);
@@ -441,7 +351,6 @@ extern	cvar_t	r_wateralpha;
 extern	cvar_t	r_dynamic;
 extern	cvar_t	r_novis;
 
-extern	cvar_t	gx_clear;
 extern	cvar_t	gx_cull;
 extern	cvar_t	gx_poly;
 extern	cvar_t	gx_texsort;

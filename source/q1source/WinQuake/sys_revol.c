@@ -52,7 +52,7 @@ f32 sys_yscale;
 
 u32 sys_xfbHeight;
 
-GXColor sys_background_color = {0, 0, 0, 0xff};
+GXColor sys_background_color = {0xFF, 0, 0, 0}; // Believe it or not, the "clear color" for GLQuake is red, not black...
 
 u32 sys_currentframebuf;
 
@@ -1115,17 +1115,13 @@ int main (int argc, char* argv[])
 	};
 
 #ifdef GXQUAKE
-	// setup the fifo and then init the flipper
 	sys_gpfifo = memalign(32,SYS_FIFO_SIZE);
 	memset(sys_gpfifo,0,SYS_FIFO_SIZE);
  
 	GX_Init(sys_gpfifo,SYS_FIFO_SIZE);
  
-	// clears the bg to color and clears the z buffer
-	GX_SetCopyClear(sys_background_color, 0x00ffffff);
+	GX_SetCopyClear(sys_background_color, GX_MAX_Z24);
  
-	// other gx setup
-	GX_SetViewport(0,0,sys_rmode->fbWidth,sys_rmode->efbHeight,0,1);
 	sys_yscale = GX_GetYScaleFactor(sys_rmode->efbHeight,sys_rmode->xfbHeight);
 	sys_xfbHeight = GX_SetDispCopyYScale(sys_yscale);
 	GX_SetScissor(0,0,sys_rmode->fbWidth,sys_rmode->efbHeight);
@@ -1135,23 +1131,19 @@ int main (int argc, char* argv[])
 	GX_SetFieldMode(sys_rmode->field_rendering,((sys_rmode->viHeight==2*sys_rmode->xfbHeight)?GX_ENABLE:GX_DISABLE));
  
 	GX_CopyDisp(sys_framebuffer[sys_currentframebuf],GX_TRUE);
+	GX_SetPixelFmt(GX_PF_RGBA6_Z24, GX_ZC_LINEAR);
 	GX_SetDispCopyGamma(GX_GM_1_0);
- 
 
-	// setup the vertex descriptor
-	// tells the flipper to expect direct data
 	GX_ClearVtxDesc();
 	GX_SetVtxDesc(GX_VA_POS, GX_DIRECT);
  	GX_SetVtxDesc(GX_VA_CLR0, GX_DIRECT);
  
-	// setup the vertex attribute table
-	// describes the data
-	// args: vat location 0-7, type of data, data format, size, scale
-	// so for ex. in the first call we are sending position data with
-	// 3 values X,Y,Z of size F32. scale sets the number of fractional
-	// bits for non float data.
 	GX_SetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_POS_XYZ, GX_F32, 0);
 	GX_SetVtxAttrFmt(GX_VTXFMT0, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8, 0);
+ 
+	GX_SetVtxAttrFmt(GX_VTXFMT1, GX_VA_POS, GX_POS_XYZ, GX_F32, 0);
+	GX_SetVtxAttrFmt(GX_VTXFMT1, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8, 0);
+	GX_SetVtxAttrFmt(GX_VTXFMT1, GX_VA_TEX0, GX_TEX_ST, GX_F32, 0);
  
 	GX_SetNumChans(1);
 	GX_SetNumTexGens(0);
@@ -1224,20 +1216,15 @@ int main (int argc, char* argv[])
 		};
 		Host_Frame (sys_frame_length);
 #ifdef GXQUAKE
-		// do this stuff after drawing
-		GX_DrawDone();
-		
-		sys_currentframebuf ^= 1;		// flip framebuffer
-		GX_SetZMode(GX_TRUE, GX_LEQUAL, GX_TRUE);
+		sys_currentframebuf ^= 1;
 		GX_SetColorUpdate(GX_TRUE);
-		GX_CopyDisp(sys_framebuffer[sys_currentframebuf],GX_TRUE);
-
+		GX_SetAlphaUpdate(GX_TRUE);
+		GX_CopyDisp(sys_framebuffer[sys_currentframebuf], GX_TRUE);
 		VIDEO_SetNextFramebuffer(sys_framebuffer[sys_currentframebuf]);
 #endif
 		KEYBOARD_FlushEvents();
 		VIDEO_Flush();
 		VIDEO_WaitVSync();
-
 		while((Sys_FloatTime() - sys_previous_time) < sys_frame_length)
 		{
 			LWP_YieldThread();

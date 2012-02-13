@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #ifdef GXQUAKE
 
+#include <gccore.h>
+
 #include "quakedef.h"
 
 extern	model_t	*loadmodel;
@@ -34,6 +36,16 @@ float	speedscale;		// for top sky and bottom sky
 msurface_t	*warpface;
 
 extern cvar_t gx_subdivide_size;
+
+extern u8 gx_z_test_enabled;
+
+extern u8 gx_z_write_enabled;
+
+extern qboolean gx_blend_enabled;
+
+extern u8 gx_blend_src_value;
+
+extern u8 gx_blend_dst_value;
 
 void BoundPoly (int numverts, float *verts, vec3_t mins, vec3_t maxs)
 {
@@ -287,14 +299,16 @@ void EmitBothSkyLayers (msurface_t *fa)
 
 	EmitSkyPolys (fa);
 
-	glEnable (GL_BLEND);
+	gx_blend_enabled = true;
+	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 	GX_Bind (alphaskytexture);
 	speedscale = realtime*16;
 	speedscale -= (int)speedscale & ~127 ;
 
 	EmitSkyPolys (fa);
 
-	glDisable (GL_BLEND);
+	gx_blend_enabled = false;
+	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 }
 
 #ifndef QUAKE2
@@ -317,7 +331,8 @@ void R_DrawSkyChain (msurface_t *s)
 	for (fa=s ; fa ; fa=fa->texturechain)
 		EmitSkyPolys (fa);
 
-	glEnable (GL_BLEND);
+	gx_blend_enabled = true;
+	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 	GX_Bind (alphaskytexture);
 	speedscale = realtime*16;
 	speedscale -= (int)speedscale & ~127 ;
@@ -325,7 +340,8 @@ void R_DrawSkyChain (msurface_t *s)
 	for (fa=s ; fa ; fa=fa->texturechain)
 		EmitSkyPolys (fa);
 
-	glDisable (GL_BLEND);
+	gx_blend_enabled = false;
+	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 }
 
 #endif
@@ -988,10 +1004,12 @@ void R_DrawSkyBox (void)
 	float	s, t;
 
 #if 0
-glEnable (GL_BLEND);
+gx_blend_enabled = true;
+GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 glColor4f (1,1,1,0.5);
-glDisable (GL_DEPTH_TEST);
+gx_z_test_enabled = GX_FALSE;
+GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
 #endif
 	for (i=0 ; i<6 ; i++)
 	{
@@ -1014,10 +1032,12 @@ skymaxs[1][i] = 1;
 		glEnd ();
 	}
 #if 0
-glDisable (GL_BLEND);
+gx_blend_enabled = false;
+GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 glColor4f (1,1,1,0.5);
-glEnable (GL_DEPTH_TEST);
+gx_z_test_enabled = GX_TRUE;
+GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
 #endif
 }
 
