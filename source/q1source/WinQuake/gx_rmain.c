@@ -283,7 +283,7 @@ void R_DrawSpriteModel (entity_t *e)
 	
 	glEnd ();
 
-	glDisable (GL_ALPHA_TEST);
+	GX_SetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 1);
 }
 
 /*
@@ -774,7 +774,7 @@ void R_PolyBlend (void)
 
 	GX_DisableMultitexture();
 
-	glDisable (GL_ALPHA_TEST);
+	GX_SetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 1);
 	gx_blend_enabled = true;
 	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 	gx_z_test_enabled = GX_FALSE;
@@ -805,7 +805,7 @@ void R_PolyBlend (void)
 	gx_blend_enabled = false;
 	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 	glEnable (GL_TEXTURE_2D);
-	glEnable (GL_ALPHA_TEST);
+	GX_SetAlphaCompare(GX_GREATER, 0.666, GX_AOP_AND, GX_ALWAYS, 1);
 }
 
 
@@ -1032,7 +1032,7 @@ void R_SetupGX (void)
 
 	gx_blend_enabled = false;
 	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
-	glDisable(GL_ALPHA_TEST);
+	GX_SetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 1);
 	gx_z_test_enabled = GX_TRUE;
 	GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
 }
