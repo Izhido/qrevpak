@@ -54,7 +54,7 @@ u32 sys_xfbHeight;
 
 GXColor sys_background_color = {0xFF, 0, 0, 0}; // Believe it or not, the "clear color" for GLQuake is red, not black...
 
-u32 sys_currentframebuf;
+u32 sys_frame_count;
 
 int sys_current_weapon;
 
@@ -506,7 +506,11 @@ void Sys_Error (char *error, ...)
 void Sys_Printf (char *fmt, ...)
 {
 	va_list         argptr;
-	
+
+#ifdef GXQUAKE
+	if(sys_frame_count > 1)
+		return;
+#endif
 	va_start (argptr,fmt);
 	vprintf (fmt,argptr);
 	va_end (argptr);
@@ -1100,12 +1104,12 @@ int main (int argc, char* argv[])
 	sys_framebuffer[0] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(sys_rmode));
 	sys_framebuffer[1] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(sys_rmode));
 
-	sys_currentframebuf = 0;
+	sys_frame_count = 0;
 
-	CON_Init(sys_framebuffer[0], 20, 20, sys_rmode->fbWidth, sys_rmode->xfbHeight, sys_rmode->fbWidth * VI_DISPLAY_PIX_SZ);
+	CON_Init(sys_framebuffer[sys_frame_count & 1], 20, 20, sys_rmode->fbWidth, sys_rmode->xfbHeight, sys_rmode->fbWidth * VI_DISPLAY_PIX_SZ);
 
 	VIDEO_Configure(sys_rmode);
-	VIDEO_SetNextFramebuffer(sys_framebuffer[sys_currentframebuf]);
+	VIDEO_SetNextFramebuffer(sys_framebuffer[sys_frame_count & 1]);
 	VIDEO_SetBlack(FALSE);
 	VIDEO_Flush();
 	VIDEO_WaitVSync();
@@ -1113,6 +1117,8 @@ int main (int argc, char* argv[])
 	{
 		VIDEO_WaitVSync();
 	};
+
+	sys_frame_count++;
 
 #ifdef GXQUAKE
 	sys_gpfifo = memalign(32,SYS_FIFO_SIZE);
@@ -1130,7 +1136,7 @@ int main (int argc, char* argv[])
 	GX_SetCopyFilter(sys_rmode->aa,sys_rmode->sample_pattern,GX_TRUE,sys_rmode->vfilter);
 	GX_SetFieldMode(sys_rmode->field_rendering,((sys_rmode->viHeight==2*sys_rmode->xfbHeight)?GX_ENABLE:GX_DISABLE));
  
-	GX_CopyDisp(sys_framebuffer[sys_currentframebuf],GX_TRUE);
+	GX_CopyDisp(sys_framebuffer[sys_frame_count & 1],GX_TRUE);
 	GX_SetPixelFmt(GX_PF_RGBA6_Z24, GX_ZC_LINEAR);
 	GX_SetDispCopyGamma(GX_GM_1_0);
 
@@ -1153,8 +1159,8 @@ int main (int argc, char* argv[])
 	sys_frame_length = 1.0 / 60.0;
 
 #else
-	VIDEO_ClearFrameBuffer(sys_rmode, sys_framebuffer[1], COLOR_BLACK);
-	VIDEO_SetNextFramebuffer(sys_framebuffer[1]);
+	VIDEO_ClearFrameBuffer(sys_rmode, sys_framebuffer[sys_frame_count & 1], COLOR_BLACK);
+	VIDEO_SetNextFramebuffer(sys_framebuffer[sys_frame_count & 1]);
 
 	sys_frame_length = 1.0 / 30.0;
 
@@ -1216,11 +1222,11 @@ int main (int argc, char* argv[])
 		};
 		Host_Frame (sys_frame_length);
 #ifdef GXQUAKE
-		sys_currentframebuf ^= 1;
+		sys_frame_count++;
 		GX_SetColorUpdate(GX_TRUE);
 		GX_SetAlphaUpdate(GX_TRUE);
-		GX_CopyDisp(sys_framebuffer[sys_currentframebuf], GX_TRUE);
-		VIDEO_SetNextFramebuffer(sys_framebuffer[sys_currentframebuf]);
+		GX_CopyDisp(sys_framebuffer[sys_frame_count & 1], GX_TRUE);
+		VIDEO_SetNextFramebuffer(sys_framebuffer[sys_frame_count & 1]);
 #endif
 		KEYBOARD_FlushEvents();
 		VIDEO_Flush();

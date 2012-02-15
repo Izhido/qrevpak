@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifdef GXQUAKE
 
 #include <gccore.h>
+#include <malloc.h>
 
 #include "quakedef.h"
 
@@ -88,8 +89,16 @@ typedef struct
 	qboolean	mipmap;
 } gxtexture_t;
 
+typedef struct
+{
+	GXTexObj texobj;
+	void* data;
+	int length;
+} gxtexobj_t;
+
 #define	MAX_GXTEXTURES	1024
 gxtexture_t	gxtextures[MAX_GXTEXTURES];
+gxtexobj_t	gxtexobjs[MAX_GXTEXTURES];
 int			numgxtextures;
 
 
@@ -100,9 +109,29 @@ void GX_Bind (int texnum)
 	if (currenttexture == texnum)
 		return;
 	currenttexture = texnum;
-	glBindTexture(GL_TEXTURE_2D, texnum);
+	if(gxtexobjs[texnum].data != NULL)
+		GX_LoadTexObj(&gxtexobjs[texnum].texobj, GX_TEXMAP0);
 }
 
+void GX_LoadAndBind (int texnum, void* data, int length, int width, int height, int format, int level)
+{
+	if(gxtexobjs[texnum].length < length)
+	{
+		if(gxtexobjs[texnum].data != NULL)
+		{
+			free(gxtexobjs[texnum].data);
+			gxtexobjs[texnum].data = NULL;
+		};
+		gxtexobjs[texnum].data = memalign(32, length);
+		if(gxtexobjs[texnum].data == NULL)
+		{
+			Sys_Error("GX_LoadAndBind: allocation failed on %i bytes", length);
+		};
+		gxtexobjs[texnum].length = length;
+	};
+	memcpy(gxtexobjs[texnum].data, data, length);
+	GX_InitTexObj(&gxtexobjs[texnum].texobj, gxtexobjs[texnum].data, width, height, format, GX_REPEAT, GX_REPEAT, level);
+}
 
 /*
 =============================================================================
@@ -396,6 +425,7 @@ void Draw_Init (void)
 	byte	*ncdata;
 	int		f, fstep;
 
+	memset(gxtexobjs, 0, sizeof(gxtexobjs));
 
 	Cvar_RegisterVariable (&gx_nobind);
 	Cvar_RegisterVariable (&gx_max_size);
@@ -691,7 +721,7 @@ void Draw_TransPicTranslate (int x, int y, qpic_t *pic, byte *translation)
 		}
 	}
 
-	glTexImage2D (GL_TEXTURE_2D, 0, gx_alpha_format, 64, 64, 0, GL_RGBA, GL_UNSIGNED_BYTE, trans);
+	GX_LoadAndBind (currenttexture, trans, 64*64 * sizeof(unsigned), 64, 64, GX_TF_RGBA8, GX_FALSE);
 
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -1018,9 +1048,8 @@ void GX_MipMap8Bit (byte *in, int width, int height)
 GX_Upload32
 ===============
 */
-void GX_Upload32 (unsigned *data, int width, int height,  qboolean mipmap, qboolean alpha)
+void GX_Upload32 (unsigned *data, int length, int width, int height,  qboolean mipmap)
 {
-	int			samples;
 static	unsigned	scaled[1024*512];	// [512*256];
 	int			scaled_width, scaled_height;
 
@@ -1040,18 +1069,16 @@ static	unsigned	scaled[1024*512];	// [512*256];
 	if (scaled_width * scaled_height > sizeof(scaled)/4)
 		Sys_Error ("GX_LoadTexture: too big");
 
-	samples = alpha ? gx_alpha_format : gx_solid_format;
-
 #if 0
 	if (mipmap)
 		gluBuild2DMipmaps (GL_TEXTURE_2D, samples, width, height, GL_RGBA, GL_UNSIGNED_BYTE, trans);
 	else if (scaled_width == width && scaled_height == height)
-		glTexImage2D (GL_TEXTURE_2D, 0, samples, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, trans);
+		GX_LoadAndBind (currenttexture, trans, length, width, height, GX_TF_RGBA8, GX_FALSE);
 	else
 	{
 		gluScaleImage (GL_RGBA, width, height, GL_UNSIGNED_BYTE, trans,
 			scaled_width, scaled_height, GL_UNSIGNED_BYTE, scaled);
-		glTexImage2D (GL_TEXTURE_2D, 0, samples, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaled);
+		GX_LoadAndBind (currenttexture, scaled, length * scaled_width / width * scaled_height / height, scaled_width, scaled_height, GX_TF_RGBA8, GX_FALSE);
 	}
 #else
 texels += scaled_width * scaled_height;
@@ -1060,7 +1087,7 @@ texels += scaled_width * scaled_height;
 	{
 		if (!mipmap)
 		{
-			glTexImage2D (GL_TEXTURE_2D, 0, samples, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+			GX_LoadAndBind (currenttexture, data, length, scaled_width, scaled_height, GX_TF_RGBA8, GX_FALSE);
 			goto done;
 		}
 		memcpy (scaled, data, width*height*4);
@@ -1068,7 +1095,7 @@ texels += scaled_width * scaled_height;
 	else
 		GX_ResampleTexture (data, width, height, scaled, scaled_width, scaled_height);
 
-	glTexImage2D (GL_TEXTURE_2D, 0, samples, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaled);
+	GX_LoadAndBind (currenttexture, scaled, length * scaled_width / width * scaled_height / height, scaled_width, scaled_height, GX_TF_RGBA8, GX_FALSE);
 	if (mipmap)
 	{
 		int		miplevel;
@@ -1084,7 +1111,7 @@ texels += scaled_width * scaled_height;
 			if (scaled_height < 1)
 				scaled_height = 1;
 			miplevel++;
-			glTexImage2D (GL_TEXTURE_2D, miplevel, samples, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaled);
+			GX_LoadAndBind (currenttexture, scaled, length * scaled_width / width * scaled_height / height, scaled_width, scaled_height, GX_TF_RGBA8, miplevel > 0 ? GX_TRUE : GX_FALSE);
 		}
 	}
 done: ;
@@ -1240,7 +1267,7 @@ static	unsigned	trans[640*480];		// FIXME, temporary
  		GX_Upload8_EXT (data, width, height, mipmap, alpha);
  		return;
 	}
-	GX_Upload32 (trans, width, height, mipmap, alpha);
+	GX_Upload32 (trans, s * 4, width, height, mipmap);
 }
 
 /*

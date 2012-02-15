@@ -64,7 +64,9 @@ struct y1cby2cr_palentry_t d_8toy1cby2cr[256][256];
 
 int vid_palentry_increment;
 
-extern void* sys_framebuffer[3];
+extern void* sys_framebuffer[2];
+
+extern int sys_frame_count;
 
 int vid_scale;
 
@@ -107,6 +109,7 @@ void VID_DrawWmoteGuide(void)
 	int i;
 	int x;
 	int y;
+	u32* vb;
 	u32* v;
 	u32 f;
 	u32 c;
@@ -125,6 +128,7 @@ void VID_DrawWmoteGuide(void)
 		{
 			r = 12 * vid.width / 320;
 			a = 0;
+			vb = ((u32*)(sys_framebuffer[sys_frame_count & 1]));
 			for(i = 0; i < 16; i++)
 			{
 				a = 3.14159265358979323846 * i / 8;
@@ -132,7 +136,7 @@ void VID_DrawWmoteGuide(void)
 				y = p.y - r * sin(a + vid_guide_increment);
 				if((x > vid_outerwidthborder)&&(x < (sys_rmode->viWidth - vid_outerwidthborder))&&(y > vid_outerheightborder)&&(y < (sys_rmode->viHeight - vid_outerheightborder)))
 				{
-					v = ((u32*)(sys_framebuffer[1])) + (y * sys_rmode->viWidth / 2) + (x / 2);
+					v = vb + (y * sys_rmode->viWidth / 2) + (x / 2);
 					if(d_8toy1cby2cr[vid_pal_increment][vid_pal_increment].count == vid_palentry_increment)
 					{
 						*v = d_8toy1cby2cr[vid_pal_increment][vid_pal_increment].color;
@@ -272,6 +276,7 @@ void	VID_Update (vrect_t *rects)
 	int h;
 	int w;
 	byte* p;
+	u32* vb;
 	u32* v;
 	int vinc;
 	int ix;
@@ -286,7 +291,8 @@ void	VID_Update (vrect_t *rects)
 	u8 r2;
 	u8 g2;
 	u8 b2;
-	
+
+	vb = ((u32*)(sys_framebuffer[sys_frame_count & 1]));
 	r = rects;
 	while(r != 0)
 	{
@@ -295,7 +301,7 @@ void	VID_Update (vrect_t *rects)
 		h = r->height;
 		w = r->width;
 		p = vid_buffer + i * vid_height + j;
-		v = ((u32*)(sys_framebuffer[1])) + ((vid_outerheightborder + (i * vid_scale)) * (sys_rmode->viWidth / 2)) + (vid_outerwidthborder / 2) + (j * vid_scale / 2);
+		v = vb + ((vid_outerheightborder + (i * vid_scale)) * (sys_rmode->viWidth / 2)) + (vid_outerwidthborder / 2) + (j * vid_scale / 2);
 		vinc = (sys_rmode->viWidth - (r->width * vid_scale)) / 2;
 		i = 0;
 		ix = 0;
@@ -355,7 +361,7 @@ void	VID_Update (vrect_t *rects)
 	};
 	if(in_osk.value)
 	{
-		OSK_Draw(sys_rmode, sys_framebuffer[1]);
+		OSK_Draw(sys_rmode, sys_framebuffer[sys_frame_count & 1]);
 	};
 	VID_DrawWmoteGuide();
 }
@@ -392,7 +398,7 @@ void D_BeginDirectRect (int x, int y, byte *pbitmap, int width, int height)
 	h = height;
 	w = width;
 	p = pbitmap;
-	v = ((u32*)(sys_framebuffer[1])) + ((vid_outerheightborder + (i * vid_scale)) * (sys_rmode->viWidth / 2)) + (vid_outerwidthborder / 2) + (j * vid_scale / 2);
+	v = ((u32*)(sys_framebuffer[sys_frame_count & 1])) + ((vid_outerheightborder + (i * vid_scale)) * (sys_rmode->viWidth / 2)) + (vid_outerwidthborder / 2) + (j * vid_scale / 2);
 	vinc = (sys_rmode->viWidth - (w * vid_scale)) / 2;
 	i = 0;
 	ix = 0;
