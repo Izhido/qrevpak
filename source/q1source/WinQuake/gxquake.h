@@ -377,7 +377,7 @@ extern	float	r_world_matrix[16];
 void R_TranslatePlayerSkin (int playernum);
 
 void GX_Bind (int texnum);
-void GX_LoadAndBind (int texnum, void* data, int length, int width, int height, int format, int level);
+void GX_LoadAndBind (void* data, int length, int width, int height, int format, int level);
 
 // Multitexture
 #define    TEXTURE0_SGIS				0x835E

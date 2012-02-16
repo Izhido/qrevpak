@@ -281,6 +281,10 @@ GLenum gl_primitive_mode = -1;
 gl_vertex_t* gl_vertices = 0;
 int gl_vertices_size = 0;
 int gl_vertex_count = 0;
+f32 rprev;
+f32 gprev;
+f32 bprev;
+f32 aprev;
 
 void glTexImage2D(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid* data)
 {
@@ -300,26 +304,10 @@ void glDisable(GLenum cap)
 
 void glColor4f(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
 {
-	int newsize;
-	gl_vertex_t* newlist;
-
-	if(gl_vertex_count >= gl_vertices_size)
-	{
-		newsize = gl_vertices_size + 1024;
-		newlist = malloc(newsize * sizeof(gl_vertex_t));
-		memset(newlist, 0, newsize * sizeof(gl_vertex_t));
-		if(gl_vertices != 0)
-		{
-			memcpy(newlist, gl_vertices, gl_vertices_size);
-			free(gl_vertices);
-		};
-		gl_vertices = newlist;
-		gl_vertices_size = newsize;
-	};
-	gl_vertices[gl_vertex_count].r = red;
-	gl_vertices[gl_vertex_count].g = green;
-	gl_vertices[gl_vertex_count].b = blue;
-	gl_vertices[gl_vertex_count].a = alpha;
+	rprev = red;
+	gprev = green;
+	bprev = blue;
+	aprev = alpha;
 }
 
 void glBegin(GLenum mode)
@@ -442,6 +430,10 @@ void glVertex3f(GLfloat x, GLfloat y, GLfloat z)
 	gl_vertices[gl_vertex_count].x = x;
 	gl_vertices[gl_vertex_count].y = y;
 	gl_vertices[gl_vertex_count].z = z;
+	gl_vertices[gl_vertex_count].r = rprev;
+	gl_vertices[gl_vertex_count].g = gprev;
+	gl_vertices[gl_vertex_count].b = bprev;
+	gl_vertices[gl_vertex_count].a = aprev;
 	gl_vertex_count++;
 }
 

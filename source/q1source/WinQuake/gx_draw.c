@@ -55,6 +55,8 @@ cvar_t		gx_nobind = {"gx_nobind", "0"};
 cvar_t		gx_max_size = {"gx_max_size", "1024"};
 cvar_t		gx_picmip = {"gx_picmip", "0"};
 
+#define		GX_MAX_MIPMAPS 10			// This is related to gx_max_size defined above
+
 byte		*draw_chars;				// 8*8 graphic characters
 qpic_t		*draw_disc;
 qpic_t		*draw_backtile;
@@ -92,8 +94,8 @@ typedef struct
 typedef struct
 {
 	GXTexObj texobj;
-	void* data;
-	int length;
+	void* data[GX_MAX_MIPMAPS];
+	int length[GX_MAX_MIPMAPS];
 } gxtexobj_t;
 
 #define	MAX_GXTEXTURES	1024
@@ -109,28 +111,38 @@ void GX_Bind (int texnum)
 	if (currenttexture == texnum)
 		return;
 	currenttexture = texnum;
-	if(gxtexobjs[texnum].data != NULL)
+	if(gxtexobjs[texnum].data[0] != NULL)
 		GX_LoadTexObj(&gxtexobjs[texnum].texobj, GX_TEXMAP0);
 }
 
-void GX_LoadAndBind (int texnum, void* data, int length, int width, int height, int format, int level)
+void GX_LoadAndBind (void* data, int length, int width, int height, int format, int mipmap)
 {
-	if(gxtexobjs[texnum].length < length)
+	qboolean changed;
+
+	changed = false;
+	if(gxtexobjs[currenttexture].length[mipmap] < length)
 	{
-		if(gxtexobjs[texnum].data != NULL)
+		if(gxtexobjs[currenttexture].data[mipmap] != NULL)
 		{
-			free(gxtexobjs[texnum].data);
-			gxtexobjs[texnum].data = NULL;
+			free(gxtexobjs[currenttexture].data[mipmap]);
+			gxtexobjs[currenttexture].data[mipmap] = NULL;
+			changed = true;
 		};
-		gxtexobjs[texnum].data = memalign(32, length);
-		if(gxtexobjs[texnum].data == NULL)
+		gxtexobjs[currenttexture].data[mipmap] = memalign(32, length);
+		if(gxtexobjs[currenttexture].data[mipmap] == NULL)
 		{
 			Sys_Error("GX_LoadAndBind: allocation failed on %i bytes", length);
 		};
-		gxtexobjs[texnum].length = length;
+		gxtexobjs[currenttexture].length[mipmap] = length;
 	};
-	memcpy(gxtexobjs[texnum].data, data, length);
-	GX_InitTexObj(&gxtexobjs[texnum].texobj, gxtexobjs[texnum].data, width, height, format, GX_REPEAT, GX_REPEAT, level);
+	memcpy(gxtexobjs[currenttexture].data[mipmap], data, length);
+	if(mipmap == 0)
+	{
+		GX_InitTexObj(&gxtexobjs[currenttexture].texobj, gxtexobjs[currenttexture].data[mipmap], width, height, format, GX_REPEAT, GX_REPEAT, GX_FALSE);
+		GX_LoadTexObj(&gxtexobjs[currenttexture].texobj, GX_TEXMAP0);
+		if(changed)
+			GX_InvalidateTexAll();
+	};
 }
 
 /*
@@ -721,7 +733,7 @@ void Draw_TransPicTranslate (int x, int y, qpic_t *pic, byte *translation)
 		}
 	}
 
-	GX_LoadAndBind (currenttexture, trans, 64*64 * sizeof(unsigned), 64, 64, GX_TF_RGBA8, GX_FALSE);
+	GX_LoadAndBind (trans, 64*64 * sizeof(unsigned), 64, 64, GX_TF_RGBA8, 0);
 
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -1073,12 +1085,12 @@ static	unsigned	scaled[1024*512];	// [512*256];
 	if (mipmap)
 		gluBuild2DMipmaps (GL_TEXTURE_2D, samples, width, height, GL_RGBA, GL_UNSIGNED_BYTE, trans);
 	else if (scaled_width == width && scaled_height == height)
-		GX_LoadAndBind (currenttexture, trans, length, width, height, GX_TF_RGBA8, GX_FALSE);
+		GX_LoadAndBind (trans, length, width, height, GX_TF_RGBA8, 0);
 	else
 	{
 		gluScaleImage (GL_RGBA, width, height, GL_UNSIGNED_BYTE, trans,
 			scaled_width, scaled_height, GL_UNSIGNED_BYTE, scaled);
-		GX_LoadAndBind (currenttexture, scaled, length * scaled_width / width * scaled_height / height, scaled_width, scaled_height, GX_TF_RGBA8, GX_FALSE);
+		GX_LoadAndBind (scaled, length * scaled_width / width * scaled_height / height, scaled_width, scaled_height, GX_TF_RGBA8, 0);
 	}
 #else
 texels += scaled_width * scaled_height;
@@ -1087,7 +1099,7 @@ texels += scaled_width * scaled_height;
 	{
 		if (!mipmap)
 		{
-			GX_LoadAndBind (currenttexture, data, length, scaled_width, scaled_height, GX_TF_RGBA8, GX_FALSE);
+			GX_LoadAndBind (data, length, scaled_width, scaled_height, GX_TF_RGBA8, 0);
 			goto done;
 		}
 		memcpy (scaled, data, width*height*4);
@@ -1095,7 +1107,7 @@ texels += scaled_width * scaled_height;
 	else
 		GX_ResampleTexture (data, width, height, scaled, scaled_width, scaled_height);
 
-	GX_LoadAndBind (currenttexture, scaled, length * scaled_width / width * scaled_height / height, scaled_width, scaled_height, GX_TF_RGBA8, GX_FALSE);
+	GX_LoadAndBind (scaled, length * scaled_width / width * scaled_height / height, scaled_width, scaled_height, GX_TF_RGBA8, 0);
 	if (mipmap)
 	{
 		int		miplevel;
@@ -1111,7 +1123,7 @@ texels += scaled_width * scaled_height;
 			if (scaled_height < 1)
 				scaled_height = 1;
 			miplevel++;
-			GX_LoadAndBind (currenttexture, scaled, length * scaled_width / width * scaled_height / height, scaled_width, scaled_height, GX_TF_RGBA8, miplevel > 0 ? GX_TRUE : GX_FALSE);
+			GX_LoadAndBind (scaled, length * scaled_width / width * scaled_height / height, scaled_width, scaled_height, GX_TF_RGBA8, miplevel);
 		}
 	}
 done: ;
