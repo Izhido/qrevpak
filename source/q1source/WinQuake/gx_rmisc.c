@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #ifdef GXQUAKE
 
+#include <gccore.h>
+
 #include "quakedef.h"
 
 
@@ -90,7 +92,7 @@ void R_InitParticleTexture (void)
 			data[y][x][3] = dottexture[x][y]*255;
 		}
 	}
-	glTexImage2D (GL_TEXTURE_2D, 0, gx_alpha_format, 8, 8, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	GX_LoadAndBind (data, 8 * 8 * 4, 8, 8, GX_TF_RGBA8, 0);
 
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
@@ -365,7 +367,7 @@ void R_TranslatePlayerSkin (int playernum)
 			frac += fracstep;
 		}
 	}
-	glTexImage2D (GL_TEXTURE_2D, 0, gx_solid_format, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+	GX_LoadAndBind (pixels, scaled_width * scaled_height * 4, scaled_width, scaled_height, GX_TF_RGBA8, 0);
 
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

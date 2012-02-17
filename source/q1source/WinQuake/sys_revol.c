@@ -1152,9 +1152,14 @@ int main (int argc, char* argv[])
 	GX_SetVtxAttrFmt(GX_VTXFMT1, GX_VA_TEX0, GX_TEX_ST, GX_F32, 0);
  
 	GX_SetNumChans(1);
-	GX_SetNumTexGens(0);
+	GX_SetNumTexGens(1);
 	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
 	GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
+
+	GX_SetTexCoordGen(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, GX_IDENTITY);
+
+	GX_InvVtxCache();
+	GX_InvalidateTexAll();
 
 	sys_frame_length = 1.0 / 60.0;
 

@@ -676,8 +676,8 @@ void R_LoadSkys (void)
 		LoadTGA (f);
 //		LoadPCX (f);
 
-		glTexImage2D (GL_TEXTURE_2D, 0, gx_solid_format, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, targa_rgba);
-//		glTexImage2D (GL_TEXTURE_2D, 0, gx_solid_format, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, pcx_rgb);
+		GX_LoadAndBind (targa_rgba, 256 * 256 * 4, 256, 256, GX_TF_RGBA8, 0);
+//		GX_LoadAndBind (pcx_rgb, 256 * 256 * 4, 256, 256, GX_TF_RGBA8, 0);
 
 		free (targa_rgba);
 //		free (pcx_rgb);
@@ -1089,7 +1089,7 @@ void R_InitSky (texture_t *mt)
 	if (!solidskytexture)
 		solidskytexture = texture_extension_number++;
 	GX_Bind (solidskytexture );
-	glTexImage2D (GL_TEXTURE_2D, 0, gx_solid_format, 128, 128, 0, GL_RGBA, GL_UNSIGNED_BYTE, trans);
+	GX_LoadAndBind (trans, 128 * 128 * 4, 128, 128, GX_TF_RGBA8, 0);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -1107,7 +1107,7 @@ void R_InitSky (texture_t *mt)
 	if (!alphaskytexture)
 		alphaskytexture = texture_extension_number++;
 	GX_Bind(alphaskytexture);
-	glTexImage2D (GL_TEXTURE_2D, 0, gx_alpha_format, 128, 128, 0, GL_RGBA, GL_UNSIGNED_BYTE, trans);
+	GX_LoadAndBind (trans, 128 * 128 * 4, 128, 128, GX_TF_RGBA8, 0);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	Sys_BigStackFree(128*128 * sizeof(unsigned), "R_InitSky");

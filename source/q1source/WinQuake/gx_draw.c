@@ -138,6 +138,7 @@ void GX_LoadAndBind (void* data, int length, int width, int height, int format, 
 	memcpy(gxtexobjs[currenttexture].data[mipmap], data, length);
 	if(mipmap == 0)
 	{
+		DCFlushRange(gxtexobjs[currenttexture].data[mipmap], length);
 		GX_InitTexObj(&gxtexobjs[currenttexture].texobj, gxtexobjs[currenttexture].data[mipmap], width, height, format, GX_REPEAT, GX_REPEAT, GX_FALSE);
 		GX_LoadTexObj(&gxtexobjs[currenttexture].texobj, GX_TEXMAP0);
 		if(changed)
@@ -1191,7 +1192,7 @@ void GX_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboole
 	{
 		if (!mipmap)
 		{
-			glTexImage2D (GL_TEXTURE_2D, 0, GL_COLOR_INDEX8_EXT, scaled_width, scaled_height, 0, GL_COLOR_INDEX , GL_UNSIGNED_BYTE, data);
+			GX_LoadAndBind (data, s, scaled_width, scaled_height, GX_TF_I8, 0);
 			goto done;
 		}
 		memcpy (scaled, data, width*height);
@@ -1199,7 +1200,7 @@ void GX_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboole
 	else
 		GX_Resample8BitTexture (data, width, height, scaled, scaled_width, scaled_height);
 
-	glTexImage2D (GL_TEXTURE_2D, 0, GL_COLOR_INDEX8_EXT, scaled_width, scaled_height, 0, GL_COLOR_INDEX, GL_UNSIGNED_BYTE, scaled);
+	GX_LoadAndBind (scaled, scaled_width * scaled_height, scaled_width, scaled_height, GX_TF_I8, 0);
 	if (mipmap)
 	{
 		int		miplevel;
@@ -1215,7 +1216,7 @@ void GX_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboole
 			if (scaled_height < 1)
 				scaled_height = 1;
 			miplevel++;
-			glTexImage2D (GL_TEXTURE_2D, miplevel, GL_COLOR_INDEX8_EXT, scaled_width, scaled_height, 0, GL_COLOR_INDEX, GL_UNSIGNED_BYTE, scaled);
+			GX_LoadAndBind (scaled, scaled_width * scaled_height, scaled_width, scaled_height, GX_TF_I8, miplevel);
 		}
 	}
 done: ;

@@ -338,6 +338,9 @@ lastposenum = posenum;
 	verts += posenum * paliashdr->poseverts;
 	order = (int *)((byte *)paliashdr + paliashdr->commands);
 
+ 	GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
+	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
 	while (1)
 	{
 		// get the vertex count and primitive type
@@ -347,13 +350,14 @@ lastposenum = posenum;
 		if (count < 0)
 		{
 			count = -count;
-			glBegin (GL_TRIANGLE_FAN);
+			GX_Begin(GX_TRIANGLEFAN, GX_VTXFMT1, count);
 		}
 		else
-			glBegin (GL_TRIANGLE_STRIP);
-
-		do
 		{
+			GX_Begin(GX_TRIANGLESTRIP, GX_VTXFMT1, count);
+		};
+		do
+		{/*
 			// texture coordinates come from the draw list
 			glTexCoord2f (((float *)order)[0], ((float *)order)[1]);
 			order += 2;
@@ -362,11 +366,20 @@ lastposenum = posenum;
 			l = shadedots[verts->lightnormalindex] * shadelight;
 			glColor3f (l, l, l);
 			glVertex3f (verts->v[0], verts->v[1], verts->v[2]);
+			verts++;*/
+			GX_Position3f32(verts->v[0], verts->v[1], verts->v[2]);
 			verts++;
+			l = shadedots[verts->lightnormalindex] * shadelight;
+			GX_Color4u8(l * 255.0, l * 255.0, l * 255.0, 255);
+			GX_TexCoord2f32 (((float *)order)[0], ((float *)order)[1]);
+			order += 2;
 		} while (--count);
 
-		glEnd ();
+		GX_End ();
 	}
+ 	GX_SetVtxDesc(GX_VA_TEX0, GX_NONE);
+	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
 }
 
 
