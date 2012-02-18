@@ -87,6 +87,7 @@ void QGX_Init (void)
 
 	gx_blend_src_value = GX_BL_SRCALPHA;
 	gx_blend_dst_value = GX_BL_INVSRCALPHA;
+	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP);
 
 //	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);

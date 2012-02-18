@@ -682,14 +682,21 @@ void DrawGXPoly (gxpoly_t *p)
 	int		i;
 	float	*v;
 
-	glBegin (GL_POLYGON);
+ 	GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
+	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
+	GX_Begin(GX_TRIANGLEFAN, GX_VTXFMT1, p->numverts);
 	v = p->verts[0];
 	for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 	{
-		glTexCoord2f (v[3], v[4]);
-		glVertex3fv (v);
+		GX_Position3f32(v[0], v[1], v[2]);
+		GX_Color4u8(255, 255, 255, 255);
+		GX_TexCoord2f32 (v[3], v[4]);
 	}
-	glEnd ();
+	GX_End ();
+ 	GX_SetVtxDesc(GX_VA_TEX0, GX_NONE);
+	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
 }
 
 

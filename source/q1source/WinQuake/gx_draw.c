@@ -118,6 +118,13 @@ void GX_Bind (int texnum)
 void GX_LoadAndBind (void* data, int length, int width, int height, int format, int mipmap)
 {
 	qboolean changed;
+	int x;
+	int y;
+	int xi;
+	int yi;
+	int i;
+	int j;
+	byte* v;
 
 	changed = false;
 	if(gxtexobjs[currenttexture].length[mipmap] < length)
@@ -135,7 +142,40 @@ void GX_LoadAndBind (void* data, int length, int width, int height, int format, 
 		};
 		gxtexobjs[currenttexture].length[mipmap] = length;
 	};
-	memcpy(gxtexobjs[currenttexture].data[mipmap], data, length);
+	if((format == GX_TF_RGBA8)&&(width >= 4)&&(height >= 4))
+	{
+		v = (byte*)(gxtexobjs[currenttexture].data[mipmap]);
+		i = 0;
+		for(y = 0; y < height; y += 4)
+		{
+			for(x = 0; x < width; x += 4)
+			{
+				for(yi = 0; yi < 4; yi++)
+				{
+					for(xi = 0; xi < 4; xi++)
+					{
+						j = i + 4 * (width * yi + xi);
+						*(v++) = ((byte*)data)[j + 3];
+						*(v++) = ((byte*)data)[j];
+					};
+				};
+				for(yi = 0; yi < 4; yi++)
+				{
+					for(xi = 0; xi < 4; xi++)
+					{
+						j = i + 4 * (width * yi + xi);
+						*(v++) = ((byte*)data)[j + 1];
+						*(v++) = ((byte*)data)[j + 2];
+					};
+				};
+				i += 16;
+			};
+			i += (16 * width);
+		};
+	} else
+	{
+		memcpy(gxtexobjs[currenttexture].data[mipmap], data, length);
+	};
 	if(mipmap == 0)
 	{
 		DCFlushRange(gxtexobjs[currenttexture].data[mipmap], length);
