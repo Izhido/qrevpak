@@ -203,7 +203,7 @@ void R_BuildLightMap (msurface_t *surf, byte *dest, int stride)
 store:
 	switch (gx_lightmap_format)
 	{
-	case GL_RGBA:
+	case GX_TF_RGBA8:
 		stride -= (smax<<2);
 		bl = blocklights;
 		for (i=0 ; i<tmax ; i++, dest += stride)
@@ -1702,10 +1702,10 @@ void GX_BuildLightmaps (void)
 		texture_extension_number += MAX_LIGHTMAPS;
 	}
 
-	gx_lightmap_format = GL_LUMINANCE;
+	gx_lightmap_format = GX_TF_RGBA8; // Default changed for GX hardware
 	// default differently on the Permedia
 	if (isPermedia)
-		gx_lightmap_format = GL_RGBA;
+		gx_lightmap_format = GX_TF_RGBA8;
 
 	if (COM_CheckParm ("-lm_1"))
 		gx_lightmap_format = GL_LUMINANCE;
@@ -1716,11 +1716,11 @@ void GX_BuildLightmaps (void)
 	if (COM_CheckParm ("-lm_2"))
 		gx_lightmap_format = GL_RGBA4;
 	if (COM_CheckParm ("-lm_4"))
-		gx_lightmap_format = GL_RGBA;
+		gx_lightmap_format = GX_TF_RGBA8;
 
 	switch (gx_lightmap_format)
 	{
-	case GL_RGBA:
+	case GX_TF_RGBA8:
 		lightmap_bytes = 4;
 		break;
 	case GL_RGBA4:
@@ -1773,9 +1773,10 @@ void GX_BuildLightmaps (void)
 		GX_Bind(lightmap_textures + i);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexImage2D (GL_TEXTURE_2D, 0, lightmap_bytes
+		GX_LoadAndBind (lightmaps+i*BLOCK_WIDTH*BLOCK_HEIGHT*lightmap_bytes, BLOCK_WIDTH*BLOCK_HEIGHT*lightmap_bytes, BLOCK_WIDTH, BLOCK_HEIGHT, gx_lightmap_format, 0);
+		/*glTexImage2D (GL_TEXTURE_2D, 0, lightmap_bytes
 		, BLOCK_WIDTH, BLOCK_HEIGHT, 0, 
-		gx_lightmap_format, GL_UNSIGNED_BYTE, lightmaps+i*BLOCK_WIDTH*BLOCK_HEIGHT*lightmap_bytes);
+		gx_lightmap_format, GL_UNSIGNED_BYTE, lightmaps+i*BLOCK_WIDTH*BLOCK_HEIGHT*lightmap_bytes);*/
 	}
 
  	if (!gx_texsort.value)

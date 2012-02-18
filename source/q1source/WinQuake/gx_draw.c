@@ -94,8 +94,10 @@ typedef struct
 typedef struct
 {
 	GXTexObj texobj;
+	u16 width;
+	u16 height;
 	void* data[GX_MAX_MIPMAPS];
-	int length[GX_MAX_MIPMAPS];
+	u32 length[GX_MAX_MIPMAPS];
 } gxtexobj_t;
 
 #define	MAX_GXTEXTURES	1024
@@ -155,8 +157,8 @@ void GX_LoadAndBind (void* data, int length, int width, int height, int format, 
 					for(xi = 0; xi < 4; xi++)
 					{
 						j = i + 4 * (width * yi + xi);
-						*(v++) = ((byte*)data)[j + 3];
 						*(v++) = ((byte*)data)[j];
+						*(v++) = ((byte*)data)[j + 3];
 					};
 				};
 				for(yi = 0; yi < 4; yi++)
@@ -164,8 +166,8 @@ void GX_LoadAndBind (void* data, int length, int width, int height, int format, 
 					for(xi = 0; xi < 4; xi++)
 					{
 						j = i + 4 * (width * yi + xi);
-						*(v++) = ((byte*)data)[j + 1];
 						*(v++) = ((byte*)data)[j + 2];
+						*(v++) = ((byte*)data)[j + 1];
 					};
 				};
 				i += 16;
@@ -176,6 +178,8 @@ void GX_LoadAndBind (void* data, int length, int width, int height, int format, 
 	{
 		memcpy(gxtexobjs[currenttexture].data[mipmap], data, length);
 	};
+	gxtexobjs[currenttexture].width = width;
+	gxtexobjs[currenttexture].height = height;
 	if(mipmap == 0)
 	{
 		DCFlushRange(gxtexobjs[currenttexture].data[mipmap], length);
@@ -184,6 +188,70 @@ void GX_LoadAndBind (void* data, int length, int width, int height, int format, 
 		if(changed)
 			GX_InvalidateTexAll();
 	};
+}
+
+void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int height, int format, int level)
+{/*
+	int x;
+	int y;
+	int xi;
+	int yi;
+	int i;
+	int j;
+	byte* v;
+
+	if(gxtexobjs[currenttexture].data[mipmap] != NULL)
+	{
+		if((format == GX_TF_RGBA8)&&(width >= 4)&&(height >= 4))
+		{
+			v = (byte*)(gxtexobjs[currenttexture].data[mipmap]);
+			i = 0;
+			for(y = yoffset; y < (yoffset + height); y++)
+			{
+				for(x = xoffset; x < (xoffset + width); x++)
+				{
+					for(yi = 0; yi < 4; yi++)
+					{
+						for(xi = 0; xi < 4; xi++)
+						{
+							j = i + 4 * (width * yi + xi);
+							*(v++) = ((byte*)data)[j];
+							*(v++) = ((byte*)data)[j + 3];
+						};
+					};
+					for(yi = 0; yi < 4; yi++)
+					{
+						for(xi = 0; xi < 4; xi++)
+						{
+							j = i + 4 * (width * yi + xi);
+							*(v++) = ((byte*)data)[j + 2];
+							*(v++) = ((byte*)data)[j + 1];
+						};
+					};
+					i += 16;
+				};
+				i += (16 * width);
+			};
+		} else
+		{
+			for(y = yoffset; y < (yoffset + height); y++)
+			{
+				v = (byte*)(gxtexobjs[currenttexture].data[mipmap]) + 
+				for(x = xoffset; x < (xoffset + width); x++)
+				{
+				}
+			};
+			memcpy(gxtexobjs[currenttexture].data[mipmap], data, length);
+		};
+	};
+	if(mipmap == 0)
+	{
+		DCFlushRange(gxtexobjs[currenttexture].data[mipmap], gxtexobjs[currenttexture].length[mipmap]);
+		GX_InitTexObj(&gxtexobjs[currenttexture].texobj, gxtexobjs[currenttexture].data[mipmap], width, height, format, GX_REPEAT, GX_REPEAT, GX_FALSE);
+		GX_LoadTexObj(&gxtexobjs[currenttexture].texobj, GX_TEXMAP0);
+		if(changed)
+			GX_InvalidateTexAll();
+	};*/
 }
 
 /*

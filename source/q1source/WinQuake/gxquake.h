@@ -61,8 +61,6 @@ typedef void GLvoid;
 
 #define GL_BLEND 12
 
-#define GL_RGBA 13
-
 #define GL_UNSIGNED_BYTE 14
 
 #define GL_FRONT 15
@@ -378,6 +376,7 @@ void R_TranslatePlayerSkin (int playernum);
 
 void GX_Bind (int texnum);
 void GX_LoadAndBind (void* data, int length, int width, int height, int format, int level);
+void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int height, int format, int level);
 
 // Multitexture
 #define    TEXTURE0_SGIS				0x835E
