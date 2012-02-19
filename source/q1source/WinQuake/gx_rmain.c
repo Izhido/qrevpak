@@ -47,6 +47,15 @@ extern u8 gx_blend_dst_value;
 
 extern u8 gx_cur_vertex_format;
 
+extern u8 gx_cur_r;
+
+extern u8 gx_cur_g;
+
+extern u8 gx_cur_b;
+
+extern u8 gx_cur_a;
+
+
 entity_t	r_worldentity;
 
 qboolean	r_cache_thrash;		// compatability
@@ -324,7 +333,7 @@ GX_DrawAliasFrame
 void GX_DrawAliasFrame (aliashdr_t *paliashdr, int posenum)
 {
 	float	s, t;
-	float 	l;
+	u8	 	l;
 	int		i, j;
 	int		index;
 	trivertx_t	*v, *verts;
@@ -359,8 +368,12 @@ lastposenum = posenum;
 		{
 			GX_Position3f32(verts->v[0], verts->v[1], verts->v[2]);
 			verts++;
-			l = shadedots[verts->lightnormalindex] * shadelight;
-			GX_Color4u8(l * 255.0, l * 255.0, l * 255.0, 255);
+			l = shadedots[verts->lightnormalindex] * shadelight * 255.0;
+			gx_cur_r = l;
+			gx_cur_g = l;
+			gx_cur_b = l;
+			gx_cur_a = 255;
+			GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
 			GX_TexCoord2f32 (((float *)order)[0], ((float *)order)[1]);
 			order += 2;
 		} while (--count);

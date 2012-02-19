@@ -63,6 +63,14 @@ u8 gx_blend_dst_value = GX_BL_ZERO;
 
 u8 gx_cur_vertex_format = GX_VTXFMT0;
 
+u8 gx_cur_r;
+
+u8 gx_cur_g;
+
+u8 gx_cur_b;
+
+u8 gx_cur_a;
+
 /*
 ===============
 QGX_Init
@@ -277,20 +285,16 @@ typedef struct
 	f32 x;
 	f32 y;
 	f32 z;
-	f32 r;
-	f32 g;
-	f32 b;
-	f32 a;
+	u8 r;
+	u8 g;
+	u8 b;
+	u8 a;
 } gl_vertex_t;
 
 GLenum gl_primitive_mode = -1;
 gl_vertex_t* gl_vertices = 0;
 int gl_vertices_size = 0;
 int gl_vertex_count = 0;
-f32 rprev;
-f32 gprev;
-f32 bprev;
-f32 aprev;
 
 void glTexParameterf(GLenum target, GLenum pname, GLfloat param)
 {
@@ -306,10 +310,10 @@ void glDisable(GLenum cap)
 
 void glColor4f(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
 {
-	rprev = red;
-	gprev = green;
-	bprev = blue;
-	aprev = alpha;
+	gx_cur_r = red * 255.0;
+	gx_cur_g = green * 255.0;
+	gx_cur_b = blue * 255.0;
+	gx_cur_a = alpha * 255.0;
 }
 
 void glBegin(GLenum mode)
@@ -346,7 +350,7 @@ void glEnd(void)
 				for(i = 0; i < m; i++)
 				{
 					GX_Position3f32(gl_vertices[i].x, gl_vertices[i].y, gl_vertices[i].z);
-					GX_Color4u8(gl_vertices[i].r * 255.0, gl_vertices[i].g * 255.0, gl_vertices[i].b * 255.0, gl_vertices[i].a * 255.0);
+					GX_Color4u8(gl_vertices[i].r, gl_vertices[i].g, gl_vertices[i].b, gl_vertices[i].a);
 				};
 				GX_End();
 			};
@@ -362,7 +366,7 @@ void glEnd(void)
 				for(i = 0; i < m; i++)
 				{
 					GX_Position3f32(gl_vertices[i].x, gl_vertices[i].y, gl_vertices[i].z);
-					GX_Color4u8(gl_vertices[i].r * 255.0, gl_vertices[i].g * 255.0, gl_vertices[i].b * 255.0, gl_vertices[i].a * 255.0);
+					GX_Color4u8(gl_vertices[i].r, gl_vertices[i].g, gl_vertices[i].b, gl_vertices[i].a);
 				};
 				GX_End();
 			};
@@ -377,7 +381,7 @@ void glEnd(void)
 				for(i = 0; i < m; i++)
 				{
 					GX_Position3f32(gl_vertices[i].x, gl_vertices[i].y, gl_vertices[i].z);
-					GX_Color4u8(gl_vertices[i].r * 255.0, gl_vertices[i].g * 255.0, gl_vertices[i].b * 255.0, gl_vertices[i].a * 255.0);
+					GX_Color4u8(gl_vertices[i].r, gl_vertices[i].g, gl_vertices[i].b, gl_vertices[i].a);
 				};
 				GX_End();
 			};
@@ -393,7 +397,7 @@ void glEnd(void)
 				for(i = 0; i < m; i++)
 				{
 					GX_Position3f32(gl_vertices[i].x, gl_vertices[i].y, gl_vertices[i].z);
-					GX_Color4u8(gl_vertices[i].r * 255.0, gl_vertices[i].g * 255.0, gl_vertices[i].b * 255.0, gl_vertices[i].a * 255.0);
+					GX_Color4u8(gl_vertices[i].r, gl_vertices[i].g, gl_vertices[i].b, gl_vertices[i].a);
 				};
 				GX_End();
 			};
@@ -411,7 +415,10 @@ void glEnd(void)
 
 void glColor3f(GLfloat red, GLfloat green, GLfloat blue)
 {
-	glColor4f(red, green, blue, 1);
+	gx_cur_r = red * 255.0;
+	gx_cur_g = green * 255.0;
+	gx_cur_b = blue * 255.0;
+	gx_cur_a = 255;
 }
 
 void glTexCoord2f(GLfloat s, GLfloat t)
@@ -420,7 +427,10 @@ void glTexCoord2f(GLfloat s, GLfloat t)
 
 void glColor4fv(const GLfloat* v)
 {
-	glColor4f((*(v)), (*(v + 1)), (*(v + 2)), (*(v + 3)));
+	gx_cur_r = (*(v)) * 255.0;
+	gx_cur_g = (*(v + 1)) * 255.0;
+	gx_cur_b = (*(v + 2)) * 255.0;
+	gx_cur_a = (*(v + 3)) * 255.0;
 }
 
 void glVertex3f(GLfloat x, GLfloat y, GLfloat z)
@@ -444,10 +454,10 @@ void glVertex3f(GLfloat x, GLfloat y, GLfloat z)
 	gl_vertices[gl_vertex_count].x = x;
 	gl_vertices[gl_vertex_count].y = y;
 	gl_vertices[gl_vertex_count].z = z;
-	gl_vertices[gl_vertex_count].r = rprev;
-	gl_vertices[gl_vertex_count].g = gprev;
-	gl_vertices[gl_vertex_count].b = bprev;
-	gl_vertices[gl_vertex_count].a = aprev;
+	gl_vertices[gl_vertex_count].r = gx_cur_r;
+	gl_vertices[gl_vertex_count].g = gx_cur_g;
+	gl_vertices[gl_vertex_count].b = gx_cur_b;
+	gl_vertices[gl_vertex_count].a = gx_cur_a;
 	gl_vertex_count++;
 }
 
@@ -482,17 +492,10 @@ void glPolygonMode(GLenum face, GLenum mode)
 
 void glColor3ubv(const GLubyte* v)
 {
-	glColor4f((*(v)) / 255.0, (*(v + 1)) / 255.0, (*(v + 2)) / 255.0, 1);
-}
-
-void glColor4ubv(const GLubyte* v)
-{
-	glColor4f((*(v)) / 255.0, (*(v + 1)) / 255.0, (*(v + 2)) / 255.0, (*(v + 3)) / 255.0);
-}
-
-void glColor4ub(GLubyte red, GLubyte green, GLubyte blue, GLubyte alpha)
-{
-	glColor4f(red / 255.0, green / 255.0, blue / 255.0, alpha / 255.0);
+	gx_cur_r = (*(v)) * 255.0;
+	gx_cur_g = (*(v + 1)) * 255.0;
+	gx_cur_b = (*(v + 2)) * 255.0;
+	gx_cur_a = 255;
 }
 
 /************************************************************************************************************************/

@@ -41,6 +41,15 @@ extern u8 gx_blend_dst_value;
 
 extern u8 gx_cur_vertex_format;
 
+extern u8 gx_cur_r;
+
+extern u8 gx_cur_g;
+
+extern u8 gx_cur_b;
+
+extern u8 gx_cur_a;
+
+
 int			skytexturenum;
 
 #ifndef GL_RGBA4
@@ -504,7 +513,7 @@ void R_DrawSequentialPoly (msurface_t *s)
 			for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 			{
 				GX_Position3f32(v[0], v[1], v[2]);
-				GX_Color4u8(255, 255, 255, 255);
+				GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
 				GX_TexCoord2f32 (v[3], v[4]);
 			}
 			GX_End();
@@ -517,7 +526,7 @@ void R_DrawSequentialPoly (msurface_t *s)
 			for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 			{
 				GX_Position3f32(v[0], v[1], v[2]);
-				GX_Color4u8(255, 255, 255, 255);
+				GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
 				GX_TexCoord2f32 (v[5], v[6]);
 			}
 			GX_End();
@@ -693,7 +702,7 @@ void DrawGXPoly (gxpoly_t *p)
 	for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 	{
 		GX_Position3f32(v[0], v[1], v[2]);
-		GX_Color4u8(255, 255, 255, 255);
+		GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
 		GX_TexCoord2f32 (v[3], v[4]);
 	}
 	GX_End ();

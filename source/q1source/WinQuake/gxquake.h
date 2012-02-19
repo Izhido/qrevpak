@@ -173,8 +173,6 @@ void glPolygonMode(GLenum face, GLenum mode);
 
 void glColor3ubv(const GLubyte* v);
 
-void glColor4ub(GLubyte red, GLubyte green, GLubyte blue, GLubyte alpha);
-
 /************************************************************************************************************************/
 
 void GX_BeginRendering (int *x, int *y, int *width, int *height);
