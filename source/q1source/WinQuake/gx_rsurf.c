@@ -39,6 +39,8 @@ extern u8 gx_blend_src_value;
 
 extern u8 gx_blend_dst_value;
 
+extern u8 gx_cur_vertex_format;
+
 int			skytexturenum;
 
 #ifndef GL_RGBA4
@@ -304,7 +306,10 @@ void GX_SelectTexture (GLenum target);
 void GX_DisableMultitexture(void) 
 {
 	if (mtexenabled) {
-		glDisable(GL_TEXTURE_2D);
+		gx_cur_vertex_format = GX_VTXFMT0;
+ 		GX_SetVtxDesc(GX_VA_TEX0, GX_NONE);
+		GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
+		GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
 		GX_SelectTexture(TEXTURE0_SGIS);
 		mtexenabled = false;
 	}
@@ -314,7 +319,10 @@ void GX_EnableMultitexture(void)
 {
 	if (gx_mtexable) {
 		GX_SelectTexture(TEXTURE1_SGIS);
-		glEnable(GL_TEXTURE_2D);
+		gx_cur_vertex_format = GX_VTXFMT1;
+ 		GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
+ 		GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
+		GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
 		mtexenabled = true;
 	}
 }
@@ -469,9 +477,7 @@ void R_DrawSequentialPoly (msurface_t *s)
 			{
 				lightmap_modified[i] = false;
 				theRect = &lightmap_rectchange[i];
-				glTexSubImage2D(GL_TEXTURE_2D, 0, 0, theRect->t, 
-					BLOCK_WIDTH, theRect->h, gx_lightmap_format, GL_UNSIGNED_BYTE,
-					lightmaps+(i* BLOCK_HEIGHT + theRect->t) *BLOCK_WIDTH*lightmap_bytes);
+				GX_LoadSubAndBind (lightmaps+(i* BLOCK_HEIGHT + theRect->t) *BLOCK_WIDTH*lightmap_bytes, 0, theRect->t, BLOCK_WIDTH, theRect->h, gx_lightmap_format, 0);
 				theRect->l = BLOCK_WIDTH;
 				theRect->t = BLOCK_HEIGHT;
 				theRect->h = 0;
@@ -493,26 +499,28 @@ void R_DrawSequentialPoly (msurface_t *s)
 
 			t = R_TextureAnimation (s->texinfo->texture);
 			GX_Bind (t->gx_texturenum);
-			glBegin (GL_POLYGON);
+			GX_Begin(GX_TRIANGLEFAN, gx_cur_vertex_format, p->numverts);
 			v = p->verts[0];
 			for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 			{
-				glTexCoord2f (v[3], v[4]);
-				glVertex3fv (v);
+				GX_Position3f32(v[0], v[1], v[2]);
+				GX_Color4u8(255, 255, 255, 255);
+				GX_TexCoord2f32 (v[3], v[4]);
 			}
-			glEnd ();
+			GX_End();
 
 			GX_Bind (lightmap_textures + s->lightmaptexturenum);
 			gx_blend_enabled = true;
 			GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
-			glBegin (GL_POLYGON);
+			GX_Begin(GX_TRIANGLEFAN, gx_cur_vertex_format, p->numverts);
 			v = p->verts[0];
 			for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 			{
-				glTexCoord2f (v[5], v[6]);
-				glVertex3fv (v);
+				GX_Position3f32(v[0], v[1], v[2]);
+				GX_Color4u8(255, 255, 255, 255);
+				GX_TexCoord2f32 (v[5], v[6]);
 			}
-			glEnd ();
+			GX_End();
 
 			gx_blend_enabled = false;
 			GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
@@ -575,9 +583,7 @@ void R_DrawSequentialPoly (msurface_t *s)
 		{
 			lightmap_modified[i] = false;
 			theRect = &lightmap_rectchange[i];
-			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, theRect->t, 
-				BLOCK_WIDTH, theRect->h, gx_lightmap_format, GL_UNSIGNED_BYTE,
-				lightmaps+(i* BLOCK_HEIGHT + theRect->t) *BLOCK_WIDTH*lightmap_bytes);
+			GX_LoadSubAndBind (lightmaps+(i* BLOCK_HEIGHT + theRect->t) *BLOCK_WIDTH*lightmap_bytes, 0, theRect->t, BLOCK_WIDTH, theRect->h, gx_lightmap_format, 0);
 			theRect->l = BLOCK_WIDTH;
 			theRect->t = BLOCK_HEIGHT;
 			theRect->h = 0;
@@ -682,10 +688,7 @@ void DrawGXPoly (gxpoly_t *p)
 	int		i;
 	float	*v;
 
- 	GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
-	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
-	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
-	GX_Begin(GX_TRIANGLEFAN, GX_VTXFMT1, p->numverts);
+	GX_Begin(GX_TRIANGLEFAN, gx_cur_vertex_format, p->numverts);
 	v = p->verts[0];
 	for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 	{
@@ -694,9 +697,6 @@ void DrawGXPoly (gxpoly_t *p)
 		GX_TexCoord2f32 (v[3], v[4]);
 	}
 	GX_End ();
- 	GX_SetVtxDesc(GX_VA_TEX0, GX_NONE);
-	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
-	GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
 }
 
 
@@ -754,15 +754,9 @@ void R_BlendLightmaps (void)
 		{
 			lightmap_modified[i] = false;
 			theRect = &lightmap_rectchange[i];
-//			glTexImage2D (GL_TEXTURE_2D, 0, lightmap_bytes
-//			, BLOCK_WIDTH, BLOCK_HEIGHT, 0, 
-//			gx_lightmap_format, GL_UNSIGNED_BYTE, lightmaps+i*BLOCK_WIDTH*BLOCK_HEIGHT*lightmap_bytes);
-//			glTexImage2D (GL_TEXTURE_2D, 0, lightmap_bytes
-//				, BLOCK_WIDTH, theRect->h, 0, 
-//				gx_lightmap_format, GL_UNSIGNED_BYTE, lightmaps+(i*BLOCK_HEIGHT+theRect->t)*BLOCK_WIDTH*lightmap_bytes);
-			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, theRect->t, 
-				BLOCK_WIDTH, theRect->h, gx_lightmap_format, GL_UNSIGNED_BYTE,
-				lightmaps+(i* BLOCK_HEIGHT + theRect->t) *BLOCK_WIDTH*lightmap_bytes);
+//			GX_LoadAndBind (lightmaps+i*BLOCK_WIDTH*BLOCK_HEIGHT*lightmap_bytes, BLOCK_WIDTH*BLOCK_HEIGHT*lightmap_bytes, BLOCK_WIDTH, BLOCK_HEIGHT, gx_lightmap_format, 0);
+//			GX_LoadAndBind (lightmaps+(i*BLOCK_HEIGHT+theRect->t)*BLOCK_WIDTH*lightmap_bytes, (BLOCK_HEIGHT+theRect->t)*BLOCK_WIDTH*lightmap_bytes, BLOCK_WIDTH, theRect->h, gx_lightmap_format, 0);
+			GX_LoadSubAndBind (lightmaps+(i* BLOCK_HEIGHT + theRect->t) *BLOCK_WIDTH*lightmap_bytes, 0, theRect->t, BLOCK_WIDTH, theRect->h, gx_lightmap_format, 0);
 			theRect->l = BLOCK_WIDTH;
 			theRect->t = BLOCK_HEIGHT;
 			theRect->h = 0;
@@ -1774,9 +1768,6 @@ void GX_BuildLightmaps (void)
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		GX_LoadAndBind (lightmaps+i*BLOCK_WIDTH*BLOCK_HEIGHT*lightmap_bytes, BLOCK_WIDTH*BLOCK_HEIGHT*lightmap_bytes, BLOCK_WIDTH, BLOCK_HEIGHT, gx_lightmap_format, 0);
-		/*glTexImage2D (GL_TEXTURE_2D, 0, lightmap_bytes
-		, BLOCK_WIDTH, BLOCK_HEIGHT, 0, 
-		gx_lightmap_format, GL_UNSIGNED_BYTE, lightmaps+i*BLOCK_WIDTH*BLOCK_HEIGHT*lightmap_bytes);*/
 	}
 
  	if (!gx_texsort.value)

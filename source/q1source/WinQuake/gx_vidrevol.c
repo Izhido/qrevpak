@@ -61,6 +61,8 @@ u8 gx_blend_src_value = GX_BL_ONE;
 
 u8 gx_blend_dst_value = GX_BL_ZERO;
 
+u8 gx_cur_vertex_format = GX_VTXFMT0;
+
 /*
 ===============
 QGX_Init
@@ -73,7 +75,10 @@ void QGX_Init (void)
 	{
 		GX_SetCullMode(gx_cull_mode);
 	};
-	glEnable(GL_TEXTURE_2D);
+	gx_cur_vertex_format = GX_VTXFMT1;
+ 	GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
+ 	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
 
 	GX_SetAlphaCompare(GX_GREATER, 0.666, GX_AOP_AND, GX_ALWAYS, 1);
 
@@ -287,10 +292,6 @@ f32 gprev;
 f32 bprev;
 f32 aprev;
 
-void glTexImage2D(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid* data)
-{
-} 
-
 void glTexParameterf(GLenum target, GLenum pname, GLfloat param)
 {
 }
@@ -327,6 +328,12 @@ void glEnd(void)
 	int i;
 	int m;
 
+	if(gx_cur_vertex_format == GX_VTXFMT1)
+	{
+ 		GX_SetVtxDesc(GX_VA_TEX0, GX_NONE);
+		GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
+		GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
+	};
 	switch(gl_primitive_mode)
 	{
 		case GL_QUADS:
@@ -394,6 +401,12 @@ void glEnd(void)
 		};
 	};
 	gl_primitive_mode = -1;
+	if(gx_cur_vertex_format == GX_VTXFMT1)
+	{
+ 		GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
+ 		GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
+		GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
+	};
 }
 
 void glColor3f(GLfloat red, GLfloat green, GLfloat blue)
@@ -452,10 +465,6 @@ void glShadeModel(GLenum mode)
 }
 
 void glHint(GLenum target, GLenum mode)
-{
-}
-
-void glTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid* data)
 {
 }
 

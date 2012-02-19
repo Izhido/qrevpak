@@ -133,8 +133,6 @@ typedef void GLvoid;
 
 #define GL_LINES 72
 
-void glTexImage2D(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid* data);
-
 void glTexParameterf(GLenum target, GLenum pname, GLfloat param);
 
 void glEnable(GLenum cap);
@@ -166,8 +164,6 @@ void glTexEnvf(GLenum target, GLenum pname, GLfloat param);
 void glShadeModel(GLenum mode);
 
 void glHint(GLenum target, GLenum mode);
-
-void glTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid* data);
 
 void glFlush(void);
 

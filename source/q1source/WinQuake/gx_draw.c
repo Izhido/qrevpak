@@ -50,6 +50,7 @@ extern u8 gx_blend_src_value;
 
 extern u8 gx_blend_dst_value;
 
+extern u8 gx_cur_vertex_format;
 
 cvar_t		gx_nobind = {"gx_nobind", "0"};
 cvar_t		gx_max_size = {"gx_max_size", "1024"};
@@ -190,8 +191,9 @@ void GX_LoadAndBind (void* data, int length, int width, int height, int format, 
 	};
 }
 
-void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int height, int format, int level)
-{/*
+// This is an absolutely awful implementation. However, as it is right now, it's never going to be used, so...
+void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int height, int format, int mipmap)
+{
 	int x;
 	int y;
 	int xi;
@@ -200,58 +202,59 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 	int j;
 	byte* v;
 
-	if(gxtexobjs[currenttexture].data[mipmap] != NULL)
+	v = (byte*)(gxtexobjs[currenttexture].data[mipmap]);
+	if(v != NULL)
 	{
 		if((format == GX_TF_RGBA8)&&(width >= 4)&&(height >= 4))
 		{
-			v = (byte*)(gxtexobjs[currenttexture].data[mipmap]);
 			i = 0;
-			for(y = yoffset; y < (yoffset + height); y++)
+			for(y = 0; y < height; y += 4)
 			{
-				for(x = xoffset; x < (xoffset + width); x++)
+				for(x = 0; x < width; x += 4)
 				{
 					for(yi = 0; yi < 4; yi++)
 					{
 						for(xi = 0; xi < 4; xi++)
 						{
-							j = i + 4 * (width * yi + xi);
-							*(v++) = ((byte*)data)[j];
-							*(v++) = ((byte*)data)[j + 3];
+							if(((x + xi) >= xoffset)&&((x + xi) < (xoffset + width))&&((y + yi) >= yoffset)&&((y + yi) < (yoffset + height)))
+							{
+								j = i + 4 * (width * yi + xi);
+								*(v++) = ((byte*)data)[j];
+								*(v++) = ((byte*)data)[j + 3];
+							} else
+							{
+								v += 2;
+							};
 						};
 					};
 					for(yi = 0; yi < 4; yi++)
 					{
 						for(xi = 0; xi < 4; xi++)
 						{
-							j = i + 4 * (width * yi + xi);
-							*(v++) = ((byte*)data)[j + 2];
-							*(v++) = ((byte*)data)[j + 1];
+							if(((x + xi) >= xoffset)&&((x + xi) < (xoffset + width))&&((y + yi) >= yoffset)&&((y + yi) < (yoffset + height)))
+							{
+								j = i + 4 * (width * yi + xi);
+								*(v++) = ((byte*)data)[j + 2];
+								*(v++) = ((byte*)data)[j + 1];
+							} else
+							{
+								v += 2;
+							};
 						};
 					};
 					i += 16;
 				};
 				i += (16 * width);
 			};
-		} else
+		};
+		if(mipmap == 0)
 		{
-			for(y = yoffset; y < (yoffset + height); y++)
-			{
-				v = (byte*)(gxtexobjs[currenttexture].data[mipmap]) + 
-				for(x = xoffset; x < (xoffset + width); x++)
-				{
-				}
-			};
-			memcpy(gxtexobjs[currenttexture].data[mipmap], data, length);
+			DCFlushRange(gxtexobjs[currenttexture].data[mipmap], gxtexobjs[currenttexture].length[mipmap]);
+			GX_InitTexObj(&gxtexobjs[currenttexture].texobj, gxtexobjs[currenttexture].data[mipmap], width, height, format, GX_REPEAT, GX_REPEAT, GX_FALSE);
+			GX_LoadTexObj(&gxtexobjs[currenttexture].texobj, GX_TEXMAP0);
+			GX_InvalidateTexAll();
 		};
 	};
-	if(mipmap == 0)
-	{
-		DCFlushRange(gxtexobjs[currenttexture].data[mipmap], gxtexobjs[currenttexture].length[mipmap]);
-		GX_InitTexObj(&gxtexobjs[currenttexture].texobj, gxtexobjs[currenttexture].data[mipmap], width, height, format, GX_REPEAT, GX_REPEAT, GX_FALSE);
-		GX_LoadTexObj(&gxtexobjs[currenttexture].texobj, GX_TEXMAP0);
-		if(changed)
-			GX_InvalidateTexAll();
-	};*/
 }
 
 /*
@@ -913,7 +916,10 @@ Fills a box of pixels with a single color
 */
 void Draw_Fill (int x, int y, int w, int h, int c)
 {
-	glDisable (GL_TEXTURE_2D);
+	gx_cur_vertex_format = GX_VTXFMT0;
+ 	GX_SetVtxDesc(GX_VA_TEX0, GX_NONE);
+	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
 	glColor3f (host_basepal[c*3]/255.0,
 		host_basepal[c*3+1]/255.0,
 		host_basepal[c*3+2]/255.0);
@@ -927,7 +933,10 @@ void Draw_Fill (int x, int y, int w, int h, int c)
 
 	glEnd ();
 	glColor3f (1,1,1);
-	glEnable (GL_TEXTURE_2D);
+	gx_cur_vertex_format = GX_VTXFMT1;
+ 	GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
+ 	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
 }
 //=============================================================================
 
@@ -941,7 +950,10 @@ void Draw_FadeScreen (void)
 {
 	gx_blend_enabled = true;
 	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
-	glDisable (GL_TEXTURE_2D);
+	gx_cur_vertex_format = GX_VTXFMT0;
+ 	GX_SetVtxDesc(GX_VA_TEX0, GX_NONE);
+	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
 	glColor4f (0, 0, 0, 0.8);
 	glBegin (GL_QUADS);
 
@@ -952,7 +964,10 @@ void Draw_FadeScreen (void)
 
 	glEnd ();
 	glColor4f (1,1,1,1);
-	glEnable (GL_TEXTURE_2D);
+	gx_cur_vertex_format = GX_VTXFMT1;
+ 	GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
+ 	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
 	gx_blend_enabled = false;
 	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 

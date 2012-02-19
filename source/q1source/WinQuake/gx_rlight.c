@@ -35,6 +35,7 @@ extern u8 gx_blend_src_value;
 
 extern u8 gx_blend_dst_value;
 
+extern u8 gx_cur_vertex_format;
 
 int	r_dlightframecount;
 
@@ -137,7 +138,10 @@ void R_RenderDlights (void)
 											//  advanced yet for this frame
 	gx_z_write_enabled = GX_FALSE;
 	GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
-	glDisable (GL_TEXTURE_2D);
+	gx_cur_vertex_format = GX_VTXFMT0;
+ 	GX_SetVtxDesc(GX_VA_TEX0, GX_NONE);
+	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
 	glShadeModel (GL_SMOOTH);
 	gx_blend_enabled = true;
 	gx_blend_src_value = GX_BL_ONE;
@@ -151,7 +155,10 @@ void R_RenderDlights (void)
 		R_RenderDlight (l);
 	}
 	glColor3f (1,1,1);
-	glEnable (GL_TEXTURE_2D);
+	gx_cur_vertex_format = GX_VTXFMT1;
+ 	GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
+ 	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
 	gx_blend_enabled = false;
 	gx_blend_src_value = GX_BL_SRCALPHA;
 	gx_blend_dst_value = GX_BL_INVSRCALPHA;

@@ -45,6 +45,8 @@ extern u8 gx_blend_src_value;
 
 extern u8 gx_blend_dst_value;
 
+extern u8 gx_cur_vertex_format;
+
 entity_t	r_worldentity;
 
 qboolean	r_cache_thrash;		// compatability
@@ -338,9 +340,6 @@ lastposenum = posenum;
 	verts += posenum * paliashdr->poseverts;
 	order = (int *)((byte *)paliashdr + paliashdr->commands);
 
- 	GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
-	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
-	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
 	while (1)
 	{
 		// get the vertex count and primitive type
@@ -350,23 +349,14 @@ lastposenum = posenum;
 		if (count < 0)
 		{
 			count = -count;
-			GX_Begin(GX_TRIANGLEFAN, GX_VTXFMT1, count);
+			GX_Begin(GX_TRIANGLEFAN, gx_cur_vertex_format, count);
 		}
 		else
 		{
-			GX_Begin(GX_TRIANGLESTRIP, GX_VTXFMT1, count);
+			GX_Begin(GX_TRIANGLESTRIP, gx_cur_vertex_format, count);
 		};
 		do
-		{/*
-			// texture coordinates come from the draw list
-			glTexCoord2f (((float *)order)[0], ((float *)order)[1]);
-			order += 2;
-
-			// normals and vertexes come from the frame list
-			l = shadedots[verts->lightnormalindex] * shadelight;
-			glColor3f (l, l, l);
-			glVertex3f (verts->v[0], verts->v[1], verts->v[2]);
-			verts++;*/
+		{
 			GX_Position3f32(verts->v[0], verts->v[1], verts->v[2]);
 			verts++;
 			l = shadedots[verts->lightnormalindex] * shadelight;
@@ -377,9 +367,6 @@ lastposenum = posenum;
 
 		GX_End ();
 	}
- 	GX_SetVtxDesc(GX_VA_TEX0, GX_NONE);
-	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
-	GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
 }
 
 
@@ -640,12 +627,18 @@ void R_DrawAliasModel (entity_t *e)
 		gx_cur_modelview_matrix++;
 		R_RotateForEntity (e);
 		GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
-		glDisable (GL_TEXTURE_2D);
+		gx_cur_vertex_format = GX_VTXFMT0;
+ 		GX_SetVtxDesc(GX_VA_TEX0, GX_NONE);
+		GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
+		GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
 		gx_blend_enabled = true;
 		GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 		glColor4f (0,0,0,0.5);
 		GX_DrawAliasShadow (paliashdr, lastposenum);
-		glEnable (GL_TEXTURE_2D);
+		gx_cur_vertex_format = GX_VTXFMT1;
+ 		GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
+ 		GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
+		GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
 		gx_blend_enabled = false;
 		GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 		glColor4f (1,1,1,1);
@@ -792,7 +785,10 @@ void R_PolyBlend (void)
 	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 	gx_z_test_enabled = GX_FALSE;
 	GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
-	glDisable (GL_TEXTURE_2D);
+	gx_cur_vertex_format = GX_VTXFMT0;
+ 	GX_SetVtxDesc(GX_VA_TEX0, GX_NONE);
+	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
 
 	a.x = 1;
 	a.y = 0;
@@ -817,7 +813,10 @@ void R_PolyBlend (void)
 
 	gx_blend_enabled = false;
 	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
-	glEnable (GL_TEXTURE_2D);
+	gx_cur_vertex_format = GX_VTXFMT1;
+ 	GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
+ 	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
 	GX_SetAlphaCompare(GX_GREATER, 0.666, GX_AOP_AND, GX_ALWAYS, 1);
 }
 
