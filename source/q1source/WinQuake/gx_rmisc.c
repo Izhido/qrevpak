@@ -94,7 +94,7 @@ void R_InitParticleTexture (void)
 	}
 	GX_LoadAndBind (data, 8 * 8 * 4, 8, 8, GX_TF_RGBA8, 0);
 
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
 
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -369,7 +369,7 @@ void R_TranslatePlayerSkin (int playernum)
 	}
 	GX_LoadAndBind (pixels, scaled_width * scaled_height * 4, scaled_width, scaled_height, GX_TF_RGBA8, 0);
 
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	Sys_BigStackFree(512*256 * sizeof(unsigned), "R_TranslatePlayerSkin");

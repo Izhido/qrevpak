@@ -47,6 +47,16 @@ extern u8 gx_blend_src_value;
 
 extern u8 gx_blend_dst_value;
 
+extern u8 gx_cur_vertex_format;
+
+extern u8 gx_cur_r;
+
+extern u8 gx_cur_g;
+
+extern u8 gx_cur_b;
+
+extern u8 gx_cur_a;
+
 void BoundPoly (int numverts, float *verts, vec3_t mins, vec3_t maxs)
 {
 	int		i, j;
@@ -215,7 +225,7 @@ void EmitWaterPolys (msurface_t *fa)
 
 	for (p=fa->polys ; p ; p=p->next)
 	{
-		glBegin (GL_POLYGON);
+		GX_Begin (GX_TRIANGLEFAN, gx_cur_vertex_format, p->numverts);
 		for (i=0,v=p->verts[0] ; i<p->numverts ; i++, v+=VERTEXSIZE)
 		{
 			os = v[3];
@@ -227,10 +237,11 @@ void EmitWaterPolys (msurface_t *fa)
 			t = ot + turbsin[(int)((os*0.125+realtime) * TURBSCALE) & 255];
 			t *= (1.0/64);
 
-			glTexCoord2f (s, t);
-			glVertex3fv (v);
+			GX_Position3f32(*v, *(v+1), *(v+2));
+			GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+			GX_TexCoord2f32 (s, t);
 		}
-		glEnd ();
+		GX_End ();
 	}
 }
 
@@ -253,7 +264,7 @@ void EmitSkyPolys (msurface_t *fa)
 
 	for (p=fa->polys ; p ; p=p->next)
 	{
-		glBegin (GL_POLYGON);
+		GX_Begin (GX_TRIANGLEFAN, gx_cur_vertex_format, p->numverts);
 		for (i=0,v=p->verts[0] ; i<p->numverts ; i++, v+=VERTEXSIZE)
 		{
 			VectorSubtract (v, r_origin, dir);
@@ -269,10 +280,11 @@ void EmitSkyPolys (msurface_t *fa)
 			s = (speedscale + dir[0]) * (1.0/128);
 			t = (speedscale + dir[1]) * (1.0/128);
 
-			glTexCoord2f (s, t);
-			glVertex3fv (v);
+			GX_Position3f32(*v, *(v+1), *(v+2));
+			GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+			GX_TexCoord2f32 (s, t);
 		}
-		glEnd ();
+		GX_End ();
 	}
 }
 
@@ -987,8 +999,9 @@ void MakeSkyVec (float s, float t, int axis)
 		t = 511.0/512;
 
 	t = 1.0 - t;
-	glTexCoord2f (s, t);
-	glVertex3fv (v);
+	GX_Position3f32(*v, *(v+1), *(v+2));
+	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_TexCoord2f32 (s, t);
 }
 
 /*
@@ -1006,8 +1019,11 @@ void R_DrawSkyBox (void)
 #if 0
 gx_blend_enabled = true;
 GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
-glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-glColor4f (1,1,1,0.5);
+GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
+gx_cur_r = 255;
+gx_cur_g = 255;
+gx_cur_b = 255;
+gx_cur_a = 127;
 gx_z_test_enabled = GX_FALSE;
 GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
 #endif
@@ -1034,8 +1050,11 @@ skymaxs[1][i] = 1;
 #if 0
 gx_blend_enabled = false;
 GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
-glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-glColor4f (1,1,1,0.5);
+GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
+gx_cur_r = 255;
+gx_cur_g = 255;
+gx_cur_b = 255;
+gx_cur_a = 127;
 gx_z_test_enabled = GX_TRUE;
 GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
 #endif

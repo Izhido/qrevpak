@@ -361,26 +361,28 @@ void R_DrawSequentialPoly (msurface_t *s)
 
 		t = R_TextureAnimation (s->texinfo->texture);
 		GX_Bind (t->gx_texturenum);
-		glBegin (GL_POLYGON);
+		GX_Begin (GX_TRIANGLEFAN, gx_cur_vertex_format, p->numverts);
 		v = p->verts[0];
 		for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 		{
-			glTexCoord2f (v[3], v[4]);
-			glVertex3fv (v);
+			GX_Position3f32(v[0], v[1], v[2]);
+			GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+			GX_TexCoord2f32 (v[3], v[4]);
 		}
-		glEnd ();
+		GX_End ();
 
 		GX_Bind (lightmap_textures + s->lightmaptexturenum);
 		gx_blend_enabled = true;
 		GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
-		glBegin (GL_POLYGON);
+		GX_Begin (GX_TRIANGLEFAN, gx_cur_vertex_format, p->numverts);
 		v = p->verts[0];
 		for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 		{
-			glTexCoord2f (v[5], v[6]);
-			glVertex3fv (v);
+			GX_Position3f32(v[0], v[1], v[2]);
+			GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+			GX_TexCoord2f32 (v[5], v[6]);
 		}
-		glEnd ();
+		GX_End ();
 
 		gx_blend_enabled = false;
 		GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
@@ -477,7 +479,7 @@ void R_DrawSequentialPoly (msurface_t *s)
 			// Binds world to texture env 0
 			GX_SelectTexture(TEXTURE0_SGIS);
 			GX_Bind (t->gx_texturenum);
-			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+			GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
 			// Binds lightmap to texenv 1
 			GX_EnableMultitexture(); // Same as SelectTexture (TEXTURE1)
 			GX_Bind (lightmap_textures + s->lightmaptexturenum);
@@ -492,7 +494,8 @@ void R_DrawSequentialPoly (msurface_t *s)
 				theRect->h = 0;
 				theRect->w = 0;
 			}
-			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_BLEND);
+			GX_SetTevOp(GX_TEVSTAGE0, GX_BLEND);
+			/**************************************** THIS SHOULD BE POSSIBLE IN GX. REIMPLEMENT ASAP:
 			glBegin(GL_POLYGON);
 			v = p->verts[0];
 			for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
@@ -502,6 +505,7 @@ void R_DrawSequentialPoly (msurface_t *s)
 				glVertex3fv (v);
 			}
 			glEnd ();
+			*********************************************************************************/
 			return;
 		} else {
 			p = s->polys;
@@ -584,7 +588,7 @@ void R_DrawSequentialPoly (msurface_t *s)
 		t = R_TextureAnimation (s->texinfo->texture);
 		GX_SelectTexture(TEXTURE0_SGIS);
 		GX_Bind (t->gx_texturenum);
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+		GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
 		GX_EnableMultitexture();
 		GX_Bind (lightmap_textures + s->lightmaptexturenum);
 		i = s->lightmaptexturenum;
@@ -598,7 +602,8 @@ void R_DrawSequentialPoly (msurface_t *s)
 			theRect->h = 0;
 			theRect->w = 0;
 		}
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_BLEND);
+		GX_SetTevOp(GX_TEVSTAGE0, GX_BLEND);
+		/**************************************** THIS SHOULD BE POSSIBLE IN GX. REIMPLEMENT ASAP:
 		glBegin (GL_TRIANGLE_FAN);
 		v = p->verts[0];
 		for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
@@ -613,6 +618,7 @@ void R_DrawSequentialPoly (msurface_t *s)
 			glVertex3fv (nv);
 		}
 		glEnd ();
+		*********************************************************************************/
 
 	} else {
 		p = s->polys;
@@ -648,19 +654,19 @@ void DrawGXWaterPoly (gxpoly_t *p)
 
 	GX_DisableMultitexture();
 
-	glBegin (GL_TRIANGLE_FAN);
+	GX_Begin (GX_TRIANGLEFAN, gx_cur_vertex_format, p->numverts);
 	v = p->verts[0];
 	for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 	{
-		glTexCoord2f (v[3], v[4]);
-
 		nv[0] = v[0] + 8*sin(v[1]*0.05+realtime)*sin(v[2]*0.05+realtime);
 		nv[1] = v[1] + 8*sin(v[0]*0.05+realtime)*sin(v[2]*0.05+realtime);
 		nv[2] = v[2];
 
-		glVertex3fv (nv);
+		GX_Position3f32(nv[0], nv[1], nv[2]);
+		GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+		GX_TexCoord2f32 (v[3], v[4]);
 	}
-	glEnd ();
+	GX_End ();
 }
 
 void DrawGXWaterPolyLightmap (gxpoly_t *p)
@@ -672,19 +678,19 @@ void DrawGXWaterPolyLightmap (gxpoly_t *p)
 
 	GX_DisableMultitexture();
 
-	glBegin (GL_TRIANGLE_FAN);
+	GX_Begin (GX_TRIANGLEFAN, gx_cur_vertex_format, p->numverts);
 	v = p->verts[0];
 	for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 	{
-		glTexCoord2f (v[5], v[6]);
-
 		nv[0] = v[0] + 8*sin(v[1]*0.05+realtime)*sin(v[2]*0.05+realtime);
 		nv[1] = v[1] + 8*sin(v[0]*0.05+realtime)*sin(v[2]*0.05+realtime);
 		nv[2] = v[2];
 
-		glVertex3fv (nv);
+		GX_Position3f32(nv[0], nv[1], nv[2]);
+		GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+		GX_TexCoord2f32 (v[5], v[6]);
 	}
-	glEnd ();
+	GX_End ();
 }
 
 /*
@@ -736,8 +742,11 @@ void R_BlendLightmaps (void)
 	}
 	else if (gx_lightmap_format == GL_INTENSITY)
 	{
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-		glColor4f (0,0,0,1);
+		GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
+		gx_cur_r = 0;
+		gx_cur_g = 0;
+		gx_cur_b = 0;
+		gx_cur_a = 255;
 		gx_blend_src_value = GX_BL_SRCALPHA;
 		gx_blend_dst_value = GX_BL_INVSRCALPHA;
 	}
@@ -777,14 +786,15 @@ void R_BlendLightmaps (void)
 				DrawGXWaterPolyLightmap (p);
 			else
 			{
-				glBegin (GL_POLYGON);
+				GX_Begin (GX_TRIANGLEFAN, gx_cur_vertex_format, p->numverts);
 				v = p->verts[0];
 				for (j=0 ; j<p->numverts ; j++, v+= VERTEXSIZE)
 				{
-					glTexCoord2f (v[5], v[6]);
-					glVertex3fv (v);
+					GX_Position3f32(v[0], v[1], v[2]);
+					GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+					GX_TexCoord2f32 (v[5], v[6]);
 				}
-				glEnd ();
+				GX_End ();
 			}
 		}
 	}
@@ -798,8 +808,11 @@ void R_BlendLightmaps (void)
 	}
 	else if (gx_lightmap_format == GL_INTENSITY)
 	{
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-		glColor4f (1,1,1,1);
+		GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
+		gx_cur_r = 255;
+		gx_cur_g = 255;
+		gx_cur_b = 255;
+		gx_cur_a = 255;
 	}
 
 	gx_z_write_enabled = GX_TRUE;
@@ -990,8 +1003,11 @@ void R_DrawWaterSurfaces (void)
 
 	gx_blend_enabled = true;
 	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
-	glColor4f (1,1,1,r_wateralpha.value);
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	gx_cur_r = 255;
+	gx_cur_g = 255;
+	gx_cur_b = 255;
+	gx_cur_a = r_wateralpha.value * 255.0;
+	GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
 
 	for (i=0 ; i<cl.worldmodel->numtextures ; i++)
 	{
@@ -1013,9 +1029,12 @@ void R_DrawWaterSurfaces (void)
 		t->texturechain = NULL;
 	}
 
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
 
-	glColor4f (1,1,1,1);
+	gx_cur_r = 255;
+	gx_cur_g = 255;
+	gx_cur_b = 255;
+	gx_cur_a = 255;
 	gx_blend_enabled = false;
 	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 }
@@ -1055,8 +1074,11 @@ void R_DrawWaterSurfaces (void)
 	if (r_wateralpha.value < 1.0) {
 		gx_blend_enabled = true;
 		GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
-		glColor4f (1,1,1,r_wateralpha.value);
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		gx_cur_r = 255;
+		gx_cur_g = 255;
+		gx_cur_b = 255;
+		gx_cur_a = r_wateralpha.value * 255,0;
+		GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
 	}
 
 	if (!gx_texsort.value) {
@@ -1095,9 +1117,12 @@ void R_DrawWaterSurfaces (void)
 	}
 
 	if (r_wateralpha.value < 1.0) {
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+		GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
 
-		glColor4f (1,1,1,1);
+		gx_cur_r = 255;
+		gx_cur_g = 255;
+		gx_cur_b = 255;
+		gx_cur_a = 255;
 		gx_blend_enabled = false;
 		GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 	}
@@ -1195,7 +1220,10 @@ void R_DrawBrushModel (entity_t *e)
 	if (R_CullBox (mins, maxs))
 		return;
 
-	glColor3f (1,1,1);
+	gx_cur_r = 255;
+	gx_cur_g = 255;
+	gx_cur_b = 255;
+	gx_cur_a = 255;
 	memset (lightmap_polys, 0, sizeof(lightmap_polys));
 
 	VectorSubtract (r_refdef.vieworg, e->origin, modelorg);
@@ -1414,7 +1442,10 @@ void R_DrawWorld (void)
 	currententity = &ent;
 	currenttexture = -1;
 
-	glColor3f (1,1,1);
+	gx_cur_r = 255;
+	gx_cur_g = 255;
+	gx_cur_b = 255;
+	gx_cur_a = 255;
 	memset (lightmap_polys, 0, sizeof(lightmap_polys));
 #ifdef QUAKE2
 	R_ClearSkyBox ();

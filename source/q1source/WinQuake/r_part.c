@@ -49,6 +49,16 @@ extern qboolean gx_blend_enabled;
 extern u8 gx_blend_src_value;
 
 extern u8 gx_blend_dst_value;
+
+extern u8 gx_cur_vertex_format;
+
+extern u8 gx_cur_r;
+
+extern u8 gx_cur_g;
+
+extern u8 gx_cur_b;
+
+extern u8 gx_cur_a;
 // <<< FIX
 
 /*
@@ -677,10 +687,8 @@ void R_DrawParticles (void)
 	float			scale;
 
     GX_Bind(particletexture);
-	gx_blend_enabled = true;
 	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	glBegin (GL_TRIANGLES);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
 
 	VectorScale (vup, 1.5, up);
 	VectorScale (vright, 1.5, right);
@@ -749,13 +757,21 @@ void R_DrawParticles (void)
 			scale = 1;
 		else
 			scale = 1 + scale * 0.004;
-		glColor3ubv ((byte *)&d_8to24table[(int)p->color]);
-		glTexCoord2f (0,0);
-		glVertex3fv (p->org);
-		glTexCoord2f (1,0);
-		glVertex3f (p->org[0] + up[0]*scale, p->org[1] + up[1]*scale, p->org[2] + up[2]*scale);
-		glTexCoord2f (0,1);
-		glVertex3f (p->org[0] + right[0]*scale, p->org[1] + right[1]*scale, p->org[2] + right[2]*scale);
+		gx_cur_r = *((byte *)&d_8to24table[(int)p->color]);
+		gx_cur_g = *(((byte *)&d_8to24table[(int)p->color]) + 1);
+		gx_cur_b = *(((byte *)&d_8to24table[(int)p->color]) + 2);
+		gx_cur_a = 255;
+		GX_Begin (GX_TRIANGLES, gx_cur_vertex_format, 3);
+		GX_Position3f32(p->org[0], p->org[1], p->org[2]);
+		GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+		GX_TexCoord2f32 (0,0);
+		GX_Position3f32(p->org[0] + up[0]*scale, p->org[1] + up[1]*scale, p->org[2] + up[2]*scale);
+		GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+		GX_TexCoord2f32 (1,0);
+		GX_Position3f32(p->org[0] + right[0]*scale, p->org[1] + right[1]*scale, p->org[2] + right[2]*scale);
+		GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+		GX_TexCoord2f32 (0,1);
+		GX_End();
 #elif GLQUAKE
 // <<< FIX
 		// hack a scale up to keep particles from disapearing
@@ -841,10 +857,8 @@ void R_DrawParticles (void)
 // Support for GX hardware:
 //#ifdef GLQUAKE
 #ifdef GXQUAKE
-	glEnd ();
-	gx_blend_enabled = false;
 	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
 #elif GLQUAKE
 // <<< FIX
 	glEnd ();

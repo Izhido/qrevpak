@@ -52,6 +52,14 @@ extern u8 gx_blend_dst_value;
 
 extern u8 gx_cur_vertex_format;
 
+extern u8 gx_cur_r;
+
+extern u8 gx_cur_g;
+
+extern u8 gx_cur_b;
+
+extern u8 gx_cur_a;
+
 cvar_t		gx_nobind = {"gx_nobind", "0"};
 cvar_t		gx_max_size = {"gx_max_size", "1024"};
 cvar_t		gx_picmip = {"gx_picmip", "0"};
@@ -173,7 +181,7 @@ void GX_LoadAndBind (void* data, int length, int width, int height, int format, 
 				};
 				i += 16;
 			};
-			i += (16 * width);
+			i += (12 * width);
 		};
 	} else
 	{
@@ -244,7 +252,7 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 					};
 					i += 16;
 				};
-				i += (16 * width);
+				i += (12 * width);
 			};
 		};
 		if(mipmap == 0)
@@ -684,16 +692,20 @@ void Draw_Character (int x, int y, int num)
 
 	GX_Bind (char_texture);
 
-	glBegin (GL_QUADS);
-	glTexCoord2f (fcol, frow);
-	glVertex2f (x, y);
-	glTexCoord2f (fcol + size, frow);
-	glVertex2f (x+8, y);
-	glTexCoord2f (fcol + size, frow + size);
-	glVertex2f (x+8, y+8);
-	glTexCoord2f (fcol, frow + size);
-	glVertex2f (x, y+8);
-	glEnd ();
+	GX_Begin (GX_QUADS, gx_cur_vertex_format, 4);
+	GX_Position3f32(x, y, 0);
+	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_TexCoord2f32 (fcol, frow);
+	GX_Position3f32(x+8, y, 0);
+	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_TexCoord2f32 (fcol + size, frow);
+	GX_Position3f32(x+8, y+8, 0);
+	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_TexCoord2f32 (fcol + size, frow + size);
+	GX_Position3f32(x, y+8, 0);
+	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_TexCoord2f32 (fcol, frow + size);
+	GX_End ();
 }
 
 /*
@@ -741,20 +753,27 @@ void Draw_AlphaPic (int x, int y, qpic_t *pic, float alpha)
 	gx = (gxpic_t *)pic->data;
 	GX_SetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 1);
 	gx_blend_enabled = true;
-	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
-	glColor4f (1,1,1,alpha);
+	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP);
+	gx_cur_r = 255;
+	gx_cur_g = 255;
+	gx_cur_b = 255;
+	gx_cur_a = alpha * 255.0;
 	GX_Bind (gx->texnum);
-	glBegin (GL_QUADS);
-	glTexCoord2f (gx->sl, gx->tl);
-	glVertex2f (x, y);
-	glTexCoord2f (gx->sh, gx->tl);
-	glVertex2f (x+pic->width, y);
-	glTexCoord2f (gx->sh, gx->th);
-	glVertex2f (x+pic->width, y+pic->height);
-	glTexCoord2f (gx->sl, gx->th);
-	glVertex2f (x, y+pic->height);
-	glEnd ();
-	glColor4f (1,1,1,1);
+	GX_Begin (GX_QUADS, gx_cur_vertex_format, 4);
+	GX_Position3f32(x, y, 0);
+	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_TexCoord2f32 (gx->sl, gx->tl);
+	GX_Position3f32(x+pic->width, y, 0);
+	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_TexCoord2f32 (gx->sh, gx->tl);
+	GX_Position3f32(x+pic->width, y+pic->height, 0);
+	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_TexCoord2f32 (gx->sh, gx->th);
+	GX_Position3f32(x, y+pic->height, 0);
+	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_TexCoord2f32 (gx->sl, gx->th);
+	GX_End ();
+	gx_cur_a = 255;
 	GX_SetAlphaCompare(GX_GREATER, 0.666, GX_AOP_AND, GX_ALWAYS, 1);
 	gx_blend_enabled = false;
 	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
@@ -776,18 +795,25 @@ void Draw_Pic (int x, int y, qpic_t *pic)
 	if (scrap_dirty)
 		Scrap_Upload ();
 	gx = (gxpic_t *)pic->data;
-	glColor4f (1,1,1,1);
+	gx_cur_r = 255;
+	gx_cur_g = 255;
+	gx_cur_b = 255;
+	gx_cur_a = 255;
 	GX_Bind (gx->texnum);
-	glBegin (GL_QUADS);
-	glTexCoord2f (gx->sl, gx->tl);
-	glVertex2f (x, y);
-	glTexCoord2f (gx->sh, gx->tl);
-	glVertex2f (x+pic->width, y);
-	glTexCoord2f (gx->sh, gx->th);
-	glVertex2f (x+pic->width, y+pic->height);
-	glTexCoord2f (gx->sl, gx->th);
-	glVertex2f (x, y+pic->height);
-	glEnd ();
+	GX_Begin (GX_QUADS, gx_cur_vertex_format, 4);
+	GX_Position3f32(x, y, 0);
+	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_TexCoord2f32 (gx->sl, gx->tl);
+	GX_Position3f32(x+pic->width, y, 0);
+	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_TexCoord2f32 (gx->sh, gx->tl);
+	GX_Position3f32(x+pic->width, y+pic->height, 0);
+	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_TexCoord2f32 (gx->sh, gx->th);
+	GX_Position3f32(x, y+pic->height, 0);
+	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_TexCoord2f32 (gx->sl, gx->th);
+	GX_End ();
 }
 
 
@@ -850,17 +876,24 @@ void Draw_TransPicTranslate (int x, int y, qpic_t *pic, byte *translation)
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glColor3f (1,1,1);
-	glBegin (GL_QUADS);
-	glTexCoord2f (0, 0);
-	glVertex2f (x, y);
-	glTexCoord2f (1, 0);
-	glVertex2f (x+pic->width, y);
-	glTexCoord2f (1, 1);
-	glVertex2f (x+pic->width, y+pic->height);
-	glTexCoord2f (0, 1);
-	glVertex2f (x, y+pic->height);
-	glEnd ();
+	gx_cur_r = 255;
+	gx_cur_g = 255;
+	gx_cur_b = 255;
+	gx_cur_a = 255;
+	GX_Begin (GX_QUADS, gx_cur_vertex_format, 4);
+	GX_Position3f32(x, y, 0);
+	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_TexCoord2f32 (0, 0);
+	GX_Position3f32(x+pic->width, y, 0);
+	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_TexCoord2f32 (1, 0);
+	GX_Position3f32(x+pic->width, y+pic->height, 0);
+	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_TexCoord2f32 (1, 1);
+	GX_Position3f32(x, y+pic->height, 0);
+	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_TexCoord2f32 (0, 1);
+	GX_End ();
 	Sys_BigStackFree(64*64 * sizeof(unsigned), "Draw_TransPicTranslate");
 }
 
@@ -892,18 +925,25 @@ refresh window.
 */
 void Draw_TileClear (int x, int y, int w, int h)
 {
-	glColor3f (1,1,1);
+	gx_cur_r = 255;
+	gx_cur_g = 255;
+	gx_cur_b = 255;
+	gx_cur_a = 255;
 	GX_Bind (*(int *)draw_backtile->data);
-	glBegin (GL_QUADS);
-	glTexCoord2f (x/64.0, y/64.0);
-	glVertex2f (x, y);
-	glTexCoord2f ( (x+w)/64.0, y/64.0);
-	glVertex2f (x+w, y);
-	glTexCoord2f ( (x+w)/64.0, (y+h)/64.0);
-	glVertex2f (x+w, y+h);
-	glTexCoord2f ( x/64.0, (y+h)/64.0 );
-	glVertex2f (x, y+h);
-	glEnd ();
+	GX_Begin (GX_QUADS, gx_cur_vertex_format, 4);
+	GX_Position3f32(x, y, 0);
+	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_TexCoord2f32 (x/64.0, y/64.0);
+	GX_Position3f32(x+w, y, 0);
+	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_TexCoord2f32 ( (x+w)/64.0, y/64.0);
+	GX_Position3f32(x+w, y+h, 0);
+	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_TexCoord2f32 ( (x+w)/64.0, (y+h)/64.0);
+	GX_Position3f32(x, y+h, 0);
+	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_TexCoord2f32 (x/64.0, (y+h)/64.0);
+	GX_End ();
 }
 
 
@@ -916,24 +956,24 @@ Fills a box of pixels with a single color
 */
 void Draw_Fill (int x, int y, int w, int h, int c)
 {
-	gx_cur_vertex_format = GX_VTXFMT0;
+	u8 r, g, b;
+
+	r = host_basepal[c*3];
+	g = host_basepal[c*3+1];
+	b = host_basepal[c*3+2];
  	GX_SetVtxDesc(GX_VA_TEX0, GX_NONE);
 	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
 	GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
-	glColor3f (host_basepal[c*3]/255.0,
-		host_basepal[c*3+1]/255.0,
-		host_basepal[c*3+2]/255.0);
-
-	glBegin (GL_QUADS);
-
-	glVertex2f (x,y);
-	glVertex2f (x+w, y);
-	glVertex2f (x+w, y+h);
-	glVertex2f (x, y+h);
-
-	glEnd ();
-	glColor3f (1,1,1);
-	gx_cur_vertex_format = GX_VTXFMT1;
+	GX_Begin(GX_QUADS, GX_VTXFMT0, 4);
+	GX_Position3f32(x, y, 0);
+	GX_Color4u8(r, g, b, 255);
+	GX_Position3f32(x+w, y, 0);
+	GX_Color4u8(r, g, b, 255);
+	GX_Position3f32(x+w, y+h, 0);
+	GX_Color4u8(r, g, b, 255);
+	GX_Position3f32(x, y+h, 0);
+	GX_Color4u8(r, g, b, 255);
+	GX_End();
  	GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
  	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
 	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
@@ -948,27 +988,23 @@ Draw_FadeScreen
 */
 void Draw_FadeScreen (void)
 {
-	gx_blend_enabled = true;
 	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
-	gx_cur_vertex_format = GX_VTXFMT0;
  	GX_SetVtxDesc(GX_VA_TEX0, GX_NONE);
 	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
 	GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
-	glColor4f (0, 0, 0, 0.8);
-	glBegin (GL_QUADS);
-
-	glVertex2f (0,0);
-	glVertex2f (vid.width, 0);
-	glVertex2f (vid.width, vid.height);
-	glVertex2f (0, vid.height);
-
-	glEnd ();
-	glColor4f (1,1,1,1);
-	gx_cur_vertex_format = GX_VTXFMT1;
+	GX_Begin(GX_QUADS, GX_VTXFMT0, 4);
+	GX_Position3f32(0, 0, 0);
+	GX_Color4u8(0, 0, 0, 204);
+	GX_Position3f32(vid.width, 0, 0);
+	GX_Color4u8(0, 0, 0, 204);
+	GX_Position3f32(vid.width, vid.height, 0);
+	GX_Color4u8(0, 0, 0, 204);
+	GX_Position3f32(0, vid.height, 0);
+	GX_Color4u8(0, 0, 0, 204);
+	GX_End();
  	GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
  	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
 	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
-	gx_blend_enabled = false;
 	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 
 	Sbar_Changed();
@@ -1033,7 +1069,10 @@ void GX_Set2D (void)
 //		GX_SetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 1);
 
 
-	glColor4f (1,1,1,1);
+	gx_cur_r = 255;
+	gx_cur_g = 255;
+	gx_cur_b = 255;
+	gx_cur_a = 255;
 }
 
 //====================================================================

@@ -101,17 +101,14 @@ void QGX_Init (void)
 	gx_blend_src_value = GX_BL_SRCALPHA;
 	gx_blend_dst_value = GX_BL_INVSRCALPHA;
 	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP);
-
-//	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 }
 
 void GX_BeginRendering (int *x, int *y, int *width, int *height)
 {
 	*x = 0;
-	*y = sys_rmode->viHeight / 20;
-	*width = sys_rmode->viWidth;
-	*height = 9 * sys_rmode->viHeight / 10;
+	*y = 0;
+	*width = sys_rmode->fbWidth;
+	*height = sys_rmode->efbHeight;
 }
 
 void GX_EndRendering (void)
@@ -215,8 +212,8 @@ void	VID_Init (unsigned char *palette)
 {
 	int i;
 	char	gxdir[MAX_OSPATH];
-	int width = sys_rmode->viWidth;
-	int height = 9 * sys_rmode->viHeight / 10;
+	int width = sys_rmode->fbWidth;
+	int height = sys_rmode->efbHeight;
 
 	vid.maxwarpwidth = width;
 	vid.maxwarpheight = height;
@@ -280,22 +277,6 @@ void	VID_Update (vrect_t *rects)
 }
 
 /******************* These are part of the GL wrapper and MUST BE DELETED ASAP: ***************************************/
-typedef struct
-{
-	f32 x;
-	f32 y;
-	f32 z;
-	u8 r;
-	u8 g;
-	u8 b;
-	u8 a;
-} gl_vertex_t;
-
-GLenum gl_primitive_mode = -1;
-gl_vertex_t* gl_vertices = 0;
-int gl_vertices_size = 0;
-int gl_vertex_count = 0;
-
 void glTexParameterf(GLenum target, GLenum pname, GLfloat param)
 {
 }
@@ -305,168 +286,6 @@ void glEnable(GLenum cap)
 }
 
 void glDisable(GLenum cap)
-{
-}
-
-void glColor4f(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
-{
-	gx_cur_r = red * 255.0;
-	gx_cur_g = green * 255.0;
-	gx_cur_b = blue * 255.0;
-	gx_cur_a = alpha * 255.0;
-}
-
-void glBegin(GLenum mode)
-{
-	gl_primitive_mode = mode;
-	gl_vertex_count = 0;
-}
-
-void glVertex2f(GLfloat x, GLfloat y)
-{
-	glVertex3f(x, y, 0);
-}
-
-void glEnd(void)
-{
-	int i;
-	int m;
-
-	if(gx_cur_vertex_format == GX_VTXFMT1)
-	{
- 		GX_SetVtxDesc(GX_VA_TEX0, GX_NONE);
-		GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
-		GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
-	};
-	switch(gl_primitive_mode)
-	{
-		case GL_QUADS:
-		{
-			m = gl_vertex_count / 4;
-			if(m > 0)
-			{
-				m = m * 4;
-				GX_Begin(GX_QUADS, GX_VTXFMT0, m);
-				for(i = 0; i < m; i++)
-				{
-					GX_Position3f32(gl_vertices[i].x, gl_vertices[i].y, gl_vertices[i].z);
-					GX_Color4u8(gl_vertices[i].r, gl_vertices[i].g, gl_vertices[i].b, gl_vertices[i].a);
-				};
-				GX_End();
-			};
-			break;
-		};
-		case GL_POLYGON:
-		case GL_TRIANGLE_FAN:
-		{
-			m = gl_vertex_count;
-			if(m >= 3)
-			{
-				GX_Begin(GX_TRIANGLEFAN, GX_VTXFMT0, m);
-				for(i = 0; i < m; i++)
-				{
-					GX_Position3f32(gl_vertices[i].x, gl_vertices[i].y, gl_vertices[i].z);
-					GX_Color4u8(gl_vertices[i].r, gl_vertices[i].g, gl_vertices[i].b, gl_vertices[i].a);
-				};
-				GX_End();
-			};
-			break;
-		};
-		case GL_TRIANGLE_STRIP:
-		{
-			m = gl_vertex_count;
-			if(m >= 3)
-			{
-				GX_Begin(GX_TRIANGLESTRIP, GX_VTXFMT0, m);
-				for(i = 0; i < m; i++)
-				{
-					GX_Position3f32(gl_vertices[i].x, gl_vertices[i].y, gl_vertices[i].z);
-					GX_Color4u8(gl_vertices[i].r, gl_vertices[i].g, gl_vertices[i].b, gl_vertices[i].a);
-				};
-				GX_End();
-			};
-			break;
-		};
-		case GL_TRIANGLES:
-		{
-			m = gl_vertex_count / 3;
-			if(m > 0)
-			{
-				m = m * 3;
-				GX_Begin(GX_TRIANGLES, GX_VTXFMT0, m);
-				for(i = 0; i < m; i++)
-				{
-					GX_Position3f32(gl_vertices[i].x, gl_vertices[i].y, gl_vertices[i].z);
-					GX_Color4u8(gl_vertices[i].r, gl_vertices[i].g, gl_vertices[i].b, gl_vertices[i].a);
-				};
-				GX_End();
-			};
-			break;
-		};
-	};
-	gl_primitive_mode = -1;
-	if(gx_cur_vertex_format == GX_VTXFMT1)
-	{
- 		GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
- 		GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
-		GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
-	};
-}
-
-void glColor3f(GLfloat red, GLfloat green, GLfloat blue)
-{
-	gx_cur_r = red * 255.0;
-	gx_cur_g = green * 255.0;
-	gx_cur_b = blue * 255.0;
-	gx_cur_a = 255;
-}
-
-void glTexCoord2f(GLfloat s, GLfloat t)
-{
-}
-
-void glColor4fv(const GLfloat* v)
-{
-	gx_cur_r = (*(v)) * 255.0;
-	gx_cur_g = (*(v + 1)) * 255.0;
-	gx_cur_b = (*(v + 2)) * 255.0;
-	gx_cur_a = (*(v + 3)) * 255.0;
-}
-
-void glVertex3f(GLfloat x, GLfloat y, GLfloat z)
-{
-	int newsize;
-	gl_vertex_t* newlist;
-
-	if(gl_vertex_count >= gl_vertices_size)
-	{
-		newsize = gl_vertices_size + 1024;
-		newlist = malloc(newsize * sizeof(gl_vertex_t));
-		memset(newlist, 0, newsize * sizeof(gl_vertex_t));
-		if(gl_vertices != 0)
-		{
-			memcpy(newlist, gl_vertices, gl_vertices_size);
-			free(gl_vertices);
-		};
-		gl_vertices = newlist;
-		gl_vertices_size = newsize;
-	};
-	gl_vertices[gl_vertex_count].x = x;
-	gl_vertices[gl_vertex_count].y = y;
-	gl_vertices[gl_vertex_count].z = z;
-	gl_vertices[gl_vertex_count].r = gx_cur_r;
-	gl_vertices[gl_vertex_count].g = gx_cur_g;
-	gl_vertices[gl_vertex_count].b = gx_cur_b;
-	gl_vertices[gl_vertex_count].a = gx_cur_a;
-	gl_vertex_count++;
-}
-
-void glVertex3fv(const GLfloat* v)
-{
-	glVertex3f(*(v), *(v + 1), *(v + 2));
-}
-
-void glTexEnvf(GLenum target, GLenum pname, GLfloat param)
 {
 }
 
@@ -482,20 +301,8 @@ void glFlush(void)
 {
 }
 
-void glAlphaFunc(GLenum func, GLclampf ref)
-{
-}
-
 void glPolygonMode(GLenum face, GLenum mode)
 {
-}
-
-void glColor3ubv(const GLubyte* v)
-{
-	gx_cur_r = (*(v)) * 255.0;
-	gx_cur_g = (*(v + 1)) * 255.0;
-	gx_cur_b = (*(v + 2)) * 255.0;
-	gx_cur_a = 255;
 }
 
 /************************************************************************************************************************/

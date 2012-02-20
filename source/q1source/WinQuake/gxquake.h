@@ -25,18 +25,6 @@ typedef float GLfloat;
 
 typedef float GLclampf;
 
-typedef unsigned int GLuint;
-
-typedef unsigned char GLboolean;
-
-typedef int GLsizei;
-
-typedef int GLint;
-
-typedef unsigned char GLubyte;
-
-typedef void GLvoid;
-
 #define GL_LINEAR_MIPMAP_NEAREST 1
 
 #define GL_LINEAR 2
@@ -55,12 +43,6 @@ typedef void GLvoid;
 
 #define GL_TEXTURE_MAG_FILTER 9
 
-#define GL_QUADS 10
-
-#define GL_ALPHA_TEST 11
-
-#define GL_BLEND 12
-
 #define GL_UNSIGNED_BYTE 14
 
 #define GL_FRONT 15
@@ -68,8 +50,6 @@ typedef void GLvoid;
 #define GL_BACK 16
 
 #define GL_COLOR_INDEX 21
-
-#define GL_TRIANGLE_FAN 22
 
 #define GL_SMOOTH 23
 
@@ -85,13 +65,9 @@ typedef void GLvoid;
 
 #define GL_TEXTURE_ENV_MODE 29
 
-#define GL_MODULATE 30
-
 #define GL_PERSPECTIVE_CORRECTION_HINT 31
 
 #define GL_FASTEST 32
-
-#define GL_REPLACE 33
 
 #define GL_FLAT 34
 
@@ -107,15 +83,11 @@ typedef void GLvoid;
 
 #define GL_INTENSITY 41
 
-#define GL_POLYGON 42
-
 #define GL_ZERO 43
 
 #define GL_ONE_MINUS_SRC_COLOR 44
 
 #define GL_RGB 45
-
-#define GL_TRIANGLES 46
 
 #define GL_GREATER 51
 
@@ -139,27 +111,7 @@ void glEnable(GLenum cap);
 
 void glDisable(GLenum cap);
 
-void glColor4f(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
-
-void glBegin(GLenum mode);
-
-void glVertex2f(GLfloat x, GLfloat y);
-
-void glEnd(void);
-
-void glColor3f(GLfloat red, GLfloat green, GLfloat blue);
-
-void glTexCoord2f(GLfloat s, GLfloat t);
-
 void glGetFloatv(GLenum pname, GLfloat* params);
-
-void glColor4fv(const GLfloat* v);
-
-void glVertex3f(GLfloat x, GLfloat y, GLfloat z);
-
-void glVertex3fv(const GLfloat* v);
-
-void glTexEnvf(GLenum target, GLenum pname, GLfloat param);
 
 void glShadeModel(GLenum mode);
 
@@ -167,11 +119,7 @@ void glHint(GLenum target, GLenum mode);
 
 void glFlush(void);
 
-void glAlphaFunc(GLenum func, GLclampf ref);
-
 void glPolygonMode(GLenum face, GLenum mode);
-
-void glColor3ubv(const GLubyte* v);
 
 /************************************************************************************************************************/
 
