@@ -148,6 +148,10 @@ void	VID_SetPalette (unsigned char *palette)
 	d_8to24table[255] &= 0xffffff;	// 255 is transparent
 
 	// JACK: 3D distance calcs - k is last closest, l is the distance.
+	// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+	// This takes ages on a Wii. Also, d_15to8table is not used in the engine, since VID_Is8Bit() never returns true. Possible bug. Fixing:
+	if(VID_Is8bit())
+	// <<< FIX
 	for (i=0; i < (1<<15); i++) {
 		/* Maps
 		000000000000000

@@ -583,7 +583,11 @@ void V_UpdatePalette (void)
 	int		i, j;
 	qboolean	new;
 	byte	*basepal, *newpal;
-	byte	pal[768];
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deferring allocation. Stack in this device is pretty small:
+	//byte	pal[768];
+	byte*	pal;
+// <<< FIX
 	float	r,g,b,a;
 	int		ir, ig, ib;
 	qboolean force;
@@ -646,6 +650,12 @@ void V_UpdatePalette (void)
 		ramps[2][i] = gammatable[ib];
 	}
 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Allocating for previous fix in big stack:
+	//byte	pal[768];
+	pal = Sys_BigStackAlloc(768 * sizeof(byte), "V_UpdatePalette");
+// <<< FIX
+
 	basepal = host_basepal;
 	newpal = pal;
 	
@@ -663,6 +673,11 @@ void V_UpdatePalette (void)
 	}
 
 	VID_ShiftPalette (pal);	
+
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+	Sys_BigStackFree(768 * sizeof(byte), "V_UpdatePalette");
+// <<< FIX
 }
 #else	// !GLQUAKE
 void V_UpdatePalette (void)
