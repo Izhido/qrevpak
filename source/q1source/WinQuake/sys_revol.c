@@ -1236,10 +1236,12 @@ int main (int argc, char* argv[])
 		KEYBOARD_FlushEvents();
 		VIDEO_Flush();
 		VIDEO_WaitVSync();
+#ifndef GXQUAKE
 		while((Sys_FloatTime() - sys_previous_time) < sys_frame_length)
 		{
 			LWP_YieldThread();
 		};
+#endif
 	};
 
 	return 0;

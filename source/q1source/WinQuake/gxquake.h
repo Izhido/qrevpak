@@ -25,19 +25,7 @@ typedef float GLfloat;
 
 typedef float GLclampf;
 
-#define GL_LINEAR_MIPMAP_NEAREST 1
-
-#define GL_LINEAR 2
-
 #define GL_TEXTURE_2D 3
-
-#define GL_NEAREST 4
-
-#define GL_NEAREST_MIPMAP_NEAREST 5
-
-#define GL_NEAREST_MIPMAP_LINEAR 6
-
-#define GL_LINEAR_MIPMAP_LINEAR 7
 
 #define GL_TEXTURE_MIN_FILTER 8
 
@@ -103,23 +91,9 @@ typedef float GLclampf;
 
 #define GL_RGBA4 60
 
-#define GL_LINES 72
-
-void glTexParameterf(GLenum target, GLenum pname, GLfloat param);
-
-void glEnable(GLenum cap);
-
-void glDisable(GLenum cap);
-
-void glGetFloatv(GLenum pname, GLfloat* params);
-
 void glShadeModel(GLenum mode);
 
 void glHint(GLenum target, GLenum mode);
-
-void glFlush(void);
-
-void glPolygonMode(GLenum face, GLenum mode);
 
 /************************************************************************************************************************/
 
@@ -319,6 +293,8 @@ void R_TranslatePlayerSkin (int playernum);
 void GX_Bind (int texnum);
 void GX_LoadAndBind (void* data, int length, int width, int height, int format, int level);
 void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int height, int format, int level);
+
+void GX_SetMinMag (int minfilt, int magfilt);
 
 // Multitexture
 #define    TEXTURE0_SGIS				0x835E

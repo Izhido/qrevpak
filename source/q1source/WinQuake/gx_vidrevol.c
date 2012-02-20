@@ -29,7 +29,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 unsigned	d_8to24table[256];
 unsigned char d_15to8table[65536];
 
-int		texture_mode = GL_LINEAR;
+int		texture_mode = GX_LINEAR;
 
 int		texture_extension_number = 1;
 
@@ -90,13 +90,9 @@ void QGX_Init (void)
 
 	GX_SetAlphaCompare(GX_GREATER, 0.666, GX_AOP_AND, GX_ALWAYS, 1);
 
-	glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
 	glShadeModel (GL_FLAT);
 
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	GX_SetMinMag (GX_NEAR, GX_NEAR);
 
 	gx_blend_src_value = GX_BL_SRCALPHA;
 	gx_blend_dst_value = GX_BL_INVSRCALPHA;
@@ -281,31 +277,11 @@ void	VID_Update (vrect_t *rects)
 }
 
 /******************* These are part of the GL wrapper and MUST BE DELETED ASAP: ***************************************/
-void glTexParameterf(GLenum target, GLenum pname, GLfloat param)
-{
-}
-
-void glEnable(GLenum cap)
-{
-}
-
-void glDisable(GLenum cap)
-{
-}
-
 void glShadeModel(GLenum mode)
 {
 }
 
 void glHint(GLenum target, GLenum mode)
-{
-}
-
-void glFlush(void)
-{
-}
-
-void glPolygonMode(GLenum face, GLenum mode)
 {
 }
 

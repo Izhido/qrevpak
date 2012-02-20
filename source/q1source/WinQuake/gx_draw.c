@@ -86,8 +86,8 @@ int		gx_lightmap_format = 4;
 int		gx_solid_format = 3;
 int		gx_alpha_format = 4;
 
-int		gx_filter_min = GL_LINEAR_MIPMAP_NEAREST;
-int		gx_filter_max = GL_LINEAR;
+u8		gx_filter_min = GX_LIN_MIP_NEAR;
+u8		gx_filter_max = GX_LINEAR;
 
 
 int		texels;
@@ -265,6 +265,13 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 	};
 }
 
+void GX_SetMinMag (int minfilt, int magfilt)
+{
+	if(gxtexobjs[currenttexture].data[0] != NULL)
+	{
+		GX_InitTexObjFilterMode(&gxtexobjs[currenttexture].texobj, minfilt, magfilt);
+	};
+}
 /*
 =============================================================================
 
@@ -480,16 +487,16 @@ void Draw_CharToConback (int num, byte *dest)
 typedef struct
 {
 	char *name;
-	int	minimize, maximize;
+	u8	minimize, maximize;
 } gxmode_t;
 
 gxmode_t modes[] = {
-	{"GL_NEAREST", GL_NEAREST, GL_NEAREST},
-	{"GL_LINEAR", GL_LINEAR, GL_LINEAR},
-	{"GL_NEAREST_MIPMAP_NEAREST", GL_NEAREST_MIPMAP_NEAREST, GL_NEAREST},
-	{"GL_LINEAR_MIPMAP_NEAREST", GL_LINEAR_MIPMAP_NEAREST, GL_LINEAR},
-	{"GL_NEAREST_MIPMAP_LINEAR", GL_NEAREST_MIPMAP_LINEAR, GL_NEAREST},
-	{"GL_LINEAR_MIPMAP_LINEAR", GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR}
+	{"GX_NEAR", GX_NEAR, GX_NEAR},
+	{"GX_LINEAR", GX_LINEAR, GX_LINEAR},
+	{"GX_NEAR_MIP_NEAR", GX_NEAR_MIP_NEAR, GX_NEAR},
+	{"GX_LIN_MIP_NEAR", GX_LIN_MIP_NEAR, GX_LINEAR},
+	{"GX_NEAR_MIP_LIN", GX_NEAR_MIP_LIN, GX_NEAR},
+	{"GX_LIN_MIP_LIN", GX_LIN_MIP_LIN, GX_LINEAR}
 };
 
 /*
@@ -534,8 +541,7 @@ void Draw_TextureMode_f (void)
 		if (gxt->mipmap)
 		{
 			GX_Bind (gxt->texnum);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gx_filter_min);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gx_filter_max);
+			GX_SetMinMag (gx_filter_min, gx_filter_max);
 		}
 	}
 }
@@ -626,8 +632,7 @@ void Draw_Init (void)
 	ncdata = cb->data;
 #endif
 
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	GX_SetMinMag (GX_NEAR, GX_NEAR);
 
 	gx = (gxpic_t *)conback->data;
 	gx->texnum = GX_LoadTexture ("conback", conback->width, conback->height, ncdata, false, false);
@@ -873,8 +878,7 @@ void Draw_TransPicTranslate (int x, int y, qpic_t *pic, byte *translation)
 
 	GX_LoadAndBind (trans, 64*64 * sizeof(unsigned), 64, 64, GX_TF_RGBA8, 0);
 
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	GX_SetMinMag (GX_LINEAR, GX_LINEAR);
 
 	gx_cur_r = 255;
 	gx_cur_g = 255;
@@ -1294,15 +1298,9 @@ done: ;
 
 
 	if (mipmap)
-	{
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gx_filter_min);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gx_filter_max);
-	}
+		GX_SetMinMag (gx_filter_min, gx_filter_max);
 	else
-	{
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gx_filter_max);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gx_filter_max);
-	}
+		GX_SetMinMag (gx_filter_max, gx_filter_max);
 }
 
 void GX_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboolean alpha) 
@@ -1385,15 +1383,9 @@ done: ;
 
 
 	if (mipmap)
-	{
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gx_filter_min);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gx_filter_max);
-	}
+		GX_SetMinMag (gx_filter_min, gx_filter_max);
 	else
-	{
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gx_filter_max);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gx_filter_max);
-	}
+		GX_SetMinMag (gx_filter_max, gx_filter_max);
 }
 
 /*

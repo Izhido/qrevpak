@@ -694,8 +694,7 @@ void R_LoadSkys (void)
 		free (targa_rgba);
 //		free (pcx_rgb);
 
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		GX_SetMinMag (GL_LINEAR, GL_LINEAR);
 	}
 }
 
@@ -1109,8 +1108,7 @@ void R_InitSky (texture_t *mt)
 		solidskytexture = texture_extension_number++;
 	GX_Bind (solidskytexture );
 	GX_LoadAndBind (trans, 128 * 128 * 4, 128, 128, GX_TF_RGBA8, 0);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	GX_SetMinMag (GX_LINEAR, GX_LINEAR);
 
 
 	for (i=0 ; i<128 ; i++)
@@ -1127,8 +1125,7 @@ void R_InitSky (texture_t *mt)
 		alphaskytexture = texture_extension_number++;
 	GX_Bind(alphaskytexture);
 	GX_LoadAndBind (trans, 128 * 128 * 4, 128, 128, GX_TF_RGBA8, 0);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	GX_SetMinMag (GX_LINEAR, GX_LINEAR);
 	Sys_BigStackFree(128*128 * sizeof(unsigned), "R_InitSky");
 }
 
