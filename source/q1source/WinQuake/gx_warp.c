@@ -311,7 +311,6 @@ void EmitBothSkyLayers (msurface_t *fa)
 
 	EmitSkyPolys (fa);
 
-	gx_blend_enabled = true;
 	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 	GX_Bind (alphaskytexture);
 	speedscale = realtime*16;
@@ -319,7 +318,6 @@ void EmitBothSkyLayers (msurface_t *fa)
 
 	EmitSkyPolys (fa);
 
-	gx_blend_enabled = false;
 	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 }
 
@@ -343,7 +341,6 @@ void R_DrawSkyChain (msurface_t *s)
 	for (fa=s ; fa ; fa=fa->texturechain)
 		EmitSkyPolys (fa);
 
-	gx_blend_enabled = true;
 	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 	GX_Bind (alphaskytexture);
 	speedscale = realtime*16;
@@ -352,7 +349,6 @@ void R_DrawSkyChain (msurface_t *s)
 	for (fa=s ; fa ; fa=fa->texturechain)
 		EmitSkyPolys (fa);
 
-	gx_blend_enabled = false;
 	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 }
 
@@ -1016,7 +1012,6 @@ void R_DrawSkyBox (void)
 	float	s, t;
 
 #if 0
-gx_blend_enabled = true;
 GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
 gx_cur_r = 255;
@@ -1047,7 +1042,6 @@ skymaxs[1][i] = 1;
 		glEnd ();
 	}
 #if 0
-gx_blend_enabled = false;
 GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
 gx_cur_r = 255;

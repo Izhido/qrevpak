@@ -664,7 +664,6 @@ void R_DrawAliasModel (entity_t *e)
  		GX_SetVtxDesc(GX_VA_TEX0, GX_NONE);
 		GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
 		GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
-		gx_blend_enabled = true;
 		GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 		gx_cur_r = 0;
 		gx_cur_g = 0;
@@ -675,7 +674,6 @@ void R_DrawAliasModel (entity_t *e)
  		GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
  		GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
 		GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
-		gx_blend_enabled = false;
 		GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 		gx_cur_r = 255;
 		gx_cur_g = 255;
@@ -1165,7 +1163,6 @@ void R_Mirror (void)
 	R_DrawWaterSurfaces ();
 
 	// blend on top
-	gx_blend_enabled = true;
 	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 	if (mirror_plane->normal[2])
 		guMtxScale(sproj, 1, -1, 1);
@@ -1202,7 +1199,6 @@ void R_Mirror (void)
 	for ( ; s ; s=s->texturechain)
 		R_RenderBrushPoly (s);
 	cl.worldmodel->textures[mirrortexturenum]->texturechain = NULL;
-	gx_blend_enabled = false;
 	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 	gx_cur_r = 255;
 	gx_cur_g = 255;

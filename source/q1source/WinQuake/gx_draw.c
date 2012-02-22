@@ -757,7 +757,6 @@ void Draw_AlphaPic (int x, int y, qpic_t *pic, float alpha)
 		Scrap_Upload ();
 	gx = (gxpic_t *)pic->data;
 	GX_SetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 1);
-	gx_blend_enabled = true;
 	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP);
 	gx_cur_r = 255;
 	gx_cur_g = 255;
@@ -780,7 +779,6 @@ void Draw_AlphaPic (int x, int y, qpic_t *pic, float alpha)
 	GX_End ();
 	gx_cur_a = 255;
 	GX_SetAlphaCompare(GX_GREATER, 0.666, GX_AOP_AND, GX_ALWAYS, 1);
-	gx_blend_enabled = false;
 	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 }
 

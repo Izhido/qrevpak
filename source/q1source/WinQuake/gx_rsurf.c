@@ -372,7 +372,6 @@ void R_DrawSequentialPoly (msurface_t *s)
 		GX_End ();
 
 		GX_Bind (lightmap_textures + s->lightmaptexturenum);
-		gx_blend_enabled = true;
 		GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 		GX_Begin (GX_TRIANGLEFAN, gx_cur_vertex_format, p->numverts);
 		v = p->verts[0];
@@ -384,7 +383,6 @@ void R_DrawSequentialPoly (msurface_t *s)
 		}
 		GX_End ();
 
-		gx_blend_enabled = false;
 		GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 
 		return;
@@ -411,7 +409,6 @@ void R_DrawSequentialPoly (msurface_t *s)
 
 		EmitSkyPolys (s);
 
-		gx_blend_enabled = true;
 		gx_blend_src_value = GX_BL_SRCALPHA;
 		gx_blend_dst_value = GX_BL_INVSRCALPHA;
 		GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
@@ -425,7 +422,6 @@ void R_DrawSequentialPoly (msurface_t *s)
 			gx_blend_dst_value = GX_BL_INVSRCCLR;
 		};
 
-		gx_blend_enabled = false;
 		GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 	}
 
@@ -439,10 +435,8 @@ void R_DrawSequentialPoly (msurface_t *s)
 	DrawGXWaterPoly (p);
 
 	GX_Bind (lightmap_textures + s->lightmaptexturenum);
-	gx_blend_enabled = true;
 	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 	DrawGLWaterPolyLightmap (p);
-	gx_blend_enabled = false;
 	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 }
 #else
@@ -523,7 +517,6 @@ void R_DrawSequentialPoly (msurface_t *s)
 			GX_End();
 
 			GX_Bind (lightmap_textures + s->lightmaptexturenum);
-			gx_blend_enabled = true;
 			GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 			GX_Begin(GX_TRIANGLEFAN, gx_cur_vertex_format, p->numverts);
 			v = p->verts[0];
@@ -535,7 +528,6 @@ void R_DrawSequentialPoly (msurface_t *s)
 			}
 			GX_End();
 
-			gx_blend_enabled = false;
 			GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 		}
 
@@ -566,14 +558,12 @@ void R_DrawSequentialPoly (msurface_t *s)
 
 		EmitSkyPolys (s);
 
-		gx_blend_enabled = true;
 		GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 		GX_Bind (alphaskytexture);
 		speedscale = realtime*16;
 		speedscale -= (int)speedscale & ~127;
 		EmitSkyPolys (s);
 
-		gx_blend_enabled = false;
 		GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 		return;
 	}
@@ -628,10 +618,8 @@ void R_DrawSequentialPoly (msurface_t *s)
 		DrawGXWaterPoly (p);
 
 		GX_Bind (lightmap_textures + s->lightmaptexturenum);
-		gx_blend_enabled = true;
 		GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 		DrawGXWaterPolyLightmap (p);
-		gx_blend_enabled = false;
 		GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 	}
 }
@@ -751,16 +739,15 @@ void R_BlendLightmaps (void)
 		gx_blend_dst_value = GX_BL_INVSRCALPHA;
 	}
 
+	if (!r_lightmap.value)
+	{
+		gx_blend_enabled = true;
+	}
+
 	if(gx_blend_enabled)
 	{
 		GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 	};
-
-	if (!r_lightmap.value)
-	{
-		gx_blend_enabled = true;
-		GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
-	}
 
 	for (i=0 ; i<MAX_LIGHTMAPS ; i++)
 	{
@@ -1001,7 +988,6 @@ void R_DrawWaterSurfaces (void)
 	gx_modelview_matrices[gx_cur_modelview_matrix][2][3] = r_world_matrix[11];
 	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
 
-	gx_blend_enabled = true;
 	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 	gx_cur_r = 255;
 	gx_cur_g = 255;
@@ -1035,7 +1021,6 @@ void R_DrawWaterSurfaces (void)
 	gx_cur_g = 255;
 	gx_cur_b = 255;
 	gx_cur_a = 255;
-	gx_blend_enabled = false;
 	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 }
 #else
@@ -1072,7 +1057,6 @@ void R_DrawWaterSurfaces (void)
 	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
 
 	if (r_wateralpha.value < 1.0) {
-		gx_blend_enabled = true;
 		GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 		gx_cur_r = 255;
 		gx_cur_g = 255;
@@ -1123,7 +1107,6 @@ void R_DrawWaterSurfaces (void)
 		gx_cur_g = 255;
 		gx_cur_b = 255;
 		gx_cur_a = 255;
-		gx_blend_enabled = false;
 		GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 	}
 

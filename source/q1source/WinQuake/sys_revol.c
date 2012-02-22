@@ -1136,8 +1136,12 @@ int main (int argc, char* argv[])
 	GX_SetCopyFilter(sys_rmode->aa,sys_rmode->sample_pattern,GX_TRUE,sys_rmode->vfilter);
 	GX_SetFieldMode(sys_rmode->field_rendering,((sys_rmode->viHeight==2*sys_rmode->xfbHeight)?GX_ENABLE:GX_DISABLE));
  
+	if (sys_rmode->aa)
+        GX_SetPixelFmt(GX_PF_RGB565_Z16, GX_ZC_LINEAR);
+    else
+        GX_SetPixelFmt(GX_PF_RGB8_Z24, GX_ZC_LINEAR);
+
 	GX_CopyDisp(sys_framebuffer[sys_frame_count & 1],GX_TRUE);
-	GX_SetPixelFmt(GX_PF_RGBA6_Z24, GX_ZC_LINEAR);
 	GX_SetDispCopyGamma(GX_GM_1_0);
 
 	GX_ClearVtxDesc();
