@@ -166,8 +166,8 @@ void GX_LoadAndBind (void* data, int length, int width, int height, int format, 
 					for(xi = 0; xi < 4; xi++)
 					{
 						j = i + 4 * (width * yi + xi);
-						*(v++) = ((byte*)data)[j];
 						*(v++) = ((byte*)data)[j + 3];
+						*(v++) = ((byte*)data)[j];
 					};
 				};
 				for(yi = 0; yi < 4; yi++)
@@ -175,8 +175,8 @@ void GX_LoadAndBind (void* data, int length, int width, int height, int format, 
 					for(xi = 0; xi < 4; xi++)
 					{
 						j = i + 4 * (width * yi + xi);
-						*(v++) = ((byte*)data)[j + 2];
 						*(v++) = ((byte*)data)[j + 1];
+						*(v++) = ((byte*)data)[j + 2];
 					};
 				};
 				i += 16;
@@ -192,7 +192,10 @@ void GX_LoadAndBind (void* data, int length, int width, int height, int format, 
 		gxtexobjs[currenttexture].width = width;
 		gxtexobjs[currenttexture].height = height;
 		DCFlushRange(gxtexobjs[currenttexture].data[mipmap], length);
-		GX_InitTexObj(&gxtexobjs[currenttexture].texobj, gxtexobjs[currenttexture].data[mipmap], width, height, format, GX_REPEAT, GX_REPEAT, GX_FALSE);
+		if(format == GX_TF_I8)
+			GX_InitTexObjCI(&gxtexobjs[currenttexture].texobj, gxtexobjs[currenttexture].data[mipmap], width, height, GX_RGB565, GX_REPEAT, GX_REPEAT, GX_FALSE, GX_TLUT0);
+		else
+			GX_InitTexObj(&gxtexobjs[currenttexture].texobj, gxtexobjs[currenttexture].data[mipmap], width, height, format, GX_REPEAT, GX_REPEAT, GX_FALSE);
 		GX_LoadTexObj(&gxtexobjs[currenttexture].texobj, GX_TEXMAP0);
 		if(changed)
 			GX_InvalidateTexAll();
@@ -226,8 +229,8 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 							if(((x + xi) >= xoffset)&&((x + xi) < (xoffset + width))&&((y + yi) >= yoffset)&&((y + yi) < (yoffset + height)))
 							{
 								j = i + 4 * (width * yi + xi);
-								*(v++) = ((byte*)data)[j];
 								*(v++) = ((byte*)data)[j + 3];
+								*(v++) = ((byte*)data)[j];
 							} else
 							{
 								v += 2;
@@ -241,8 +244,8 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 							if(((x + xi) >= xoffset)&&((x + xi) < (xoffset + width))&&((y + yi) >= yoffset)&&((y + yi) < (yoffset + height)))
 							{
 								j = i + 4 * (width * yi + xi);
-								*(v++) = ((byte*)data)[j + 2];
 								*(v++) = ((byte*)data)[j + 1];
+								*(v++) = ((byte*)data)[j + 2];
 							} else
 							{
 								v += 2;
@@ -752,7 +755,7 @@ void Draw_AlphaPic (int x, int y, qpic_t *pic, float alpha)
 	if (scrap_dirty)
 		Scrap_Upload ();
 	gx = (gxpic_t *)pic->data;
-	GX_SetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 1);
+	GX_SetAlphaCompare(GX_GEQUAL, 0, GX_AOP_AND, GX_LEQUAL, 255);
 	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP);
 	gx_cur_r = 255;
 	gx_cur_g = 255;
@@ -774,7 +777,7 @@ void Draw_AlphaPic (int x, int y, qpic_t *pic, float alpha)
 	GX_TexCoord2f32 (gx->sl, gx->th);
 	GX_End ();
 	gx_cur_a = 255;
-	GX_SetAlphaCompare(GX_GREATER, 0.666, GX_AOP_AND, GX_ALWAYS, 1);
+	GX_SetAlphaCompare(GX_GREATER, 170, GX_AOP_AND, GX_LEQUAL, 255);
 	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 }
 
@@ -1063,8 +1066,8 @@ void GX_Set2D (void)
 	GX_SetCullMode(GX_CULL_NONE);
 	gx_blend_enabled = false;
 	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
-	GX_SetAlphaCompare(GX_GREATER, 0.666, GX_AOP_AND, GX_ALWAYS, 1);
-//		GX_SetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 1);
+	GX_SetAlphaCompare(GX_GREATER, 170, GX_AOP_AND, GX_LEQUAL, 255);
+//		GX_SetAlphaCompare(GX_GEQUAL, 0, GX_AOP_AND, GX_LEQUAL, 255);
 
 
 	gx_cur_r = 255;
@@ -1221,7 +1224,7 @@ void GX_MipMap8Bit (byte *in, int width, int height)
 GX_Upload32
 ===============
 */
-void GX_Upload32 (unsigned *data, int length, int width, int height,  qboolean mipmap)
+void GX_Upload32 (unsigned *data, int length, int width, int height,  qboolean mipmap, int format)
 {
 static	unsigned	scaled[1024*512];	// [512*256];
 	int			scaled_width, scaled_height;
@@ -1246,12 +1249,12 @@ static	unsigned	scaled[1024*512];	// [512*256];
 	if (mipmap)
 		gluBuild2DMipmaps (GL_TEXTURE_2D, samples, width, height, GL_RGBA, GL_UNSIGNED_BYTE, trans);
 	else if (scaled_width == width && scaled_height == height)
-		GX_LoadAndBind (trans, length, width, height, GX_TF_RGBA8, 0);
+		GX_LoadAndBind (trans, length, width, height, format, 0);
 	else
 	{
 		gluScaleImage (GL_RGBA, width, height, GL_UNSIGNED_BYTE, trans,
 			scaled_width, scaled_height, GL_UNSIGNED_BYTE, scaled);
-		GX_LoadAndBind (scaled, length * scaled_width / width * scaled_height / height, scaled_width, scaled_height, GX_TF_RGBA8, 0);
+		GX_LoadAndBind (scaled, length * scaled_width / width * scaled_height / height, scaled_width, scaled_height, format, 0);
 	}
 #else
 texels += scaled_width * scaled_height;
@@ -1260,7 +1263,7 @@ texels += scaled_width * scaled_height;
 	{
 		if (!mipmap)
 		{
-			GX_LoadAndBind (data, length, scaled_width, scaled_height, GX_TF_RGBA8, 0);
+			GX_LoadAndBind (data, length, scaled_width, scaled_height, format, 0);
 			goto done;
 		}
 		memcpy (scaled, data, width*height*4);
@@ -1268,7 +1271,7 @@ texels += scaled_width * scaled_height;
 	else
 		GX_ResampleTexture (data, width, height, scaled, scaled_width, scaled_height);
 
-	GX_LoadAndBind (scaled, length * scaled_width / width * scaled_height / height, scaled_width, scaled_height, GX_TF_RGBA8, 0);
+	GX_LoadAndBind (scaled, length * scaled_width / width * scaled_height / height, scaled_width, scaled_height, format, 0);
 	if (mipmap)
 	{
 		int		miplevel;
@@ -1284,7 +1287,7 @@ texels += scaled_width * scaled_height;
 			if (scaled_height < 1)
 				scaled_height = 1;
 			miplevel++;
-			GX_LoadAndBind (scaled, length * scaled_width / width * scaled_height / height, scaled_width, scaled_height, GX_TF_RGBA8, miplevel);
+			GX_LoadAndBind (scaled, length * scaled_width / width * scaled_height / height, scaled_width, scaled_height, format, miplevel);
 		}
 	}
 done: ;
@@ -1297,7 +1300,7 @@ done: ;
 		GX_SetMinMag (gx_filter_max, gx_filter_max);
 }
 
-void GX_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboolean alpha) 
+void GX_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboolean alpha, int format) 
 {
 	int			i, s;
 	qboolean	noalpha;
@@ -1346,7 +1349,7 @@ void GX_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboole
 	{
 		if (!mipmap)
 		{
-			GX_LoadAndBind (data, s, scaled_width, scaled_height, GX_TF_I8, 0);
+			GX_LoadAndBind (data, s, scaled_width, scaled_height, format, 0);
 			goto done;
 		}
 		memcpy (scaled, data, width*height);
@@ -1354,7 +1357,7 @@ void GX_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboole
 	else
 		GX_Resample8BitTexture (data, width, height, scaled, scaled_width, scaled_height);
 
-	GX_LoadAndBind (scaled, scaled_width * scaled_height, scaled_width, scaled_height, GX_TF_I8, 0);
+	GX_LoadAndBind (scaled, scaled_width * scaled_height, scaled_width, scaled_height, format, 0);
 	if (mipmap)
 	{
 		int		miplevel;
@@ -1370,7 +1373,7 @@ void GX_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboole
 			if (scaled_height < 1)
 				scaled_height = 1;
 			miplevel++;
-			GX_LoadAndBind (scaled, scaled_width * scaled_height, scaled_width, scaled_height, GX_TF_I8, miplevel);
+			GX_LoadAndBind (scaled, scaled_width * scaled_height, scaled_width, scaled_height, format, miplevel);
 		}
 	}
 done: ;
@@ -1425,10 +1428,10 @@ static	unsigned	trans[640*480];		// FIXME, temporary
 	}
 
  	if (VID_Is8bit() && !alpha && (data!=scrap_texels[0])) {
- 		GX_Upload8_EXT (data, width, height, mipmap, alpha);
+ 		GX_Upload8_EXT (data, width, height, mipmap, alpha, GX_TF_RGBA8);
  		return;
 	}
-	GX_Upload32 (trans, s * 4, width, height, mipmap);
+	GX_Upload32 (trans, s * 4, width, height, mipmap, GX_TF_RGBA8);
 }
 
 /*

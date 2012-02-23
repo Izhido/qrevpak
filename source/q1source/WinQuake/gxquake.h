@@ -121,7 +121,7 @@ extern	TEXSUBIMAGEPTR TexSubImage2DFunc;
 extern	int texture_extension_number;
 extern	int		texture_mode;
 
-void GX_Upload32 (unsigned *data, int length, int width, int height,  qboolean mipmap);
+void GX_Upload32 (unsigned *data, int length, int width, int height,  qboolean mipmap, int format);
 void GX_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboolean alpha);
 int GX_LoadTexture (char *identifier, int width, int height, byte *data, qboolean mipmap, qboolean alpha);
 int GX_FindTexture (char *identifier);

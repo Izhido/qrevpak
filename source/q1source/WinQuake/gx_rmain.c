@@ -272,7 +272,7 @@ void R_DrawSpriteModel (entity_t *e)
 
     GX_Bind(frame->gx_texturenum);
 
-	GX_SetAlphaCompare(GX_GREATER, 0.666, GX_AOP_AND, GX_ALWAYS, 1);
+	GX_SetAlphaCompare(GX_GREATER, 170, GX_AOP_AND, GX_LEQUAL, 255);
 	GX_Begin (GX_QUADS, gx_cur_vertex_format, 4);
 
 	VectorMA (e->origin, frame->down, up, point);
@@ -301,7 +301,7 @@ void R_DrawSpriteModel (entity_t *e)
 	
 	GX_End ();
 
-	GX_SetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 1);
+	GX_SetAlphaCompare(GX_GEQUAL, 0, GX_AOP_AND, GX_LEQUAL, 255);
 }
 
 /*
@@ -818,7 +818,7 @@ void R_PolyBlend (void)
 
 	GX_DisableMultitexture();
 
-	GX_SetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 1);
+	GX_SetAlphaCompare(GX_GEQUAL, 0, GX_AOP_AND, GX_LEQUAL, 255);
 	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 	gx_z_test_enabled = GX_FALSE;
 	GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
@@ -857,7 +857,7 @@ void R_PolyBlend (void)
  	GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
  	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
 	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
-	GX_SetAlphaCompare(GX_GREATER, 0.666, GX_AOP_AND, GX_ALWAYS, 1);
+	GX_SetAlphaCompare(GX_GREATER, 170, GX_AOP_AND, GX_LEQUAL, 255);
 }
 
 
@@ -1084,7 +1084,7 @@ void R_SetupGX (void)
 
 	gx_blend_enabled = false;
 	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
-	GX_SetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 1);
+	GX_SetAlphaCompare(GX_GEQUAL, 0, GX_AOP_AND, GX_LEQUAL, 255);
 	gx_z_test_enabled = GX_TRUE;
 	GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
 }
