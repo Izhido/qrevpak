@@ -187,10 +187,10 @@ void GX_LoadAndBind (void* data, int length, int width, int height, int format, 
 	{
 		memcpy(gxtexobjs[currenttexture].data[mipmap], data, length);
 	};
-	gxtexobjs[currenttexture].width = width;
-	gxtexobjs[currenttexture].height = height;
 	if(mipmap == 0)
 	{
+		gxtexobjs[currenttexture].width = width;
+		gxtexobjs[currenttexture].height = height;
 		DCFlushRange(gxtexobjs[currenttexture].data[mipmap], length);
 		GX_InitTexObj(&gxtexobjs[currenttexture].texobj, gxtexobjs[currenttexture].data[mipmap], width, height, format, GX_REPEAT, GX_REPEAT, GX_FALSE);
 		GX_LoadTexObj(&gxtexobjs[currenttexture].texobj, GX_TEXMAP0);
@@ -199,7 +199,6 @@ void GX_LoadAndBind (void* data, int length, int width, int height, int format, 
 	};
 }
 
-// This is an absolutely awful implementation. However, as it is right now, it's never going to be used, so...
 void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int height, int format, int mipmap)
 {
 	int x;
@@ -211,14 +210,14 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 	byte* v;
 
 	v = (byte*)(gxtexobjs[currenttexture].data[mipmap]);
-	if(v != NULL)
+	if((v != NULL)&&(mipmap == 0))
 	{
 		if((format == GX_TF_RGBA8)&&(width >= 4)&&(height >= 4))
 		{
 			i = 0;
-			for(y = 0; y < height; y += 4)
+			for(y = 0; y < gxtexobjs[currenttexture].height; y += 4)
 			{
-				for(x = 0; x < width; x += 4)
+				for(x = 0; x < gxtexobjs[currenttexture].width; x += 4)
 				{
 					for(yi = 0; yi < 4; yi++)
 					{
@@ -255,13 +254,10 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 				i += (12 * width);
 			};
 		};
-		if(mipmap == 0)
-		{
-			DCFlushRange(gxtexobjs[currenttexture].data[mipmap], gxtexobjs[currenttexture].length[mipmap]);
-			GX_InitTexObj(&gxtexobjs[currenttexture].texobj, gxtexobjs[currenttexture].data[mipmap], width, height, format, GX_REPEAT, GX_REPEAT, GX_FALSE);
-			GX_LoadTexObj(&gxtexobjs[currenttexture].texobj, GX_TEXMAP0);
-			GX_InvalidateTexAll();
-		};
+		DCFlushRange(gxtexobjs[currenttexture].data[mipmap], gxtexobjs[currenttexture].length[mipmap]);
+		GX_InitTexObj(&gxtexobjs[currenttexture].texobj, gxtexobjs[currenttexture].data[mipmap], width, height, format, GX_REPEAT, GX_REPEAT, GX_FALSE);
+		GX_LoadTexObj(&gxtexobjs[currenttexture].texobj, GX_TEXMAP0);
+		GX_InvalidateTexAll();
 	};
 }
 

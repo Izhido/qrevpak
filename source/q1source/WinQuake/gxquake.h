@@ -292,7 +292,7 @@ void R_TranslatePlayerSkin (int playernum);
 
 void GX_Bind (int texnum);
 void GX_LoadAndBind (void* data, int length, int width, int height, int format, int level);
-void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int height, int format, int level);
+void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int height, int format, int mipmap);
 
 void GX_SetMinMag (int minfilt, int magfilt);
 

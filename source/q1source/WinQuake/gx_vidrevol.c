@@ -97,7 +97,8 @@ void QGX_Init (void)
 	gx_blend_enabled = false;
 	gx_blend_src_value = GX_BL_SRCALPHA;
 	gx_blend_dst_value = GX_BL_INVSRCALPHA;
-	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP);
+	if(gx_blend_enabled)
+		GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP);
 }
 
 void GX_BeginRendering (int *x, int *y, int *width, int *height)
