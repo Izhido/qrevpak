@@ -271,6 +271,24 @@ void GX_SetMinMag (int minfilt, int magfilt)
 		GX_InitTexObjFilterMode(&gxtexobjs[currenttexture].texobj, minfilt, magfilt);
 	};
 }
+
+void GX_Ortho(Mtx44 mtx, f32 top, f32 bottom, f32 left, f32 right, f32 nearP, f32 farP)
+{
+	f32 t;
+
+	memset(mtx, 0, 4 * 4 * sizeof(f32));
+	t = 1.0f / (right - left);
+	mtx[0][0] = 2 * t;
+	mtx[0][3] = (-right - left) * t;
+	t = 1.0f / (top - bottom);
+	mtx[1][1] = 2 * t;
+	mtx[1][3] = (-top - bottom)*t;
+	t = 1.0f / (farP - nearP);
+	mtx[2][2] = -2 * t;
+	mtx[2][3] = (-farP - nearP) * t;
+	mtx[3][3] = 1;
+}
+
 /*
 =============================================================================
 
@@ -1054,8 +1072,8 @@ void GX_Set2D (void)
 {
 	GX_SetViewport(gxx, gxy, gxwidth, gxheight, 0, 1);
 
-	guOrtho(gx_projection_matrix, 0, vid.height, 0, vid.width, -99999, 99999);
-	GX_LoadProjectionMtx(gx_projection_matrix, GX_PERSPECTIVE);
+	GX_Ortho(gx_projection_matrix, 0, vid.height, 0, vid.width, -99999, 99999);
+	GX_LoadProjectionMtx(gx_projection_matrix, GX_ORTHOGRAPHIC);
 
 	guMtxIdentity(gx_modelview_matrices[gx_cur_modelview_matrix]);
 	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
