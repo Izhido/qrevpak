@@ -30,7 +30,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #define GL_COLOR_INDEX8_EXT     0x80E5
 
-extern unsigned char d_15to8table[65536];
+//extern unsigned char d_15to8table[65536];
 
 extern Mtx44 gx_projection_matrix;
 
@@ -192,8 +192,8 @@ void GX_LoadAndBind (void* data, int length, int width, int height, int format, 
 		gxtexobjs[currenttexture].width = width;
 		gxtexobjs[currenttexture].height = height;
 		DCFlushRange(gxtexobjs[currenttexture].data[mipmap], length);
-		if(format == GX_TF_I8)
-			GX_InitTexObjCI(&gxtexobjs[currenttexture].texobj, gxtexobjs[currenttexture].data[mipmap], width, height, GX_RGB565, GX_REPEAT, GX_REPEAT, GX_FALSE, GX_TLUT0);
+		if(format == GX_TF_CI8)
+			GX_InitTexObjCI(&gxtexobjs[currenttexture].texobj, gxtexobjs[currenttexture].data[mipmap], width, height, format, GX_REPEAT, GX_REPEAT, GX_FALSE, GX_TLUT0);
 		else
 			GX_InitTexObj(&gxtexobjs[currenttexture].texobj, gxtexobjs[currenttexture].data[mipmap], width, height, format, GX_REPEAT, GX_REPEAT, GX_FALSE);
 		GX_LoadTexObj(&gxtexobjs[currenttexture].texobj, GX_TEXMAP0);
@@ -361,7 +361,7 @@ void Scrap_Upload (void)
 
 	for (texnum=0 ; texnum<MAX_SCRAPS ; texnum++) {
 		GX_Bind(scrap_texnum + texnum);
-		GX_Upload8 (scrap_texels[texnum], BLOCK_WIDTH, BLOCK_HEIGHT, false, true);
+		GX_Upload8 (scrap_texels[texnum], BLOCK_WIDTH, BLOCK_HEIGHT, false, true, GX_TF_RGBA8);
 	}
 	scrap_dirty = false;
 }
@@ -598,7 +598,7 @@ void Draw_Init (void)
 			draw_chars[i] = 255;	// proper transparent color
 
 	// now turn them into textures
-	char_texture = GX_LoadTexture ("charset", 128, 128, draw_chars, false, true);
+	char_texture = GX_LoadTexture ("charset", 128, 128, draw_chars, false, true, GX_TF_RGBA8);
 
 	start = Hunk_LowMark();
 
@@ -652,7 +652,7 @@ void Draw_Init (void)
 	GX_SetMinMag (GX_NEAR, GX_NEAR);
 
 	gx = (gxpic_t *)conback->data;
-	gx->texnum = GX_LoadTexture ("conback", conback->width, conback->height, ncdata, false, false);
+	gx->texnum = GX_LoadTexture ("conback", conback->width, conback->height, ncdata, false, false, GX_TF_RGBA8);
 	gx->sl = 0;
 	gx->sh = 1;
 	gx->tl = 0;
@@ -1210,7 +1210,7 @@ GX_MipMap8Bit
 Mipping for 8 bit textures
 ================
 */
-void GX_MipMap8Bit (byte *in, int width, int height)
+/*void GX_MipMap8Bit (byte *in, int width, int height)
 {
 	int		i, j;
 	unsigned short     r,g,b;
@@ -1235,7 +1235,7 @@ void GX_MipMap8Bit (byte *in, int width, int height)
 			out[0] = d_15to8table[(r<<0) + (g<<5) + (b<<10)];
 		}
 	}
-}
+}*/
 
 /*
 ===============
@@ -1246,6 +1246,7 @@ void GX_Upload32 (unsigned *data, int length, int width, int height,  qboolean m
 {
 static	unsigned	scaled[1024*512];	// [512*256];
 	int			scaled_width, scaled_height;
+	int			pixsize;
 
 	for (scaled_width = 1 ; scaled_width < width ; scaled_width<<=1)
 		;
@@ -1262,6 +1263,11 @@ static	unsigned	scaled[1024*512];	// [512*256];
 
 	if (scaled_width * scaled_height > sizeof(scaled)/4)
 		Sys_Error ("GX_LoadTexture: too big");
+
+	if(format == GX_TF_RGBA8)
+		pixsize = 4;
+	else
+		pixsize = 1;
 
 #if 0
 	if (mipmap)
@@ -1284,7 +1290,7 @@ texels += scaled_width * scaled_height;
 			GX_LoadAndBind (data, length, scaled_width, scaled_height, format, 0);
 			goto done;
 		}
-		memcpy (scaled, data, width*height*4);
+		memcpy (scaled, data, width*height*pixsize);
 	}
 	else
 		GX_ResampleTexture (data, width, height, scaled, scaled_width, scaled_height);
@@ -1318,6 +1324,7 @@ done: ;
 		GX_SetMinMag (gx_filter_max, gx_filter_max);
 }
 
+/*
 void GX_Upload8_EXT (byte *data, int width, int height,  qboolean mipmap, qboolean alpha, int format) 
 {
 	int			i, s;
@@ -1402,13 +1409,14 @@ done: ;
 	else
 		GX_SetMinMag (gx_filter_max, gx_filter_max);
 }
+*/
 
 /*
 ===============
 GX_Upload8
 ===============
 */
-void GX_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboolean alpha)
+void GX_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboolean alpha, int format)
 {
 static	unsigned	trans[640*480];		// FIXME, temporary
 	int			i, s;
@@ -1416,40 +1424,46 @@ static	unsigned	trans[640*480];		// FIXME, temporary
 	int			p;
 
 	s = width*height;
-	// if there are no transparent pixels, make it a 3 component
-	// texture even if it was specified as otherwise
-	if (alpha)
+	if(format == GX_TF_RGBA8)
 	{
-		noalpha = true;
-		for (i=0 ; i<s ; i++)
+		// if there are no transparent pixels, make it a 3 component
+		// texture even if it was specified as otherwise
+		if (alpha)
 		{
-			p = data[i];
-			if (p == 255)
-				noalpha = false;
-			trans[i] = d_8to24table[p];
+			noalpha = true;
+			for (i=0 ; i<s ; i++)
+			{
+				p = data[i];
+				if (p == 255)
+					noalpha = false;
+				trans[i] = d_8to24table[p];
+			}
+
+			if (alpha && noalpha)
+				alpha = false;
+		}
+		else
+		{
+			if (s&3)
+				Sys_Error ("GX_Upload8: s&3");
+			for (i=0 ; i<s ; i+=4)
+			{
+				trans[i] = d_8to24table[data[i]];
+				trans[i+1] = d_8to24table[data[i+1]];
+				trans[i+2] = d_8to24table[data[i+2]];
+				trans[i+3] = d_8to24table[data[i+3]];
+			}
 		}
 
-		if (alpha && noalpha)
-			alpha = false;
-	}
-	else
+ 		/*if (VID_Is8bit() && !alpha && (data!=scrap_texels[0])) {
+ 			GX_Upload8_EXT (data, width, height, mipmap, alpha, GX_TF_RGBA8);
+ 			return;
+		}*/
+		GX_Upload32 (trans, s * 4, width, height, mipmap, format);
+	} else
 	{
-		if (s&3)
-			Sys_Error ("GX_Upload8: s&3");
-		for (i=0 ; i<s ; i+=4)
-		{
-			trans[i] = d_8to24table[data[i]];
-			trans[i+1] = d_8to24table[data[i+1]];
-			trans[i+2] = d_8to24table[data[i+2]];
-			trans[i+3] = d_8to24table[data[i+3]];
-		}
-	}
-
- 	if (VID_Is8bit() && !alpha && (data!=scrap_texels[0])) {
- 		GX_Upload8_EXT (data, width, height, mipmap, alpha, GX_TF_RGBA8);
- 		return;
-	}
-	GX_Upload32 (trans, s * 4, width, height, mipmap, GX_TF_RGBA8);
+		GX_Upload32 (trans, s, width, height, mipmap, format);
+	};
 }
 
 /*
@@ -1457,7 +1471,7 @@ static	unsigned	trans[640*480];		// FIXME, temporary
 GX_LoadTexture
 ================
 */
-int GX_LoadTexture (char *identifier, int width, int height, byte *data, qboolean mipmap, qboolean alpha)
+int GX_LoadTexture (char *identifier, int width, int height, byte *data, qboolean mipmap, qboolean alpha, int format)
 {
 	qboolean	noalpha;
 	int			i, p, s;
@@ -1489,7 +1503,7 @@ int GX_LoadTexture (char *identifier, int width, int height, byte *data, qboolea
 
 	GX_Bind(texture_extension_number );
 
-	GX_Upload8 (data, width, height, mipmap, alpha);
+	GX_Upload8 (data, width, height, mipmap, alpha, format);
 
 	texture_extension_number++;
 
@@ -1503,7 +1517,7 @@ GX_LoadPicTexture
 */
 int GX_LoadPicTexture (qpic_t *pic)
 {
-	return GX_LoadTexture ("", pic->width, pic->height, pic->data, false, true);
+	return GX_LoadTexture ("", pic->width, pic->height, pic->data, false, true, GX_TF_RGBA8);
 }
 
 /****************************************/

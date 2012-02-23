@@ -306,7 +306,7 @@ void R_TranslatePlayerSkin (int playernum)
 
 
 	// don't mipmap these, because it takes too long
-	GX_Upload8 (translated, paliashdr->skinwidth, paliashdr->skinheight, false, false, true);
+	GX_Upload8 (translated, paliashdr->skinwidth, paliashdr->skinheight, false, false, true, GX_TF_RGBA8);
 #else
 	scaled_width = gx_max_size.value < 512 ? gx_max_size.value : 512;
 	scaled_height = gx_max_size.value < 256 ? gx_max_size.value : 256;
@@ -317,7 +317,7 @@ void R_TranslatePlayerSkin (int playernum)
 
 	pixels = Sys_BigStackAlloc(512*256 * sizeof(unsigned), "R_TranslatePlayerSkin");
 
-	if (VID_Is8bit()) { // 8bit texture upload
+	/*if (VID_Is8bit()) { // 8bit texture upload
 		byte *out2;
 
 		out2 = (byte *)pixels;
@@ -340,10 +340,10 @@ void R_TranslatePlayerSkin (int playernum)
 			}
 		}
 
-		GX_Upload8_EXT ((byte *)pixels, scaled_width, scaled_height, false, false);
+		GX_Upload8_EXT ((byte *)pixels, scaled_width, scaled_height, false, false, GX_TF_RGBA8);
 		Sys_BigStackFree(512*256 * sizeof(unsigned), "R_TranslatePlayerSkin");
 		return;
-	}
+	}*/
 
 	for (i=0 ; i<256 ; i++)
 		translate32[i] = d_8to24table[translate[i]];

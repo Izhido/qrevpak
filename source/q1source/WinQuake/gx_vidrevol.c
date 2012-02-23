@@ -23,15 +23,16 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifdef GXQUAKE
 
 #include <gccore.h>
+#include <malloc.h>
 
 #include "quakedef.h"
 
 unsigned	d_8to24table[256];
-unsigned char d_15to8table[65536];
+//unsigned char d_15to8table[65536];
 
 u16* gx_8to16table;
 
-GXTlutObj gx_i8_tlut;
+GXTlutObj gx_ci8_tlut;
 
 int		texture_mode = GX_LINEAR;
 
@@ -160,37 +161,33 @@ void	VID_SetPalette (unsigned char *palette)
 	d_8to24table[255] &= 0xffffff;
 	gx_8to16table[255] &= 0xffff;	// 255 is transparent
 
-	GX_InitTlutObj(&gx_i8_tlut, gx_8to16table, GX_TL_RGB565, 256);
-	GX_LoadTlut(&gx_i8_tlut, GX_TLUT0);
+	GX_InitTlutObj(&gx_ci8_tlut, gx_8to16table, GX_TL_RGB565, 256);
+	GX_LoadTlut(&gx_ci8_tlut, GX_TLUT0);
 
 	// JACK: 3D distance calcs - k is last closest, l is the distance.
-	// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-	// This takes ages on a Wii. Also, d_15to8table is not used in the engine, since VID_Is8Bit() never returns true. Possible bug. Fixing:
-	if(VID_Is8bit())
-	// <<< FIX
-	for (i=0; i < (1<<15); i++) {
-		/* Maps
-		000000000000000
-		000000000011111 = Red  = 0x1F
-		000001111100000 = Blue = 0x03E0
-		111110000000000 = Grn  = 0x7C00
-		*/
-		r = ((i & 0x1F) << 3)+4;
-		g = ((i & 0x03E0) >> 2)+4;
-		b = ((i & 0x7C00) >> 7)+4;
-		pal = (unsigned char *)d_8to24table;
-		for (v=0,k=0,bestdist=10000*10000; v<256; v++,pal+=4) {
-			r1 = (int)r - (int)pal[0];
-			g1 = (int)g - (int)pal[1];
-			b1 = (int)b - (int)pal[2];
-			dist = (r1*r1)+(g1*g1)+(b1*b1);
-			if (dist < bestdist) {
-				k=v;
-				bestdist = dist;
-			}
-		}
-		d_15to8table[i]=k;
-	}
+	//for (i=0; i < (1<<15); i++) {
+	//	/* Maps
+	//	000000000000000
+	//	000000000011111 = Red  = 0x1F
+	//	000001111100000 = Blue = 0x03E0
+	//	111110000000000 = Grn  = 0x7C00
+	//	*/
+	//	r = ((i & 0x1F) << 3)+4;
+	//	g = ((i & 0x03E0) >> 2)+4;
+	//	b = ((i & 0x7C00) >> 7)+4;
+	//	pal = (unsigned char *)d_8to24table;
+	//	for (v=0,k=0,bestdist=10000*10000; v<256; v++,pal+=4) {
+	//		r1 = (int)r - (int)pal[0];
+	//		g1 = (int)g - (int)pal[1];
+	//		b1 = (int)b - (int)pal[2];
+	//		dist = (r1*r1)+(g1*g1)+(b1*b1);
+	//		if (dist < bestdist) {
+	//			k=v;
+	//			bestdist = dist;
+	//		}
+	//	}
+	//	d_15to8table[i]=k;
+	//}
 }
 
 void	VID_ShiftPalette (unsigned char *palette)
