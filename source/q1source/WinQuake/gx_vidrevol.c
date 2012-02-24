@@ -30,10 +30,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 unsigned	d_8to24table[256];
 //unsigned char d_15to8table[65536];
 
-u16* gx_8to16table;
-
-GXTlutObj gx_ci8_tlut;
-
 int		texture_mode = GX_LINEAR;
 
 int		texture_extension_number = 1;
@@ -104,10 +100,6 @@ void QGX_Init (void)
 	gx_blend_dst_value = GX_BL_INVSRCALPHA;
 	if(gx_blend_enabled)
 		GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP);
-
-	gx_8to16table = memalign(32, 256 * 2);
-	if(gx_8to16table == NULL)
-		Sys_Error("QGX_Init: allocation failed on %i bytes", 256 * 2);
 }
 
 void GX_BeginRendering (int *x, int *y, int *width, int *height)
@@ -128,12 +120,10 @@ void	VID_SetPalette (unsigned char *palette)
 	byte	*pal;
 	unsigned r,g,b;
 	unsigned v;
-	u16 gv;
 	int     r1,g1,b1;
 	int		j,k,l,m;
 	unsigned short i;
 	unsigned	*table;
-	u16			*gxtable;
 	FILE *f;
 	char s[255];
 	int dist, bestdist;
@@ -144,7 +134,6 @@ void	VID_SetPalette (unsigned char *palette)
 //
 	pal = palette;
 	table = d_8to24table;
-	gxtable = gx_8to16table;
 	for (i=0 ; i<256 ; i++)
 	{
 		r = pal[0];
@@ -154,15 +143,8 @@ void	VID_SetPalette (unsigned char *palette)
 		
 		v = (r<<24) | (g<<16) | (b<<8) | 255;
 		*table++ = v;
-		
-		gv = ((r>>3)<<11) | ((g>>2)<<5) | (b>>3);
-		*gxtable++ = gv;
 	}
-	d_8to24table[255] &= 0xffffff;
-	gx_8to16table[255] &= 0xffff;	// 255 is transparent
-
-	GX_InitTlutObj(&gx_ci8_tlut, gx_8to16table, GX_TL_RGB565, 256);
-	GX_LoadTlut(&gx_ci8_tlut, GX_TLUT0);
+	d_8to24table[255] &= 0xffffff00;	// 255 is transparent
 
 	// JACK: 3D distance calcs - k is last closest, l is the distance.
 	//for (i=0; i < (1<<15); i++) {
