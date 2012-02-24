@@ -995,9 +995,10 @@ void R_SetupGX (void)
 		w = h = 256;
 	}
 
-	GX_SetViewport(gxx + x, gxy + y2, w, h, 0, 1);
+	//GX_SetViewport(gxx + x, gxy + y2, w, h, 0, 1);
+	GX_SetViewport(0, 0, gxwidth, gxheight, 0, 1);
 	
-	screenaspect = (float)r_refdef.vrect.width/r_refdef.vrect.height;
+/*	screenaspect = (float)r_refdef.vrect.width/r_refdef.vrect.height;
 //	yfov = 2*atan((float)r_refdef.vrect.height/r_refdef.vrect.width)*180/M_PI;
 	ymax = 4 * tan( r_refdef.fov_y * M_PI / 360.0 );
 	ymin = -ymax;
@@ -1005,7 +1006,8 @@ void R_SetupGX (void)
 	xmin = ymin * screenaspect;
 	xmax = ymax * screenaspect;
 
-	guFrustum(gx_projection_matrix, ymax, ymin, xmin, xmax, 4, 4096 );
+	guFrustum(gx_projection_matrix, ymax, ymin, xmin, xmax, 4, 4096 );*/
+	guPerspective(gx_projection_matrix, r_refdef.fov_y, (float)r_refdef.vrect.width/r_refdef.vrect.height, 4, 4096);
 
 	if (mirror)
 	{
