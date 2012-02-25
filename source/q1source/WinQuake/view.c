@@ -728,7 +728,6 @@ void V_UpdatePalette (void)
 			
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Allocating for previous fix in big stack:
-	//byte	pal[768];
 	pal = Sys_BigStackAlloc(768 * sizeof(byte), "V_UpdatePalette");
 // <<< FIX
 

@@ -120,14 +120,14 @@ void	VID_SetPalette (unsigned char *palette)
 	byte	*pal;
 	unsigned r,g,b;
 	unsigned v;
-	int     r1,g1,b1;
-	int		j,k,l,m;
+	//int     r1,g1,b1;
+	//int		j,k,l,m;
 	unsigned short i;
 	unsigned	*table;
-	FILE *f;
-	char s[255];
-	int dist, bestdist;
-	static qboolean palflag = false;
+	//FILE *f;
+	//char s[255];
+	//int dist, bestdist;
+	//static qboolean palflag = false;
 
 //
 // 8 8 8 encoding
@@ -177,15 +177,19 @@ void	VID_ShiftPalette (unsigned char *palette)
 	VID_SetPalette(palette);
 }
 
-qboolean VID_Is8bit(void)
+/*qboolean VID_Is8bit(void)
 {
 	return is8bit;
-}
+}*/
 
 static void Check_Gamma (unsigned char *pal)
 {
 	float	f, inf;
-	unsigned char	palette[768];
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Allocating in big stack. Stack in this device is pretty small:
+	//unsigned char	palette[768];
+	unsigned char*	palette = Sys_BigStackAlloc(768, "Check_Gamma");
+// <<< FIX
 	int		i;
 
 	if ((i = COM_CheckParm("-gamma")) == 0) {
@@ -205,6 +209,10 @@ static void Check_Gamma (unsigned char *pal)
 	}
 
 	memcpy (pal, palette, sizeof(palette));
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+	Sys_BigStackFree(768, "Check_Gamma");
+// <<< FIX
 }
 
 void	VID_Init (unsigned char *palette)

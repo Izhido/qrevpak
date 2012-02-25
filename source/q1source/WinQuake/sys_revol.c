@@ -1241,9 +1241,9 @@ int main (int argc, char* argv[])
 		VIDEO_Flush();
 		VIDEO_WaitVSync();
 #ifndef GXQUAKE
-		while((Sys_FloatTime() - sys_previous_time) < sys_frame_length)
+		while((Sys_FloatTime() - sys_previous_time) < (1.0 / 45.0))
 		{
-			LWP_YieldThread();
+			VIDEO_WaitVSync();
 		};
 #endif
 	};
