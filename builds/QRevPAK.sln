@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+# Visual C++ Express 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Q1Rev-soft", "Q1Rev\soft\Q1Rev-soft.vcxproj", "{5DE58189-B9F0-48EB-BBA3-8B9B71A58D6A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QWRev-soft", "QWRev\soft\QWRev-soft.vcxproj", "{699B9057-F457-400B-9882-2D213832581D}"
