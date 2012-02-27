@@ -102,11 +102,16 @@ typedef struct
 
 typedef struct
 {
-	GXTexObj texobj;
 	u16 width;
 	u16 height;
-	void* data[GX_MAX_MIPMAPS];
-	u32 length[GX_MAX_MIPMAPS];
+	void* data;
+	u32 length;
+} gxtexlevel_t;
+
+typedef struct
+{
+	GXTexObj texobj;
+	gxtexlevel_t level[GX_MAX_MIPMAPS];
 } gxtexobj_t;
 
 #define	MAX_GXTEXTURES	1024
@@ -122,7 +127,7 @@ void GX_Bind (int texnum)
 	if (currenttexture == texnum)
 		return;
 	currenttexture = texnum;
-	if(gxtexobjs[texnum].data[0] != NULL)
+	if(gxtexobjs[texnum].level[0].data != NULL)
 		GX_LoadTexObj(&gxtexobjs[texnum].texobj, GX_TEXMAP0);
 }
 
@@ -138,24 +143,24 @@ void GX_LoadAndBind (void* data, int length, int width, int height, int format, 
 	byte* v;
 
 	changed = false;
-	if(gxtexobjs[currenttexture].length[mipmap] < length)
+	if(gxtexobjs[currenttexture].level[mipmap].length < length)
 	{
-		if(gxtexobjs[currenttexture].data[mipmap] != NULL)
+		if(gxtexobjs[currenttexture].level[mipmap].data != NULL)
 		{
-			free(gxtexobjs[currenttexture].data[mipmap]);
-			gxtexobjs[currenttexture].data[mipmap] = NULL;
+			free(gxtexobjs[currenttexture].level[mipmap].data);
+			gxtexobjs[currenttexture].level[mipmap].data = NULL;
 		};
-		gxtexobjs[currenttexture].data[mipmap] = memalign(32, length);
-		if(gxtexobjs[currenttexture].data[mipmap] == NULL)
+		gxtexobjs[currenttexture].level[mipmap].data = memalign(32, length);
+		if(gxtexobjs[currenttexture].level[mipmap].data == NULL)
 		{
 			Sys_Error("GX_LoadAndBind: allocation failed on %i bytes", length);
 		};
-		gxtexobjs[currenttexture].length[mipmap] = length;
+		gxtexobjs[currenttexture].level[mipmap].length = length;
 		changed = true;
 	};
 	if((format == GX_TF_RGBA8)&&(width >= 4)&&(height >= 4))
 	{
-		v = (byte*)(gxtexobjs[currenttexture].data[mipmap]);
+		v = (byte*)(gxtexobjs[currenttexture].level[mipmap].data);
 		i = 0;
 		for(y = 0; y < height; y += 4)
 		{
@@ -183,39 +188,16 @@ void GX_LoadAndBind (void* data, int length, int width, int height, int format, 
 			};
 			i += (12 * width);
 		};
-	} else if((format == GX_TF_CI8)&&(width >= 8)&&(height >= 4))
-	{
-		v = (byte*)(gxtexobjs[currenttexture].data[mipmap]);
-		i = 0;
-		for(y = 0; y < height; y += 4)
-		{
-			for(x = 0; x < width; x += 8)
-			{
-				for(yi = 0; yi < 4; yi++)
-				{
-					for(xi = 0; xi < 8; xi++)
-					{
-						j = i + width * yi + xi;
-						*(v++) = ((byte*)data)[j];
-					};
-				};
-				i += 8;
-			};
-			i += (3 * width);
-		};
 	} else
 	{
-		memcpy(gxtexobjs[currenttexture].data[mipmap], data, length);
+		memcpy(gxtexobjs[currenttexture].level[mipmap].data, data, length);
 	};
 	if(mipmap == 0)
 	{
-		gxtexobjs[currenttexture].width = width;
-		gxtexobjs[currenttexture].height = height;
-		DCFlushRange(gxtexobjs[currenttexture].data[mipmap], length);
-		if(format == GX_TF_CI8)
-			GX_InitTexObjCI(&gxtexobjs[currenttexture].texobj, gxtexobjs[currenttexture].data[mipmap], width, height, format, GX_REPEAT, GX_REPEAT, GX_FALSE, GX_TLUT0);
-		else
-			GX_InitTexObj(&gxtexobjs[currenttexture].texobj, gxtexobjs[currenttexture].data[mipmap], width, height, format, GX_REPEAT, GX_REPEAT, GX_FALSE);
+		gxtexobjs[currenttexture].level[mipmap].width = width;
+		gxtexobjs[currenttexture].level[mipmap].height = height;
+		DCFlushRange(gxtexobjs[currenttexture].level[mipmap].data, length);
+		GX_InitTexObj(&gxtexobjs[currenttexture].texobj, gxtexobjs[currenttexture].level[mipmap].data, gxtexobjs[currenttexture].level[mipmap].width, gxtexobjs[currenttexture].level[mipmap].height, format, GX_REPEAT, GX_REPEAT, GX_FALSE);
 		GX_LoadTexObj(&gxtexobjs[currenttexture].texobj, GX_TEXMAP0);
 		if(changed)
 			GX_InvalidateTexAll();
@@ -232,15 +214,15 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 	int j;
 	byte* v;
 
-	v = (byte*)(gxtexobjs[currenttexture].data[mipmap]);
+	v = (byte*)(gxtexobjs[currenttexture].level[mipmap].data);
 	if((v != NULL)&&(mipmap == 0))
 	{
 		if((format == GX_TF_RGBA8)&&(width >= 4)&&(height >= 4))
 		{
 			i = 0;
-			for(y = 0; y < gxtexobjs[currenttexture].height; y += 4)
+			for(y = 0; y < gxtexobjs[currenttexture].level[mipmap].height; y += 4)
 			{
-				for(x = 0; x < gxtexobjs[currenttexture].width; x += 4)
+				for(x = 0; x < gxtexobjs[currenttexture].level[mipmap].width; x += 4)
 				{
 					for(yi = 0; yi < 4; yi++)
 					{
@@ -277,8 +259,8 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 				i += (12 * width);
 			};
 		};
-		DCFlushRange(gxtexobjs[currenttexture].data[mipmap], gxtexobjs[currenttexture].length[mipmap]);
-		GX_InitTexObj(&gxtexobjs[currenttexture].texobj, gxtexobjs[currenttexture].data[mipmap], width, height, format, GX_REPEAT, GX_REPEAT, GX_FALSE);
+		DCFlushRange(gxtexobjs[currenttexture].level[mipmap].data, gxtexobjs[currenttexture].level[mipmap].length);
+		GX_InitTexObj(&gxtexobjs[currenttexture].texobj, gxtexobjs[currenttexture].level[mipmap].data, gxtexobjs[currenttexture].level[mipmap].width, gxtexobjs[currenttexture].level[mipmap].height, format, GX_REPEAT, GX_REPEAT, GX_FALSE);
 		GX_LoadTexObj(&gxtexobjs[currenttexture].texobj, GX_TEXMAP0);
 		GX_InvalidateTexAll();
 	};
@@ -286,7 +268,7 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 
 void GX_SetMinMag (int minfilt, int magfilt)
 {
-	if(gxtexobjs[currenttexture].data[0] != NULL)
+	if(gxtexobjs[currenttexture].level[0].data != NULL)
 	{
 		GX_InitTexObjFilterMode(&gxtexobjs[currenttexture].texobj, minfilt, magfilt);
 	};
@@ -1266,7 +1248,6 @@ void GX_Upload32 (unsigned *data, int length, int width, int height,  qboolean m
 {
 static	unsigned	scaled[1024*512];	// [512*256];
 	int			scaled_width, scaled_height;
-	int			pixsize;
 
 	for (scaled_width = 1 ; scaled_width < width ; scaled_width<<=1)
 		;
@@ -1305,7 +1286,7 @@ texels += scaled_width * scaled_height;
 			GX_LoadAndBind (data, length, scaled_width, scaled_height, GX_TF_RGBA8, 0);
 			goto done;
 		}
-		memcpy (scaled, data, width*height*pixsize);
+		memcpy (scaled, data, width*height*4);
 	}
 	else
 		GX_ResampleTexture (data, width, height, scaled, scaled_width, scaled_height);

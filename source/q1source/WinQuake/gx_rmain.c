@@ -995,8 +995,7 @@ void R_SetupGX (void)
 		w = h = 256;
 	}
 
-	//GX_SetViewport(gxx + x, gxy + y2, w, h, 0, 1);
-	GX_SetViewport(0, 0, gxwidth, gxheight, 0, 1);
+	GX_SetViewport(gxx + x, gxy/* + y2*/, w, h, 0, 1);
 	
 /*	screenaspect = (float)r_refdef.vrect.width/r_refdef.vrect.height;
 //	yfov = 2*atan((float)r_refdef.vrect.height/r_refdef.vrect.width)*180/M_PI;
@@ -1129,6 +1128,61 @@ void R_RenderScene (void)
 
 /*
 =============
+R_Clear
+=============
+*/
+void R_Clear (void)
+{
+	/************************************** ONCE IT IS FOUND HOW THIS WORKS ON GX, REIMPLEMENT IT ASAP: 
+	if (r_mirroralpha.value != 1.0)
+	{
+		if (gl_clear.value)
+			glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		else
+			glClear (GL_DEPTH_BUFFER_BIT);
+		gldepthmin = 0;
+		gldepthmax = 0.5;
+		glDepthFunc (GL_LEQUAL);
+	}
+	else if (gl_ztrick.value)
+	{
+		static int trickframe;
+
+		if (gl_clear.value)
+			glClear (GL_COLOR_BUFFER_BIT);
+
+		trickframe++;
+		if (trickframe & 1)
+		{
+			gldepthmin = 0;
+			gldepthmax = 0.49999;
+			glDepthFunc (GL_LEQUAL);
+		}
+		else
+		{
+			gldepthmin = 1;
+			gldepthmax = 0.5;
+			glDepthFunc (GL_GEQUAL);
+		}
+	}
+	else
+	{
+		if (gl_clear.value)
+			glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		else
+			glClear (GL_DEPTH_BUFFER_BIT);
+		gldepthmin = 0;
+		gldepthmax = 1;
+		glDepthFunc (GL_LEQUAL);
+	}
+
+	glDepthRange (gldepthmin, gldepthmax);
+	*************************************** FOR NOW, IT WILL BE REPLACED WITH THIS: */
+	Sbar_Changed();
+}
+
+/*
+=============
 R_Mirror
 =============
 */
@@ -1234,6 +1288,8 @@ void R_RenderView (void)
 	}
 
 	mirror = false;
+
+	R_Clear ();
 
 	// render normal view
 
