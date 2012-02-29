@@ -210,6 +210,8 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 	byte* dst;
 	int tex_width;
 	int tex_height;
+	int ybegin;
+	int yend;
 	int x;
 	int y;
 	int xi;
@@ -222,11 +224,23 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 	if(format == GX_TF_RGBA8)
 	{
 		dst = (byte*)(gxtexobjs[currenttexture].data);
-		tex_width = gxtexobjs[currenttexture].width;
-		tex_height = gxtexobjs[currenttexture].height;
 		if(dst != NULL)
 		{
-			for(y = 0; y < tex_height; y += 4)
+			tex_width = gxtexobjs[currenttexture].width;
+			tex_height = gxtexobjs[currenttexture].height;
+			ybegin = (yoffset >> 2) << 2;
+			if(ybegin < 0) 
+				ybegin = 0;
+			if(ybegin > tex_height) 
+				ybegin = tex_height;
+			yend = (((yoffset + height) >> 2) << 2) + 4;
+			if(yend < 0) 
+				yend = 0;
+			if(yend > tex_height) 
+				yend = tex_height;
+			if(yend > 0) 
+				dst += (4 * ybegin * tex_height);
+			for(y = ybegin; y < yend; y += 4)
 			{
 				for(x = 0; x < tex_width; x += 4)
 				{
