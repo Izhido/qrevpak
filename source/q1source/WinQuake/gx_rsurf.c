@@ -482,7 +482,7 @@ void R_DrawSequentialPoly (msurface_t *s)
 			{
 				lightmap_modified[i] = false;
 				theRect = &lightmap_rectchange[i];
-				GX_LoadSubAndBind (lightmaps+(i* BLOCK_HEIGHT + theRect->t) *BLOCK_WIDTH*lightmap_bytes, 0, theRect->t, BLOCK_WIDTH, theRect->h, gx_lightmap_format, 0);
+				GX_LoadSubAndBind (lightmaps+(i* BLOCK_HEIGHT + theRect->t) *BLOCK_WIDTH*lightmap_bytes, 0, theRect->t, BLOCK_WIDTH, theRect->h, gx_lightmap_format);
 				theRect->l = BLOCK_WIDTH;
 				theRect->t = BLOCK_HEIGHT;
 				theRect->h = 0;
@@ -586,7 +586,7 @@ void R_DrawSequentialPoly (msurface_t *s)
 		{
 			lightmap_modified[i] = false;
 			theRect = &lightmap_rectchange[i];
-			GX_LoadSubAndBind (lightmaps+(i* BLOCK_HEIGHT + theRect->t) *BLOCK_WIDTH*lightmap_bytes, 0, theRect->t, BLOCK_WIDTH, theRect->h, gx_lightmap_format, 0);
+			GX_LoadSubAndBind (lightmaps+(i* BLOCK_HEIGHT + theRect->t) *BLOCK_WIDTH*lightmap_bytes, 0, theRect->t, BLOCK_WIDTH, theRect->h, gx_lightmap_format);
 			theRect->l = BLOCK_WIDTH;
 			theRect->t = BLOCK_HEIGHT;
 			theRect->h = 0;
@@ -759,9 +759,9 @@ void R_BlendLightmaps (void)
 		{
 			lightmap_modified[i] = false;
 			theRect = &lightmap_rectchange[i];
-//			GX_LoadAndBind (lightmaps+i*BLOCK_WIDTH*BLOCK_HEIGHT*lightmap_bytes, BLOCK_WIDTH*BLOCK_HEIGHT*lightmap_bytes, BLOCK_WIDTH, BLOCK_HEIGHT, gx_lightmap_format, 0);
-//			GX_LoadAndBind (lightmaps+(i*BLOCK_HEIGHT+theRect->t)*BLOCK_WIDTH*lightmap_bytes, (BLOCK_HEIGHT+theRect->t)*BLOCK_WIDTH*lightmap_bytes, BLOCK_WIDTH, theRect->h, gx_lightmap_format, 0);
-			GX_LoadSubAndBind (lightmaps+(i* BLOCK_HEIGHT + theRect->t) *BLOCK_WIDTH*lightmap_bytes, 0, theRect->t, BLOCK_WIDTH, theRect->h, gx_lightmap_format, 0);
+//			GX_LoadAndBind (lightmaps+i*BLOCK_WIDTH*BLOCK_HEIGHT*lightmap_bytes, BLOCK_WIDTH*BLOCK_HEIGHT*lightmap_bytes, BLOCK_WIDTH, BLOCK_HEIGHT, gx_lightmap_format);
+//			GX_LoadAndBind (lightmaps+(i*BLOCK_HEIGHT+theRect->t)*BLOCK_WIDTH*lightmap_bytes, (BLOCK_HEIGHT+theRect->t)*BLOCK_WIDTH*lightmap_bytes, BLOCK_WIDTH, theRect->h, gx_lightmap_format);
+			GX_LoadSubAndBind (lightmaps+(i* BLOCK_HEIGHT + theRect->t) *BLOCK_WIDTH*lightmap_bytes, 0, theRect->t, BLOCK_WIDTH, theRect->h, gx_lightmap_format);
 			theRect->l = BLOCK_WIDTH;
 			theRect->t = BLOCK_HEIGHT;
 			theRect->h = 0;
@@ -1788,7 +1788,7 @@ void GX_BuildLightmaps (void)
 		lightmap_rectchange[i].w = 0;
 		lightmap_rectchange[i].h = 0;
 		GX_Bind(lightmap_textures + i);
-		GX_LoadAndBind (lightmaps+i*BLOCK_WIDTH*BLOCK_HEIGHT*lightmap_bytes, BLOCK_WIDTH*BLOCK_HEIGHT*lightmap_bytes, BLOCK_WIDTH, BLOCK_HEIGHT, gx_lightmap_format, 0);
+		GX_LoadAndBind (lightmaps+i*BLOCK_WIDTH*BLOCK_HEIGHT*lightmap_bytes, BLOCK_WIDTH*BLOCK_HEIGHT*lightmap_bytes, BLOCK_WIDTH, BLOCK_HEIGHT, gx_lightmap_format);
 		GX_SetMinMag (GX_LINEAR, GX_LINEAR);
 	}
 

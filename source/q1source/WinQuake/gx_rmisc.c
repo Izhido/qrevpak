@@ -92,7 +92,7 @@ void R_InitParticleTexture (void)
 			data[y][x][3] = dottexture[x][y]*255;
 		}
 	}
-	GX_LoadAndBind (data, 8 * 8 * 4, 8, 8, GX_TF_RGBA8, 0);
+	GX_LoadAndBind (data, 8 * 8 * 4, 8, 8, GX_TF_RGBA8);
 
 	GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
 
@@ -366,7 +366,7 @@ void R_TranslatePlayerSkin (int playernum)
 			frac += fracstep;
 		}
 	}
-	GX_LoadAndBind (pixels, scaled_width * scaled_height * 4, scaled_width, scaled_height, GX_TF_RGBA8, 0);
+	GX_LoadAndBind (pixels, scaled_width * scaled_height * 4, scaled_width, scaled_height, GX_TF_RGBA8);
 
 	GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
 	GX_SetMinMag (GX_LINEAR, GX_LINEAR);

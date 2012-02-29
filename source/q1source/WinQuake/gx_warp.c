@@ -684,8 +684,8 @@ void R_LoadSkys (void)
 		LoadTGA (f);
 //		LoadPCX (f);
 
-		GX_LoadAndBind (targa_rgba, 256 * 256 * 4, 256, 256, GX_TF_RGBA8, 0);
-//		GX_LoadAndBind (pcx_rgb, 256 * 256 * 4, 256, 256, GX_TF_RGBA8, 0);
+		GX_LoadAndBind (targa_rgba, 256 * 256 * 4, 256, 256, GX_TF_RGBA8);
+//		GX_LoadAndBind (pcx_rgb, 256 * 256 * 4, 256, 256, GX_TF_RGBA8);
 
 		free (targa_rgba);
 //		free (pcx_rgb);
@@ -1101,7 +1101,7 @@ void R_InitSky (texture_t *mt)
 	if (!solidskytexture)
 		solidskytexture = texture_extension_number++;
 	GX_Bind (solidskytexture );
-	GX_LoadAndBind (trans, 128 * 128 * 4, 128, 128, GX_TF_RGBA8, 0);
+	GX_LoadAndBind (trans, 128 * 128 * 4, 128, 128, GX_TF_RGBA8);
 	GX_SetMinMag (GX_LINEAR, GX_LINEAR);
 
 
@@ -1118,7 +1118,7 @@ void R_InitSky (texture_t *mt)
 	if (!alphaskytexture)
 		alphaskytexture = texture_extension_number++;
 	GX_Bind(alphaskytexture);
-	GX_LoadAndBind (trans, 128 * 128 * 4, 128, 128, GX_TF_RGBA8, 0);
+	GX_LoadAndBind (trans, 128 * 128 * 4, 128, 128, GX_TF_RGBA8);
 	GX_SetMinMag (GX_LINEAR, GX_LINEAR);
 	Sys_BigStackFree(128*128 * sizeof(unsigned), "R_InitSky");
 }
