@@ -89,8 +89,6 @@ typedef float GLclampf;
 
 #define GL_TEXTURE_WRAP_T 56
 
-#define GL_RGBA4 60
-
 void glShadeModel(GLenum mode);
 
 void glHint(GLenum target, GLenum mode);

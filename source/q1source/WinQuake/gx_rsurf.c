@@ -54,10 +54,6 @@ extern Mtx r_world_matrix;
 
 int			skytexturenum;
 
-#ifndef GL_RGBA4
-#define	GL_RGBA4	0
-#endif
-
 
 int		lightmap_bytes;		// 1, 2, or 4
 
@@ -229,6 +225,22 @@ store:
 					t = 255;
 				dest[3] = 255-t;
 				dest += 4;
+			}
+		}
+		break;
+	case GX_TF_RGB5A3:
+		stride -= (smax<<1);
+		bl = blocklights;
+		for (i=0 ; i<tmax ; i++, dest += stride)
+		{
+			for (j=0 ; j<smax ; j++)
+			{
+				t = *bl++;
+				t >>= 7;
+				if (t > 255)
+					t = 255;
+				dest[1] = (255-t) >> 4;
+				dest += 2;
 			}
 		}
 		break;
@@ -1699,7 +1711,6 @@ void GX_BuildLightmaps (void)
 {
 	int		i, j;
 	model_t	*m;
-	extern qboolean isPermedia;
 
 	memset (allocated, 0, sizeof(allocated));
 
@@ -1712,9 +1723,6 @@ void GX_BuildLightmaps (void)
 	}
 
 	gx_lightmap_format = GX_TF_RGBA8; // Default changed for GX hardware
-	// default differently on the Permedia
-	if (isPermedia)
-		gx_lightmap_format = GX_TF_RGBA8;
 
 	if (COM_CheckParm ("-lm_1"))
 		gx_lightmap_format = GL_LUMINANCE;
@@ -1723,7 +1731,7 @@ void GX_BuildLightmaps (void)
 	if (COM_CheckParm ("-lm_i"))
 		gx_lightmap_format = GL_INTENSITY;
 	if (COM_CheckParm ("-lm_2"))
-		gx_lightmap_format = GL_RGBA4;
+		gx_lightmap_format = GX_TF_RGB5A3;
 	if (COM_CheckParm ("-lm_4"))
 		gx_lightmap_format = GX_TF_RGBA8;
 
@@ -1732,7 +1740,7 @@ void GX_BuildLightmaps (void)
 	case GX_TF_RGBA8:
 		lightmap_bytes = 4;
 		break;
-	case GL_RGBA4:
+	case GX_TF_RGB5A3:
 		lightmap_bytes = 2;
 		break;
 	case GL_LUMINANCE:

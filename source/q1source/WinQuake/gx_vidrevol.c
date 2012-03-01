@@ -36,8 +36,6 @@ int		texture_extension_number = 1;
 
 static float vid_gamma = 1.0;
 
-qboolean is8bit = false;
-qboolean isPermedia = false;
 qboolean gx_mtexable = false;
 
 extern GXRModeObj* sys_rmode;
@@ -120,14 +118,8 @@ void	VID_SetPalette (unsigned char *palette)
 	byte	*pal;
 	unsigned r,g,b;
 	unsigned v;
-	//int     r1,g1,b1;
-	//int		j,k,l,m;
 	unsigned short i;
 	unsigned	*table;
-	//FILE *f;
-	//char s[255];
-	//int dist, bestdist;
-	//static qboolean palflag = false;
 
 //
 // 8 8 8 encoding
@@ -145,42 +137,12 @@ void	VID_SetPalette (unsigned char *palette)
 		*table++ = v;
 	}
 	d_8to24table[255] &= 0xffffff00;	// 255 is transparent
-
-	// JACK: 3D distance calcs - k is last closest, l is the distance.
-	//for (i=0; i < (1<<15); i++) {
-	//	/* Maps
-	//	000000000000000
-	//	000000000011111 = Red  = 0x1F
-	//	000001111100000 = Blue = 0x03E0
-	//	111110000000000 = Grn  = 0x7C00
-	//	*/
-	//	r = ((i & 0x1F) << 3)+4;
-	//	g = ((i & 0x03E0) >> 2)+4;
-	//	b = ((i & 0x7C00) >> 7)+4;
-	//	pal = (unsigned char *)d_8to24table;
-	//	for (v=0,k=0,bestdist=10000*10000; v<256; v++,pal+=4) {
-	//		r1 = (int)r - (int)pal[0];
-	//		g1 = (int)g - (int)pal[1];
-	//		b1 = (int)b - (int)pal[2];
-	//		dist = (r1*r1)+(g1*g1)+(b1*b1);
-	//		if (dist < bestdist) {
-	//			k=v;
-	//			bestdist = dist;
-	//		}
-	//	}
-	//	d_15to8table[i]=k;
-	//}
 }
 
 void	VID_ShiftPalette (unsigned char *palette)
 {
 	VID_SetPalette(palette);
 }
-
-/*qboolean VID_Is8bit(void)
-{
-	return is8bit;
-}*/
 
 static void Check_Gamma (unsigned char *pal)
 {

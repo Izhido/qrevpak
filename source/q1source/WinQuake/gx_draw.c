@@ -192,6 +192,46 @@ byte* GX_CopyTexRGBA8(byte* src, int width, int height, byte* dst)
 	return dst;
 }
 
+byte* GX_CopyTexRGB5A3(byte* src, int width, int height, byte* dst)
+{
+	int x;
+	int y;
+	int xi;
+	int yi;
+	int i;
+	int j;
+	int k;
+	int l;
+	byte s1;
+	byte s2;
+
+	i = 0;
+	j = 2 * width - 8;
+	l = 6 * width;
+	for(y = 0; y < height; y += 4)
+	{
+		for(x = 0; x < width; x += 4)
+		{
+			k = i;
+			for(yi = 0; yi < 4; yi++)
+			{
+				for(xi = 0; xi < 4; xi++)
+				{
+					s1 = src[k];
+					s2 = src[k + 1];
+					*(dst++) = (((s2 & 15) >> 1) << 4) | (s1 >> 4);
+					*(dst++) = ((s1 & 15) << 4) | (s2 >> 4);
+					k += 2;
+				};
+				k += j;
+			};
+			i += 16;
+		};
+		i += l;
+	};
+	return dst;
+}
+
 void GX_BindCurrentTex(qboolean changed, int format, int mipmap)
 {
 	DCFlushRange(gxtexobjs[currenttexture].data, gxtexobjs[currenttexture].length);
@@ -207,6 +247,9 @@ void GX_LoadAndBind (void* data, int length, int width, int height, int format)
 	if((format == GX_TF_RGBA8)&&(width >= 4)&&(height >= 4))
 	{
 		GX_CopyTexRGBA8((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
+	} else if((format == GX_TF_RGB5A3)&&(width >= 4)&&(height >= 4))
+	{
+		GX_CopyTexRGB5A3((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
 	} else
 	{
 		memcpy(gxtexobjs[currenttexture].data, data, length);
@@ -229,6 +272,8 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 	int ys;
 	int k;
 	qboolean in;
+	byte s1;
+	byte s2;
 
 	if(format == GX_TF_RGBA8)
 	{
@@ -289,6 +334,56 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 									in = true;
 									*(dst++) = ((byte*)data)[k + 1];
 									*(dst++) = ((byte*)data)[k + 2];
+								};
+							};
+							if(!in)
+								dst += 2;
+						};
+					};
+				};
+			};
+		};
+		GX_BindCurrentTex(true, format, GX_FALSE);
+	} else if(format == GX_TF_RGB5A3)
+	{
+		dst = (byte*)(gxtexobjs[currenttexture].data);
+		if(dst != NULL)
+		{
+			tex_width = gxtexobjs[currenttexture].width;
+			tex_height = gxtexobjs[currenttexture].height;
+			ybegin = (yoffset >> 2) << 2;
+			if(ybegin < 0) 
+				ybegin = 0;
+			if(ybegin > tex_height) 
+				ybegin = tex_height;
+			yend = (((yoffset + height) >> 2) << 2) + 4;
+			if(yend < 0) 
+				yend = 0;
+			if(yend > tex_height) 
+				yend = tex_height;
+			if(yend > 0) 
+				dst += (2 * ybegin * tex_height);
+			for(y = ybegin; y < yend; y += 4)
+			{
+				for(x = 0; x < tex_width; x += 4)
+				{
+					for(yi = 0; yi < 4; yi++)
+					{
+						for(xi = 0; xi < 4; xi++)
+						{
+							in = false;
+							xs = x + xi - xoffset;
+							if((xs >= 0)&&(xs < width))
+							{
+								ys = y + yi - yoffset;
+								if((ys >= 0)&&(ys < height))
+								{
+									k = 2 * (ys * width + xs);
+									in = true;
+									s1 = ((byte*)data)[k];
+									s2 = ((byte*)data)[k + 1];
+									*(dst++) = (((s2 & 15) >> 1) << 4) | (s1 >> 4);
+									*(dst++) = ((s1 & 15) << 4) | (s2 >> 4);
 								};
 							};
 							if(!in)
