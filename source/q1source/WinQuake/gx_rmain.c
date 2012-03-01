@@ -91,8 +91,8 @@ vec3_t	vpn;
 vec3_t	vright;
 vec3_t	r_origin;
 
-float	r_world_matrix[16];
-float	r_base_world_matrix[16];
+Mtx		r_world_matrix;
+Mtx		r_base_world_matrix;
 
 //
 // screen size info
@@ -1056,22 +1056,7 @@ void R_SetupGX (void)
 
 	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
 
-	r_world_matrix[0] = gx_modelview_matrices[gx_cur_modelview_matrix][0][0];
-	r_world_matrix[1] = gx_modelview_matrices[gx_cur_modelview_matrix][0][1];
-	r_world_matrix[2] = gx_modelview_matrices[gx_cur_modelview_matrix][0][2];
-	r_world_matrix[3] = gx_modelview_matrices[gx_cur_modelview_matrix][0][3];
-	r_world_matrix[4] = gx_modelview_matrices[gx_cur_modelview_matrix][1][0];
-	r_world_matrix[5] = gx_modelview_matrices[gx_cur_modelview_matrix][1][1];
-	r_world_matrix[6] = gx_modelview_matrices[gx_cur_modelview_matrix][1][2];
-	r_world_matrix[7] = gx_modelview_matrices[gx_cur_modelview_matrix][1][3];
-	r_world_matrix[8] = gx_modelview_matrices[gx_cur_modelview_matrix][2][0];
-	r_world_matrix[9] = gx_modelview_matrices[gx_cur_modelview_matrix][2][1];
-	r_world_matrix[10] = gx_modelview_matrices[gx_cur_modelview_matrix][2][2];
-	r_world_matrix[11] = gx_modelview_matrices[gx_cur_modelview_matrix][2][3];
-	r_world_matrix[12] = 0;
-	r_world_matrix[13] = 0;
-	r_world_matrix[14] = 0;
-	r_world_matrix[15] = 1;
+	guMtxCopy(gx_modelview_matrices[gx_cur_modelview_matrix], r_world_matrix);
 
 	//
 	// set drawing parms
@@ -1200,7 +1185,7 @@ void R_Mirror (void)
 	if (!mirror)
 		return;
 
-	memcpy (r_base_world_matrix, r_world_matrix, sizeof(r_base_world_matrix));
+	guMtxCopy(r_world_matrix, r_base_world_matrix);
 
 	d = DotProduct (r_refdef.vieworg, mirror_plane->normal) - mirror_plane->dist;
 	VectorMA (r_refdef.vieworg, -2*d, mirror_plane->normal, r_refdef.vieworg);
@@ -1237,18 +1222,7 @@ void R_Mirror (void)
 		GX_SetCullMode(gx_cull_mode);
 	};
 
-	gx_modelview_matrices[gx_cur_modelview_matrix][0][0] = r_base_world_matrix[0];
-	gx_modelview_matrices[gx_cur_modelview_matrix][0][1] = r_base_world_matrix[1];
-	gx_modelview_matrices[gx_cur_modelview_matrix][0][2] = r_base_world_matrix[2];
-	gx_modelview_matrices[gx_cur_modelview_matrix][0][3] = r_base_world_matrix[3];
-	gx_modelview_matrices[gx_cur_modelview_matrix][1][0] = r_base_world_matrix[4];
-	gx_modelview_matrices[gx_cur_modelview_matrix][1][1] = r_base_world_matrix[5];
-	gx_modelview_matrices[gx_cur_modelview_matrix][1][2] = r_base_world_matrix[6];
-	gx_modelview_matrices[gx_cur_modelview_matrix][1][3] = r_base_world_matrix[7];
-	gx_modelview_matrices[gx_cur_modelview_matrix][2][0] = r_base_world_matrix[8];
-	gx_modelview_matrices[gx_cur_modelview_matrix][2][1] = r_base_world_matrix[9];
-	gx_modelview_matrices[gx_cur_modelview_matrix][2][2] = r_base_world_matrix[10];
-	gx_modelview_matrices[gx_cur_modelview_matrix][2][3] = r_base_world_matrix[11];
+	guMtxCopy(r_base_world_matrix, gx_modelview_matrices[gx_cur_modelview_matrix]);
 	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
 
 	a = r_mirroralpha.value;

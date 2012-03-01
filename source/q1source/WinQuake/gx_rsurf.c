@@ -49,6 +49,8 @@ extern u8 gx_cur_b;
 
 extern u8 gx_cur_a;
 
+extern Mtx r_world_matrix;
+
 
 int			skytexturenum;
 
@@ -975,18 +977,7 @@ void R_DrawWaterSurfaces (void)
 	//
 	// go back to the world matrix
 	//
-	gx_modelview_matrices[gx_cur_modelview_matrix][0][0] = r_world_matrix[0];
-	gx_modelview_matrices[gx_cur_modelview_matrix][0][1] = r_world_matrix[1];
-	gx_modelview_matrices[gx_cur_modelview_matrix][0][2] = r_world_matrix[2];
-	gx_modelview_matrices[gx_cur_modelview_matrix][0][3] = r_world_matrix[3];
-	gx_modelview_matrices[gx_cur_modelview_matrix][1][0] = r_world_matrix[4];
-	gx_modelview_matrices[gx_cur_modelview_matrix][1][1] = r_world_matrix[5];
-	gx_modelview_matrices[gx_cur_modelview_matrix][1][2] = r_world_matrix[6];
-	gx_modelview_matrices[gx_cur_modelview_matrix][1][3] = r_world_matrix[7];
-	gx_modelview_matrices[gx_cur_modelview_matrix][2][0] = r_world_matrix[8];
-	gx_modelview_matrices[gx_cur_modelview_matrix][2][1] = r_world_matrix[9];
-	gx_modelview_matrices[gx_cur_modelview_matrix][2][2] = r_world_matrix[10];
-	gx_modelview_matrices[gx_cur_modelview_matrix][2][3] = r_world_matrix[11];
+	guMtxCopy(r_world_matrix, gx_modelview_matrices[gx_cur_modelview_matrix]);
 	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
 
 	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
@@ -1049,18 +1040,7 @@ void R_DrawWaterSurfaces (void)
 	// go back to the world matrix
 	//
 
-	gx_modelview_matrices[gx_cur_modelview_matrix][0][0] = r_world_matrix[0];
-	gx_modelview_matrices[gx_cur_modelview_matrix][0][1] = r_world_matrix[1];
-	gx_modelview_matrices[gx_cur_modelview_matrix][0][2] = r_world_matrix[2];
-	gx_modelview_matrices[gx_cur_modelview_matrix][0][3] = r_world_matrix[3];
-	gx_modelview_matrices[gx_cur_modelview_matrix][1][0] = r_world_matrix[4];
-	gx_modelview_matrices[gx_cur_modelview_matrix][1][1] = r_world_matrix[5];
-	gx_modelview_matrices[gx_cur_modelview_matrix][1][2] = r_world_matrix[6];
-	gx_modelview_matrices[gx_cur_modelview_matrix][1][3] = r_world_matrix[7];
-	gx_modelview_matrices[gx_cur_modelview_matrix][2][0] = r_world_matrix[8];
-	gx_modelview_matrices[gx_cur_modelview_matrix][2][1] = r_world_matrix[9];
-	gx_modelview_matrices[gx_cur_modelview_matrix][2][2] = r_world_matrix[10];
-	gx_modelview_matrices[gx_cur_modelview_matrix][2][3] = r_world_matrix[11];
+	guMtxCopy(r_world_matrix, gx_modelview_matrices[gx_cur_modelview_matrix]);
 	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
 
 	if (r_wateralpha.value < 1.0) {

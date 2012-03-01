@@ -192,7 +192,7 @@ byte* GX_CopyTexRGBA8(byte* src, int width, int height, byte* dst)
 	return dst;
 }
 
-void GX_BindCurrentTex(qboolean changed, u8 format, u8 mipmap)
+void GX_BindCurrentTex(qboolean changed, int format, int mipmap)
 {
 	DCFlushRange(gxtexobjs[currenttexture].data, gxtexobjs[currenttexture].length);
 	GX_InitTexObj(&gxtexobjs[currenttexture].texobj, gxtexobjs[currenttexture].data, gxtexobjs[currenttexture].width, gxtexobjs[currenttexture].height, format, GX_REPEAT, GX_REPEAT, mipmap);

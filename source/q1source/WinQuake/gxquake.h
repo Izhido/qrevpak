@@ -286,8 +286,6 @@ extern	int			mirrortexturenum;	// quake texturenum, not gxtexturenum
 extern	qboolean	mirror;
 extern	mplane_t	*mirror_plane;
 
-extern	float	r_world_matrix[16];
-
 void R_TranslatePlayerSkin (int playernum);
 
 void GX_Bind (int texnum);
