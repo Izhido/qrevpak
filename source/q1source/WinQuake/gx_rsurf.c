@@ -967,6 +967,7 @@ void R_DrawWaterSurfaces (void)
 	int			i;
 	msurface_t	*s;
 	texture_t	*t;
+	float		a;
 
 	if (r_wateralpha.value == 1.0)
 		return;
@@ -989,10 +990,15 @@ void R_DrawWaterSurfaces (void)
 	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
 
 	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+	a = r_wateralpha.value;
+	if(a < 0.0)
+		a = 0.0;
+	if(a > 1.0)
+		a = 1.0;
 	gx_cur_r = 255;
 	gx_cur_g = 255;
 	gx_cur_b = 255;
-	gx_cur_a = r_wateralpha.value * 255.0;
+	gx_cur_a = a * 255.0;
 	GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
 
 	for (i=0 ; i<cl.worldmodel->numtextures ; i++)
@@ -1034,6 +1040,7 @@ void R_DrawWaterSurfaces (void)
 	int			i;
 	msurface_t	*s;
 	texture_t	*t;
+	float a;
 
 	if (r_wateralpha.value == 1.0 && gx_texsort.value)
 		return;
@@ -1058,10 +1065,15 @@ void R_DrawWaterSurfaces (void)
 
 	if (r_wateralpha.value < 1.0) {
 		GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+		a = r_wateralpha.value;
+		if(a < 0.0)
+			a = 0.0;
+		if(a > 1.0)
+			a = 1.0;
 		gx_cur_r = 255;
 		gx_cur_g = 255;
 		gx_cur_b = 255;
-		gx_cur_a = r_wateralpha.value * 255,0;
+		gx_cur_a = a * 255,0;
 		GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
 	}
 

@@ -340,7 +340,7 @@ GX_DrawAliasFrame
 void GX_DrawAliasFrame (aliashdr_t *paliashdr, int posenum)
 {
 	float	s, t;
-	u8	 	l;
+	float 	l;
 	int		i, j;
 	int		index;
 	trivertx_t	*v, *verts;
@@ -355,6 +355,8 @@ lastposenum = posenum;
 	verts = (trivertx_t *)((byte *)paliashdr + paliashdr->posedata);
 	verts += posenum * paliashdr->poseverts;
 	order = (int *)((byte *)paliashdr + paliashdr->commands);
+
+	gx_cur_a = 255;
 
 	while (1)
 	{
@@ -373,11 +375,12 @@ lastposenum = posenum;
 		{
 			GX_Position3f32(verts->v[0], verts->v[1], verts->v[2]);
 			verts++;
-			l = shadedots[verts->lightnormalindex] * shadelight * 255.0;
-			gx_cur_r = l;
-			gx_cur_g = l;
-			gx_cur_b = l;
-			gx_cur_a = 255;
+			l = shadedots[verts->lightnormalindex] * shadelight;
+			if(l < 0.0)
+				l = 0.0;
+			if(l > 1.0)
+				l = 1.0;
+			gx_cur_r = gx_cur_g = gx_cur_b = (l * 255.0);
 			GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
 			GX_TexCoord2f32 (((float *)order)[0], ((float *)order)[1]);
 			order += 2;
@@ -1192,6 +1195,7 @@ void R_Mirror (void)
 	msurface_t	*s;
 	entity_t	*ent;
 	Mtx44		sproj;
+	float a;
 
 	if (!mirror)
 		return;
@@ -1247,10 +1251,15 @@ void R_Mirror (void)
 	gx_modelview_matrices[gx_cur_modelview_matrix][2][3] = r_base_world_matrix[11];
 	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
 
+	a = r_mirroralpha.value;
+	if(a < 0.0)
+		a = 0.0;
+	if(a > 1.0)
+		a = 1.0;
 	gx_cur_r = 255;
 	gx_cur_g = 255;
 	gx_cur_b = 255;
-	gx_cur_a = r_mirroralpha.value * 255.0;
+	gx_cur_a = a * 255.0;
 	s = cl.worldmodel->textures[mirrortexturenum]->texturechain;
 	for ( ; s ; s=s->texturechain)
 		R_RenderBrushPoly (s);

@@ -122,6 +122,29 @@ void GX_Bind (int texnum)
 		GX_LoadTexObj(&gxtexobjs[texnum].texobj, GX_TEXMAP0);
 }
 
+qboolean GX_ReallocTex(int length, int width, int height)
+{
+	qboolean changed = false;
+	if(gxtexobjs[currenttexture].length < length)
+	{
+		if(gxtexobjs[currenttexture].data != NULL)
+		{
+			free(gxtexobjs[currenttexture].data);
+			gxtexobjs[currenttexture].data = NULL;
+		};
+		gxtexobjs[currenttexture].data = memalign(32, length);
+		if(gxtexobjs[currenttexture].data == NULL)
+		{
+			Sys_Error("GX_ReallocTex: allocation failed on %i bytes", length);
+		};
+		gxtexobjs[currenttexture].length = length;
+		changed = true;
+	};
+	gxtexobjs[currenttexture].width = width;
+	gxtexobjs[currenttexture].height = height;
+	return changed;
+}
+
 byte* GX_CopyTexRGBA8(byte* src, int width, int height, byte* dst)
 {
 	int x;
@@ -169,28 +192,18 @@ byte* GX_CopyTexRGBA8(byte* src, int width, int height, byte* dst)
 	return dst;
 }
 
+void GX_BindCurrentTex(qboolean changed, u8 format, u8 mipmap)
+{
+	DCFlushRange(gxtexobjs[currenttexture].data, gxtexobjs[currenttexture].length);
+	GX_InitTexObj(&gxtexobjs[currenttexture].texobj, gxtexobjs[currenttexture].data, gxtexobjs[currenttexture].width, gxtexobjs[currenttexture].height, format, GX_REPEAT, GX_REPEAT, mipmap);
+	GX_LoadTexObj(&gxtexobjs[currenttexture].texobj, GX_TEXMAP0);
+	if(changed)
+		GX_InvalidateTexAll();
+}
+
 void GX_LoadAndBind (void* data, int length, int width, int height, int format)
 {
-	qboolean changed;
-
-	changed = false;
-	if(gxtexobjs[currenttexture].length < length)
-	{
-		if(gxtexobjs[currenttexture].data != NULL)
-		{
-			free(gxtexobjs[currenttexture].data);
-			gxtexobjs[currenttexture].data = NULL;
-		};
-		gxtexobjs[currenttexture].data = memalign(32, length);
-		if(gxtexobjs[currenttexture].data == NULL)
-		{
-			Sys_Error("GX_LoadAndBind: allocation failed on %i bytes", length);
-		};
-		gxtexobjs[currenttexture].length = length;
-		changed = true;
-	};
-	gxtexobjs[currenttexture].width = width;
-	gxtexobjs[currenttexture].height = height;
+	qboolean changed = GX_ReallocTex(length, width, height);
 	if((format == GX_TF_RGBA8)&&(width >= 4)&&(height >= 4))
 	{
 		GX_CopyTexRGBA8((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
@@ -198,11 +211,7 @@ void GX_LoadAndBind (void* data, int length, int width, int height, int format)
 	{
 		memcpy(gxtexobjs[currenttexture].data, data, length);
 	};
-	DCFlushRange(gxtexobjs[currenttexture].data, gxtexobjs[currenttexture].length);
-	GX_InitTexObj(&gxtexobjs[currenttexture].texobj, gxtexobjs[currenttexture].data, gxtexobjs[currenttexture].width, gxtexobjs[currenttexture].height, format, GX_REPEAT, GX_REPEAT, GX_FALSE);
-	GX_LoadTexObj(&gxtexobjs[currenttexture].texobj, GX_TEXMAP0);
-	if(changed)
-		GX_InvalidateTexAll();
+	GX_BindCurrentTex(changed, format, GX_FALSE);
 }
 
 void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int height, int format)
@@ -289,10 +298,7 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 				};
 			};
 		};
-		DCFlushRange(gxtexobjs[currenttexture].data, gxtexobjs[currenttexture].length);
-		GX_InitTexObj(&gxtexobjs[currenttexture].texobj, gxtexobjs[currenttexture].data, gxtexobjs[currenttexture].width, gxtexobjs[currenttexture].height, format, GX_REPEAT, GX_REPEAT, GX_FALSE);
-		GX_LoadTexObj(&gxtexobjs[currenttexture].texobj, GX_TEXMAP0);
-		GX_InvalidateTexAll();
+		GX_BindCurrentTex(true, format, GX_FALSE);
 	};
 }
 
@@ -810,6 +816,10 @@ void Draw_AlphaPic (int x, int y, qpic_t *pic, float alpha)
 	gx_cur_r = 255;
 	gx_cur_g = 255;
 	gx_cur_b = 255;
+	if(alpha < 0.0)
+		alpha = 0.0;
+	if(alpha > 1.0)
+		alpha = 1.0;
 	gx_cur_a = alpha * 255.0;
 	GX_Bind (gx->texnum);
 	GX_Begin (GX_QUADS, gx_cur_vertex_format, 4);
@@ -1309,24 +1319,7 @@ texels += scaled_width * scaled_height;
 			miplevel++;
 		};
 		scaledlen = GX_GetTexBufferSize(scaled_width, scaled_height, GX_TF_RGBA8, GX_TRUE, miplevel);
-		changed = false;
-		if(gxtexobjs[currenttexture].length < scaledlen)
-		{
-			if(gxtexobjs[currenttexture].data != NULL)
-			{
-				free(gxtexobjs[currenttexture].data);
-				gxtexobjs[currenttexture].data = NULL;
-			};
-			gxtexobjs[currenttexture].data = memalign(32, scaledlen);
-			if(gxtexobjs[currenttexture].data == NULL)
-			{
-				Sys_Error("GX_Upload32: allocation failed on %i bytes", length);
-			};
-			gxtexobjs[currenttexture].length = scaledlen;
-			changed = true;
-		};
-		gxtexobjs[currenttexture].width = scaled_width;
-		gxtexobjs[currenttexture].height = scaled_height;
+		changed = GX_ReallocTex(scaledlen, scaled_width, scaled_height);
 		dst = GX_CopyTexRGBA8((byte*)scaled, scaled_width, scaled_height, (byte*)(gxtexobjs[currenttexture].data));
 		while (scaled_width > 4 && scaled_height > 4)
 		{
@@ -1334,12 +1327,8 @@ texels += scaled_width * scaled_height;
 			scaled_width >>= 1;
 			scaled_height >>= 1;
 			dst = GX_CopyTexRGBA8((byte*)scaled, scaled_width, scaled_height, dst);
-		}
-		DCFlushRange(gxtexobjs[currenttexture].data, gxtexobjs[currenttexture].length);
-		GX_InitTexObj(&gxtexobjs[currenttexture].texobj, gxtexobjs[currenttexture].data, gxtexobjs[currenttexture].width, gxtexobjs[currenttexture].height, GX_TF_RGBA8, GX_REPEAT, GX_REPEAT, GX_TRUE);
-		GX_LoadTexObj(&gxtexobjs[currenttexture].texobj, GX_TEXMAP0);
-		if(changed)
-			GX_InvalidateTexAll();
+		};
+		GX_BindCurrentTex(changed, GX_TF_RGBA8, GX_TRUE);
 	} else
 		GX_LoadAndBind (scaled, length * scaled_width / width * scaled_height / height, scaled_width, scaled_height, GX_TF_RGBA8);
 
