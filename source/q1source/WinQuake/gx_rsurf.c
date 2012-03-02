@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifdef GXQUAKE
 
 #include <gccore.h>
+#include <malloc.h>
 
 #include "quakedef.h"
 
@@ -79,7 +80,7 @@ int			allocated[MAX_LIGHTMAPS][BLOCK_WIDTH];
 
 // the lightmap texture data needs to be kept in
 // main memory so texsubimage can update properly
-byte		lightmaps[4*MAX_LIGHTMAPS*BLOCK_WIDTH*BLOCK_HEIGHT];
+byte*		lightmaps/*[4*MAX_LIGHTMAPS*BLOCK_WIDTH*BLOCK_HEIGHT]*/;
 
 // For gx_texsort 0
 msurface_t  *skychain = NULL;
@@ -244,7 +245,7 @@ store:
 			}
 		}
 		break;
-	case GL_ALPHA:
+	case GX_TF_A8:
 	case GL_LUMINANCE:
 	case GL_INTENSITY:
 		bl = blocklights;
@@ -1727,7 +1728,7 @@ void GX_BuildLightmaps (void)
 	if (COM_CheckParm ("-lm_1"))
 		gx_lightmap_format = GL_LUMINANCE;
 	if (COM_CheckParm ("-lm_a"))
-		gx_lightmap_format = GL_ALPHA;
+		gx_lightmap_format = GX_TF_A8;
 	if (COM_CheckParm ("-lm_i"))
 		gx_lightmap_format = GL_INTENSITY;
 	if (COM_CheckParm ("-lm_2"))
@@ -1745,10 +1746,19 @@ void GX_BuildLightmaps (void)
 		break;
 	case GL_LUMINANCE:
 	case GL_INTENSITY:
-	case GL_ALPHA:
+	case GX_TF_A8:
 		lightmap_bytes = 1;
 		break;
 	}
+
+	if(lightmaps == NULL)
+	{
+		lightmaps = memalign(32, lightmap_bytes*MAX_LIGHTMAPS*BLOCK_WIDTH*BLOCK_HEIGHT);
+		if(lightmaps == NULL)
+		{
+			Sys_Error("GX_BuildLightmaps: allocation failed on %i bytes", lightmap_bytes*MAX_LIGHTMAPS*BLOCK_WIDTH*BLOCK_HEIGHT);
+		};
+	};
 
 	for (j=1 ; j<MAX_MODELS ; j++)
 	{

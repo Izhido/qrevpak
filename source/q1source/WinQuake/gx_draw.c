@@ -225,7 +225,42 @@ byte* GX_CopyTexRGB5A3(byte* src, int width, int height, byte* dst)
 				};
 				k += j;
 			};
-			i += 16;
+			i += 8;
+		};
+		i += l;
+	};
+	return dst;
+}
+
+byte* GX_CopyTexV8(byte* src, int width, int height, byte* dst)
+{
+	int x;
+	int y;
+	int xi;
+	int yi;
+	int i;
+	int j;
+	int k;
+	int l;
+
+	i = 0;
+	j = width - 8;
+	l = 3 * width;
+	for(y = 0; y < height; y += 4)
+	{
+		for(x = 0; x < width; x += 8)
+		{
+			k = i;
+			for(yi = 0; yi < 4; yi++)
+			{
+				for(xi = 0; xi < 8; xi++)
+				{
+					*(dst++) = src[k];
+					k++;
+				};
+				k += j;
+			};
+			i += 8;
 		};
 		i += l;
 	};
@@ -250,6 +285,9 @@ void GX_LoadAndBind (void* data, int length, int width, int height, int format)
 	} else if((format == GX_TF_RGB5A3)&&(width >= 4)&&(height >= 4))
 	{
 		GX_CopyTexRGB5A3((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
+	} else if((format == GX_TF_A8)&&(width >= 8)&&(height >= 4))
+	{
+		GX_CopyTexV8((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
 	} else
 	{
 		memcpy(gxtexobjs[currenttexture].data, data, length);
@@ -388,6 +426,53 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 							};
 							if(!in)
 								dst += 2;
+						};
+					};
+				};
+			};
+		};
+		GX_BindCurrentTex(true, format, GX_FALSE);
+	} else if(format == GX_TF_A8)
+	{
+		dst = (byte*)(gxtexobjs[currenttexture].data);
+		if(dst != NULL)
+		{
+			tex_width = gxtexobjs[currenttexture].width;
+			tex_height = gxtexobjs[currenttexture].height;
+			ybegin = (yoffset >> 2) << 2;
+			if(ybegin < 0) 
+				ybegin = 0;
+			if(ybegin > tex_height) 
+				ybegin = tex_height;
+			yend = (((yoffset + height) >> 2) << 2) + 4;
+			if(yend < 0) 
+				yend = 0;
+			if(yend > tex_height) 
+				yend = tex_height;
+			if(yend > 0) 
+				dst += (ybegin * tex_height);
+			for(y = ybegin; y < yend; y += 4)
+			{
+				for(x = 0; x < tex_width; x += 8)
+				{
+					for(yi = 0; yi < 4; yi++)
+					{
+						for(xi = 0; xi < 8; xi++)
+						{
+							in = false;
+							xs = x + xi - xoffset;
+							if((xs >= 0)&&(xs < width))
+							{
+								ys = y + yi - yoffset;
+								if((ys >= 0)&&(ys < height))
+								{
+									k = ys * width + xs;
+									in = true;
+									*(dst++) = ((byte*)data)[k];
+								};
+							};
+							if(!in)
+								dst++;
 						};
 					};
 				};

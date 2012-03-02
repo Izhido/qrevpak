@@ -65,8 +65,6 @@ typedef float GLclampf;
 
 #define GL_GEQUAL 38
 
-#define GL_ALPHA 39
-
 #define GL_LUMINANCE 40
 
 #define GL_INTENSITY 41
@@ -74,8 +72,6 @@ typedef float GLclampf;
 #define GL_ZERO 43
 
 #define GL_ONE_MINUS_SRC_COLOR 44
-
-#define GL_RGB 45
 
 #define GL_GREATER 51
 
