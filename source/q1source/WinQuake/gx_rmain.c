@@ -55,6 +55,7 @@ extern u8 gx_cur_b;
 
 extern u8 gx_cur_a;
 
+extern int gx_tex_allocated;
 
 entity_t	r_worldentity;
 
@@ -1300,7 +1301,7 @@ void R_RenderView (void)
 	if (r_speeds.value)
 	{
 		time2 = Sys_FloatTime ();
-		Con_Printf ("%3i ms  %4i wpoly %4i epoly\n", (int)((time2-time1)*1000), c_brush_polys, c_alias_polys); 
+		Con_Printf ("%3i ms  %4i wpoly %4i epoly %9i bytes\n", (int)((time2-time1)*1000), c_brush_polys, c_alias_polys, gx_tex_allocated); 
 	}
 }
 

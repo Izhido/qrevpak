@@ -25,20 +25,6 @@ typedef float GLfloat;
 
 typedef float GLclampf;
 
-#define GL_TEXTURE_2D 3
-
-#define GL_TEXTURE_MIN_FILTER 8
-
-#define GL_TEXTURE_MAG_FILTER 9
-
-#define GL_UNSIGNED_BYTE 14
-
-#define GL_FRONT 15
-
-#define GL_BACK 16
-
-#define GL_COLOR_INDEX 21
-
 #define GL_SMOOTH 23
 
 #define GL_ONE 24
@@ -46,12 +32,6 @@ typedef float GLclampf;
 #define GL_SRC_ALPHA 25
 
 #define GL_ONE_MINUS_SRC_ALPHA 26
-
-#define GL_TRIANGLE_STRIP 27
-
-#define GL_TEXTURE_ENV 28
-
-#define GL_TEXTURE_ENV_MODE 29
 
 #define GL_PERSPECTIVE_CORRECTION_HINT 31
 
@@ -61,29 +41,9 @@ typedef float GLclampf;
 
 #define GL_NICEST 35
 
-#define GL_LEQUAL 37
-
-#define GL_GEQUAL 38
-
 #define GL_LUMINANCE 40
 
-#define GL_INTENSITY 41
-
-#define GL_ZERO 43
-
 #define GL_ONE_MINUS_SRC_COLOR 44
-
-#define GL_GREATER 51
-
-#define GL_FRONT_AND_BACK 52
-
-#define GL_FILL 53
-
-#define GL_TEXTURE_WRAP_S 54
-
-#define GL_REPEAT 55
-
-#define GL_TEXTURE_WRAP_T 56
 
 void glShadeModel(GLenum mode);
 

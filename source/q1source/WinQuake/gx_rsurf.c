@@ -247,7 +247,7 @@ store:
 		break;
 	case GX_TF_A8:
 	case GL_LUMINANCE:
-	case GL_INTENSITY:
+	case GX_TF_I8:
 		bl = blocklights;
 		for (i=0 ; i<tmax ; i++, dest += stride)
 		{
@@ -743,7 +743,7 @@ void R_BlendLightmaps (void)
 		gx_blend_src_value = GX_BL_ZERO;
 		gx_blend_dst_value = GX_BL_INVSRCCLR;
 	}
-	else if (gx_lightmap_format == GL_INTENSITY)
+	else if (gx_lightmap_format == GX_TF_I8)
 	{
 		GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
 		gx_cur_r = 0;
@@ -808,7 +808,7 @@ void R_BlendLightmaps (void)
 		gx_blend_src_value = GX_BL_SRCALPHA;
 		gx_blend_dst_value = GX_BL_INVSRCALPHA;
 	}
-	else if (gx_lightmap_format == GL_INTENSITY)
+	else if (gx_lightmap_format == GX_TF_I8)
 	{
 		GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
 		gx_cur_r = 255;
@@ -1723,14 +1723,14 @@ void GX_BuildLightmaps (void)
 		texture_extension_number += MAX_LIGHTMAPS;
 	}
 
-	gx_lightmap_format = GX_TF_RGBA8; // Default changed for GX hardware
+	gx_lightmap_format = GX_TF_I8; // Default changed for GX hardware
 
 	if (COM_CheckParm ("-lm_1"))
 		gx_lightmap_format = GL_LUMINANCE;
 	if (COM_CheckParm ("-lm_a"))
 		gx_lightmap_format = GX_TF_A8;
 	if (COM_CheckParm ("-lm_i"))
-		gx_lightmap_format = GL_INTENSITY;
+		gx_lightmap_format = GX_TF_I8;
 	if (COM_CheckParm ("-lm_2"))
 		gx_lightmap_format = GX_TF_RGB5A3;
 	if (COM_CheckParm ("-lm_4"))
@@ -1745,7 +1745,7 @@ void GX_BuildLightmaps (void)
 		lightmap_bytes = 2;
 		break;
 	case GL_LUMINANCE:
-	case GL_INTENSITY:
+	case GX_TF_I8:
 	case GX_TF_A8:
 		lightmap_bytes = 1;
 		break;

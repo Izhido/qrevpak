@@ -28,8 +28,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "quakedef.h"
 
-#define GL_COLOR_INDEX8_EXT     0x80E5
-
 extern Mtx44 gx_projection_matrix;
 
 extern Mtx gx_modelview_matrices[32];
@@ -85,6 +83,7 @@ int		gx_alpha_format = 4;
 u8		gx_filter_min = GX_LIN_MIP_NEAR;
 u8		gx_filter_max = GX_LINEAR;
 
+int		gx_tex_allocated; // To track amount of memory used for textures
 
 int		texels;
 
@@ -131,6 +130,7 @@ qboolean GX_ReallocTex(int length, int width, int height)
 		{
 			free(gxtexobjs[currenttexture].data);
 			gxtexobjs[currenttexture].data = NULL;
+			gx_tex_allocated -= gxtexobjs[currenttexture].length;
 		};
 		gxtexobjs[currenttexture].data = memalign(32, length);
 		if(gxtexobjs[currenttexture].data == NULL)
@@ -138,6 +138,7 @@ qboolean GX_ReallocTex(int length, int width, int height)
 			Sys_Error("GX_ReallocTex: allocation failed on %i bytes", length);
 		};
 		gxtexobjs[currenttexture].length = length;
+		gx_tex_allocated += length;
 		changed = true;
 	};
 	gxtexobjs[currenttexture].width = width;
@@ -285,7 +286,7 @@ void GX_LoadAndBind (void* data, int length, int width, int height, int format)
 	} else if((format == GX_TF_RGB5A3)&&(width >= 4)&&(height >= 4))
 	{
 		GX_CopyTexRGB5A3((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
-	} else if((format == GX_TF_A8)&&(width >= 8)&&(height >= 4))
+	} else if(((format == GX_TF_A8)||(format == GX_TF_I8))&&(width >= 8)&&(height >= 4))
 	{
 		GX_CopyTexV8((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
 	} else
@@ -432,7 +433,7 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 			};
 		};
 		GX_BindCurrentTex(true, format, GX_FALSE);
-	} else if(format == GX_TF_A8)
+	} else if((format == GX_TF_A8)||(format == GX_TF_I8))
 	{
 		dst = (byte*)(gxtexobjs[currenttexture].data);
 		if(dst != NULL)
@@ -1591,10 +1592,12 @@ int GX_LoadTexture (char *identifier, int width, int height, byte *data, qboolea
 			}
 		}
 	}
-	else {
+	else
 		gxt = &gxtextures[numgxtextures];
-		numgxtextures++;
-	}
+
+	numgxtextures++;
+	if(numgxtextures > MAX_GXTEXTURES)
+		Sys_Error ("GX_LoadTexture: Too many textures!");
 
 	strcpy (gxt->identifier, identifier);
 	gxt->texnum = texture_extension_number;

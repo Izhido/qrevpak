@@ -77,7 +77,7 @@ QGX_Init
 */
 void QGX_Init (void)
 {
-	gx_cull_mode = GL_BACK;
+	gx_cull_mode = GX_CULL_BACK;
 	if(gx_cull_enabled)
 	{
 		GX_SetCullMode(gx_cull_mode);
