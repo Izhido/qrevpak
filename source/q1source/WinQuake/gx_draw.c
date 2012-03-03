@@ -268,6 +268,41 @@ byte* GX_CopyTexV8(byte* src, int width, int height, byte* dst)
 	return dst;
 }
 
+byte* GX_CopyTexIA4(byte* src, int width, int height, byte* dst)
+{
+	int x;
+	int y;
+	int xi;
+	int yi;
+	int i;
+	int j;
+	int k;
+	int l;
+
+	i = 0;
+	j = width - 8;
+	l = 3 * width;
+	for(y = 0; y < height; y += 4)
+	{
+		for(x = 0; x < width; x += 8)
+		{
+			k = i;
+			for(yi = 0; yi < 4; yi++)
+			{
+				for(xi = 0; xi < 8; xi++)
+				{
+					*(dst++) = ((src[k] & 15) << 4) | (src[k] >> 4);
+					k++;
+				};
+				k += j;
+			};
+			i += 8;
+		};
+		i += l;
+	};
+	return dst;
+}
+
 void GX_BindCurrentTex(qboolean changed, int format, int mipmap)
 {
 	DCFlushRange(gxtexobjs[currenttexture].data, gxtexobjs[currenttexture].length);
@@ -280,18 +315,21 @@ void GX_BindCurrentTex(qboolean changed, int format, int mipmap)
 void GX_LoadAndBind (void* data, int length, int width, int height, int format)
 {
 	qboolean changed = GX_ReallocTex(length, width, height);
-	if((format == GX_TF_RGBA8)&&(width >= 4)&&(height >= 4))
+	switch(format)
 	{
+	case GX_TF_RGBA8:
 		GX_CopyTexRGBA8((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
-	} else if((format == GX_TF_RGB5A3)&&(width >= 4)&&(height >= 4))
-	{
+		break;
+	case GX_TF_RGB5A3:
 		GX_CopyTexRGB5A3((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
-	} else if(((format == GX_TF_A8)||(format == GX_TF_I8))&&(width >= 8)&&(height >= 4))
-	{
+		break;
+	case GX_TF_I8:
+	case GX_TF_A8:
 		GX_CopyTexV8((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
-	} else
-	{
-		memcpy(gxtexobjs[currenttexture].data, data, length);
+		break;
+	case GX_TF_IA4:
+		GX_CopyTexIA4((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
+		break;
 	};
 	GX_BindCurrentTex(changed, format, GX_FALSE);
 }
@@ -470,6 +508,54 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 									k = ys * width + xs;
 									in = true;
 									*(dst++) = ((byte*)data)[k];
+								};
+							};
+							if(!in)
+								dst++;
+						};
+					};
+				};
+			};
+		};
+		GX_BindCurrentTex(true, format, GX_FALSE);
+	} else if(format == GX_TF_IA4)
+	{
+		dst = (byte*)(gxtexobjs[currenttexture].data);
+		if(dst != NULL)
+		{
+			tex_width = gxtexobjs[currenttexture].width;
+			tex_height = gxtexobjs[currenttexture].height;
+			ybegin = (yoffset >> 2) << 2;
+			if(ybegin < 0) 
+				ybegin = 0;
+			if(ybegin > tex_height) 
+				ybegin = tex_height;
+			yend = (((yoffset + height) >> 2) << 2) + 4;
+			if(yend < 0) 
+				yend = 0;
+			if(yend > tex_height) 
+				yend = tex_height;
+			if(yend > 0) 
+				dst += (ybegin * tex_height);
+			for(y = ybegin; y < yend; y += 4)
+			{
+				for(x = 0; x < tex_width; x += 8)
+				{
+					for(yi = 0; yi < 4; yi++)
+					{
+						for(xi = 0; xi < 8; xi++)
+						{
+							in = false;
+							xs = x + xi - xoffset;
+							if((xs >= 0)&&(xs < width))
+							{
+								ys = y + yi - yoffset;
+								if((ys >= 0)&&(ys < height))
+								{
+									k = ys * width + xs;
+									in = true;
+									s1 = ((byte*)data)[k];
+									*(dst++) = ((s1 & 15) << 4) | (s1 >> 4);
 								};
 							};
 							if(!in)

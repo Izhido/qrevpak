@@ -27,12 +27,6 @@ typedef float GLclampf;
 
 #define GL_SMOOTH 23
 
-#define GL_ONE 24
-
-#define GL_SRC_ALPHA 25
-
-#define GL_ONE_MINUS_SRC_ALPHA 26
-
 #define GL_PERSPECTIVE_CORRECTION_HINT 31
 
 #define GL_FASTEST 32
@@ -40,10 +34,6 @@ typedef float GLclampf;
 #define GL_FLAT 34
 
 #define GL_NICEST 35
-
-#define GL_LUMINANCE 40
-
-#define GL_ONE_MINUS_SRC_COLOR 44
 
 void glShadeModel(GLenum mode);
 

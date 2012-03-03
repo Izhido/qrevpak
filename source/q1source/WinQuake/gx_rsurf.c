@@ -246,7 +246,6 @@ store:
 		}
 		break;
 	case GX_TF_A8:
-	case GL_LUMINANCE:
 	case GX_TF_I8:
 		bl = blocklights;
 		for (i=0 ; i<tmax ; i++, dest += stride)
@@ -258,6 +257,20 @@ store:
 				if (t > 255)
 					t = 255;
 				dest[j] = 255-t;
+			}
+		}
+		break;
+	case GX_TF_IA4:
+		bl = blocklights;
+		for (i=0 ; i<tmax ; i++, dest += stride)
+		{
+			for (j=0 ; j<smax ; j++)
+			{
+				t = *bl++;
+				t >>= 7;
+				if (t > 255)
+					t = 255;
+				dest[j] = (255-t) & 240;
 			}
 		}
 		break;
@@ -431,7 +444,7 @@ void R_DrawSequentialPoly (msurface_t *s)
 		speedscale = realtime*16;
 		speedscale -= (int)speedscale;
 		EmitSkyPolys (s);
-		if (gx_lightmap_format == GL_LUMINANCE)
+		if (gx_lightmap_format == GX_TF_IA4)
 		{
 			gx_blend_src_value = GX_BL_ZERO;
 			gx_blend_dst_value = GX_BL_INVSRCCLR;
@@ -738,7 +751,7 @@ void R_BlendLightmaps (void)
 	gx_z_write_enabled = GX_FALSE;
 	GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);		// don't bother writing Z
 
-	if (gx_lightmap_format == GL_LUMINANCE)
+	if (gx_lightmap_format == GX_TF_IA4)
 	{
 		gx_blend_src_value = GX_BL_ZERO;
 		gx_blend_dst_value = GX_BL_INVSRCCLR;
@@ -803,7 +816,7 @@ void R_BlendLightmaps (void)
 
 	gx_blend_enabled = false;
 	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
-	if (gx_lightmap_format == GL_LUMINANCE)
+	if (gx_lightmap_format == GX_TF_IA4)
 	{
 		gx_blend_src_value = GX_BL_SRCALPHA;
 		gx_blend_dst_value = GX_BL_INVSRCALPHA;
@@ -1723,10 +1736,10 @@ void GX_BuildLightmaps (void)
 		texture_extension_number += MAX_LIGHTMAPS;
 	}
 
-	gx_lightmap_format = GX_TF_I8; // Default changed for GX hardware
+	gx_lightmap_format = GX_TF_IA4; // Default changed for GX hardware
 
 	if (COM_CheckParm ("-lm_1"))
-		gx_lightmap_format = GL_LUMINANCE;
+		gx_lightmap_format = GX_TF_IA4;
 	if (COM_CheckParm ("-lm_a"))
 		gx_lightmap_format = GX_TF_A8;
 	if (COM_CheckParm ("-lm_i"))
@@ -1744,7 +1757,7 @@ void GX_BuildLightmaps (void)
 	case GX_TF_RGB5A3:
 		lightmap_bytes = 2;
 		break;
-	case GL_LUMINANCE:
+	case GX_TF_IA4:
 	case GX_TF_I8:
 	case GX_TF_A8:
 		lightmap_bytes = 1;
