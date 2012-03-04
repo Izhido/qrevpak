@@ -1141,6 +1141,7 @@ R_Clear
 */
 void R_Clear (void)
 {
+	Cvar_SetValue("gx_ztrick", 0.0); // ONCE WE FULLY UNDERSTAND HOW zNear AND zFar WORKS ON GX, REMOVE THIS ASAP
 	if (r_mirroralpha.value != 1.0)
 	{
 		sys_clear_buffer = GX_TRUE;

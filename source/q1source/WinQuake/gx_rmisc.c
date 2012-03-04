@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "quakedef.h"
 
-
+extern void R_InitBubble();
 
 /*
 ==================
@@ -210,6 +210,8 @@ void R_Init (void)
 
 	Cvar_RegisterVariable (&gx_doubleeyes);
 
+	R_InitBubble();
+	
 	R_InitParticles ();
 	R_InitParticleTexture ();
 

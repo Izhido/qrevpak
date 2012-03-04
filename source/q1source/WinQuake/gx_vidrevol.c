@@ -36,7 +36,7 @@ int		texture_extension_number = 1;
 
 float		gxdepthmin, gxdepthmax;
 
-cvar_t	gx_ztrick = {"gx_ztrick","0"};//"1"};
+cvar_t	gx_ztrick = {"gx_ztrick","1"};
 
 static float vid_gamma = 1.0;
 

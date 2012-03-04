@@ -1204,7 +1204,11 @@ int main (int argc, char* argv[])
 
 	static quakeparms_t    parms;
 
+#ifdef GXQUAKE
+	parms.memsize = 16*1024*1024;
+#else
 	parms.memsize = 8*1024*1024;
+#endif
 	parms.membase = malloc (parms.memsize);
 	parms.basedir = ".";
 
