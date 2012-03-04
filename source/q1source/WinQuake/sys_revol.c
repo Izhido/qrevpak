@@ -99,6 +99,8 @@ u8 sys_previous_mouse_buttons;
 
 float sys_frame_length;
 
+u8 sys_clear_buffer = GX_TRUE;
+
 /*
 ===============================================================================
 
@@ -1234,7 +1236,7 @@ int main (int argc, char* argv[])
 		sys_frame_count++;
 		GX_SetColorUpdate(GX_TRUE);
 		GX_SetAlphaUpdate(GX_TRUE);
-		GX_CopyDisp(sys_framebuffer[sys_frame_count & 1], GX_TRUE);
+		GX_CopyDisp(sys_framebuffer[sys_frame_count & 1], sys_clear_buffer);
 		VIDEO_SetNextFramebuffer(sys_framebuffer[sys_frame_count & 1]);
 #endif
 		KEYBOARD_FlushEvents();

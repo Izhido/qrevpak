@@ -34,6 +34,10 @@ int		texture_mode = GX_LINEAR;
 
 int		texture_extension_number = 1;
 
+float		gxdepthmin, gxdepthmax;
+
+cvar_t	gx_ztrick = {"gx_ztrick","0"};//"1"};
+
 static float vid_gamma = 1.0;
 
 qboolean gx_mtexable = false;
@@ -69,6 +73,14 @@ u8 gx_cur_g;
 u8 gx_cur_b;
 
 u8 gx_cur_a;
+
+f32 gx_viewport_x;
+
+f32 gx_viewport_y;
+
+f32 gx_viewport_width;
+
+f32 gx_viewport_height;
 
 /*
 ===============
@@ -184,6 +196,8 @@ void	VID_Init (unsigned char *palette)
 	int width = sys_rmode->fbWidth;
 	int height = sys_rmode->efbHeight;
 
+	Cvar_RegisterVariable (&gx_ztrick);
+	
 	vid.maxwarpwidth = width;
 	vid.maxwarpheight = height;
 	vid.colormap = host_colormap;

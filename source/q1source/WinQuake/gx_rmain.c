@@ -57,6 +57,16 @@ extern u8 gx_cur_a;
 
 extern int gx_tex_allocated;
 
+extern f32 gx_viewport_x;
+
+extern f32 gx_viewport_y;
+
+extern f32 gx_viewport_width;
+
+extern f32 gx_viewport_height;
+
+extern u8 sys_clear_buffer;
+
 entity_t	r_worldentity;
 
 qboolean	r_cache_thrash;		// compatability
@@ -132,6 +142,8 @@ cvar_t	gx_nocolors = {"gx_nocolors","0"};
 cvar_t	gx_keeptjunctions = {"gx_keeptjunctions","0"};
 cvar_t	gx_reporttjunctions = {"gx_reporttjunctions","0"};
 cvar_t	gx_doubleeyes = {"gx_doubleeys", "1"};
+
+extern	cvar_t	gx_ztrick;
 
 /*
 =================
@@ -800,7 +812,10 @@ void R_DrawViewModel (void)
 	ambient[0] = ambient[1] = ambient[2] = ambient[3] = (float)ambientlight / 128;
 	diffuse[0] = diffuse[1] = diffuse[2] = diffuse[3] = (float)shadelight / 128;
 
+	// hack the depth range to prevent view model from poking into walls
+	GX_SetViewport (gx_viewport_x, gx_viewport_y, gx_viewport_width, gx_viewport_height, gxdepthmin, gxdepthmin + 0.3*(gxdepthmax-gxdepthmin));
 	R_DrawAliasModel (currententity);
+	GX_SetViewport (gx_viewport_x, gx_viewport_y, gx_viewport_width, gx_viewport_height, gxdepthmin, gxdepthmax);
 }
 
 
@@ -999,7 +1014,11 @@ void R_SetupGX (void)
 		w = h = 256;
 	}
 
-	GX_SetViewport(gxx + x, gxy/* + y2*/, w, h, 0, 1);
+	gx_viewport_x = gxx + x;
+	gx_viewport_y = gxy/* + y2*/;
+	gx_viewport_width = w;
+	gx_viewport_height = h;
+	GX_SetViewport (gx_viewport_x, gx_viewport_y, gx_viewport_width, gx_viewport_height, gxdepthmin, gxdepthmax);
 	
 /*	screenaspect = (float)r_refdef.vrect.width/r_refdef.vrect.height;
 //	yfov = 2*atan((float)r_refdef.vrect.height/r_refdef.vrect.width)*180/M_PI;
@@ -1122,52 +1141,44 @@ R_Clear
 */
 void R_Clear (void)
 {
-	/************************************** ONCE IT IS FOUND HOW THIS WORKS ON GX, REIMPLEMENT IT ASAP: 
 	if (r_mirroralpha.value != 1.0)
 	{
-		if (gl_clear.value)
-			glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		else
-			glClear (GL_DEPTH_BUFFER_BIT);
-		gldepthmin = 0;
-		gldepthmax = 0.5;
-		glDepthFunc (GL_LEQUAL);
+		sys_clear_buffer = GX_TRUE;
+		gxdepthmin = 0;
+		gxdepthmax = 0.5;
+		GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
+		Sbar_Changed();
 	}
-	else if (gl_ztrick.value)
+	else if (gx_ztrick.value)
 	{
 		static int trickframe;
 
-		if (gl_clear.value)
-			glClear (GL_COLOR_BUFFER_BIT);
+		sys_clear_buffer = GX_FALSE;
 
 		trickframe++;
 		if (trickframe & 1)
 		{
-			gldepthmin = 0;
-			gldepthmax = 0.49999;
-			glDepthFunc (GL_LEQUAL);
+			gxdepthmin = 0;
+			gxdepthmax = 0.49999;
+			GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
 		}
 		else
 		{
-			gldepthmin = 1;
-			gldepthmax = 0.5;
-			glDepthFunc (GL_GEQUAL);
+			gxdepthmin = 1;
+			gxdepthmax = 0.5;
+			GX_SetZMode(gx_z_test_enabled, GX_GEQUAL, gx_z_write_enabled);
 		}
 	}
 	else
 	{
-		if (gl_clear.value)
-			glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		else
-			glClear (GL_DEPTH_BUFFER_BIT);
-		gldepthmin = 0;
-		gldepthmax = 1;
-		glDepthFunc (GL_LEQUAL);
+		sys_clear_buffer = GX_TRUE;
+		gxdepthmin = 0;
+		gxdepthmax = 1;
+		GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
+		Sbar_Changed();
 	}
 
-	glDepthRange (gldepthmin, gldepthmax);
-	*************************************** FOR NOW, IT WILL BE REPLACED WITH THIS: */
-	Sbar_Changed();
+	GX_SetViewport (gx_viewport_x, gx_viewport_y, gx_viewport_width, gx_viewport_height, gxdepthmin, gxdepthmax);
 }
 
 /*
@@ -1205,8 +1216,18 @@ void R_Mirror (void)
 		cl_numvisedicts++;
 	}
 
+	gxdepthmin = 0.5;
+	gxdepthmax = 1;
+	GX_SetViewport (gx_viewport_x, gx_viewport_y, gx_viewport_width, gx_viewport_height, gxdepthmin, gxdepthmax);
+	GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
+
 	R_RenderScene ();
 	R_DrawWaterSurfaces ();
+
+	gxdepthmin = 0;
+	gxdepthmax = 0.5;
+	GX_SetViewport (gx_viewport_x, gx_viewport_y, gx_viewport_width, gx_viewport_height, gxdepthmin, gxdepthmax);
+	GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
 
 	// blend on top
 	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 

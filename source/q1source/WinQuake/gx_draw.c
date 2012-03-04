@@ -56,6 +56,14 @@ extern u8 gx_cur_b;
 
 extern u8 gx_cur_a;
 
+extern f32 gx_viewport_x;
+
+extern f32 gx_viewport_y;
+
+extern f32 gx_viewport_width;
+
+extern f32 gx_viewport_height;
+
 cvar_t		gx_nobind = {"gx_nobind", "0"};
 cvar_t		gx_max_size = {"gx_max_size", "1024"};
 cvar_t		gx_picmip = {"gx_picmip", "0"};
@@ -1379,7 +1387,11 @@ Setup as if the screen was 320*200
 */
 void GX_Set2D (void)
 {
-	GX_SetViewport(gxx, gxy, gxwidth, gxheight, 0, 1);
+	gx_viewport_x = gxx;
+	gx_viewport_y = gxy;
+	gx_viewport_width = gxwidth;
+	gx_viewport_height = gxheight;
+	GX_SetViewport (gx_viewport_x, gx_viewport_y, gx_viewport_width, gx_viewport_height, gxdepthmin, gxdepthmax);
 
 	GX_Ortho(gx_projection_matrix, 0, vid.height, 0, vid.width, 0, 300); //-99999, 99999);
 	GX_LoadProjectionMtx(gx_projection_matrix, GX_ORTHOGRAPHIC);
