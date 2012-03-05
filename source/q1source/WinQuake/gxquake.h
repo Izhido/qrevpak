@@ -209,6 +209,7 @@ extern	cvar_t	r_wateralpha;
 extern	cvar_t	r_dynamic;
 extern	cvar_t	r_novis;
 
+extern	cvar_t	gx_clear;
 extern	cvar_t	gx_cull;
 extern	cvar_t	gx_poly;
 extern	cvar_t	gx_texsort;

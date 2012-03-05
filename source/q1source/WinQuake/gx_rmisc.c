@@ -192,6 +192,7 @@ void R_Init (void)
 	Cvar_RegisterVariable (&r_novis);
 	Cvar_RegisterVariable (&r_speeds);
 
+	Cvar_RegisterVariable (&gx_clear);
 	Cvar_RegisterVariable (&gx_texsort);
 
  	if (gx_mtexable)

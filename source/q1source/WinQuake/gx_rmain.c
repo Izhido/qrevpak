@@ -65,7 +65,9 @@ extern f32 gx_viewport_width;
 
 extern f32 gx_viewport_height;
 
-extern u8 sys_clear_buffer;
+extern u8 sys_clear_buffers;
+
+extern u8 sys_clear_color_buffer;
 
 entity_t	r_worldentity;
 
@@ -131,6 +133,7 @@ cvar_t	r_wateralpha = {"r_wateralpha","1"};
 cvar_t	r_dynamic = {"r_dynamic","1"};
 cvar_t	r_novis = {"r_novis","0"};
 
+cvar_t	gx_clear = {"gx_clear","0"};
 cvar_t	gx_cull = {"gx_cull","1"};
 cvar_t	gx_texsort = {"gx_texsort","1"};
 cvar_t	gx_smoothmodels = {"gx_smoothmodels","1"};
@@ -978,12 +981,12 @@ R_SetupGX
 */
 void R_SetupGX (void)
 {
-	float		screenaspect;
+	//float		screenaspect;
 	float		yfov;
 	int			i;
 	extern	int gxwidth, gxheight;
 	int			x, x2, y2, y, w, h;
-	f32			xmin, xmax, ymin, ymax;
+	//f32			xmin, xmax, ymin, ymax;
 	Mtx44		m;
 	guVector	a;
 
@@ -1142,19 +1145,25 @@ R_Clear
 void R_Clear (void)
 {
 	Cvar_SetValue("gx_ztrick", 0.0); // ONCE WE FULLY UNDERSTAND HOW zNear AND zFar WORKS ON GX, REMOVE THIS ASAP
+	Sbar_Changed();                  // THIS TOO, REMOVE IT ASAP
 	if (r_mirroralpha.value != 1.0)
 	{
-		sys_clear_buffer = GX_TRUE;
+		if (gx_clear.value)
+		{
+			sys_clear_color_buffer = GX_TRUE;
+			Sbar_Changed();
+		} else
+			sys_clear_color_buffer = GX_FALSE;
+		sys_clear_buffers = GX_TRUE;
 		gxdepthmin = 0;
 		gxdepthmax = 0.5;
 		GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
-		Sbar_Changed();
 	}
 	else if (gx_ztrick.value)
 	{
 		static int trickframe;
 
-		sys_clear_buffer = GX_FALSE;
+		sys_clear_buffers = GX_FALSE;
 
 		trickframe++;
 		if (trickframe & 1)
@@ -1172,11 +1181,16 @@ void R_Clear (void)
 	}
 	else
 	{
-		sys_clear_buffer = GX_TRUE;
+		if (gx_clear.value)
+		{
+			sys_clear_color_buffer = GX_TRUE;
+			Sbar_Changed();
+		} else
+			sys_clear_color_buffer = GX_FALSE;
+		sys_clear_buffers = GX_TRUE;
 		gxdepthmin = 0;
 		gxdepthmax = 1;
 		GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
-		Sbar_Changed();
 	}
 
 	GX_SetViewport (gx_viewport_x, gx_viewport_y, gx_viewport_width, gx_viewport_height, gxdepthmin, gxdepthmax);

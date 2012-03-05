@@ -99,7 +99,9 @@ u8 sys_previous_mouse_buttons;
 
 float sys_frame_length;
 
-u8 sys_clear_buffer = GX_TRUE;
+u8 sys_clear_buffers = GX_TRUE;
+
+u8 sys_clear_color_buffer = GX_TRUE;
 
 /*
 ===============================================================================
@@ -1238,9 +1240,11 @@ int main (int argc, char* argv[])
 		Host_Frame (sys_frame_length);
 #ifdef GXQUAKE
 		sys_frame_count++;
+		GX_SetColorUpdate(sys_clear_color_buffer);
+		GX_SetAlphaUpdate(sys_clear_color_buffer);
+		GX_CopyDisp(sys_framebuffer[sys_frame_count & 1], sys_clear_buffers);
 		GX_SetColorUpdate(GX_TRUE);
 		GX_SetAlphaUpdate(GX_TRUE);
-		GX_CopyDisp(sys_framebuffer[sys_frame_count & 1], sys_clear_buffer);
 		VIDEO_SetNextFramebuffer(sys_framebuffer[sys_frame_count & 1]);
 #endif
 		KEYBOARD_FlushEvents();
