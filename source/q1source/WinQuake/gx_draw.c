@@ -377,7 +377,7 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 				yend = 0;
 			if(yend > tex_height) 
 				yend = tex_height;
-			if(yend > 0) 
+			if(ybegin > 0) 
 				dst += (4 * ybegin * tex_height);
 			for(y = ybegin; y < yend; y += 4)
 			{
@@ -446,7 +446,7 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 				yend = 0;
 			if(yend > tex_height) 
 				yend = tex_height;
-			if(yend > 0) 
+			if(ybegin > 0) 
 				dst += (2 * ybegin * tex_height);
 			for(y = ybegin; y < yend; y += 4)
 			{
@@ -496,7 +496,7 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 				yend = 0;
 			if(yend > tex_height) 
 				yend = tex_height;
-			if(yend > 0) 
+			if(ybegin > 0) 
 				dst += (ybegin * tex_height);
 			for(y = ybegin; y < yend; y += 4)
 			{
@@ -543,7 +543,7 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 				yend = 0;
 			if(yend > tex_height) 
 				yend = tex_height;
-			if(yend > 0) 
+			if(ybegin > 0) 
 				dst += (ybegin * tex_height);
 			for(y = ybegin; y < yend; y += 4)
 			{
