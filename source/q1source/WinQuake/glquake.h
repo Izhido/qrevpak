@@ -252,3 +252,5 @@ extern qboolean gl_mtexable;
 
 void GL_DisableMultitexture(void);
 void GL_EnableMultitexture(void);
+
+void VID_DrawWmoteGuide(void);

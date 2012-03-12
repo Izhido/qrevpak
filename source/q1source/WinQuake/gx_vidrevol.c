@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifdef GXQUAKE
 
 #include <gccore.h>
+#include <wiiuse/wpad.h>
 #include <malloc.h>
 
 #include "quakedef.h"
@@ -43,6 +44,8 @@ static float vid_gamma = 1.0;
 qboolean gx_mtexable = false;
 
 extern GXRModeObj* sys_rmode;
+
+extern cvar_t in_osk;
 
 Mtx44 gx_projection_matrix;
 
@@ -82,6 +85,11 @@ f32 gx_viewport_width;
 
 f32 gx_viewport_height;
 
+double vid_guide_increment;
+
+int vid_pal_increment;
+
+int vid_guide_texture;
 /*
 ===============
 QGX_Init
@@ -123,6 +131,95 @@ void GX_BeginRendering (int *x, int *y, int *width, int *height)
 void GX_EndRendering (void)
 {
 	GX_DrawDone();
+}
+
+void VID_DrawWmoteGuide(void)
+{
+	ir_t p;
+	u32 k;
+	int r;
+	int w;
+	int sw;
+	int hsw;
+	unsigned int* guide;
+	double a;
+	int i;
+	int x;
+	int y;
+
+	WPAD_ScanPads();
+	WPAD_IR(WPAD_CHAN_0, &p);
+	if(p.valid)
+	{
+		k = WPAD_ButtonsHeld(WPAD_CHAN_0);
+		if((((k & WPAD_BUTTON_A) != WPAD_BUTTON_A)&&(wmotelookbinv.value == 0))
+		 ||(((k & WPAD_BUTTON_A) == WPAD_BUTTON_A)&&(wmotelookbinv.value != 0))
+		 ||(in_osk.value != 0))
+		{
+			r = 12 * vid.width / 320;
+			w = 2 * r;
+			for (sw = 1 ; sw < w ; sw<<=1)
+				;
+			hsw = sw / 2;
+
+			guide = Sys_BigStackAlloc(sw*sw * sizeof(unsigned), "VID_DrawWmoteGuide");
+
+			i = 0;
+			for(y = 0; y < sw; y++)
+			{
+				for(x = 0; x < sw; x++)
+				{
+					guide[i] = d_8to24table[255];
+					i++;
+				};
+			};
+
+			a = 0;
+			for(i = 0; i < 16; i++)
+			{
+				a = M_PI * i / 8;
+				x = hsw - r * cos(a + vid_guide_increment);
+				y = hsw - r * sin(a + vid_guide_increment);
+
+				guide[y*sw + x] = d_8to24table[vid_pal_increment];
+				guide[y*sw + x + 1] = d_8to24table[vid_pal_increment];
+
+				vid_pal_increment++;
+				if(vid_pal_increment > 255)
+				{
+					vid_pal_increment = 0;
+				};
+			};
+
+			if(!vid_guide_texture)
+				vid_guide_texture = texture_extension_number++;
+			
+			GX_Bind(vid_guide_texture);
+			GX_LoadAndBind(guide, sw*sw * 4, sw, sw, GX_TF_RGBA8);
+
+			GX_Begin (GX_QUADS, gx_cur_vertex_format, 4);
+			GX_Position3f32(p.x - hsw, p.y - hsw, 0);
+			GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+			GX_TexCoord2f32 (0, 0);
+			GX_Position3f32(p.x + hsw, p.y - hsw, 0);
+			GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+			GX_TexCoord2f32 (1, 0);
+			GX_Position3f32(p.x + hsw, p.y + hsw, 0);
+			GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+			GX_TexCoord2f32 (1, 1);
+			GX_Position3f32(p.x - hsw, p.y + hsw, 0);
+			GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+			GX_TexCoord2f32 (0, 1);
+			GX_End ();
+
+			Sys_BigStackFree(sw*sw * sizeof(unsigned), "VID_DrawWmoteGuide");
+		};
+		vid_guide_increment += 0.02;
+		if(vid_guide_increment > M_PI)
+		{
+			vid_guide_increment -= M_PI;
+		};
+	};
 }
 
 void	VID_SetPalette (unsigned char *palette)

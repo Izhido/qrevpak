@@ -921,6 +921,8 @@ void SCR_UpdateScreen (void)
 	V_UpdatePalette ();
 
 	GX_EndRendering ();
+
+	VID_DrawWmoteGuide ();
 }
 
 #endif

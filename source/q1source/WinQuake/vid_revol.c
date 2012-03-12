@@ -131,7 +131,7 @@ void VID_DrawWmoteGuide(void)
 			vb = ((u32*)(sys_framebuffer[sys_frame_count & 1]));
 			for(i = 0; i < 16; i++)
 			{
-				a = 3.14159265358979323846 * i / 8;
+				a = M_PI * i / 8;
 				x = p.x - r * cos(a + vid_guide_increment);
 				y = p.y - r * sin(a + vid_guide_increment);
 				if((x > vid_outerwidthborder)&&(x < (sys_rmode->viWidth - vid_outerwidthborder))&&(y > vid_outerheightborder)&&(y < (sys_rmode->viHeight - vid_outerheightborder)))
@@ -160,9 +160,9 @@ void VID_DrawWmoteGuide(void)
 			};
 		};
 		vid_guide_increment += 0.02;
-		if(vid_guide_increment > 3.14159265358979323846)
+		if(vid_guide_increment > M_PI)
 		{
-			vid_guide_increment -= 3.14159265358979323846;
+			vid_guide_increment -= M_PI;
 		};
 	};
 }

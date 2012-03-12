@@ -1239,6 +1239,10 @@ int main (int argc, char* argv[])
 		};
 		Host_Frame (sys_frame_length);
 #ifdef GXQUAKE
+		if(in_osk.value)
+		{
+			OSK_Draw(sys_rmode, sys_framebuffer[sys_frame_count & 1]);
+		};
 		sys_frame_count++;
 		GX_SetColorUpdate(sys_clear_color_buffer);
 		GX_SetAlphaUpdate(sys_clear_color_buffer);
