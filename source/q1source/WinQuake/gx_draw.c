@@ -117,6 +117,8 @@ gxtexture_t	gxtextures[MAX_GXTEXTURES];
 gxtexobj_t	gxtexobjs[MAX_GXTEXTURES];
 int			numgxtextures;
 
+static GLenum oldtarget = GX_TEXMAP0;
+
 
 void GX_Bind (int texnum)
 {
@@ -126,7 +128,7 @@ void GX_Bind (int texnum)
 		return;
 	currenttexture = texnum;
 	if(gxtexobjs[texnum].data != NULL)
-		GX_LoadTexObj(&gxtexobjs[texnum].texobj, GX_TEXMAP0);
+		GX_LoadTexObj(&gxtexobjs[texnum].texobj, oldtarget - GX_TEXMAP0);
 }
 
 qboolean GX_ReallocTex(int length, int width, int height)
@@ -315,7 +317,7 @@ void GX_BindCurrentTex(qboolean changed, int format, int mipmap)
 {
 	DCFlushRange(gxtexobjs[currenttexture].data, gxtexobjs[currenttexture].length);
 	GX_InitTexObj(&gxtexobjs[currenttexture].texobj, gxtexobjs[currenttexture].data, gxtexobjs[currenttexture].width, gxtexobjs[currenttexture].height, format, GX_REPEAT, GX_REPEAT, mipmap);
-	GX_LoadTexObj(&gxtexobjs[currenttexture].texobj, GX_TEXMAP0);
+	GX_LoadTexObj(&gxtexobjs[currenttexture].texobj, oldtarget - GX_TEXMAP0);
 	if(changed)
 		GX_InvalidateTexAll();
 }
@@ -1724,18 +1726,18 @@ int GX_LoadPicTexture (qpic_t *pic)
 
 /****************************************/
 
-static GLenum oldtarget = TEXTURE0_SGIS;
-
 void GX_SelectTexture (GLenum target) 
 {
 	if (!gx_mtexable)
 		return;
-	qgxSelectTextureSGIS(target);
 	if (target == oldtarget) 
 		return;
-	cnttextures[oldtarget-TEXTURE0_SGIS] = currenttexture;
-	currenttexture = cnttextures[target-TEXTURE0_SGIS];
+	cnttextures[oldtarget-GX_TEXMAP0] = currenttexture;
+	currenttexture = cnttextures[target-GX_TEXMAP0];
 	oldtarget = target;
+	if(currenttexture >= 0)
+		if(gxtexobjs[currenttexture].data != NULL)
+			GX_LoadTexObj(&gxtexobjs[currenttexture].texobj, oldtarget - GX_TEXMAP0);
 }
 
 #endif

@@ -395,9 +395,6 @@
     <ClInclude Include="..\..\..\source\q1source\QW\client\render.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\q1source\QW\client\resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\source\q1source\QW\client\r_local.h">
       <Filter>Header Files</Filter>
     </ClInclude>

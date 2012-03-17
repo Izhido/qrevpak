@@ -242,14 +242,6 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 void GX_SetMinMag (int minfilt, int magfilt);
 
 // Multitexture
-#define    TEXTURE0_SGIS				0x835E
-#define    TEXTURE1_SGIS				0x835F
-
-typedef void (*lpMTexFUNC) (GLenum, GLfloat, GLfloat);
-typedef void (*lpSelTexFUNC) (GLenum);
-extern lpMTexFUNC qgxMTexCoord2fSGIS;
-extern lpSelTexFUNC qgxSelectTextureSGIS;
-
 extern qboolean gx_mtexable;
 
 void GX_DisableMultitexture(void);

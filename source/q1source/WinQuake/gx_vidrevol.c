@@ -90,6 +90,15 @@ double vid_guide_increment;
 int vid_pal_increment;
 
 int vid_guide_texture;
+
+void CheckMultiTextureExtensions(void) 
+{
+	if (!COM_CheckParm("-nomtex")) {
+		Con_Printf("Multitexture extensions found.\n");
+		//************************* ACTIVATE THIS ASAP: gx_mtexable = true;
+	}
+}
+
 /*
 ===============
 QGX_Init
@@ -97,6 +106,8 @@ QGX_Init
 */
 void QGX_Init (void)
 {
+	CheckMultiTextureExtensions();
+
 	gx_cull_mode = GX_CULL_BACK;
 	if(gx_cull_enabled)
 	{

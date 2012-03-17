@@ -333,9 +333,6 @@ extern	float	speedscale;		// for top sky and bottom sky
 void DrawGXWaterPoly (gxpoly_t *p);
 void DrawGXWaterPolyLightmap (gxpoly_t *p);
 
-lpMTexFUNC qgxMTexCoord2fSGIS = NULL;
-lpSelTexFUNC qgxSelectTextureSGIS = NULL;
-
 qboolean mtexenabled = false;
 
 void GX_SelectTexture (GLenum target);
@@ -343,11 +340,9 @@ void GX_SelectTexture (GLenum target);
 void GX_DisableMultitexture(void) 
 {
 	if (mtexenabled) {
-		gx_cur_vertex_format = GX_VTXFMT0;
- 		GX_SetVtxDesc(GX_VA_TEX0, GX_NONE);
-		GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
-		GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
-		GX_SelectTexture(TEXTURE0_SGIS);
+		GX_SetVtxDesc(GX_VA_TEX1, GX_NONE);
+		GX_SetNumTevStages(1);
+		GX_SetNumTexGens(1);
 		mtexenabled = false;
 	}
 }
@@ -355,11 +350,10 @@ void GX_DisableMultitexture(void)
 void GX_EnableMultitexture(void) 
 {
 	if (gx_mtexable) {
-		GX_SelectTexture(TEXTURE1_SGIS);
-		gx_cur_vertex_format = GX_VTXFMT1;
- 		GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
- 		GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
-		GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
+		GX_SelectTexture(GX_TEXMAP1);
+		GX_SetNumTexGens(2);
+		GX_SetNumTevStages(2);
+		GX_SetVtxDesc(GX_VA_TEX1, GX_DIRECT);
 		mtexenabled = true;
 	}
 }
@@ -499,7 +493,7 @@ void R_DrawSequentialPoly (msurface_t *s)
 
 			t = R_TextureAnimation (s->texinfo->texture);
 			// Binds world to texture env 0
-			GX_SelectTexture(TEXTURE0_SGIS);
+			GX_SelectTexture(GX_TEXMAP0);
 			GX_Bind (t->gx_texturenum);
 			GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
 			// Binds lightmap to texenv 1
@@ -516,18 +510,17 @@ void R_DrawSequentialPoly (msurface_t *s)
 				theRect->h = 0;
 				theRect->w = 0;
 			}
-			GX_SetTevOp(GX_TEVSTAGE0, GX_BLEND);
-			/**************************************** THIS SHOULD BE POSSIBLE IN GX. REIMPLEMENT ASAP:
-			glBegin(GL_POLYGON);
+			GX_SetTevOp(GX_TEVSTAGE1, GX_BLEND);
+			GX_Begin(GX_TRIANGLEFAN, gx_cur_vertex_format, p->numverts);
 			v = p->verts[0];
 			for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 			{
-				qgxMTexCoord2fSGIS (TEXTURE0_SGIS, v[3], v[4]);
-				qgxMTexCoord2fSGIS (TEXTURE1_SGIS, v[5], v[6]);
-				glVertex3fv (v);
+				GX_Position3f32(v[0], v[1], v[2]);
+				GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+				GX_TexCoord2f32 (v[3], v[4]);
+				GX_TexCoord2f32 (v[5], v[6]);
 			}
-			glEnd ();
-			*********************************************************************************/
+			GX_End();
 			return;
 		} else {
 			p = s->polys;
@@ -604,7 +597,7 @@ void R_DrawSequentialPoly (msurface_t *s)
 		p = s->polys;
 
 		t = R_TextureAnimation (s->texinfo->texture);
-		GX_SelectTexture(TEXTURE0_SGIS);
+		GX_SelectTexture(GX_TEXMAP0);
 		GX_Bind (t->gx_texturenum);
 		GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
 		GX_EnableMultitexture();
@@ -620,23 +613,21 @@ void R_DrawSequentialPoly (msurface_t *s)
 			theRect->h = 0;
 			theRect->w = 0;
 		}
-		GX_SetTevOp(GX_TEVSTAGE0, GX_BLEND);
-		/**************************************** THIS SHOULD BE POSSIBLE IN GX. REIMPLEMENT ASAP:
-		glBegin (GL_TRIANGLE_FAN);
+		GX_SetTevOp(GX_TEVSTAGE1, GX_BLEND);
+		GX_Begin(GX_TRIANGLEFAN, gx_cur_vertex_format, p->numverts);
 		v = p->verts[0];
 		for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 		{
-			qgxMTexCoord2fSGIS (TEXTURE0_SGIS, v[3], v[4]);
-			qgxMTexCoord2fSGIS (TEXTURE1_SGIS, v[5], v[6]);
-
 			nv[0] = v[0] + 8*sin(v[1]*0.05+realtime)*sin(v[2]*0.05+realtime);
 			nv[1] = v[1] + 8*sin(v[0]*0.05+realtime)*sin(v[2]*0.05+realtime);
 			nv[2] = v[2];
 
-			glVertex3fv (nv);
+			GX_Position3f32(nv[0], nv[1], nv[2]);
+			GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+			GX_TexCoord2f32 (v[3], v[4]);
+			GX_TexCoord2f32 (v[5], v[6]);
 		}
-		glEnd ();
-		*********************************************************************************/
+		GX_End();
 
 	} else {
 		p = s->polys;
@@ -1796,7 +1787,7 @@ void GX_BuildLightmaps (void)
 	}
 
  	if (!gx_texsort.value)
- 		GX_SelectTexture(TEXTURE1_SGIS);
+ 		GX_SelectTexture(GX_TEXMAP1);
 
 	//
 	// upload all lightmaps that were filled
@@ -1816,7 +1807,7 @@ void GX_BuildLightmaps (void)
 	}
 
  	if (!gx_texsort.value)
- 		GX_SelectTexture(TEXTURE0_SGIS);
+ 		GX_SelectTexture(GX_TEXMAP0);
 
 }
 

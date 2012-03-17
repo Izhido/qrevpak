@@ -69,39 +69,6 @@
     <ClCompile Include="..\..\..\source\q1source\WinQuake\draw.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\d_edge.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\d_init.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\d_modech.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\d_part.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\d_polyse.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\d_scan.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\d_sky.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\d_sprite.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\d_surf.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\d_vars.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\d_zpoint.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\q1source\WinQuake\host.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -118,9 +85,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\q1source\WinQuake\menu.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\model.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\q1source\WinQuake\net_dgrm.c">
@@ -153,46 +117,7 @@
     <ClCompile Include="..\..\..\source\q1source\WinQuake\pr_exec.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\r_aclip.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\r_alias.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\r_bsp.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\r_draw.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\r_edge.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\r_efrag.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\r_light.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\r_main.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\r_misc.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\q1source\WinQuake\r_part.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\r_sky.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\r_sprite.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\r_surf.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\r_vars.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\q1source\WinQuake\sbar.c">
@@ -226,9 +151,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\q1source\WinQuake\sys_revol.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\vid_revol.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\q1source\WinQuake\view.c">
@@ -299,9 +221,6 @@
     <ClInclude Include="..\..\..\source\q1source\WinQuake\asm_draw.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\q1source\WinQuake\asm_i386.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\source\q1source\WinQuake\block16.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -335,9 +254,6 @@
     <ClInclude Include="..\..\..\source\q1source\WinQuake\cvar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\q1source\WinQuake\dosisms.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\source\q1source\WinQuake\draw.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -348,18 +264,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\source\q1source\WinQuake\d_local.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\q1source\WinQuake\glquake.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\q1source\WinQuake\glquake2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\q1source\WinQuake\gl_model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\q1source\WinQuake\gl_warp_sin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\source\q1source\WinQuake\input.h">
@@ -378,9 +282,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\source\q1source\WinQuake\modelgen.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\q1source\WinQuake\mpdosock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\source\q1source\WinQuake\net.h">
@@ -437,9 +338,6 @@
     <ClInclude Include="..\..\..\source\q1source\WinQuake\render.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\q1source\WinQuake\resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\source\q1source\WinQuake\r_local.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -464,25 +362,13 @@
     <ClInclude Include="..\..\..\source\q1source\WinQuake\sys.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\q1source\WinQuake\vgamodes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\source\q1source\WinQuake\vid.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\q1source\WinQuake\vid_dos.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\source\q1source\WinQuake\view.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\q1source\WinQuake\vregset.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\source\q1source\WinQuake\wad.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\q1source\WinQuake\winquake.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\source\q1source\WinQuake\world.h">
