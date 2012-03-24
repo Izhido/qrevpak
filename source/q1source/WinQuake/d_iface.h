@@ -50,11 +50,7 @@ typedef struct particle_s
 	vec3_t		vel;
 	float		ramp;
 	float		die;
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Enums are not guaranteed to be sizeof(int) in this platform. Replacing:
-	//ptype_t		type;
-	int type;
-// <<< FIX
+	ptype_t		type;
 } particle_t;
 
 #define PARTICLE_Z_CLIP	8.0

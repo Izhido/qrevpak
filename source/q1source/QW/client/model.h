@@ -215,11 +215,7 @@ typedef struct
 
 typedef struct
 {
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Enums are not guaranteed to be sizeof(int) in this platform. Replacing:
-	//spriteframetype_t	type;
-	int type;
-// <<< FIX
+	spriteframetype_t	type;
 	mspriteframe_t		*frameptr;
 } mspriteframedesc_t;
 
@@ -246,11 +242,7 @@ Alias models are position independent, so the cache manager can move them.
 
 typedef struct
 {
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Enums are not guaranteed to be sizeof(int) in this platform. Replacing:
-	//aliasframetype_t	type;
-	int type;
-// <<< FIX
+	aliasframetype_t	type;
 	trivertx_t			bboxmin;
 	trivertx_t			bboxmax;
 	int					frame;
@@ -259,11 +251,7 @@ typedef struct
 
 typedef struct
 {
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Enums are not guaranteed to be sizeof(int) in this platform. Replacing:
-	//aliasskintype_t		type;
-	int type;
-// <<< FIX
+	aliasskintype_t		type;
 	void				*pcachespot;
 	int					skin;
 } maliasskindesc_t;
@@ -325,17 +313,9 @@ typedef struct model_s
 	char		name[MAX_QPATH];
 	qboolean	needload;		// bmodels and sprites don't cache normally
 
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Enums are not guaranteed to be sizeof(int) in this platform. Replacing:
-	//modtype_t	type;
-	int type;
-// <<< FIX
+	modtype_t	type;
 	int			numframes;
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Enums are not guaranteed to be sizeof(int) in this platform. Replacing:
-	//synctype_t	synctype;
-	int synctype;
-// <<< FIX
+	synctype_t	synctype;
 	
 	int			flags;
 

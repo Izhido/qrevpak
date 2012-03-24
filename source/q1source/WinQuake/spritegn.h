@@ -76,11 +76,7 @@ typedef struct {
 	int			height;
 	int			numframes;
 	float		beamlength;
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Enums are not guaranteed to be sizeof(int) in this platform. Replacing:
-	//synctype_t	synctype;
-	int synctype;
-// <<< FIX
+	synctype_t	synctype;
 } dsprite_t;
 
 #define SPR_VP_PARALLEL_UPRIGHT		0
@@ -106,11 +102,7 @@ typedef struct {
 typedef enum { SPR_SINGLE=0, SPR_GROUP } spriteframetype_t;
 
 typedef struct {
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Enums are not guaranteed to be sizeof(int) in this platform. Replacing:
-	//spriteframetype_t	type;
-	int type;
-// <<< FIX
+	spriteframetype_t	type;
 } dspriteframetype_t;
 
 #define IDSPRITEHEADER	(('P'<<24)+('S'<<16)+('D'<<8)+'I')

@@ -110,11 +110,7 @@ ca_connected		// valid netcon, talking to a server
 //
 typedef struct
 {
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Enums are not guaranteed to be sizeof(int) in this platform. Replacing:
-	//cactive_t	state;
-	int state;
-// <<< FIX
+	cactive_t	state;
 
 // personalization data sent to server	
 	char		mapstring[MAX_QPATH];

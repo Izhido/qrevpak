@@ -24,22 +24,10 @@ typedef unsigned char 		byte;
 #define BYTE_DEFINED 1
 #endif
 
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// bool is already defined there
-#if !defined QBOOLEAN_DEFINED
 #undef true
 #undef false
 
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Enums are not guaranteed to be sizeof(int) in this platform. Replacing:
-//typedef enum {false, true}	qboolean;
-#define true 1
-#define false 0
-typedef int qboolean;
-// <<< FIX
-#define QBOOLEAN_DEFINED 1
-#endif
-// <<< FIX
+typedef enum {false, true}	qboolean;
 
 //============================================================================
 

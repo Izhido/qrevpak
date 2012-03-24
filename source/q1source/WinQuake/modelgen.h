@@ -69,11 +69,7 @@ typedef struct {
 	int			numverts;
 	int			numtris;
 	int			numframes;
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Enums are not guaranteed to be sizeof(int) in this platform. Replacing:
-	//synctype_t	synctype;
-	int synctype;
-// <<< FIX
+	synctype_t	synctype;
 	int			flags;
 	float		size;
 } mdl_t;
@@ -126,19 +122,11 @@ typedef struct {
 } daliasskininterval_t;
 
 typedef struct {
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Enums are not guaranteed to be sizeof(int) in this platform. Replacing:
-	//aliasframetype_t	type;
-	int type;
-// <<< FIX
+	aliasframetype_t	type;
 } daliasframetype_t;
 
 typedef struct {
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Enums are not guaranteed to be sizeof(int) in this platform. Replacing:
-	//aliasskintype_t	type;
-	int type;
-// <<< FIX
+	aliasskintype_t	type;
 } daliasskintype_t;
 
 #define IDPOLYHEADER	(('O'<<24)+('P'<<16)+('D'<<8)+'I')

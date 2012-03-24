@@ -59,11 +59,7 @@ typedef struct
 	edict_t		*edicts;			// can NOT be array indexed, because
 									// edict_t is variable sized, but can
 									// be used to reference the world ent
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Enums are not guaranteed to be sizeof(int) in this platform. Replacing:
-	//server_state_t	state;			// some actions are only valid during load
-	int state;			// some actions are only valid during load
-// <<< FIX
+	server_state_t	state;			// some actions are only valid during load
 
 	sizebuf_t	datagram;
 	byte		datagram_buf[MAX_DATAGRAM];

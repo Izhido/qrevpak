@@ -161,11 +161,7 @@ typedef enum {
 typedef struct
 {
 // connection information
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Enums are not guaranteed to be sizeof(int) in this platform. Replacing:
-	//cactive_t	state;
-	int state;
-// <<< FIX
+	cactive_t	state;
 	
 // network stuff
 	netchan_t	netchan;

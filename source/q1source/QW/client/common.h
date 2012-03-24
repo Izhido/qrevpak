@@ -23,22 +23,10 @@ typedef unsigned char 		byte;
 #define _DEF_BYTE_
 
 // KJB Undefined true and false defined in SciTech's DEBUG.H header
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// bool is already defined there
-#if !defined QBOOLEAN_DEFINED
 #undef true
 #undef false
 
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Enums are not guaranteed to be sizeof(int) in this platform. Replacing:
-//typedef enum {false, true}	qboolean;
-#define true 1
-#define false 0
-typedef int qboolean;
-// <<< FIX
-#define QBOOLEAN_DEFINED 1
-#endif
-// <<< FIX
+typedef enum {false, true}	qboolean;
 
 #define	MAX_INFO_STRING	196
 #define	MAX_SERVERINFO_STRING	512
