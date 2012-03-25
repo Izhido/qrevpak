@@ -281,10 +281,10 @@ void BuildTris (void)
 
 /*
 ================
-GL_MakeAliasModelDisplayLists
+GX_MakeAliasModelDisplayLists
 ================
 */
-void GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr)
+void GX_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr)
 {
 	int		i, j;
 	int			*cmds;
@@ -298,8 +298,8 @@ void GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr)
 	//
 	// look for a cached version
 	//
-	strcpy (cache, "glquake/");
-	COM_StripExtension (m->name+strlen("progs/"), cache+strlen("glquake/"));
+	strcpy (cache, "gxquake/");
+	COM_StripExtension (m->name+strlen("progs/"), cache+strlen("gxquake/"));
 	strcat (cache, ".ms2");
 
 	COM_FOpenFile (cache, &f);	
@@ -328,7 +328,7 @@ void GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr)
 		if (!f) {
 			char gldir[MAX_OSPATH];
 
-			sprintf (gldir, "%s/glquake", com_gamedir);
+			sprintf (gldir, "%s/gxquake", com_gamedir);
 			Sys_mkdir (gldir);
 			f = fopen (fullpath, "wb");
 		}

@@ -21,7 +21,53 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #ifdef GXQUAKE
 
+#include <gccore.h>
+
 #include "quakedef.h"
+
+extern Mtx44 gx_projection_matrix;
+
+extern Mtx gx_modelview_matrices[32];
+
+extern int gx_cur_modelview_matrix;
+
+extern qboolean gx_cull_enabled;
+
+extern u8 gx_cull_mode;
+
+extern u8 gx_z_test_enabled;
+
+extern u8 gx_z_write_enabled;
+
+extern qboolean gx_blend_enabled;
+
+extern u8 gx_blend_src_value;
+
+extern u8 gx_blend_dst_value;
+
+extern u8 gx_cur_vertex_format;
+
+extern u8 gx_cur_r;
+
+extern u8 gx_cur_g;
+
+extern u8 gx_cur_b;
+
+extern u8 gx_cur_a;
+
+extern int gx_tex_allocated;
+
+extern f32 gx_viewport_x;
+
+extern f32 gx_viewport_y;
+
+extern f32 gx_viewport_width;
+
+extern f32 gx_viewport_height;
+
+extern u8 sys_clear_buffers;
+
+extern u8 sys_clear_color_buffer;
 
 entity_t	r_worldentity;
 
@@ -46,7 +92,7 @@ int			cnttextures[2] = {-1, -1};     // cached
 int			particletexture;	// little dot for particles
 int			playertextures;		// up to 16 color translated skins
 
-int			mirrortexturenum;	// quake texturenum, not gltexturenum
+int			mirrortexturenum;	// quake texturenum, not gxtexturenum
 qboolean	mirror;
 mplane_t	*mirror_plane;
 
@@ -58,8 +104,8 @@ vec3_t	vpn;
 vec3_t	vright;
 vec3_t	r_origin;
 
-float	r_world_matrix[16];
-float	r_base_world_matrix[16];
+Mtx		r_world_matrix;
+Mtx		r_base_world_matrix;
 
 //
 // screen size info
@@ -88,18 +134,19 @@ cvar_t	r_dynamic = {"r_dynamic","1"};
 cvar_t	r_novis = {"r_novis","0"};
 cvar_t	r_netgraph = {"r_netgraph","0"};
 
-cvar_t	gl_clear = {"gl_clear","0"};
-cvar_t	gl_cull = {"gl_cull","1"};
-cvar_t	gl_texsort = {"gl_texsort","1"};
-cvar_t	gl_smoothmodels = {"gl_smoothmodels","1"};
-cvar_t	gl_affinemodels = {"gl_affinemodels","0"};
-cvar_t	gl_polyblend = {"gl_polyblend","1"};
-cvar_t	gl_flashblend = {"gl_flashblend","1"};
-cvar_t	gl_playermip = {"gl_playermip","0"};
-cvar_t	gl_nocolors = {"gl_nocolors","0"};
-cvar_t	gl_keeptjunctions = {"gl_keeptjunctions","1"};
-cvar_t	gl_reporttjunctions = {"gl_reporttjunctions","0"};
-cvar_t	gl_finish = {"gl_finish","0"};
+cvar_t	gx_clear = {"gx_clear","0"};
+cvar_t	gx_cull = {"gx_cull","1"};
+cvar_t	gx_texsort = {"gx_texsort","1"};
+cvar_t	gx_smoothmodels = {"gx_smoothmodels","1"};
+cvar_t	gx_affinemodels = {"gx_affinemodels","0"};
+cvar_t	gx_polyblend = {"gx_polyblend","1"};
+cvar_t	gx_flashblend = {"gx_flashblend","1"};
+cvar_t	gx_playermip = {"gx_playermip","0"};
+cvar_t	gx_nocolors = {"gx_nocolors","0"};
+cvar_t	gx_keeptjunctions = {"gx_keeptjunctions","1"};
+cvar_t	gx_reporttjunctions = {"gx_reporttjunctions","0"};
+cvar_t	gx_doubleeyes = {"gx_doubleeys", "1"};
+
 
 extern	cvar_t	gl_ztrick;
 extern	cvar_t	scr_fov;
@@ -123,12 +170,25 @@ qboolean R_CullBox (vec3_t mins, vec3_t maxs)
 
 void R_RotateForEntity (entity_t *e)
 {
-    glTranslatef (e->origin[0],  e->origin[1],  e->origin[2]);
+	Mtx m;
+	guVector a;
 
-    glRotatef (e->angles[1],  0, 0, 1);
-    glRotatef (-e->angles[0],  0, 1, 0);
+	guMtxTrans(m, e->origin[0],  e->origin[1],  e->origin[2]);
+	guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
+	a.x = 0;
+	a.y = 0;
+	a.z = 1;
+	guMtxRotAxisDeg(m, &a, e->angles[1]);
+	guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
+	a.y = 1;
+	a.z = 0;
+	guMtxRotAxisDeg(m, &a, -e->angles[0]);
+	guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
 	//ZOID: fixed z angle
-    glRotatef (e->angles[2],  1, 0, 0);
+	a.x = 1;
+	a.y = 0;
+	guMtxRotAxisDeg(m, &a, e->angles[2]);
+	guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
 }
 
 /*
@@ -222,41 +282,45 @@ void R_DrawSpriteModel (entity_t *e)
 		right = vright;
 	}
 
-	glColor3f (1,1,1);
+	gx_cur_r = 255;
+	gx_cur_g = 255;
+	gx_cur_b = 255;
+	gx_cur_a = 255;
 
-	GL_DisableMultitexture();
+	GX_DisableMultitexture();
 
-    GL_Bind(frame->gl_texturenum);
+    GX_Bind(frame->gx_texturenum);
 
-	glEnable (GL_ALPHA_TEST);
-	glBegin (GL_QUADS);
+	GX_SetAlphaCompare(GX_GREATER, 170, GX_AOP_AND, GX_LEQUAL, 255);
+	GX_Begin (GX_QUADS, gx_cur_vertex_format, 4);
 
-	glEnable (GL_ALPHA_TEST);
-	glBegin (GL_QUADS);
-
-	glTexCoord2f (0, 1);
 	VectorMA (e->origin, frame->down, up, point);
 	VectorMA (point, frame->left, right, point);
-	glVertex3fv (point);
+	GX_Position3f32(*(point), *(point + 1), *(point + 2));
+	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_TexCoord2f32 (0, 1);
 
-	glTexCoord2f (0, 0);
 	VectorMA (e->origin, frame->up, up, point);
 	VectorMA (point, frame->left, right, point);
-	glVertex3fv (point);
+	GX_Position3f32(*(point), *(point + 1), *(point + 2));
+	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_TexCoord2f32 (0, 0);
 
-	glTexCoord2f (1, 0);
 	VectorMA (e->origin, frame->up, up, point);
 	VectorMA (point, frame->right, right, point);
-	glVertex3fv (point);
+	GX_Position3f32(*(point), *(point + 1), *(point + 2));
+	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_TexCoord2f32 (1, 0);
 
-	glTexCoord2f (1, 1);
 	VectorMA (e->origin, frame->down, up, point);
 	VectorMA (point, frame->right, right, point);
-	glVertex3fv (point);
+	GX_Position3f32(*(point), *(point + 1), *(point + 2));
+	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_TexCoord2f32 (1, 1);
 	
-	glEnd ();
+	GX_End ();
 
-	glDisable (GL_ALPHA_TEST);
+	GX_SetAlphaCompare(GX_GEQUAL, 0, GX_AOP_AND, GX_LEQUAL, 255);
 }
 
 /*

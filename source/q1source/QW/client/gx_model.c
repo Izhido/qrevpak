@@ -24,6 +24,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #ifdef GXQUAKE
 
+#include <gccore.h>
+
 #include "quakedef.h"
 
 model_t	*loadmodel;
@@ -40,7 +42,7 @@ byte	mod_novis[MAX_MAP_LEAFS/8];
 model_t	mod_known[MAX_MOD_KNOWN];
 int		mod_numknown;
 
-cvar_t gl_subdivide_size = {"gl_subdivide_size", "128", true};
+cvar_t gx_subdivide_size = {"gx_subdivide_size", "128", true};
 
 /*
 ===============
@@ -49,7 +51,7 @@ Mod_Init
 */
 void Mod_Init (void)
 {
-	Cvar_RegisterVariable (&gl_subdivide_size);
+	Cvar_RegisterVariable (&gx_subdivide_size);
 	memset (mod_novis, 0xff, sizeof(mod_novis));
 }
 
@@ -240,7 +242,7 @@ model_t *Mod_LoadModel (model_t *mod, qboolean crash)
 {
 	void	*d;
 	unsigned *buf;
-	byte	stackbuf[1024];		// avoid dirtying the cache heap
+	byte*	stackbuf;
 
 	if (!mod->needload)
 	{
@@ -265,7 +267,8 @@ model_t *Mod_LoadModel (model_t *mod, qboolean crash)
 //
 // load the file
 //
-	buf = (unsigned *)COM_LoadStackFile (mod->name, stackbuf, sizeof(stackbuf));
+	stackbuf = Sys_BigStackAlloc(1024 * sizeof(byte), "Mod_LoadModel");
+	buf = (unsigned *)COM_LoadStackFile (mod->name, stackbuf, 1024);
 	if (!buf)
 	{
 		if (crash)
@@ -302,6 +305,7 @@ model_t *Mod_LoadModel (model_t *mod, qboolean crash)
 		break;
 	}
 
+	Sys_BigStackFree(1024 * sizeof(byte), "Mod_LoadModel");
 	return mod;
 }
 
@@ -389,9 +393,9 @@ void Mod_LoadTextures (lump_t *l)
 			R_InitSky (tx);
 		else
 		{
-			texture_mode = GL_LINEAR_MIPMAP_NEAREST; //_LINEAR;
-			tx->gl_texturenum = GL_LoadTexture (mt->name, tx->width, tx->height, (byte *)(tx+1), true, false);
-			texture_mode = GL_LINEAR;
+			texture_mode = GX_LIN_MIP_NEAR; //_LINEAR;
+			tx->gx_texturenum = GX_LoadTexture (mt->name, tx->width, tx->height, (byte *)(tx+1), true, false);
+			texture_mode = GX_LINEAR;
 		}
 	}
 
@@ -805,7 +809,7 @@ void Mod_LoadFaces (lump_t *l)
 		{
 			out->flags |= (SURF_DRAWSKY | SURF_DRAWTILED);
 #ifndef QUAKE2
-			GL_SubdivideSurface (out);	// cut up polygon for warps
+			GX_SubdivideSurface (out);	// cut up polygon for warps
 #endif
 			continue;
 		}
@@ -818,7 +822,7 @@ void Mod_LoadFaces (lump_t *l)
 				out->extents[i] = 16384;
 				out->texturemins[i] = -8192;
 			}
-			GL_SubdivideSurface (out);	// cut up polygon for warps
+			GX_SubdivideSurface (out);	// cut up polygon for warps
 			continue;
 		}
 
@@ -936,7 +940,7 @@ void Mod_LoadLeafs (lump_t *l)
 		for (j=0 ; j<4 ; j++)
 			out->ambient_sound_level[j] = in->ambient_level[j];
 
-		// gl underwater warp
+		// gx underwater warp
 		if (out->contents != CONTENTS_EMPTY)
 		{
 			for (j=0 ; j<out->nummarksurfaces ; j++)
@@ -1469,11 +1473,11 @@ void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype)
 				memcpy (player_8bit_texels, (byte *)(pskintype + 1), s);
 			}
 			sprintf (name, "%s_%i", loadmodel->name, i);
-			pheader->gl_texturenum[i][0] =
-			pheader->gl_texturenum[i][1] =
-			pheader->gl_texturenum[i][2] =
-			pheader->gl_texturenum[i][3] =
-				GL_LoadTexture (name, pheader->skinwidth, 
+			pheader->gx_texturenum[i][0] =
+			pheader->gx_texturenum[i][1] =
+			pheader->gx_texturenum[i][2] =
+			pheader->gx_texturenum[i][3] =
+				GX_LoadTexture (name, pheader->skinwidth, 
 				pheader->skinheight, (byte *)(pskintype + 1), true, false);
 			pskintype = (daliasskintype_t *)((byte *)(pskintype+1) + s);
 		} else {
@@ -1489,15 +1493,15 @@ void *Mod_LoadAllSkins (int numskins, daliasskintype_t *pskintype)
 			{
 					Mod_FloodFillSkin( skin, pheader->skinwidth, pheader->skinheight );
 					sprintf (name, "%s_%i_%i", loadmodel->name, i,j);
-					pheader->gl_texturenum[i][j&3] = 
-						GL_LoadTexture (name, pheader->skinwidth, 
+					pheader->gx_texturenum[i][j&3] = 
+						GX_LoadTexture (name, pheader->skinwidth, 
 						pheader->skinheight, (byte *)(pskintype), true, false);
 					pskintype = (daliasskintype_t *)((byte *)(pskintype) + s);
 			}
 			k = j;
 			for (/* */; j < 4; j++)
-				pheader->gl_texturenum[i][j&3] = 
-				pheader->gl_texturenum[i][j - k]; 
+				pheader->gx_texturenum[i][j&3] = 
+				pheader->gx_texturenum[i][j - k]; 
 		}
 	}
 
@@ -1680,7 +1684,7 @@ void Mod_LoadAliasModel (model_t *mod, void *buffer)
 	//
 	// build the draw lists
 	//
-	GL_MakeAliasModelDisplayLists (mod, pheader);
+	GX_MakeAliasModelDisplayLists (mod, pheader);
 
 //
 // move the complete, relocatable alias model to the cache
@@ -1733,7 +1737,7 @@ void * Mod_LoadSpriteFrame (void * pin, mspriteframe_t **ppframe, int framenum)
 	pspriteframe->right = width + origin[0];
 
 	sprintf (name, "%s_%i", loadmodel->name, framenum);
-	pspriteframe->gl_texturenum = GL_LoadTexture (name, width, height, (byte *)(pinframe + 1), true, true);
+	pspriteframe->gx_texturenum = GX_LoadTexture (name, width, height, (byte *)(pinframe + 1), true, true);
 
 	return (void *)((byte *)pinframe + sizeof (dspriteframe_t) + size);
 }

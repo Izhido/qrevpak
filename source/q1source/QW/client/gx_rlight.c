@@ -21,7 +21,30 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #ifdef GXQUAKE
 
+#include <gccore.h>
+
 #include "quakedef.h"
+
+extern u8 gx_z_test_enabled;
+
+extern u8 gx_z_write_enabled;
+
+extern qboolean gx_blend_enabled;
+
+extern u8 gx_blend_src_value;
+
+extern u8 gx_blend_dst_value;
+
+extern u8 gx_cur_vertex_format;
+
+extern u8 gx_cur_r;
+
+extern u8 gx_cur_g;
+
+extern u8 gx_cur_b;
+
+extern u8 gx_cur_a;
+
 
 int	r_dlightframecount;
 
@@ -77,7 +100,8 @@ void AddLightBlend (float r, float g, float b, float a2)
 
 float bubble_sintable[17], bubble_costable[17];
 
-void R_InitBubble() {
+void R_InitBubble(void) 
+{
 	float a;
 	int i;
 	float *bub_sin, *bub_cos;
@@ -112,26 +136,23 @@ void R_RenderDlight (dlight_t *light)
 		return;
 	}
 
-	glBegin (GL_TRIANGLE_FAN);
-//	glColor3f (0.2,0.1,0.0);
-//	glColor3f (0.2,0.1,0.05); // changed dimlight effect
-	glColor4f (light->color[0], light->color[1], light->color[2],
-		light->color[3]);
+	GX_Begin (GX_TRIANGLEFAN, GX_VTXFMT0, 18);
 	for (i=0 ; i<3 ; i++)
 		v[i] = light->origin[i] - vpn[i]*rad;
-	glVertex3fv (v);
-	glColor3f (0,0,0);
+	GX_Position3f32(v[0], v[1], v[2]);
+	GX_Color4u8(51, 25, 0, 255);
 	for (i=16 ; i>=0 ; i--)
 	{
 //		a = i/16.0 * M_PI*2;
 		for (j=0 ; j<3 ; j++)
 			v[j] = light->origin[j] + (vright[j]*(*bub_cos) +
-				+ vup[j]*(*bub_sin)) * rad;
+				+ vup[j]*(*bub_sin))*rad;
 		bub_sin++; 
 		bub_cos++;
-		glVertex3fv (v);
+		GX_Position3f32(v[0], v[1], v[2]);
+		GX_Color4u8(0, 0, 0, 255);
 	}
-	glEnd ();
+	GX_End ();
 }
 
 /*
@@ -144,17 +165,21 @@ void R_RenderDlights (void)
 	int		i;
 	dlight_t	*l;
 
-	if (!gl_flashblend.value)
+	if (!gx_flashblend.value)
 		return;
 
 	r_dlightframecount = r_framecount + 1;	// because the count hasn't
 											//  advanced yet for this frame
-	glDepthMask (0);
-	glDisable (GL_TEXTURE_2D);
+	gx_z_write_enabled = GX_FALSE;
+	GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
+	gx_cur_vertex_format = GX_VTXFMT0;
+ 	GX_SetVtxDesc(GX_VA_TEX0, GX_NONE);
+	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
 	glShadeModel (GL_SMOOTH);
-	glEnable (GL_BLEND);
-	glBlendFunc (GL_ONE, GL_ONE);
-
+	gx_blend_src_value = GX_BL_ONE;
+	gx_blend_dst_value = GX_BL_ONE;
+	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 	l = cl_dlights;
 	for (i=0 ; i<MAX_DLIGHTS ; i++, l++)
 	{
@@ -162,12 +187,19 @@ void R_RenderDlights (void)
 			continue;
 		R_RenderDlight (l);
 	}
-
-	glColor3f (1,1,1);
-	glDisable (GL_BLEND);
-	glEnable (GL_TEXTURE_2D);
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glDepthMask (1);
+	gx_cur_r = 255;
+	gx_cur_g = 255;
+	gx_cur_b = 255;
+	gx_cur_a = 255;
+	gx_cur_vertex_format = GX_VTXFMT1;
+ 	GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
+ 	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
+	gx_blend_src_value = GX_BL_SRCALPHA;
+	gx_blend_dst_value = GX_BL_INVSRCALPHA;
+	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+	gx_z_write_enabled = GX_TRUE;
+	GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
 }
 
 
@@ -235,7 +267,7 @@ void R_PushDlights (void)
 	int		i;
 	dlight_t	*l;
 
-	if (gl_flashblend.value)
+	if (gx_flashblend.value)
 		return;
 
 	r_dlightframecount = r_framecount + 1;	// because the count hasn't

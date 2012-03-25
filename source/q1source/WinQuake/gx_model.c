@@ -242,11 +242,7 @@ model_t *Mod_LoadModel (model_t *mod, qboolean crash)
 {
 	void	*d;
 	unsigned *buf;
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Deferring allocation. Stack in this device is pretty small:
-	//byte	stackbuf[1024];		// avoid dirtying the cache heap
 	byte*	stackbuf;
-// <<< FIX
 
 	if (!mod->needload)
 	{
@@ -271,12 +267,8 @@ model_t *Mod_LoadModel (model_t *mod, qboolean crash)
 //
 // load the file
 //
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Allocating for previous fix in big stack, and actually using the result:
-	//buf = (unsigned *)COM_LoadStackFile (mod->name, stackbuf, sizeof(stackbuf));
 	stackbuf = Sys_BigStackAlloc(1024 * sizeof(byte), "Mod_LoadModel");
 	buf = (unsigned *)COM_LoadStackFile (mod->name, stackbuf, 1024);
-// <<< FIX
 	if (!buf)
 	{
 		if (crash)
@@ -313,11 +305,7 @@ model_t *Mod_LoadModel (model_t *mod, qboolean crash)
 		break;
 	}
 
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Deallocating from previous fix:
 	Sys_BigStackFree(1024 * sizeof(byte), "Mod_LoadModel");
-// <<< FIX
-
 	return mod;
 }
 
