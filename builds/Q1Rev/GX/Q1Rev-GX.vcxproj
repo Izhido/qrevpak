@@ -77,7 +77,6 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
     <ClCompile Include="..\..\..\source\q1source\WinQuake\console.c" />
     <ClCompile Include="..\..\..\source\q1source\WinQuake\crc.c" />
     <ClCompile Include="..\..\..\source\q1source\WinQuake\cvar.c" />
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\draw.c" />
     <ClCompile Include="..\..\..\source\q1source\WinQuake\gx_model.c" />
     <ClCompile Include="..\..\..\source\q1source\WinQuake\gx_draw.c" />
     <ClCompile Include="..\..\..\source\q1source\WinQuake\gx_mesh.c" />
@@ -102,7 +101,6 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
     <ClCompile Include="..\..\..\source\q1source\WinQuake\net_revol.c" />
     <ClCompile Include="..\..\..\source\q1source\WinQuake\net_udp.c" />
     <ClCompile Include="..\..\..\source\q1source\WinQuake\net_vcr.c" />
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\nonintel.c" />
     <ClCompile Include="..\..\..\source\q1source\WinQuake\pr_cmds.c" />
     <ClCompile Include="..\..\..\source\q1source\WinQuake\pr_edict.c" />
     <ClCompile Include="..\..\..\source\q1source\WinQuake\pr_exec.c" />

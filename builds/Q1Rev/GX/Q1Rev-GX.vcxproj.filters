@@ -66,9 +66,6 @@
     <ClCompile Include="..\..\..\source\q1source\WinQuake\cvar.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\draw.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\q1source\WinQuake\host.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -103,9 +100,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\q1source\WinQuake\net_vcr.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\q1source\WinQuake\nonintel.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\q1source\WinQuake\pr_cmds.c">

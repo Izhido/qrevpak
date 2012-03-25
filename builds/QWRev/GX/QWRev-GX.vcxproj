@@ -12,8 +12,9 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{955D8603-4B1C-4166-BA43-576F7EBDE4B2}</ProjectGuid>
-    <RootNamespace>QWRev-GL</RootNamespace>
+    <RootNamespace>QWRev-GX</RootNamespace>
     <Keyword>MakeFileProj</Keyword>
+    <ProjectName>QWRev-GX</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -41,7 +42,7 @@
 make</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">make clean</NMakeCleanCommandLine>
     <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
-    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">GLQUAKE;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
     <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
     <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
@@ -79,66 +80,36 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
     <ClCompile Include="..\..\..\source\q1source\QW\client\console.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\crc.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\cvar.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\d_edge.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\d_fill.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\d_init.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\d_modech.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\d_part.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\d_polyse.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\d_scan.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\d_sky.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\d_sprite.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\d_surf.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\d_vars.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\d_zpoint.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\draw.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\gl_draw.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\gl_mesh.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\gl_model.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\gl_ngraph.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\gl_refrag.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\gl_rlight.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\gl_rmain.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\gl_rmisc.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\gl_rsurf.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\gl_screen.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\gl_test.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\gl_vidrevol.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\gl_warp.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\gx_draw.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\gx_mesh.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\gx_model.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\gx_ngraph.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\gx_refrag.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\gx_rlight.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\gx_rmain.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\gx_rmisc.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\gx_rsurf.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\gx_screen.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\gx_test.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\gx_vidrevol.c" />
+    <ClCompile Include="..\..\..\source\q1source\QW\client\gx_warp.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\in_revol.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\keys.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\mathlib.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\md4.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\menu.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\model.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\net_chan.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\net_udp.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\nonintel.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\pmove.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\pmovetst.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\r_aclip.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\r_alias.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\r_bsp.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\r_draw.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\r_edge.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\r_efrag.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\r_light.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\r_main.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\r_misc.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\r_part.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\r_sky.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\r_sprite.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\r_surf.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\r_vars.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\sbar.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\screen.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\skin.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\snd_dma.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\snd_mem.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\snd_mix.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\snd_revol.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\sys_revol.c" />
-    <ClCompile Include="..\..\..\source\q1source\QW\client\vid_revol.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\view.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\wad.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\zone.c" />
