@@ -5,12 +5,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Header Files\glrevol">
-      <UniqueIdentifier>{ce42805c-49b8-41d3-84b6-95fa3d87790e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\glrevol\GL">
-      <UniqueIdentifier>{4a908926-5b9f-4493-961e-f882ebe0eee4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\oskrevol">
       <UniqueIdentifier>{8547ff98-d5f5-43b6-b208-6c803f7986a9}</UniqueIdentifier>
     </Filter>
@@ -21,9 +15,6 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Source Files\glrevol">
-      <UniqueIdentifier>{bfdb4d36-342b-4968-afce-8fdc5bfbf5de}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\oskrevol">
       <UniqueIdentifier>{a094d064-f8a8-4944-b9a6-b596a56b830c}</UniqueIdentifier>
@@ -36,9 +27,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\source\glrevol\source\glrevol.c">
-      <Filter>Source Files\glrevol</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\oskrevol\source\osk_revol.c">
       <Filter>Source Files\oskrevol</Filter>
     </ClCompile>
@@ -188,12 +176,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\source\glrevol\include\GL\gl.h">
-      <Filter>Header Files\glrevol\GL</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\glrevol\include\GL\glu.h">
-      <Filter>Header Files\glrevol\GL</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\source\oskrevol\include\osk_revol.h">
       <Filter>Header Files\oskrevol</Filter>
     </ClInclude>
@@ -294,9 +276,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\source\q1source\QW\client\protocol.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\q1source\QW\client\quakeasm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\source\q1source\QW\client\quakedef.h">

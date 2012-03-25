@@ -813,7 +813,13 @@ void CL_LinkPlayers (void)
 			continue;	// not present this frame
 
 		// spawn light flashes, even ones coming from invisible objects
-#ifdef GLQUAKE
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Support for GX hardware:
+//#ifdef GLQUAKE
+#ifdef GXQUAKE
+		if (!gx_flashblend.value || j != cl.playernum) {
+#elif GLQUAKE
+// <<< FIX
 		if (!gl_flashblend.value || j != cl.playernum) {
 #endif
 			if ((state->effects & (EF_BLUE | EF_RED)) == (EF_BLUE | EF_RED))
@@ -826,7 +832,11 @@ void CL_LinkPlayers (void)
 				CL_NewDlight (j, state->origin[0], state->origin[1], state->origin[2] + 16, 400 + (rand()&31), 0.1, 0);
 			else if (state->effects & EF_DIMLIGHT)
 				CL_NewDlight (j, state->origin[0], state->origin[1], state->origin[2], 200 + (rand()&31), 0.1, 0);
-#ifdef GLQUAKE
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Support for GX hardware:
+//#ifdef GLQUAKE
+#if defined(GXQUAKE) || defined(GLQUAKE)
+// <<< FIX
 		}
 #endif
 

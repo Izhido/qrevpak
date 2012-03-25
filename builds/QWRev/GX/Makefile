@@ -15,11 +15,10 @@ include $(DEVKITPPC)/wii_rules
 # SOURCES is a list of directories containing source code
 # INCLUDES is a list of directories containing extra header files
 #---------------------------------------------------------------------------------
-TARGET		:=	QWRev-GL
+TARGET		:=	QWRev-GX
 BUILD		:=	build
 SOURCES		:=	../../../source/q1source/QW/client \
-                ../../../source/oskrevol/source \
-                ../../../source/glrevol/source \
+                ../../../source/oskrevol/source\
                 ../../../source/oggplayer/source
 DATA		:=	../../../data  
 INCLUDES	:=  ../../../source/q1source/QW/client
@@ -29,7 +28,7 @@ INCLUDES	:=  ../../../source/q1source/QW/client
 #---------------------------------------------------------------------------------
 
 CFLAGS	= -g -O2 -Wall $(MACHDEP) $(INCLUDE) \
-          -DGLQUAKE
+          -DGXQUAKE
 CXXFLAGS	=	$(CFLAGS)
 
 LDFLAGS	=	-g $(MACHDEP) -Wl,-Map,$(notdir $@).map
@@ -45,7 +44,6 @@ LIBS	:=	 -lwiikeyboard -lvorbisidec -lasnd -lwiiuse -lbte -lfat -logc -lm
 #---------------------------------------------------------------------------------
 LIBDIRS	:= $(PORTLIBS) \
            $(CURDIR)/../../../source/oskrevol \
-           $(CURDIR)/../../../source/glrevol \
            $(CURDIR)/../../../source/oggplayer
 
 #---------------------------------------------------------------------------------

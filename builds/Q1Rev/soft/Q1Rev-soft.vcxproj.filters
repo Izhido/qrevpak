@@ -392,9 +392,6 @@
     <ClInclude Include="..\..\..\source\q1source\WinQuake\pr_comp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\q1source\WinQuake\quakeasm.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\source\q1source\WinQuake\quakedef.h">
       <Filter>Header Files</Filter>
     </ClInclude>

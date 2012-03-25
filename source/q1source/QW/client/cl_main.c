@@ -1526,7 +1526,11 @@ void Host_Init (quakeparms_t *parms)
 	SCR_Init ();
 	R_Init ();
 //	S_Init ();		// S_Init is now done as part of VID. Sigh.
-#ifdef GLQUAKE
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Support for GX hardware:
+//#ifdef GLQUAKE
+#if defined(GXQUAKE) || defined(GLQUAKE)
+// <<< FIX
 	S_Init();
 #endif
 

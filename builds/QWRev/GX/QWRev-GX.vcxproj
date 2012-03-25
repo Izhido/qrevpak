@@ -42,7 +42,7 @@
 make</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">make clean</NMakeCleanCommandLine>
     <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
-    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">GLQUAKE;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">GXQUAKE;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
     <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
     <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
@@ -63,7 +63,6 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\source\glrevol\source\glrevol.c" />
     <ClCompile Include="..\..\..\source\oggplayer\source\oggplayer.c" />
     <ClCompile Include="..\..\..\source\oskrevol\source\osk_revol.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\cd_revol.c" />
@@ -115,8 +114,6 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
     <ClCompile Include="..\..\..\source\q1source\QW\client\zone.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\source\glrevol\include\GL\gl.h" />
-    <ClInclude Include="..\..\..\source\glrevol\include\GL\glu.h" />
     <ClInclude Include="..\..\..\source\oggplayer\include\oggplayer.h" />
     <ClInclude Include="..\..\..\source\oskrevol\include\osk_revol.h" />
     <ClInclude Include="..\..\..\source\q1source\QW\client\adivtab.h" />
@@ -152,7 +149,6 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
     <ClInclude Include="..\..\..\source\q1source\QW\client\net.h" />
     <ClInclude Include="..\..\..\source\q1source\QW\client\pmove.h" />
     <ClInclude Include="..\..\..\source\q1source\QW\client\protocol.h" />
-    <ClInclude Include="..\..\..\source\q1source\QW\client\quakeasm.h" />
     <ClInclude Include="..\..\..\source\q1source\QW\client\quakedef.h" />
     <ClInclude Include="..\..\..\source\q1source\QW\client\r_local.h" />
     <ClInclude Include="..\..\..\source\q1source\QW\client\r_shared.h" />

@@ -21,10 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // draw.c -- this is the only file outside the refresh that touches the
 // vid buffer
 
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Include only for the GL builds (part 1):
-#ifdef GLQUAKE
-// <<< FIX
+#ifdef GXQUAKE
 
 #include "quakedef.h"
 
@@ -730,12 +727,8 @@ Only used for the player color selection menu
 void Draw_TransPicTranslate (int x, int y, qpic_t *pic, byte *translation)
 {
 	int				v, u, c;
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Allocating in big stack. Stack in this device is pretty small:
-	//unsigned		trans[64*64], *dest;
 	unsigned*		trans = Sys_BigStackAlloc(64*64 * sizeof(unsigned), "Draw_TransPicTranslate");
 	unsigned *dest;
-// <<< FIX
 	byte			*src;
 	int				p;
 
@@ -773,10 +766,7 @@ void Draw_TransPicTranslate (int x, int y, qpic_t *pic, byte *translation)
 	glTexCoord2f (0, 1);
 	glVertex2f (x, y+pic->height);
 	glEnd ();
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Deallocating from previous fix:
 	Sys_BigStackFree(64*64 * sizeof(unsigned), "Draw_TransPicTranslate");
-// <<< FIX
 }
 
 
@@ -1379,23 +1369,17 @@ static GLenum oldtarget = TEXTURE0_SGIS;
 
 void GL_SelectTexture (GLenum target) 
 {
-	if (!gl_mtexable)
+	if (!gx_mtexable)
 		return;
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Until we learn to use multitexturing on this platform, this will be removed:
-//#ifndef __linux__ // no multitexture under Linux yet
-//	qglSelectTextureSGIS(target);
-//#endif
-// <<< FIX
 	if (target == oldtarget) 
 		return;
-	cnttextures[oldtarget-TEXTURE0_SGIS] = currenttexture;
-	currenttexture = cnttextures[target-TEXTURE0_SGIS];
+	cnttextures[oldtarget-GX_TEXMAP0] = currenttexture;
+	currenttexture = cnttextures[target-GX_TEXMAP0];
 	oldtarget = target;
+	if(currenttexture >= 0)
+		if(gxtexobjs[currenttexture].data != NULL)
+			GX_LoadTexObj(&gxtexobjs[currenttexture].texobj, oldtarget - GX_TEXMAP0);
 }
 
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Include only for the GL builds (part 2):
 #endif
-// <<< FIX
 

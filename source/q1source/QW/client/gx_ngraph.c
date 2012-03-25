@@ -17,12 +17,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
-// gl_ngraph.c
+// gx_ngraph.c
 
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Include only for the GL builds (part 1):
-#ifdef GLQUAKE
-// <<< FIX
+#ifdef GXQUAKE
 
 #include "quakedef.h"
 
@@ -143,8 +140,5 @@ void R_NetGraph (void)
 	glVertex2f (x, y+NET_GRAPHHEIGHT);
 	glEnd ();
 }
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Include only for the GL builds (part 2):
 #endif
-// <<< FIX
 

@@ -19,10 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // r_surf.c: surface-related refresh code
 
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Include only for the GL builds (part 1):
-#ifdef GLQUAKE
-// <<< FIX
+#ifdef GXQUAKE
 
 #include "quakedef.h"
 
@@ -1370,11 +1367,7 @@ void R_MarkLeaves (void)
 	byte	*vis;
 	mnode_t	*node;
 	int		i;
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Deferring allocation. Stack in this device is pretty small:
-	//byte	solid[4096];
 	byte*	solid;
-// <<< FIX
 
 	if (r_oldviewleaf == r_viewleaf && !r_novis.value)
 		return;
@@ -1385,10 +1378,7 @@ void R_MarkLeaves (void)
 	r_visframecount++;
 	r_oldviewleaf = r_viewleaf;
 
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Allocating for previous fix:
 	solid = Sys_BigStackAlloc(4096 * sizeof(byte), "R_MarkLeaves");
-// <<< FIX
 
 	if (r_novis.value)
 	{
@@ -1412,10 +1402,7 @@ void R_MarkLeaves (void)
 			} while (node);
 		}
 	}
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Deallocating for previous fix:
 	Sys_BigStackFree(4096 * sizeof(byte), "R_MarkLeaves");
-// <<< FIX
 }
 
 
@@ -1713,7 +1700,4 @@ void GL_BuildLightmaps (void)
 
 }
 
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Include only for the GL builds (part 2):
 #endif
-// <<< FIX

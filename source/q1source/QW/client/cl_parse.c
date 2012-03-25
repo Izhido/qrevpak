@@ -870,7 +870,11 @@ CL_NewTranslation
 */
 void CL_NewTranslation (int slot)
 {
-#ifdef GLQUAKE
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Support for GX hardware:
+//#ifdef GLQUAKE
+#if defined(GXQUAKE) || defined(GLQUAKE)
+// <<< FIX
 	if (slot > MAX_CLIENTS)
 		Sys_Error ("CL_NewTranslation: slot > MAX_CLIENTS");
 
@@ -1064,7 +1068,15 @@ void CL_MuzzleFlash (void)
 	if ((unsigned)(i-1) >= MAX_CLIENTS)
 		return;
 
-#ifdef GLQUAKE
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Support for GX hardware:
+//#ifdef GLQUAKE
+#ifdef GXQUAKE
+	// don't draw our own muzzle flash in GX if flashblending
+	if (i-1 == cl.playernum && gx_flashblend.value)
+		return;
+#elif GLQUAKE
+// <<< FIX
 	// don't draw our own muzzle flash in gl if flashblending
 	if (i-1 == cl.playernum && gl_flashblend.value)
 		return;

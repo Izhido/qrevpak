@@ -329,9 +329,6 @@
     <ClInclude Include="..\..\..\source\q1source\QW\client\protocol.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\q1source\QW\client\quakeasm.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\source\q1source\QW\client\quakedef.h">
       <Filter>Header Files</Filter>
     </ClInclude>

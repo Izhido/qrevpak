@@ -165,7 +165,6 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
     <ClInclude Include="..\..\..\source\q1source\QW\client\net.h" />
     <ClInclude Include="..\..\..\source\q1source\QW\client\pmove.h" />
     <ClInclude Include="..\..\..\source\q1source\QW\client\protocol.h" />
-    <ClInclude Include="..\..\..\source\q1source\QW\client\quakeasm.h" />
     <ClInclude Include="..\..\..\source\q1source\QW\client\quakedef.h" />
     <ClInclude Include="..\..\..\source\q1source\QW\client\r_local.h" />
     <ClInclude Include="..\..\..\source\q1source\QW\client\r_shared.h" />

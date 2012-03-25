@@ -22,10 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // models are the only shared resource between a client and server running
 // on the same machine.
 
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Include only for the GL builds (part 1):
-#ifdef GLQUAKE
-// <<< FIX
+#ifdef GXQUAKE
 
 #include "quakedef.h"
 
@@ -1390,11 +1387,7 @@ extern unsigned d_8to24table[];
 void Mod_FloodFillSkin( byte *skin, int skinwidth, int skinheight )
 {
 	byte				fillcolor = *skin; // assume this is the pixel to fill
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Deferring allocation. Stack in this device is pretty small:
-	//floodfill_t			fifo[FLOODFILL_FIFO_SIZE];
 	floodfill_t*			fifo;
-// <<< FIX
 	int					inpt = 0, outpt = 0;
 	int					filledcolor = -1;
 	int					i;
@@ -1418,10 +1411,7 @@ void Mod_FloodFillSkin( byte *skin, int skinwidth, int skinheight )
 		return;
 	}
 
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Allocating for previous fix:
 	fifo = Sys_BigStackAlloc(FLOODFILL_FIFO_SIZE * sizeof(floodfill_t), "Mod_FloodFillSkin");
-// <<< FIX
 
 	fifo[inpt].x = 0, fifo[inpt].y = 0;
 	inpt = (inpt + 1) & FLOODFILL_FIFO_MASK;
@@ -1440,10 +1430,7 @@ void Mod_FloodFillSkin( byte *skin, int skinwidth, int skinheight )
 		if (y < skinheight - 1)	FLOODFILL_STEP( skinwidth, 0, 1 );
 		skin[x + skinwidth * y] = fdc;
 	}
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Deallocating for previous fix:
 	Sys_BigStackFree(FLOODFILL_FIFO_SIZE * sizeof(floodfill_t), "Mod_FloodFillSkin");
-// <<< FIX
 }
 
 /*
@@ -1899,8 +1886,5 @@ void Mod_Print (void)
 	}
 }
 
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Include only for the GL builds (part 2):
 #endif
-// <<< FIX
 

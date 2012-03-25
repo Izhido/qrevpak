@@ -167,7 +167,6 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
     <ClInclude Include="..\..\..\source\q1source\WinQuake\progdefs.h" />
     <ClInclude Include="..\..\..\source\q1source\WinQuake\progs.h" />
     <ClInclude Include="..\..\..\source\q1source\WinQuake\protocol.h" />
-    <ClInclude Include="..\..\..\source\q1source\WinQuake\quakeasm.h" />
     <ClInclude Include="..\..\..\source\q1source\WinQuake\quakedef.h" />
     <ClInclude Include="..\..\..\source\q1source\WinQuake\r_local.h" />
     <ClInclude Include="..\..\..\source\q1source\WinQuake\r_shared.h" />

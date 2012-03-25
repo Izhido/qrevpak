@@ -56,7 +56,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "render.h"
 #include "client.h"
 
-#ifdef GLQUAKE
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Support for GX hardware:
+//#ifdef GLQUAKE
+#ifdef GXQUAKE
+#include "gx_model.h"
+#elif GLQUAKE
+// <<< FIX
 #include "gl_model.h"
 #else
 #include "model.h"
@@ -72,7 +78,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "cdaudio.h"
 #include "pmove.h"
 
-#ifdef GLQUAKE
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Support for GX hardware:
+//#ifdef GLQUAKE
+#ifdef GXQUAKE
+#include "gxquake.h"
+#elif GLQUAKE
+// <<< FIX
 #include "glquake.h"
 #endif
 
