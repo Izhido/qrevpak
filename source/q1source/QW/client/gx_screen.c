@@ -20,10 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // screen.c -- master for refresh, status bar, console, chat, notify, etc
 
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Include only for the GL builds (part 1):
-#ifdef GLQUAKE
-// <<< FIX
+#ifdef GXQUAKE
 
 #include "quakedef.h"
 
@@ -77,7 +74,7 @@ console is:
 */
 
 
-int                     glx, gly, glwidth, glheight;
+int			gxx, gxy, gxwidth, gxheight;
 
 // only the refresh window will be updated unless these variables are flagged 
 int                     scr_copytop;
@@ -96,7 +93,7 @@ cvar_t          scr_showturtle = {"showturtle","0"};
 cvar_t          scr_showpause = {"showpause","1"};
 cvar_t          scr_printspeed = {"scr_printspeed","8"};
 cvar_t			scr_allowsnap = {"scr_allowsnap", "1"};
-cvar_t			gl_triplebuffer = {"gl_triplebuffer", "1", true };
+cvar_t			gx_triplebuffer = {"gl_triplebuffer", "1", true };
 extern  		cvar_t  crosshair;
 
 qboolean        scr_initialized;                // ready to draw
@@ -389,7 +386,7 @@ void SCR_Init (void)
 	Cvar_RegisterVariable (&scr_centertime);
 	Cvar_RegisterVariable (&scr_printspeed);
 	Cvar_RegisterVariable (&scr_allowsnap);
-	Cvar_RegisterVariable (&gl_triplebuffer);
+	Cvar_RegisterVariable (&gx_triplebuffer);
 
 //
 // register our commands
@@ -628,7 +625,7 @@ SCR_ScreenShot_f
 ================== 
 */  
 void SCR_ScreenShot_f (void) 
-{
+{/*
 	byte            *buffer;
 	char            pcxname[80]; 
 	char            checkname[MAX_OSPATH];
@@ -676,7 +673,7 @@ void SCR_ScreenShot_f (void)
 
 	free (buffer);
 	Con_Printf ("Wrote %s\n", pcxname);
-} 
+*/} 
 
 /* 
 ============== 
@@ -834,7 +831,7 @@ SCR_RSShot_f
 ================== 
 */  
 void SCR_RSShot_f (void) 
-{ 
+{/* 
 	int     i, x, y;
 	unsigned char		*src, *dest;
 	char		pcxname[80]; 
@@ -905,7 +902,7 @@ void SCR_RSShot_f (void)
 			if (dey == dy) dey++; // at least one
 
 			count = 0;
-			for (/* */; dy < dey; dy++) {
+			for (*//* *//*; dy < dey; dy++) {
 				src = newbuf + (glwidth * 3 * dy) + dx * 3;
 				for (nx = dx; nx < dex; nx++) {
 					r += *src++;
@@ -952,7 +949,7 @@ void SCR_RSShot_f (void)
 	free(newbuf);
 
 	Con_Printf ("Wrote %s\n", pcxname);
-} 
+*/} 
 
 
 
@@ -1094,7 +1091,7 @@ void SCR_UpdateScreen (void)
 	if (block_drawing)
 		return;
 
-	vid.numpages = 2 + gl_triplebuffer.value;
+	vid.numpages = 2 + gx_triplebuffer.value;
 
 	scr_copytop = 0;
 	scr_copyeverything = 0;
@@ -1119,7 +1116,7 @@ void SCR_UpdateScreen (void)
 		vid.recalc_refdef = true;
 	}
 
-	GL_BeginRendering (&glx, &gly, &glwidth, &glheight);
+	GX_BeginRendering (&gxx, &gxy, &gxwidth, &gxheight);
 	
 	//
 	// determine size of refresh window
@@ -1140,7 +1137,7 @@ void SCR_UpdateScreen (void)
 	
 	V_RenderView ();
 
-	GL_Set2D ();
+	GX_Set2D ();
 
 	//
 	// draw any areas not covered by the refresh
@@ -1189,10 +1186,7 @@ void SCR_UpdateScreen (void)
 
 	V_UpdatePalette ();
 
-	GL_EndRendering ();
+	GX_EndRendering ();
 }
 
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Include only for the GL builds (part 2):
 #endif
-// <<< FIX

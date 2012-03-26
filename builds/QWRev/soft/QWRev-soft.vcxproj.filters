@@ -290,18 +290,6 @@
     <ClInclude Include="..\..\..\source\q1source\QW\client\d_local.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\q1source\QW\client\glquake.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\q1source\QW\client\glquake2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\q1source\QW\client\gl_model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\q1source\QW\client\gl_warp_sin.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\source\q1source\QW\client\input.h">
       <Filter>Header Files</Filter>
     </ClInclude>

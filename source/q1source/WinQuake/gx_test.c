@@ -127,10 +127,7 @@ void DrawPuff (puff_t *p)
 		}
 	}
 
-	gx_cur_r = 255;
-	gx_cur_g = 0;
-	gx_cur_b = 0;
-	gx_cur_a = 255;
+	glColor3f (1, 0, 0);
 
 #if 0
 	glBegin (GL_LINES);

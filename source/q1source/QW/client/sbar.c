@@ -829,7 +829,11 @@ void Sbar_Draw (void)
 	else if (sb_showteamscores)
 		Sbar_TeamOverlay();
 
-#ifdef GLQUAKE
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Support for GX hardware:
+//#ifdef GLQUAKE
+#if defined(GXQUAKE) || defined(GLQUAKE)
+// <<< FIX
 	if (sb_showscores || sb_showteamscores || 
 		cl.stats[STAT_HEALTH] <= 0)
 		sb_updates = 0;

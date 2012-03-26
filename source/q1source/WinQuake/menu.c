@@ -1930,8 +1930,18 @@ void M_Quit_Draw (void)
 // <<< FIX
 	}
 
-#ifdef _WIN32
-	M_DrawTextBox (0, 0, 38, 23);
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// This is the message that is supposed to appear on hardware builds.
+// The original #ifdef doesn't let it happen on Wii. Changing it so 
+// it appears for the GX build:
+//#ifdef _WIN32
+#ifdef GXQUAKE
+// <<< FIX
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Making space for additional credits:
+//	M_DrawTextBox (0, 0, 38, 23);
+	M_DrawTextBox (0, 0, 38, 27);
+// <<< FIX
 	M_PrintWhite (16, 12,  "  Quake version 1.09 by id Software\n\n");
 	M_PrintWhite (16, 28,  "Programming        Art \n");
 	M_Print (16, 36,  " John Carmack       Adrian Carmack\n");
@@ -1953,6 +1963,12 @@ void M_Quit_Draw (void)
 	M_PrintWhite (16, 164, "registered trademark licensed to\n");
 	M_PrintWhite (16, 172, "Nothing Interactive, Inc. All rights\n");
 	M_PrintWhite (16, 180, "reserved. Press y to exit\n");
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Appending additional credits:
+	M_PrintWhite (16, 196, "Modifications for Nintendo Wii using\n");
+	M_PrintWhite (16, 204, "devkitPPC / libogc:\n");
+	M_PrintWhite (16, 212, "(c) 2009, 2012 Heriberto Delgado.");
+// <<< FIX
 #else
 	M_DrawTextBox (56, 76, 24, 4);
 	M_Print (64, 84,  quitMessage[msgNumber*4+0]);

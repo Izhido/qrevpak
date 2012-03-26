@@ -248,7 +248,11 @@ void Skin_NextDownload (void)
 		if (!sc->name[0])
 			continue;
 		Skin_Cache (sc->skin);
-#ifdef GLQUAKE
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Support for GX hardware:
+//#ifdef GLQUAKE
+#if defined(GXQUAKE) || defined(GLQUAKE)
+// <<< FIX
 		sc->skin = NULL;
 #endif
 	}

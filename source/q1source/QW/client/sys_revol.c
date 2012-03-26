@@ -23,7 +23,7 @@
 
 qboolean isDedicated;
 
-void* sys_framebuffer[3] = {NULL, NULL, NULL};
+void* sys_framebuffer[2] = {NULL, NULL};
 
 GXRModeObj* sys_rmode;
 
@@ -33,7 +33,9 @@ f32 sys_yscale;
 
 u32 sys_xfbHeight;
 
-u32 sys_currentframebuf;
+GXColor sys_background_color = {0xFF, 0, 0, 0}; // Believe it or not, the "clear color" for GLQuake is red, not black...
+
+u32 sys_frame_count;
 
 int sys_current_weapon;
 
@@ -75,6 +77,12 @@ s32 sys_mouse_valid;
 mouse_event sys_mouse_event;
 
 u8 sys_previous_mouse_buttons;
+
+float sys_frame_length;
+
+u8 sys_clear_buffers = GX_TRUE;
+
+u8 sys_clear_color_buffer = GX_TRUE;
 
 /*
 ===============================================================================
@@ -496,7 +504,11 @@ void Sys_Error (char *error, ...)
 void Sys_Printf (char *fmt, ...)
 {
 	va_list         argptr;
-	
+
+#ifdef GXQUAKE
+	if(sys_frame_count > 1)
+		return;
+#endif
 	va_start (argptr,fmt);
 	vprintf (fmt,argptr);
 	va_end (argptr);
@@ -1038,10 +1050,7 @@ void Sys_BigStackFree(int size, char* purpose)
 
 void Sys_PowerOff(s32 chan)
 {
-	if(chan == WPAD_CHAN_0)
-	{
-		SYS_ResetSystem(SYS_POWEROFF, 0, 0);
-	};
+	SYS_ResetSystem(SYS_POWEROFF, 0, 0);
 }
 
 int main (int argc, char* argv[])
@@ -1055,23 +1064,16 @@ int main (int argc, char* argv[])
 	PAD_Init();
 
 	sys_rmode = VIDEO_GetPreferredMode(NULL);
-	VIDEO_Configure(sys_rmode);
 
 	sys_framebuffer[0] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(sys_rmode));
 	sys_framebuffer[1] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(sys_rmode));
-#ifdef GLQUAKE
-	sys_framebuffer[2] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(sys_rmode));
-#endif
 
-	VIDEO_ClearFrameBuffer(sys_rmode, sys_framebuffer[0], COLOR_BLACK);
+	sys_frame_count = 0;
 
-	CON_Init(sys_framebuffer[0], 20, 20, sys_rmode->fbWidth, sys_rmode->xfbHeight, sys_rmode->fbWidth * VI_DISPLAY_PIX_SZ);
+	CON_Init(sys_framebuffer[sys_frame_count & 1], 20, 20, sys_rmode->fbWidth, sys_rmode->xfbHeight, sys_rmode->fbWidth * VI_DISPLAY_PIX_SZ);
 
-#ifndef GLQUAKE
-	VIDEO_ClearFrameBuffer(sys_rmode, sys_framebuffer[1], COLOR_BLACK);
-#endif
-
-	VIDEO_SetNextFramebuffer(sys_framebuffer[0]);
+	VIDEO_Configure(sys_rmode);
+	VIDEO_SetNextFramebuffer(sys_framebuffer[sys_frame_count & 1]);
 	VIDEO_SetBlack(FALSE);
 	VIDEO_Flush();
 	VIDEO_WaitVSync();
@@ -1080,48 +1082,63 @@ int main (int argc, char* argv[])
 		VIDEO_WaitVSync();
 	};
 
-#ifdef GLQUAKE
-	GXColor background = {0, 0, 0, 0xff};
-	sys_currentframebuf = 1;
-	sys_gpfifo = memalign(32, SYS_FIFO_SIZE);
-	memset(sys_gpfifo, 0, SYS_FIFO_SIZE);
-	GX_Init(sys_gpfifo, SYS_FIFO_SIZE);
-	GX_SetCopyClear(background, 0x00ffffff);
-	GX_SetViewport(0, 0, sys_rmode->fbWidth, sys_rmode->efbHeight, 0, 1);
-	sys_yscale = GX_GetYScaleFactor(sys_rmode->efbHeight, sys_rmode->xfbHeight);
+	sys_frame_count++;
+
+#ifdef GXQUAKE
+	sys_gpfifo = memalign(32,SYS_FIFO_SIZE);
+	memset(sys_gpfifo,0,SYS_FIFO_SIZE);
+ 
+	GX_Init(sys_gpfifo,SYS_FIFO_SIZE);
+ 
+	GX_SetCopyClear(sys_background_color, GX_MAX_Z24);
+ 
+	sys_yscale = GX_GetYScaleFactor(sys_rmode->efbHeight,sys_rmode->xfbHeight);
 	sys_xfbHeight = GX_SetDispCopyYScale(sys_yscale);
-	GX_SetScissor(0, 0, sys_rmode->fbWidth, sys_rmode->efbHeight);
-	GX_SetDispCopySrc(0, 0, sys_rmode->fbWidth, sys_rmode->efbHeight);
-	GX_SetDispCopyDst(sys_rmode->fbWidth, sys_xfbHeight);
-	GX_SetCopyFilter(sys_rmode->aa, sys_rmode->sample_pattern, GX_TRUE, sys_rmode->vfilter);
-	if(sys_rmode->viHeight == 2 * sys_rmode->xfbHeight)
-	{
-		GX_SetFieldMode(sys_rmode->field_rendering, GX_ENABLE);
-	} else
-	{
-		GX_SetFieldMode(sys_rmode->field_rendering, GX_DISABLE);
-	};
-	if(sys_rmode->aa)
-	{
+	GX_SetScissor(0,0,sys_rmode->fbWidth,sys_rmode->efbHeight);
+	GX_SetDispCopySrc(0,0,sys_rmode->fbWidth,sys_rmode->efbHeight);
+	GX_SetDispCopyDst(sys_rmode->fbWidth,sys_xfbHeight);
+	GX_SetCopyFilter(sys_rmode->aa,sys_rmode->sample_pattern,GX_TRUE,sys_rmode->vfilter);
+	GX_SetFieldMode(sys_rmode->field_rendering,((sys_rmode->viHeight==2*sys_rmode->xfbHeight)?GX_ENABLE:GX_DISABLE));
+ 
+	if (sys_rmode->aa)
         GX_SetPixelFmt(GX_PF_RGB565_Z16, GX_ZC_LINEAR);
-	} else
-	{
+    else
         GX_SetPixelFmt(GX_PF_RGB8_Z24, GX_ZC_LINEAR);
-	};
-	GX_SetCullMode(GX_CULL_NONE);
-	GX_SetBlendMode(GX_BM_BLEND, GX_BL_SRCALPHA, GX_BL_INVSRCALPHA, GX_LO_CLEAR);
-	GX_SetAlphaUpdate(GX_ENABLE);
-	GX_CopyDisp(sys_framebuffer[sys_currentframebuf], GX_TRUE);
+
+	GX_CopyDisp(sys_framebuffer[sys_frame_count & 1],GX_TRUE);
 	GX_SetDispCopyGamma(GX_GM_1_0);
+
 	GX_ClearVtxDesc();
 	GX_SetVtxDesc(GX_VA_POS, GX_DIRECT);
  	GX_SetVtxDesc(GX_VA_CLR0, GX_DIRECT);
+ 
 	GX_SetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_POS_XYZ, GX_F32, 0);
-	GX_SetVtxAttrFmt (GX_VTXFMT0, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8, 0);
+	GX_SetVtxAttrFmt(GX_VTXFMT0, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8, 0);
+ 
+	GX_SetVtxAttrFmt(GX_VTXFMT1, GX_VA_POS, GX_POS_XYZ, GX_F32, 0);
+	GX_SetVtxAttrFmt(GX_VTXFMT1, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8, 0);
+	GX_SetVtxAttrFmt(GX_VTXFMT1, GX_VA_TEX0, GX_TEX_ST, GX_F32, 0);
+	GX_SetVtxAttrFmt(GX_VTXFMT1, GX_VA_TEX1, GX_TEX_ST, GX_F32, 0);
+ 
 	GX_SetNumChans(1);
-	GX_SetNumTexGens(0);
+	GX_SetNumTexGens(1);
 	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
 	GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
+
+	GX_SetTexCoordGen(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, GX_IDENTITY);
+	GX_SetTexCoordGen(GX_TEXCOORD1, GX_TG_MTX2x4, GX_TG_TEX1, GX_IDENTITY);
+
+	GX_InvVtxCache();
+	GX_InvalidateTexAll();
+
+	sys_frame_length = 1.0 / 60.0;
+
+#else
+	VIDEO_ClearFrameBuffer(sys_rmode, sys_framebuffer[sys_frame_count & 1], COLOR_BLACK);
+	VIDEO_SetNextFramebuffer(sys_framebuffer[sys_frame_count & 1]);
+
+	sys_frame_length = 1.0 / 30.0;
+
 #endif
 
 	WPAD_SetDataFormat(WPAD_CHAN_0, WPAD_FMT_BTNS_ACC_IR);
@@ -1151,7 +1168,11 @@ int main (int argc, char* argv[])
 
 	static quakeparms_t    parms;
 
+#ifdef GXQUAKE
+	parms.memsize = 16*1024*1024;
+#else
 	parms.memsize = 8*1024*1024;
+#endif
 	parms.membase = malloc (parms.memsize);
 	parms.basedir = ".";
 
@@ -1164,12 +1185,6 @@ int main (int argc, char* argv[])
 	Host_Init (&parms);
 
 	WPAD_SetPowerButtonCallback(Sys_PowerOff);
-
-#ifdef GLQUAKE
-	VIDEO_SetNextFramebuffer(sys_framebuffer[sys_currentframebuf]);
-#else
-	VIDEO_SetNextFramebuffer(sys_framebuffer[1]);
-#endif
 
 	while (1)
 	{
@@ -1184,29 +1199,30 @@ int main (int argc, char* argv[])
 			sys_mouse_valid = 0;
 			sys_mouse_event.button = 0;
 		};
-		Host_Frame (1.0/30.0);
-#ifdef GLQUAKE
-		GX_DrawDone();
-		if(sys_currentframebuf == 1)
+		Host_Frame (sys_frame_length);
+#ifdef GXQUAKE
+		if(in_osk.value)
 		{
-			sys_currentframebuf = 2;
-		} else
-		{
-			sys_currentframebuf = 1;
+			OSK_Draw(sys_rmode, sys_framebuffer[sys_frame_count & 1]);
 		};
-		GX_SetZMode(GX_TRUE, GX_LEQUAL, GX_TRUE);
+		sys_frame_count++;
+		GX_SetColorUpdate(sys_clear_color_buffer);
+		GX_SetAlphaUpdate(sys_clear_color_buffer);
+		GX_CopyDisp(sys_framebuffer[sys_frame_count & 1], sys_clear_buffers);
 		GX_SetColorUpdate(GX_TRUE);
-		GX_CopyDisp(sys_framebuffer[sys_currentframebuf], GX_TRUE);
-		VIDEO_SetNextFramebuffer(sys_framebuffer[sys_currentframebuf]);
+		GX_SetAlphaUpdate(GX_TRUE);
+		VIDEO_SetNextFramebuffer(sys_framebuffer[sys_frame_count & 1]);
 #endif
 		KEYBOARD_FlushEvents();
 		VIDEO_Flush();
 		VIDEO_WaitVSync();
-		while((Sys_DoubleTime() - sys_previous_time) < (1.0/30.0))
+#ifndef GXQUAKE
+		while((Sys_DoubleTime() - sys_previous_time) < (1.0 / 45.0))
 		{
-			LWP_YieldThread();
+			VIDEO_WaitVSync();
 		};
-	};	
+#endif
+	};
 
 	return 0;
 }

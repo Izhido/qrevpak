@@ -1012,14 +1012,10 @@ void R_DrawSkyBox (void)
 	float	s, t;
 
 #if 0
-GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
-GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
-gx_cur_r = 255;
-gx_cur_g = 255;
-gx_cur_b = 255;
-gx_cur_a = 127;
-gx_z_test_enabled = GX_FALSE;
-GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
+glEnable (GL_BLEND);
+glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+glColor4f (1,1,1,0.5);
+glDisable (GL_DEPTH_TEST);
 #endif
 	for (i=0 ; i<6 ; i++)
 	{
@@ -1042,14 +1038,10 @@ skymaxs[1][i] = 1;
 		glEnd ();
 	}
 #if 0
-GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
-GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
-gx_cur_r = 255;
-gx_cur_g = 255;
-gx_cur_b = 255;
-gx_cur_a = 127;
-gx_z_test_enabled = GX_TRUE;
-GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
+glDisable (GL_BLEND);
+glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+glColor4f (1,1,1,0.5);
+glEnable (GL_DEPTH_TEST);
 #endif
 }
 

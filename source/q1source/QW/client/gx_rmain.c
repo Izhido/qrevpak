@@ -45,6 +45,12 @@ extern u8 gx_blend_src_value;
 
 extern u8 gx_blend_dst_value;
 
+extern qboolean gx_alpha_test_enabled;
+
+extern u8 gx_alpha_test_lower;
+
+extern u8 gx_alpha_test_higher;
+
 extern u8 gx_cur_vertex_format;
 
 extern u8 gx_cur_r;
@@ -145,10 +151,10 @@ cvar_t	gx_playermip = {"gx_playermip","0"};
 cvar_t	gx_nocolors = {"gx_nocolors","0"};
 cvar_t	gx_keeptjunctions = {"gx_keeptjunctions","1"};
 cvar_t	gx_reporttjunctions = {"gx_reporttjunctions","0"};
-cvar_t	gx_doubleeyes = {"gx_doubleeys", "1"};
+cvar_t	gx_finish = {"gl_finish","0"};
 
 
-extern	cvar_t	gl_ztrick;
+extern	cvar_t	gx_ztrick;
 extern	cvar_t	scr_fov;
 /*
 =================
@@ -291,7 +297,7 @@ void R_DrawSpriteModel (entity_t *e)
 
     GX_Bind(frame->gx_texturenum);
 
-	GX_SetAlphaCompare(GX_GREATER, 170, GX_AOP_AND, GX_LEQUAL, 255);
+	GX_SetAlphaCompare(GX_GEQUAL, gx_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gx_alpha_test_higher);
 	GX_Begin (GX_QUADS, gx_cur_vertex_format, 4);
 
 	VectorMA (e->origin, frame->down, up, point);
@@ -320,7 +326,7 @@ void R_DrawSpriteModel (entity_t *e)
 	
 	GX_End ();
 
-	GX_SetAlphaCompare(GX_GEQUAL, 0, GX_AOP_AND, GX_LEQUAL, 255);
+	GX_SetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
 }
 
 /*
@@ -353,10 +359,10 @@ int	lastposenum;
 
 /*
 =============
-GL_DrawAliasFrame
+GX_DrawAliasFrame
 =============
 */
-void GL_DrawAliasFrame (aliashdr_t *paliashdr, int posenum)
+void GX_DrawAliasFrame (aliashdr_t *paliashdr, int posenum)
 {
 	float 	l;
 	trivertx_t	*verts;
@@ -369,6 +375,8 @@ lastposenum = posenum;
 	verts += posenum * paliashdr->poseverts;
 	order = (int *)((byte *)paliashdr + paliashdr->commands);
 
+	gx_cur_a = 255;
+
 	while (1)
 	{
 		// get the vertex count and primitive type
@@ -378,37 +386,40 @@ lastposenum = posenum;
 		if (count < 0)
 		{
 			count = -count;
-			glBegin (GL_TRIANGLE_FAN);
+			GX_Begin(GX_TRIANGLEFAN, gx_cur_vertex_format, count);
 		}
 		else
-			glBegin (GL_TRIANGLE_STRIP);
-
+			GX_Begin(GX_TRIANGLESTRIP, gx_cur_vertex_format, count);
 		do
 		{
-			// texture coordinates come from the draw list
-			glTexCoord2f (((float *)order)[0], ((float *)order)[1]);
-			order += 2;
-
 			// normals and vertexes come from the frame list
-			l = shadedots[verts->lightnormalindex] * shadelight;
-			glColor3f (l, l, l);
-			glVertex3f (verts->v[0], verts->v[1], verts->v[2]);
+			GX_Position3f32(verts->v[0], verts->v[1], verts->v[2]);
 			verts++;
+			l = shadedots[verts->lightnormalindex] * shadelight;
+			if(l < 0.0)
+				l = 0.0;
+			if(l > 1.0)
+				l = 1.0;
+			gx_cur_r = gx_cur_g = gx_cur_b = (l * 255.0);
+			GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+			// texture coordinates come from the draw list
+			GX_TexCoord2f32 (((float *)order)[0], ((float *)order)[1]);
+			order += 2;
 		} while (--count);
 
-		glEnd ();
+		GX_End ();
 	}
 }
 
 
 /*
 =============
-GL_DrawAliasShadow
+GX_DrawAliasShadow
 =============
 */
 extern	vec3_t			lightspot;
 
-void GL_DrawAliasShadow (aliashdr_t *paliashdr, int posenum)
+void GX_DrawAliasShadow (aliashdr_t *paliashdr, int posenum)
 {
 	trivertx_t	*verts;
 	int		*order;
@@ -434,15 +445,15 @@ void GL_DrawAliasShadow (aliashdr_t *paliashdr, int posenum)
 		if (count < 0)
 		{
 			count = -count;
-			glBegin (GL_TRIANGLE_FAN);
+			GX_Begin (GX_TRIANGLEFAN, GX_VTXFMT0, count);
 		}
 		else
-			glBegin (GL_TRIANGLE_STRIP);
+			GX_Begin (GX_TRIANGLESTRIP, GX_VTXFMT0, count);
 
 		do
 		{
 			// texture coordinates come from the draw list
-			// (skipped for shadows) glTexCoord2fv ((float *)order);
+			// (skipped for shadows) GX_TexCoord2f32 (*((float *)order), *(((float *)order) + 1));
 			order += 2;
 
 			// normals and vertexes come from the frame list
@@ -454,13 +465,15 @@ void GL_DrawAliasShadow (aliashdr_t *paliashdr, int posenum)
 			point[1] -= shadevector[1]*(point[2]+lheight);
 			point[2] = height;
 //			height -= 0.001;
-			glVertex3fv (point);
+			GX_Position3f32(point[0], point[1], point[2]);
+			GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
 
 			verts++;
 		} while (--count);
 
-		glEnd ();
-	}	
+		GX_End ();
+	};
+
 }
 
 
@@ -491,7 +504,7 @@ void R_SetupAliasFrame (int frame, aliashdr_t *paliashdr)
 		pose += (int)(cl.time / interval) % numposes;
 	}
 
-	GL_DrawAliasFrame (paliashdr, pose);
+	GX_DrawAliasFrame (paliashdr, pose);
 }
 
 
@@ -513,6 +526,7 @@ void R_DrawAliasModel (entity_t *e)
 	aliashdr_t	*paliashdr;
 	float		an;
 	int			anim;
+	Mtx			m;
 
 	clmodel = currententity->model;
 
@@ -589,26 +603,35 @@ void R_DrawAliasModel (entity_t *e)
 	// draw all the triangles
 	//
 
-	GL_DisableMultitexture();
+	GX_DisableMultitexture();
 
-    glPushMatrix ();
+	guMtxCopy(gx_modelview_matrices[gx_cur_modelview_matrix], gx_modelview_matrices[gx_cur_modelview_matrix + 1]);
+	gx_cur_modelview_matrix++;
+
 	R_RotateForEntity (e);
 
 	if (!strcmp (clmodel->name, "progs/eyes.mdl") ) {
-		glTranslatef (paliashdr->scale_origin[0], paliashdr->scale_origin[1], paliashdr->scale_origin[2] - (22 + 8));
-	// double size of eyes, since they are really hard to see in gl
-		glScalef (paliashdr->scale[0]*2, paliashdr->scale[1]*2, paliashdr->scale[2]*2);
+		guMtxTrans(m, paliashdr->scale_origin[0], paliashdr->scale_origin[1], paliashdr->scale_origin[2] - (22 + 8));
+		guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
+
+// double size of eyes, since they are really hard to see while hardware rendering
+		guMtxScale(m, paliashdr->scale[0]*2, paliashdr->scale[1]*2, paliashdr->scale[2]*2);
+		guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
 	} else {
-		glTranslatef (paliashdr->scale_origin[0], paliashdr->scale_origin[1], paliashdr->scale_origin[2]);
-		glScalef (paliashdr->scale[0], paliashdr->scale[1], paliashdr->scale[2]);
+		guMtxTrans(m, paliashdr->scale_origin[0], paliashdr->scale_origin[1], paliashdr->scale_origin[2]);
+		guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
+		guMtxScale(m, paliashdr->scale[0], paliashdr->scale[1], paliashdr->scale[2]);
+		guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
 	}
 
+	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
+
 	anim = (int)(cl.time*10) & 3;
-    GL_Bind(paliashdr->gl_texturenum[currententity->skinnum][anim]);
+    GX_Bind(paliashdr->gx_texturenum[currententity->skinnum][anim]);
 
 	// we can't dynamically colormap textures, so they are cached
 	// seperately for the players.  Heads are just uncolored.
-	if (currententity->scoreboard && !gl_nocolors.value)
+	if (currententity->scoreboard && !gx_nocolors.value)
 	{
 		i = currententity->scoreboard - cl.players;
 		if (!currententity->scoreboard->skin) {
@@ -616,38 +639,54 @@ void R_DrawAliasModel (entity_t *e)
 			R_TranslatePlayerSkin(i);
 		}
 		if (i >= 0 && i<MAX_CLIENTS)
-		    GL_Bind(playertextures + i);
+		    GX_Bind(playertextures + i);
 	}
 
-	if (gl_smoothmodels.value)
+	if (gx_smoothmodels.value)
 		glShadeModel (GL_SMOOTH);
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
 
-	if (gl_affinemodels.value)
+	if (gx_affinemodels.value)
 		glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
 
 	R_SetupAliasFrame (currententity->frame, paliashdr);
 
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
 
 	glShadeModel (GL_FLAT);
-	if (gl_affinemodels.value)
+	if (gx_affinemodels.value)
 		glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
-	glPopMatrix ();
+	gx_cur_modelview_matrix--;
+	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
 
 	if (r_shadows.value)
 	{
-		glPushMatrix ();
+		guMtxCopy(gx_modelview_matrices[gx_cur_modelview_matrix], gx_modelview_matrices[gx_cur_modelview_matrix + 1]);
+		gx_cur_modelview_matrix++;
 		R_RotateForEntity (e);
-		glDisable (GL_TEXTURE_2D);
-		glEnable (GL_BLEND);
-		glColor4f (0,0,0,0.5);
-		GL_DrawAliasShadow (paliashdr, lastposenum);
-		glEnable (GL_TEXTURE_2D);
-		glDisable (GL_BLEND);
-		glColor4f (1,1,1,1);
-		glPopMatrix ();
+		GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
+		gx_cur_vertex_format = GX_VTXFMT0;
+ 		GX_SetVtxDesc(GX_VA_TEX0, GX_NONE);
+		GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
+		GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
+		GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+		gx_cur_r = 0;
+		gx_cur_g = 0;
+		gx_cur_b = 0;
+		gx_cur_a = 127;
+		GX_DrawAliasShadow (paliashdr, lastposenum);
+		gx_cur_vertex_format = GX_VTXFMT1;
+ 		GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
+ 		GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
+		GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
+		GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+		gx_cur_r = 255;
+		gx_cur_g = 255;
+		gx_cur_b = 255;
+		gx_cur_a = 255;
+		gx_cur_modelview_matrix--;
+		GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
 	}
 
 }
@@ -764,9 +803,9 @@ void R_DrawViewModel (void)
 	diffuse[0] = diffuse[1] = diffuse[2] = diffuse[3] = (float)shadelight / 128;
 
 	// hack the depth range to prevent view model from poking into walls
-	glDepthRange (gldepthmin, gldepthmin + 0.3*(gldepthmax-gldepthmin));
+	GX_SetViewport (gx_viewport_x, gx_viewport_y, gx_viewport_width, gx_viewport_height, gxdepthmin, gxdepthmin + 0.3*(gxdepthmax-gxdepthmin));
 	R_DrawAliasModel (currententity);
-	glDepthRange (gldepthmin, gldepthmax);
+	GX_SetViewport (gx_viewport_x, gx_viewport_y, gx_viewport_width, gx_viewport_height, gxdepthmin, gxdepthmax);
 }
 
 
@@ -777,38 +816,59 @@ R_PolyBlend
 */
 void R_PolyBlend (void)
 {
-	if (!gl_polyblend.value)
+	guVector v;
+	Mtx m;
+	u8 r, g, b, a;
+
+	if (!gx_polyblend.value)
 		return;
 	if (!v_blend[3])
 		return;
 
 //Con_Printf("R_PolyBlend(): %4.2f %4.2f %4.2f %4.2f\n",v_blend[0], v_blend[1],	v_blend[2],	v_blend[3]);
 
- 	GL_DisableMultitexture();
+ 	GX_DisableMultitexture();
 
-	glDisable (GL_ALPHA_TEST);
-	glEnable (GL_BLEND);
-	glDisable (GL_DEPTH_TEST);
-	glDisable (GL_TEXTURE_2D);
+	GX_SetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
+	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+	gx_z_test_enabled = GX_FALSE;
+	GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
+ 	GX_SetVtxDesc(GX_VA_TEX0, GX_NONE);
+	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
 
-    glLoadIdentity ();
+	v.x = 1;
+	v.y = 0;
+	v.z = 0;
+	guMtxRotAxisDeg(gx_modelview_matrices[gx_cur_modelview_matrix], &v, -90); // put Z going up
+	v.x = 0;
+	v.z = 1;
+	guMtxRotAxisDeg(m, &v, 90); 
+	guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]); // put Z going up
 
-    glRotatef (-90,  1, 0, 0);	    // put Z going up
-    glRotatef (90,  0, 0, 1);	    // put Z going up
+	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
 
-	glColor4fv (v_blend);
+	r = v_blend[0] * 255.0;
+	g = v_blend[1] * 255.0;
+	b = v_blend[2] * 255.0;
+	a = v_blend[3] * 255.0;
 
-	glBegin (GL_QUADS);
+	GX_Begin (GX_QUADS, GX_VTXFMT0, 4);
+	GX_Position3f32(10, 100, 100);
+	GX_Color4u8(r, g, b, a);
+	GX_Position3f32(10, -100, 100);
+	GX_Color4u8(r, g, b, a);
+	GX_Position3f32(10, -100, -100);
+	GX_Color4u8(r, g, b, a);
+	GX_Position3f32(10, 100, -100);
+	GX_Color4u8(r, g, b, a);
+	GX_End ();
 
-	glVertex3f (10, 100, 100);
-	glVertex3f (10, -100, 100);
-	glVertex3f (10, -100, -100);
-	glVertex3f (10, 100, -100);
-	glEnd ();
-
-	glDisable (GL_BLEND);
-	glEnable (GL_TEXTURE_2D);
-	glEnable (GL_ALPHA_TEST);
+	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+ 	GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
+ 	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
+	GX_SetAlphaCompare(GX_GEQUAL, gx_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gx_alpha_test_higher);
 }
 
 
@@ -844,7 +904,6 @@ void R_SetFrustum (void)
 	}
 	else
 	{
-
 		// rotate VPN right by FOV_X/2 degrees
 		RotatePointAroundVector( frustum[0].normal, vup, vpn, -(90-r_refdef.fov_x / 2 ) );
 		// rotate VPN left by FOV_X/2 degrees
@@ -902,50 +961,35 @@ void R_SetupFrame (void)
 }
 
 
-void MYgluPerspective( GLdouble fovy, GLdouble aspect,
-		     GLdouble zNear, GLdouble zFar )
-{
-   GLdouble xmin, xmax, ymin, ymax;
-
-   ymax = zNear * tan( fovy * M_PI / 360.0 );
-   ymin = -ymax;
-
-   xmin = ymin * aspect;
-   xmax = ymax * aspect;
-
-   glFrustum( xmin, xmax, ymin, ymax, zNear, zFar );
-}
-
-
 /*
 =============
-R_SetupGL
+R_SetupGX
 =============
 */
-void R_SetupGL (void)
+void R_SetupGX (void)
 {
-	float	screenaspect;
-	extern	int glwidth, glheight;
+	//float	screenaspect;
+	extern	int gxwidth, gxheight;
 	int		x, x2, y2, y, w, h;
+	Mtx44		m;
+	guVector	a;
 
 	//
 	// set up viewpoint
 	//
-	glMatrixMode(GL_PROJECTION);
-    glLoadIdentity ();
-	x = r_refdef.vrect.x * glwidth/vid.width;
-	x2 = (r_refdef.vrect.x + r_refdef.vrect.width) * glwidth/vid.width;
-	y = (vid.height-r_refdef.vrect.y) * glheight/vid.height;
-	y2 = (vid.height - (r_refdef.vrect.y + r_refdef.vrect.height)) * glheight/vid.height;
+	x = r_refdef.vrect.x * gxwidth/vid.width;
+	x2 = (r_refdef.vrect.x + r_refdef.vrect.width) * gxwidth/vid.width;
+	y = (vid.height-r_refdef.vrect.y) * gxheight/vid.height;
+	y2 = (vid.height - (r_refdef.vrect.y + r_refdef.vrect.height)) * gxheight/vid.height;
 
 	// fudge around because of frac screen scale
 	if (x > 0)
 		x--;
-	if (x2 < glwidth)
+	if (x2 < gxwidth)
 		x2++;
 	if (y2 < 0)
 		y2--;
-	if (y < glheight)
+	if (y < gxheight)
 		y++;
 
 	w = x2 - x;
@@ -957,48 +1001,80 @@ void R_SetupGL (void)
 		w = h = 256;
 	}
 
-	glViewport (glx + x, gly + y2, w, h);
-    screenaspect = (float)r_refdef.vrect.width/r_refdef.vrect.height;
-//	yfov = 2*atan((float)r_refdef.vrect.height/r_refdef.vrect.width)*180/M_PI;
-//	yfov = (2.0 * tan (scr_fov.value/360*M_PI)) / screenaspect;
-//	yfov = 2*atan((float)r_refdef.vrect.height/r_refdef.vrect.width)*(scr_fov.value*2)/M_PI;
-//    MYgluPerspective (yfov,  screenaspect,  4,  4096);
-    MYgluPerspective (r_refdef.fov_y,  screenaspect,  4,  4096);
+	gx_viewport_x = gxx + x;
+	gx_viewport_y = gxy/* + y2*/;
+	gx_viewport_width = w;
+	gx_viewport_height = h;
+	GX_SetViewport (gx_viewport_x, gx_viewport_y, gx_viewport_width, gx_viewport_height, gxdepthmin, gxdepthmax);
+	
+	guPerspective(gx_projection_matrix, r_refdef.fov_y, (float)r_refdef.vrect.width/r_refdef.vrect.height, 4, 4096);
 
 	if (mirror)
 	{
 		if (mirror_plane->normal[2])
-			glScalef (1, -1, 1);
+			guMtxScale(m, 1, -1, 1);
 		else
-			glScalef (-1, 1, 1);
-		glCullFace(GL_BACK);
+			guMtxScale(m, -1, 1, 1);
+
+		guMtxConcat(gx_projection_matrix, m, gx_projection_matrix);
+		gx_cull_mode = GX_CULL_FRONT;
 	}
 	else
-		glCullFace(GL_FRONT);
+		gx_cull_mode = GX_CULL_BACK;
 
-	glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity ();
+	if(gx_cull_enabled)
+	{
+		GX_SetCullMode(gx_cull_mode);
+	};
 
-    glRotatef (-90,  1, 0, 0);	    // put Z going up
-    glRotatef (90,  0, 0, 1);	    // put Z going up
-    glRotatef (-r_refdef.viewangles[2],  1, 0, 0);
-    glRotatef (-r_refdef.viewangles[0],  0, 1, 0);
-    glRotatef (-r_refdef.viewangles[1],  0, 0, 1);
-    glTranslatef (-r_refdef.vieworg[0],  -r_refdef.vieworg[1],  -r_refdef.vieworg[2]);
+	GX_LoadProjectionMtx(gx_projection_matrix, GX_PERSPECTIVE);
 
-	glGetFloatv (GL_MODELVIEW_MATRIX, r_world_matrix);
+	a.x = 1;
+	a.y = 0;
+	a.z = 0;
+	guMtxRotAxisDeg(gx_modelview_matrices[gx_cur_modelview_matrix], &a, -90);
+	a.x = 0;
+	a.z = 1;
+	guMtxRotAxisDeg(m, &a, 90);
+	guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]); // put Z going up
+	a.x = 1;
+	a.z = 0;
+	guMtxRotAxisDeg(m, &a, -r_refdef.viewangles[2]);
+	guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
+	a.x = 0;
+	a.y = 1;
+	guMtxRotAxisDeg(m, &a, -r_refdef.viewangles[0]);
+	guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
+	a.y = 0;
+	a.z = 1;
+	guMtxRotAxisDeg(m, &a, -r_refdef.viewangles[1]);
+	guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
+	guMtxTrans(m, -r_refdef.vieworg[0], -r_refdef.vieworg[1], -r_refdef.vieworg[2]);
+	guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
+
+	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
+
+	guMtxCopy(gx_modelview_matrices[gx_cur_modelview_matrix], r_world_matrix);
 
 	//
 	// set drawing parms
 	//
-	if (gl_cull.value)
-		glEnable(GL_CULL_FACE);
-	else
-		glDisable(GL_CULL_FACE);
+	if (gx_cull.value)
+	{
+		gx_cull_enabled = true;
+		GX_SetCullMode(gx_cull_mode);
+	} else
+	{
+		gx_cull_enabled = false;
+		GX_SetCullMode(GX_CULL_NONE);
+	};
 
-	glDisable(GL_BLEND);
-	glDisable(GL_ALPHA_TEST);
-	glEnable(GL_DEPTH_TEST);
+	gx_blend_enabled = false;
+	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+	gx_alpha_test_enabled = false;
+	GX_SetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
+	gx_z_test_enabled = GX_TRUE;
+	GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
 }
 
 /*
@@ -1014,7 +1090,7 @@ void R_RenderScene (void)
 
 	R_SetFrustum ();
 
-	R_SetupGL ();
+	R_SetupGX ();
 
 	R_MarkLeaves ();	// done here so we know if we're in water
 
@@ -1024,13 +1100,13 @@ void R_RenderScene (void)
 
 	R_DrawEntitiesOnList ();
 
-	GL_DisableMultitexture();
+	GX_DisableMultitexture();
 
 	R_RenderDlights ();
 
 	R_DrawParticles ();
 
-#ifdef GLTEST
+#ifdef GXTEST
 	Test_Draw ();
 #endif
 
@@ -1044,49 +1120,56 @@ R_Clear
 */
 void R_Clear (void)
 {
+	Cvar_SetValue("gx_ztrick", 0.0); // ONCE WE FULLY UNDERSTAND HOW zNear AND zFar WORKS ON GX, REMOVE THIS ASAP
+	Sbar_Changed();                  // THIS TOO, REMOVE IT ASAP
 	if (r_mirroralpha.value != 1.0)
 	{
-		if (gl_clear.value)
-			glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		else
-			glClear (GL_DEPTH_BUFFER_BIT);
-		gldepthmin = 0;
-		gldepthmax = 0.5;
-		glDepthFunc (GL_LEQUAL);
+		if (gx_clear.value)
+		{
+			sys_clear_color_buffer = GX_TRUE;
+			Sbar_Changed();
+		} else
+			sys_clear_color_buffer = GX_FALSE;
+		sys_clear_buffers = GX_TRUE;
+		gxdepthmin = 0;
+		gxdepthmax = 0.5;
+		GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
 	}
-	else if (gl_ztrick.value)
+	else if (gx_ztrick.value)
 	{
 		static int trickframe;
 
-		if (gl_clear.value)
-			glClear (GL_COLOR_BUFFER_BIT);
+		sys_clear_buffers = GX_FALSE;
 
 		trickframe++;
 		if (trickframe & 1)
 		{
-			gldepthmin = 0;
-			gldepthmax = 0.49999;
-			glDepthFunc (GL_LEQUAL);
+			gxdepthmin = 0;
+			gxdepthmax = 0.49999;
+			GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
 		}
 		else
 		{
-			gldepthmin = 1;
-			gldepthmax = 0.5;
-			glDepthFunc (GL_GEQUAL);
+			gxdepthmin = 1;
+			gxdepthmax = 0.5;
+			GX_SetZMode(gx_z_test_enabled, GX_GEQUAL, gx_z_write_enabled);
 		}
 	}
 	else
 	{
-		if (gl_clear.value)
-			glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		else
-			glClear (GL_DEPTH_BUFFER_BIT);
-		gldepthmin = 0;
-		gldepthmax = 1;
-		glDepthFunc (GL_LEQUAL);
+		if (gx_clear.value)
+		{
+			sys_clear_color_buffer = GX_TRUE;
+			Sbar_Changed();
+		} else
+			sys_clear_color_buffer = GX_FALSE;
+		sys_clear_buffers = GX_TRUE;
+		gxdepthmin = 0;
+		gxdepthmax = 1;
+		GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
 	}
 
-	glDepthRange (gldepthmin, gldepthmax);
+	GX_SetViewport (gx_viewport_x, gx_viewport_y, gx_viewport_width, gx_viewport_height, gxdepthmin, gxdepthmax);
 }
 
 #if 0 //!!! FIXME, Zoid, mirror is disabled for now
@@ -1178,16 +1261,12 @@ void R_RenderView (void)
 
 	if (r_speeds.value)
 	{
-		glFinish ();
 		time1 = Sys_DoubleTime ();
 		c_brush_polys = 0;
 		c_alias_polys = 0;
 	}
 
 	mirror = false;
-
-	if (gl_finish.value)
-		glFinish ();
 
 	R_Clear ();
 
@@ -1203,9 +1282,8 @@ void R_RenderView (void)
 
 	if (r_speeds.value)
 	{
-//		glFinish ();
 		time2 = Sys_DoubleTime ();
-		Con_Printf ("%3i ms  %4i wpoly %4i epoly\n", (int)((time2-time1)*1000), c_brush_polys, c_alias_polys); 
+		Con_Printf ("%3i ms  %4i wpoly %4i epoly %9i bytes\n", (int)((time2-time1)*1000), c_brush_polys, c_alias_polys, gx_tex_allocated); 
 	}
 }
 

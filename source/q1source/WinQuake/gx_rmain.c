@@ -45,6 +45,12 @@ extern u8 gx_blend_src_value;
 
 extern u8 gx_blend_dst_value;
 
+extern qboolean gx_alpha_test_enabled;
+
+extern u8 gx_alpha_test_lower;
+
+extern u8 gx_alpha_test_higher;
+
 extern u8 gx_cur_vertex_format;
 
 extern u8 gx_cur_r;
@@ -288,7 +294,7 @@ void R_DrawSpriteModel (entity_t *e)
 
     GX_Bind(frame->gx_texturenum);
 
-	GX_SetAlphaCompare(GX_GREATER, 170, GX_AOP_AND, GX_LEQUAL, 255);
+	GX_SetAlphaCompare(GX_GEQUAL, gx_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gx_alpha_test_higher);
 	GX_Begin (GX_QUADS, gx_cur_vertex_format, 4);
 
 	VectorMA (e->origin, frame->down, up, point);
@@ -317,7 +323,7 @@ void R_DrawSpriteModel (entity_t *e)
 	
 	GX_End ();
 
-	GX_SetAlphaCompare(GX_GEQUAL, 0, GX_AOP_AND, GX_LEQUAL, 255);
+	GX_SetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
 }
 
 /*
@@ -840,7 +846,7 @@ void R_PolyBlend (void)
 
 	GX_DisableMultitexture();
 
-	GX_SetAlphaCompare(GX_GEQUAL, 0, GX_AOP_AND, GX_LEQUAL, 255);
+	GX_SetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
 	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 	gx_z_test_enabled = GX_FALSE;
 	GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
@@ -879,7 +885,7 @@ void R_PolyBlend (void)
  	GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
  	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
 	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
-	GX_SetAlphaCompare(GX_GREATER, 170, GX_AOP_AND, GX_LEQUAL, 255);
+	GX_SetAlphaCompare(GX_GEQUAL, gx_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gx_alpha_test_higher);
 }
 
 
@@ -981,12 +987,10 @@ R_SetupGX
 */
 void R_SetupGX (void)
 {
-	//float		screenaspect;
 	float		yfov;
 	int			i;
 	extern	int gxwidth, gxheight;
 	int			x, x2, y2, y, w, h;
-	//f32			xmin, xmax, ymin, ymax;
 	Mtx44		m;
 	guVector	a;
 
@@ -1023,15 +1027,6 @@ void R_SetupGX (void)
 	gx_viewport_height = h;
 	GX_SetViewport (gx_viewport_x, gx_viewport_y, gx_viewport_width, gx_viewport_height, gxdepthmin, gxdepthmax);
 	
-/*	screenaspect = (float)r_refdef.vrect.width/r_refdef.vrect.height;
-//	yfov = 2*atan((float)r_refdef.vrect.height/r_refdef.vrect.width)*180/M_PI;
-	ymax = 4 * tan( r_refdef.fov_y * M_PI / 360.0 );
-	ymin = -ymax;
-
-	xmin = ymin * screenaspect;
-	xmax = ymax * screenaspect;
-
-	guFrustum(gx_projection_matrix, ymax, ymin, xmin, xmax, 4, 4096 );*/
 	guPerspective(gx_projection_matrix, r_refdef.fov_y, (float)r_refdef.vrect.width/r_refdef.vrect.height, 4, 4096);
 
 	if (mirror)
@@ -1096,7 +1091,8 @@ void R_SetupGX (void)
 
 	gx_blend_enabled = false;
 	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
-	GX_SetAlphaCompare(GX_GEQUAL, 0, GX_AOP_AND, GX_LEQUAL, 255);
+	gx_alpha_test_enabled = false;
+	GX_SetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
 	gx_z_test_enabled = GX_TRUE;
 	GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
 }

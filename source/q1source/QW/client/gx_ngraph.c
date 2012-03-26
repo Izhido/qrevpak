@@ -21,9 +21,21 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #ifdef GXQUAKE
 
+#include <gccore.h>
+
 #include "quakedef.h"
 
 extern byte		*draw_chars;				// 8*8 graphic characters
+
+extern u8 gx_cur_vertex_format;
+
+extern u8 gx_cur_r;
+
+extern u8 gx_cur_g;
+
+extern u8 gx_cur_b;
+
+extern u8 gx_cur_a;
 
 int	netgraphtexture;	// netgraph texture
 
@@ -117,28 +129,32 @@ void R_NetGraph (void)
 	Draw_String(8, y, st);
 	y += 8;
 	
-    GL_Bind(netgraphtexture);
+    GX_Bind(netgraphtexture);
 
-	glTexImage2D (GL_TEXTURE_2D, 0, gl_alpha_format, 
-		NET_TIMINGS, NET_GRAPHHEIGHT, 0, GL_RGBA, 
-		GL_UNSIGNED_BYTE, ngraph_pixels);
+	GX_LoadAndBind(ngraph_pixels, NET_TIMINGS * NET_GRAPHHEIGHT * 4, NET_TIMINGS, NET_GRAPHHEIGHT, GX_TF_RGBA8);
 
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
+	GX_SetMinMag (GX_LINEAR, GX_LINEAR);
 
 	x = 8;
-	glColor3f (1,1,1);
-	glBegin (GL_QUADS);
-	glTexCoord2f (0, 0);
-	glVertex2f (x, y);
-	glTexCoord2f (1, 0);
-	glVertex2f (x+NET_TIMINGS, y);
-	glTexCoord2f (1, 1);
-	glVertex2f (x+NET_TIMINGS, y+NET_GRAPHHEIGHT);
-	glTexCoord2f (0, 1);
-	glVertex2f (x, y+NET_GRAPHHEIGHT);
-	glEnd ();
+	gx_cur_r = 255;
+	gx_cur_g = 255;
+	gx_cur_b = 255;
+	gx_cur_a = 255;
+	GX_Begin (GX_QUADS, gx_cur_vertex_format, 4);
+	GX_Position3f32(x, y, 0);
+	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_TexCoord2f32 (0, 0);
+	GX_Position3f32(x+NET_TIMINGS, y, 0);
+	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_TexCoord2f32 (1, 0);
+	GX_Position3f32(x+NET_TIMINGS, y+NET_GRAPHHEIGHT, 0);
+	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_TexCoord2f32 (1, 1);
+	GX_Position3f32(x, y+NET_GRAPHHEIGHT, 0);
+	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_TexCoord2f32 (0, 1);
+	GX_End ();
 }
 #endif
 

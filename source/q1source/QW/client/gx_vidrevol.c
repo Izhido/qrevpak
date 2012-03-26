@@ -17,96 +17,232 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
-// gl_vidrevol.c -- GL video driver for the Nintendo Wii using devkitPPC / libogc
+// gx_vidrevol.c -- video driver for the GX hardware of the Nintendo Wii 
 // (based on vid_null.c)
 
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Include only for the GL builds (part 1):
-#ifdef GLQUAKE
-// <<< FIX
+#ifdef GXQUAKE
 
 #include <gccore.h>
+#include <wiiuse/wpad.h>
+#include <malloc.h>
 
 #include "quakedef.h"
 
 unsigned	d_8to24table[256];
-unsigned char d_15to8table[65536];
 
-int		texture_mode = GL_LINEAR;
+int		texture_mode = GX_LINEAR;
 
 int		texture_extension_number = 1;
 
-float		gldepthmin, gldepthmax;
+float		gxdepthmin, gxdepthmax;
 
-cvar_t	gl_ztrick = {"gl_ztrick","1"};
-
-const char *gl_vendor;
-const char *gl_renderer;
-const char *gl_version;
-const char *gl_extensions;
+cvar_t	gx_ztrick = {"gx_ztrick","1"};
 
 static float vid_gamma = 1.0;
 
-qboolean is8bit = false;
-qboolean isPermedia = false;
-qboolean gl_mtexable = false;
+qboolean gx_mtexable = false;
 
 cvar_t		_windowed_mouse = {"_windowed_mouse","0", true};
 
 extern GXRModeObj* sys_rmode;
 
+extern cvar_t in_osk;
+
+Mtx44 gx_projection_matrix;
+
+Mtx gx_modelview_matrices[32];
+
+int gx_cur_modelview_matrix = 0;
+
+qboolean gx_cull_enabled = false;
+
+u8 gx_cull_mode;
+
+u8 gx_z_test_enabled = GX_FALSE;
+
+u8 gx_z_write_enabled = GX_TRUE;
+
+qboolean gx_blend_enabled = false;
+
+u8 gx_blend_src_value = GX_BL_ONE;
+
+u8 gx_blend_dst_value = GX_BL_ZERO;
+
+qboolean gx_alpha_test_enabled = false;
+
+u8 gx_alpha_test_lower = 0;
+
+u8 gx_alpha_test_higher = 255;
+
+u8 gx_cur_vertex_format = GX_VTXFMT0;
+
+u8 gx_cur_r;
+
+u8 gx_cur_g;
+
+u8 gx_cur_b;
+
+u8 gx_cur_a;
+
+f32 gx_viewport_x;
+
+f32 gx_viewport_y;
+
+f32 gx_viewport_width;
+
+f32 gx_viewport_height;
+
+double vid_guide_increment;
+
+int vid_pal_increment;
+
+int vid_guide_texture;
+
+void CheckMultiTextureExtensions(void) 
+{
+	if (!COM_CheckParm("-nomtex")) {
+		Con_Printf("Multitexture extensions found.\n");
+		//************************* ACTIVATE THIS ASAP: gx_mtexable = true;
+	}
+}
+
 /*
 ===============
-GL_Init
+QGX_Init
 ===============
 */
-void GL_Init (void)
+void QGX_Init (void)
 {
-	gl_vendor = glGetString (GL_VENDOR);
-	Con_Printf ("GL_VENDOR: %s\n", gl_vendor);
-	gl_renderer = glGetString (GL_RENDERER);
-	Con_Printf ("GL_RENDERER: %s\n", gl_renderer);
+	CheckMultiTextureExtensions();
 
-	gl_version = glGetString (GL_VERSION);
-	Con_Printf ("GL_VERSION: %s\n", gl_version);
-	gl_extensions = glGetString (GL_EXTENSIONS);
-	Con_Printf ("GL_EXTENSIONS: %s\n", gl_extensions);
+	gx_cull_mode = GX_CULL_BACK;
+	if(gx_cull_enabled)
+	{
+		GX_SetCullMode(gx_cull_mode);
+	};
+	gx_cur_vertex_format = GX_VTXFMT1;
+ 	GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
+ 	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
 
-//	Con_Printf ("%s %s\n", gl_renderer, gl_version);
+	gx_alpha_test_lower = 170;
+	gx_alpha_test_higher = 255;
+	gx_alpha_test_enabled = true;
+	GX_SetAlphaCompare(GX_GEQUAL, gx_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gx_alpha_test_higher);
 
-	glClearColor (1,0,0,0);
-	glCullFace(GL_FRONT);
-	glEnable(GL_TEXTURE_2D);
-
-	glEnable(GL_ALPHA_TEST);
-	glAlphaFunc(GL_GREATER, 0.666);
-
-	glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
 	glShadeModel (GL_FLAT);
 
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	GX_SetMinMag (GX_NEAR, GX_NEAR);
 
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	gx_blend_enabled = false;
+	gx_blend_src_value = GX_BL_SRCALPHA;
+	gx_blend_dst_value = GX_BL_INVSRCALPHA;
+	if(gx_blend_enabled)
+		GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP);
 
-//	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
 }
 
-void GL_BeginRendering (int *x, int *y, int *width, int *height)
+void GX_BeginRendering (int *x, int *y, int *width, int *height)
 {
 	*x = 0;
-	*y = sys_rmode->viHeight / 20;
-	*width = sys_rmode->viWidth;
-	*height = 9 * sys_rmode->viHeight / 10;
+	*y = 0;
+	*width = sys_rmode->fbWidth;
+	*height = sys_rmode->efbHeight;
 }
 
-void GL_EndRendering (void)
+void GX_EndRendering (void)
 {
-	glFlush();
-	//fxMesaSwapBuffers();
+	GX_DrawDone();
+}
+
+void VID_DrawWmoteGuide(void)
+{
+	ir_t p;
+	u32 k;
+	int r;
+	int w;
+	int sw;
+	int hsw;
+	unsigned int* guide;
+	double a;
+	int i;
+	int x;
+	int y;
+
+	WPAD_ScanPads();
+	WPAD_IR(WPAD_CHAN_0, &p);
+	if(p.valid)
+	{
+		k = WPAD_ButtonsHeld(WPAD_CHAN_0);
+		if((((k & WPAD_BUTTON_A) != WPAD_BUTTON_A)&&(wmotelookbinv.value == 0))
+		 ||(((k & WPAD_BUTTON_A) == WPAD_BUTTON_A)&&(wmotelookbinv.value != 0))
+		 ||(in_osk.value != 0))
+		{
+			r = 12 * vid.width / 320;
+			w = 2 * r;
+			for (sw = 1 ; sw < w ; sw<<=1)
+				;
+			hsw = sw / 2;
+
+			guide = Sys_BigStackAlloc(sw*sw * sizeof(unsigned), "VID_DrawWmoteGuide");
+
+			i = 0;
+			for(y = 0; y < sw; y++)
+			{
+				for(x = 0; x < sw; x++)
+				{
+					guide[i] = d_8to24table[255];
+					i++;
+				};
+			};
+
+			a = 0;
+			for(i = 0; i < 16; i++)
+			{
+				a = M_PI * i / 8;
+				x = hsw - r * cos(a + vid_guide_increment);
+				y = hsw - r * sin(a + vid_guide_increment);
+
+				guide[y*sw + x] = d_8to24table[vid_pal_increment];
+				guide[y*sw + x + 1] = d_8to24table[vid_pal_increment];
+
+				vid_pal_increment++;
+				if(vid_pal_increment > 255)
+				{
+					vid_pal_increment = 0;
+				};
+			};
+
+			if(!vid_guide_texture)
+				vid_guide_texture = texture_extension_number++;
+			
+			GX_Bind(vid_guide_texture);
+			GX_LoadAndBind(guide, sw*sw * 4, sw, sw, GX_TF_RGBA8);
+
+			GX_Begin (GX_QUADS, gx_cur_vertex_format, 4);
+			GX_Position3f32(p.x - hsw, p.y - hsw, 0);
+			GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+			GX_TexCoord2f32 (0, 0);
+			GX_Position3f32(p.x + hsw, p.y - hsw, 0);
+			GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+			GX_TexCoord2f32 (1, 0);
+			GX_Position3f32(p.x + hsw, p.y + hsw, 0);
+			GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+			GX_TexCoord2f32 (1, 1);
+			GX_Position3f32(p.x - hsw, p.y + hsw, 0);
+			GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+			GX_TexCoord2f32 (0, 1);
+			GX_End ();
+
+			Sys_BigStackFree(sw*sw * sizeof(unsigned), "VID_DrawWmoteGuide");
+		};
+		vid_guide_increment += 0.02;
+		if(vid_guide_increment > M_PI)
+		{
+			vid_guide_increment -= M_PI;
+		};
+	};
 }
 
 void	VID_SetPalette (unsigned char *palette)
@@ -114,14 +250,8 @@ void	VID_SetPalette (unsigned char *palette)
 	byte	*pal;
 	unsigned r,g,b;
 	unsigned v;
-	int     r1,g1,b1;
-	int		j,k,l,m;
 	unsigned short i;
 	unsigned	*table;
-	FILE *f;
-	char s[255];
-	int dist, bestdist;
-	static qboolean palflag = false;
 
 //
 // 8 8 8 encoding
@@ -135,35 +265,10 @@ void	VID_SetPalette (unsigned char *palette)
 		b = pal[2];
 		pal += 3;
 		
-		v = (255<<24) + (r<<0) + (g<<8) + (b<<16);
+		v = (r<<24) | (g<<16) | (b<<8) | 255;
 		*table++ = v;
 	}
-	d_8to24table[255] &= 0xffffff;	// 255 is transparent
-
-	// JACK: 3D distance calcs - k is last closest, l is the distance.
-	for (i=0; i < (1<<15); i++) {
-		/* Maps
-		000000000000000
-		000000000011111 = Red  = 0x1F
-		000001111100000 = Blue = 0x03E0
-		111110000000000 = Grn  = 0x7C00
-		*/
-		r = ((i & 0x1F) << 3)+4;
-		g = ((i & 0x03E0) >> 2)+4;
-		b = ((i & 0x7C00) >> 7)+4;
-		pal = (unsigned char *)d_8to24table;
-		for (v=0,k=0,bestdist=10000*10000; v<256; v++,pal+=4) {
-			r1 = (int)r - (int)pal[0];
-			g1 = (int)g - (int)pal[1];
-			b1 = (int)b - (int)pal[2];
-			dist = (r1*r1)+(g1*g1)+(b1*b1);
-			if (dist < bestdist) {
-				k=v;
-				bestdist = dist;
-			}
-		}
-		d_15to8table[i]=k;
-	}
+	d_8to24table[255] &= 0xffffff00;	// 255 is transparent
 }
 
 void	VID_ShiftPalette (unsigned char *palette)
@@ -171,23 +276,14 @@ void	VID_ShiftPalette (unsigned char *palette)
 	VID_SetPalette(palette);
 }
 
-qboolean VID_Is8bit(void)
-{
-	return is8bit;
-}
-
 static void Check_Gamma (unsigned char *pal)
 {
 	float	f, inf;
-	unsigned char	palette[768];
+	unsigned char*	palette = Sys_BigStackAlloc(768, "Check_Gamma");
 	int		i;
 
 	if ((i = COM_CheckParm("-gamma")) == 0) {
-		if ((gl_renderer && strstr(gl_renderer, "Voodoo")) ||
-			(gl_vendor && strstr(gl_vendor, "3Dfx")))
-			vid_gamma = 1;
-		else
-			vid_gamma = 0.7; // default to 0.7 on non-3dfx hardware
+		vid_gamma = 0.7;
 	} else
 		vid_gamma = Q_atof(com_argv[i+1]);
 
@@ -203,16 +299,17 @@ static void Check_Gamma (unsigned char *pal)
 	}
 
 	memcpy (pal, palette, sizeof(palette));
+	Sys_BigStackFree(768, "Check_Gamma");
 }
 
 void	VID_Init (unsigned char *palette)
 {
 	int i;
-	char	gldir[MAX_OSPATH];
-	int width = sys_rmode->viWidth;
-	int height = 9 * sys_rmode->viHeight / 10;
+	char	gxdir[MAX_OSPATH];
+	int width = sys_rmode->fbWidth;
+	int height = sys_rmode->efbHeight;
 
-	Cvar_RegisterVariable (&gl_ztrick);
+	Cvar_RegisterVariable (&gx_ztrick);
 	
 	vid.maxwarpwidth = width;
 	vid.maxwarpheight = height;
@@ -254,10 +351,10 @@ void	VID_Init (unsigned char *palette)
 				(320.0 / 240.0);
 	vid.numpages = 2;
 
-	GL_Init();
+	QGX_Init();
 
-	sprintf (gldir, "%s/glquake", com_gamedir);
-	Sys_mkdir (gldir);
+	sprintf (gxdir, "%s/gxquake", com_gamedir);
+	Sys_mkdir (gxdir);
 
 	Check_Gamma(palette);
 	VID_SetPalette(palette);
@@ -285,8 +382,15 @@ void	VID_Update (vrect_t *rects)
 {
 }
 
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Include only for the GL builds (part 2):
+/******************* These are part of the GL wrapper and MUST BE DELETED ASAP: ***************************************/
+void glShadeModel(GLenum mode)
+{
+}
+
+void glHint(GLenum target, GLenum mode)
+{
+}
+
+/************************************************************************************************************************/
 #endif
-// <<< FIX
 

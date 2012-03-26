@@ -160,10 +160,6 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
     <ClInclude Include="..\..\..\source\q1source\WinQuake\d_local.h" />
     <ClInclude Include="..\..\..\source\q1source\WinQuake\dosisms.h" />
     <ClInclude Include="..\..\..\source\q1source\WinQuake\draw.h" />
-    <ClInclude Include="..\..\..\source\q1source\WinQuake\gl_model.h" />
-    <ClInclude Include="..\..\..\source\q1source\WinQuake\gl_warp_sin.h" />
-    <ClInclude Include="..\..\..\source\q1source\WinQuake\glquake.h" />
-    <ClInclude Include="..\..\..\source\q1source\WinQuake\glquake2.h" />
     <ClInclude Include="..\..\..\source\q1source\WinQuake\input.h" />
     <ClInclude Include="..\..\..\source\q1source\WinQuake\keys.h" />
     <ClInclude Include="..\..\..\source\q1source\WinQuake\mathlib.h" />

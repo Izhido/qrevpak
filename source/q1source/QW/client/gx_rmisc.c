@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #ifdef GXQUAKE
 
+#include <gccore.h>
+
 #include "quakedef.h"
 
 extern void R_InitBubble();
@@ -78,7 +80,7 @@ void R_InitParticleTexture (void)
 	// particle texture
 	//
 	particletexture = texture_extension_number++;
-    GL_Bind(particletexture);
+    GX_Bind(particletexture);
 
 	for (x=0 ; x<8 ; x++)
 	{
@@ -90,12 +92,11 @@ void R_InitParticleTexture (void)
 			data[y][x][3] = dottexture[x][y]*255;
 		}
 	}
-	glTexImage2D (GL_TEXTURE_2D, 0, gl_alpha_format, 8, 8, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	GX_LoadAndBind (data, 8 * 8 * 4, 8, 8, GX_TF_RGBA8);
 
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
 
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	GX_SetMinMag (GX_LINEAR, GX_LINEAR);
 }
 
 /*
@@ -106,7 +107,7 @@ Grab six views for environment mapping tests
 ===============
 */
 void R_Envmap_f (void)
-{
+{/*
 	byte* buffer = Sys_BigStackAlloc(256*256*4 * sizeof(byte), "R_Envmap_f");
 
 	glDrawBuffer  (GL_FRONT);
@@ -163,7 +164,7 @@ void R_Envmap_f (void)
 	glReadBuffer  (GL_BACK);
 	GL_EndRendering ();
 	Sys_BigStackFree(256*256*4 * sizeof(byte), "R_Envmap_f");
-}
+*/}
 
 /*
 ===============
@@ -189,30 +190,30 @@ void R_Init (void)
 	Cvar_RegisterVariable (&r_speeds);
 	Cvar_RegisterVariable (&r_netgraph);
 
-	Cvar_RegisterVariable (&gl_clear);
-	Cvar_RegisterVariable (&gl_texsort);
+	Cvar_RegisterVariable (&gx_clear);
+	Cvar_RegisterVariable (&gx_texsort);
  
- 	if (gl_mtexable)
-		Cvar_SetValue ("gl_texsort", 0.0);
+ 	if (gx_mtexable)
+		Cvar_SetValue ("gx_texsort", 0.0);
 
-	Cvar_RegisterVariable (&gl_cull);
-	Cvar_RegisterVariable (&gl_smoothmodels);
-	Cvar_RegisterVariable (&gl_affinemodels);
-	Cvar_RegisterVariable (&gl_polyblend);
-	Cvar_RegisterVariable (&gl_flashblend);
-	Cvar_RegisterVariable (&gl_playermip);
-	Cvar_RegisterVariable (&gl_nocolors);
-	Cvar_RegisterVariable (&gl_finish);
+	Cvar_RegisterVariable (&gx_cull);
+	Cvar_RegisterVariable (&gx_smoothmodels);
+	Cvar_RegisterVariable (&gx_affinemodels);
+	Cvar_RegisterVariable (&gx_polyblend);
+	Cvar_RegisterVariable (&gx_flashblend);
+	Cvar_RegisterVariable (&gx_playermip);
+	Cvar_RegisterVariable (&gx_nocolors);
+	Cvar_RegisterVariable (&gx_finish);
 
-	Cvar_RegisterVariable (&gl_keeptjunctions);
-	Cvar_RegisterVariable (&gl_reporttjunctions);
+	Cvar_RegisterVariable (&gx_keeptjunctions);
+	Cvar_RegisterVariable (&gx_reporttjunctions);
 
 	R_InitBubble();
 	
 	R_InitParticles ();
 	R_InitParticleTexture ();
 
-#ifdef GLTEST
+#ifdef GXTEST
 	Test_Init ();
 #endif
 
@@ -248,7 +249,7 @@ void R_TranslatePlayerSkin (int playernum)
 	extern	byte		player_8bit_texels[320*200];
 	char s[512];
 
-	GL_DisableMultitexture();
+	GX_DisableMultitexture();
 
 	player = &cl.players[playernum];
 	if (!player->name[0])
@@ -309,7 +310,7 @@ void R_TranslatePlayerSkin (int playernum)
 
 		// because this happens during gameplay, do it fast
 		// instead of sending it through gl_upload 8
-		GL_Bind(playertextures + playernum);
+		GX_Bind(playertextures + playernum);
 
 	#if 0
 		s = 320*200;
@@ -329,41 +330,13 @@ void R_TranslatePlayerSkin (int playernum)
 			false, false, true);
 	#endif
 
-		scaled_width = gl_max_size.value < 512 ? gl_max_size.value : 512;
-		scaled_height = gl_max_size.value < 256 ? gl_max_size.value : 256;
+		scaled_width = gx_max_size.value < 512 ? gx_max_size.value : 512;
+		scaled_height = gx_max_size.value < 256 ? gx_max_size.value : 256;
 		// allow users to crunch sizes down even more if they want
-		scaled_width >>= (int)gl_playermip.value;
-		scaled_height >>= (int)gl_playermip.value;
+		scaled_width >>= (int)gx_playermip.value;
+		scaled_height >>= (int)gx_playermip.value;
 
 		pixels = Sys_BigStackAlloc(512*256 * sizeof(unsigned), "R_TranslatePlayerSkin");
-
-		if (VID_Is8bit()) { // 8bit texture upload
-			byte *out2;
-
-			out2 = (byte *)pixels;
-			memset(pixels, 0, 512*256 * sizeof(unsigned));
-			fracstep = tinwidth*0x10000/scaled_width;
-			for (i=0 ; i<scaled_height ; i++, out2 += scaled_width)
-			{
-				inrow = original + inwidth*(i*tinheight/scaled_height);
-				frac = fracstep >> 1;
-				for (j=0 ; j<scaled_width ; j+=4)
-				{
-					out2[j] = translate[inrow[frac>>16]];
-					frac += fracstep;
-					out2[j+1] = translate[inrow[frac>>16]];
-					frac += fracstep;
-					out2[j+2] = translate[inrow[frac>>16]];
-					frac += fracstep;
-					out2[j+3] = translate[inrow[frac>>16]];
-					frac += fracstep;
-				}
-			}
-
-			GL_Upload8_EXT ((byte *)pixels, scaled_width, scaled_height, false, false);
-		Sys_BigStackFree(512*256 * sizeof(unsigned), "R_TranslatePlayerSkin");
-			return;
-		}
 
 		for (i=0 ; i<256 ; i++)
 			translate32[i] = d_8to24table[translate[i]];
@@ -388,13 +361,10 @@ void R_TranslatePlayerSkin (int playernum)
 			}
 		}
 
-		glTexImage2D (GL_TEXTURE_2D, 0, gl_solid_format, 
-			scaled_width, scaled_height, 0, GL_RGBA, 
-			GL_UNSIGNED_BYTE, pixels);
+	GX_LoadAndBind (pixels, scaled_width * scaled_height * 4, scaled_width, scaled_height, GX_TF_RGBA8);
 
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
+	GX_SetMinMag (GX_LINEAR, GX_LINEAR);
 		Sys_BigStackFree(512*256 * sizeof(unsigned), "R_TranslatePlayerSkin");
 	}
 }
@@ -422,7 +392,7 @@ void R_NewMap (void)
 	r_viewleaf = NULL;
 	R_ClearParticles ();
 
-	GL_BuildLightmaps ();
+	GX_BuildLightmaps ();
 
 	// identify sky texture
 	skytexturenum = -1;
@@ -451,7 +421,7 @@ For program optimization
 ====================
 */
 void R_TimeRefresh_f (void)
-{
+{/*
 	int			i;
 	float		start, stop, time;
 
@@ -472,7 +442,7 @@ void R_TimeRefresh_f (void)
 
 	glDrawBuffer  (GL_BACK);
 	GL_EndRendering ();
-}
+*/}
 
 void D_FlushCaches (void)
 {

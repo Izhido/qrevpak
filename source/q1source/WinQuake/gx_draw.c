@@ -46,6 +46,12 @@ extern u8 gx_blend_src_value;
 
 extern u8 gx_blend_dst_value;
 
+extern qboolean gx_alpha_test_enabled;
+
+extern u8 gx_alpha_test_lower;
+
+extern u8 gx_alpha_test_higher;
+
 extern u8 gx_cur_vertex_format;
 
 extern u8 gx_cur_r;
@@ -1088,7 +1094,7 @@ void Draw_AlphaPic (int x, int y, qpic_t *pic, float alpha)
 	if (scrap_dirty)
 		Scrap_Upload ();
 	gx = (gxpic_t *)pic->data;
-	GX_SetAlphaCompare(GX_GEQUAL, 0, GX_AOP_AND, GX_LEQUAL, 255);
+	GX_SetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
 	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP);
 	gx_cur_r = 255;
 	gx_cur_g = 255;
@@ -1114,7 +1120,7 @@ void Draw_AlphaPic (int x, int y, qpic_t *pic, float alpha)
 	GX_TexCoord2f32 (gx->sl, gx->th);
 	GX_End ();
 	gx_cur_a = 255;
-	GX_SetAlphaCompare(GX_GREATER, 170, GX_AOP_AND, GX_LEQUAL, 255);
+	GX_SetAlphaCompare(GX_GEQUAL, gx_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gx_alpha_test_higher);
 	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 }
 
@@ -1407,8 +1413,10 @@ void GX_Set2D (void)
 	GX_SetCullMode(GX_CULL_NONE);
 	gx_blend_enabled = false;
 	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
-	GX_SetAlphaCompare(GX_GREATER, 170, GX_AOP_AND, GX_LEQUAL, 255);
-//		GX_SetAlphaCompare(GX_GEQUAL, 0, GX_AOP_AND, GX_LEQUAL, 255);
+	gx_alpha_test_enabled = true;
+	GX_SetAlphaCompare(GX_GEQUAL, gx_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gx_alpha_test_higher);
+//		gx_alpha_test_enabled = false;
+//		GX_SetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
 
 
 	gx_cur_r = 255;

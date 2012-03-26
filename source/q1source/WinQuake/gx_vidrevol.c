@@ -29,7 +29,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "quakedef.h"
 
 unsigned	d_8to24table[256];
-//unsigned char d_15to8table[65536];
 
 int		texture_mode = GX_LINEAR;
 
@@ -66,6 +65,12 @@ qboolean gx_blend_enabled = false;
 u8 gx_blend_src_value = GX_BL_ONE;
 
 u8 gx_blend_dst_value = GX_BL_ZERO;
+
+qboolean gx_alpha_test_enabled = false;
+
+u8 gx_alpha_test_lower = 0;
+
+u8 gx_alpha_test_higher = 255;
 
 u8 gx_cur_vertex_format = GX_VTXFMT0;
 
@@ -118,7 +123,10 @@ void QGX_Init (void)
  	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
 	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
 
-	GX_SetAlphaCompare(GX_GREATER, 170, GX_AOP_AND, GX_LEQUAL, 255);
+	gx_alpha_test_lower = 170;
+	gx_alpha_test_higher = 255;
+	gx_alpha_test_enabled = true;
+	GX_SetAlphaCompare(GX_GEQUAL, gx_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gx_alpha_test_higher);
 
 	glShadeModel (GL_FLAT);
 
@@ -129,6 +137,8 @@ void QGX_Init (void)
 	gx_blend_dst_value = GX_BL_INVSRCALPHA;
 	if(gx_blend_enabled)
 		GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP);
+
+	GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
 }
 
 void GX_BeginRendering (int *x, int *y, int *width, int *height)
@@ -267,11 +277,7 @@ void	VID_ShiftPalette (unsigned char *palette)
 static void Check_Gamma (unsigned char *pal)
 {
 	float	f, inf;
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Allocating in big stack. Stack in this device is pretty small:
-	//unsigned char	palette[768];
 	unsigned char*	palette = Sys_BigStackAlloc(768, "Check_Gamma");
-// <<< FIX
 	int		i;
 
 	if ((i = COM_CheckParm("-gamma")) == 0) {
@@ -291,10 +297,7 @@ static void Check_Gamma (unsigned char *pal)
 	}
 
 	memcpy (pal, palette, sizeof(palette));
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Deallocating from previous fix:
 	Sys_BigStackFree(768, "Check_Gamma");
-// <<< FIX
 }
 
 void	VID_Init (unsigned char *palette)

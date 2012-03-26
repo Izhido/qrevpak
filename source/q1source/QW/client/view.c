@@ -61,6 +61,11 @@ cvar_t  cl_crossy = {"cl_crossy", "0", true};
 
 #ifdef GLQUAKE
 cvar_t	gl_cshiftpercent = {"gl_cshiftpercent", "100", false};
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// New cvar for GX hardware:
+#elif GXQUAKE
+cvar_t	gx_cshiftpercent = {"gl_cshiftpercent", "100", false};
+// <<< FIX
 #endif
 
 cvar_t  v_contentblend = {"v_contentblend", "1", false};
@@ -267,7 +272,11 @@ cvar_t		v_gamma = {"gamma", "1", true};
 byte		gammatable[256];	// palette is sent through this
 
 
-#ifdef	GLQUAKE
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Add include for GX hardware:
+//#ifdef	GLQUAKE
+#if defined(GXQUAKE) || defined(GLQUAKE)
+// <<< FIX
 byte		ramps[3][256];
 float		v_blend[4];		// rgba 0.0 - 1.0
 #endif	// GLQUAKE
@@ -488,7 +497,11 @@ void V_CalcPowerupCshift (void)
 V_CalcBlend
 =============
 */
-#ifdef	GLQUAKE
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Add include for GX hardware:
+//#ifdef	GLQUAKE
+#if defined(GXQUAKE) || defined(GLQUAKE)
+// <<< FIX
 void V_CalcBlend (void)
 {
 	float	r, g, b, a, a2;
@@ -501,10 +514,18 @@ void V_CalcBlend (void)
 
 	for (j=0 ; j<NUM_CSHIFTS ; j++)	
 	{
-		if (!gl_cshiftpercent.value)
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Variable name changed for GX hardware:
+//		if (!gl_cshiftpercent.value)
+		if (!gx_cshiftpercent.value)
+// <<< FIX
 			continue;
 
-		a2 = ((cl.cshifts[j].percent * gl_cshiftpercent.value) / 100.0) / 255.0;
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Variable name changed for GX hardware:
+//		a2 = ((cl.cshifts[j].percent * gl_cshiftpercent.value) / 100.0) / 255.0;
+		a2 = ((cl.cshifts[j].percent * gx_cshiftpercent.value) / 100.0) / 255.0;
+// <<< FIX
 
 //		a2 = (cl.cshifts[j].percent/2)/255.0;
 		if (!a2)
@@ -533,7 +554,11 @@ void V_CalcBlend (void)
 V_UpdatePalette
 =============
 */
-#ifdef	GLQUAKE
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Add include for GX hardware:
+//#ifdef	GLQUAKE
+#if defined(GXQUAKE) || defined(GLQUAKE)
+// <<< FIX
 void V_UpdatePalette (void)
 {
 	int		i, j;
@@ -1068,6 +1093,11 @@ void V_Init (void)
 	Cvar_RegisterVariable (&cl_crossy);
 #ifdef GLQUAKE
 	Cvar_RegisterVariable (&gl_cshiftpercent);
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Registering new cvar for GX hardware:
+#elif GXQUAKE
+	Cvar_RegisterVariable (&gx_cshiftpercent);
+// <<< FIX
 #endif
 
 	Cvar_RegisterVariable (&cl_rollspeed);

@@ -152,10 +152,6 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
     <ClInclude Include="..\..\..\source\q1source\QW\client\d_ifacea.h" />
     <ClInclude Include="..\..\..\source\q1source\QW\client\d_local.h" />
     <ClInclude Include="..\..\..\source\q1source\QW\client\draw.h" />
-    <ClInclude Include="..\..\..\source\q1source\QW\client\gl_model.h" />
-    <ClInclude Include="..\..\..\source\q1source\QW\client\gl_warp_sin.h" />
-    <ClInclude Include="..\..\..\source\q1source\QW\client\glquake.h" />
-    <ClInclude Include="..\..\..\source\q1source\QW\client\glquake2.h" />
     <ClInclude Include="..\..\..\source\q1source\QW\client\input.h" />
     <ClInclude Include="..\..\..\source\q1source\QW\client\keys.h" />
     <ClInclude Include="..\..\..\source\q1source\QW\client\mathlib.h" />

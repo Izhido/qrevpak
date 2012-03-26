@@ -314,18 +314,6 @@
     <ClInclude Include="..\..\..\source\q1source\WinQuake\d_local.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\q1source\WinQuake\glquake.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\q1source\WinQuake\glquake2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\q1source\WinQuake\gl_model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\q1source\WinQuake\gl_warp_sin.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\source\q1source\WinQuake\input.h">
       <Filter>Header Files</Filter>
     </ClInclude>

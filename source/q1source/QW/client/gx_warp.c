@@ -17,12 +17,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
-// gl_warp.c -- sky and water polygons
+// gx_warp.c -- sky and water polygons
 
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Include only for the GL builds (part 1):
-#ifdef GLQUAKE
-// <<< FIX
+#ifdef GXQUAKE
+
+#include <gccore.h>
 
 #include "quakedef.h"
 
@@ -36,7 +35,27 @@ float	speedscale;		// for top sky and bottom sky
 
 msurface_t	*warpface;
 
-extern cvar_t gl_subdivide_size;
+extern cvar_t gx_subdivide_size;
+
+extern u8 gx_z_test_enabled;
+
+extern u8 gx_z_write_enabled;
+
+extern qboolean gx_blend_enabled;
+
+extern u8 gx_blend_src_value;
+
+extern u8 gx_blend_dst_value;
+
+extern u8 gx_cur_vertex_format;
+
+extern u8 gx_cur_r;
+
+extern u8 gx_cur_g;
+
+extern u8 gx_cur_b;
+
+extern u8 gx_cur_a;
 
 void BoundPoly (int numverts, float *verts, vec3_t mins, vec3_t maxs)
 {
@@ -66,7 +85,7 @@ void SubdividePolygon (int numverts, float *verts)
 	int		f, b;
 	float	dist[64];
 	float	frac;
-	glpoly_t	*poly;
+	gxpoly_t	*poly;
 	float	s, t;
 
 	if (numverts > 60)
@@ -77,7 +96,7 @@ void SubdividePolygon (int numverts, float *verts)
 	for (i=0 ; i<3 ; i++)
 	{
 		m = (mins[i] + maxs[i]) * 0.5;
-		m = gl_subdivide_size.value * floor (m/gl_subdivide_size.value + 0.5);
+		m = gx_subdivide_size.value * floor (m/gx_subdivide_size.value + 0.5);
 		if (maxs[i] - m < 8)
 			continue;
 		if (m - mins[i] < 8)
@@ -125,7 +144,7 @@ void SubdividePolygon (int numverts, float *verts)
 		return;
 	}
 
-	poly = Hunk_Alloc (sizeof(glpoly_t) + (numverts-4) * VERTEXSIZE*sizeof(float));
+	poly = Hunk_Alloc (sizeof(gxpoly_t) + (numverts-4) * VERTEXSIZE*sizeof(float));
 	poly->next = warpface->polys;
 	warpface->polys = poly;
 	poly->numverts = numverts;
@@ -141,14 +160,14 @@ void SubdividePolygon (int numverts, float *verts)
 
 /*
 ================
-GL_SubdivideSurface
+GX_SubdivideSurface
 
 Breaks a polygon up along axial 64 unit
 boundaries so that turbulent and sky warps
 can be done reasonably.
 ================
 */
-void GL_SubdivideSurface (msurface_t *fa)
+void GX_SubdivideSurface (msurface_t *fa)
 {
 	vec3_t		verts[64];
 	int			numverts;
@@ -184,7 +203,7 @@ void GL_SubdivideSurface (msurface_t *fa)
 // speed up sin calculations - Ed
 float	turbsin[] =
 {
-	#include "gl_warp_sin.h"
+	#include "gx_warp_sin.h"
 };
 #define TURBSCALE (256.0 / (2 * M_PI))
 
@@ -192,12 +211,12 @@ float	turbsin[] =
 =============
 EmitWaterPolys
 
-Does a water warp on the pre-fragmented glpoly_t chain
+Does a water warp on the pre-fragmented gxpoly_t chain
 =============
 */
 void EmitWaterPolys (msurface_t *fa)
 {
-	glpoly_t	*p;
+	gxpoly_t	*p;
 	float		*v;
 	int			i;
 	float		s, t, os, ot;
@@ -205,7 +224,7 @@ void EmitWaterPolys (msurface_t *fa)
 
 	for (p=fa->polys ; p ; p=p->next)
 	{
-		glBegin (GL_POLYGON);
+		GX_Begin (GX_TRIANGLEFAN, gx_cur_vertex_format, p->numverts);
 		for (i=0,v=p->verts[0] ; i<p->numverts ; i++, v+=VERTEXSIZE)
 		{
 			os = v[3];
@@ -217,10 +236,11 @@ void EmitWaterPolys (msurface_t *fa)
 			t = ot + turbsin[(int)((os*0.125+realtime) * TURBSCALE) & 255];
 			t *= (1.0/64);
 
-			glTexCoord2f (s, t);
-			glVertex3fv (v);
+			GX_Position3f32(*v, *(v+1), *(v+2));
+			GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+			GX_TexCoord2f32 (s, t);
 		}
-		glEnd ();
+		GX_End ();
 	}
 }
 
@@ -234,7 +254,7 @@ EmitSkyPolys
 */
 void EmitSkyPolys (msurface_t *fa)
 {
-	glpoly_t	*p;
+	gxpoly_t	*p;
 	float		*v;
 	int			i;
 	float	s, t;
@@ -243,7 +263,7 @@ void EmitSkyPolys (msurface_t *fa)
 
 	for (p=fa->polys ; p ; p=p->next)
 	{
-		glBegin (GL_POLYGON);
+		GX_Begin (GX_TRIANGLEFAN, gx_cur_vertex_format, p->numverts);
 		for (i=0,v=p->verts[0] ; i<p->numverts ; i++, v+=VERTEXSIZE)
 		{
 			VectorSubtract (v, r_origin, dir);
@@ -259,10 +279,11 @@ void EmitSkyPolys (msurface_t *fa)
 			s = (speedscale + dir[0]) * (1.0/128);
 			t = (speedscale + dir[1]) * (1.0/128);
 
-			glTexCoord2f (s, t);
-			glVertex3fv (v);
+			GX_Position3f32(*v, *(v+1), *(v+2));
+			GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+			GX_TexCoord2f32 (s, t);
 		}
-		glEnd ();
+		GX_End ();
 	}
 }
 
@@ -270,29 +291,29 @@ void EmitSkyPolys (msurface_t *fa)
 ===============
 EmitBothSkyLayers
 
-Does a sky warp on the pre-fragmented glpoly_t chain
+Does a sky warp on the pre-fragmented gxpoly_t chain
 This will be called for brushmodels, the world
 will have them chained together.
 ===============
 */
 void EmitBothSkyLayers (msurface_t *fa)
 {
-	GL_DisableMultitexture();
+	GX_DisableMultitexture();
 
-	GL_Bind (solidskytexture);
+	GX_Bind (solidskytexture);
 	speedscale = realtime*8;
 	speedscale -= (int)speedscale & ~127 ;
 
 	EmitSkyPolys (fa);
 
-	glEnable (GL_BLEND);
-	GL_Bind (alphaskytexture);
+	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+	GX_Bind (alphaskytexture);
 	speedscale = realtime*16;
 	speedscale -= (int)speedscale & ~127 ;
 
 	EmitSkyPolys (fa);
 
-	glDisable (GL_BLEND);
+	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 }
 
 #ifndef QUAKE2
@@ -305,25 +326,25 @@ void R_DrawSkyChain (msurface_t *s)
 {
 	msurface_t	*fa;
 
-	GL_DisableMultitexture();
+	GX_DisableMultitexture();
 
-	// used when gl_texsort is on
-	GL_Bind(solidskytexture);
+	// used when gx_texsort is on
+	GX_Bind(solidskytexture);
 	speedscale = realtime*8;
 	speedscale -= (int)speedscale & ~127 ;
 
 	for (fa=s ; fa ; fa=fa->texturechain)
 		EmitSkyPolys (fa);
 
-	glEnable (GL_BLEND);
-	GL_Bind (alphaskytexture);
+	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+	GX_Bind (alphaskytexture);
 	speedscale = realtime*16;
 	speedscale -= (int)speedscale & ~127 ;
 
 	for (fa=s ; fa ; fa=fa->texturechain)
 		EmitSkyPolys (fa);
 
-	glDisable (GL_BLEND);
+	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 }
 
 #endif
@@ -647,7 +668,7 @@ void R_LoadSkys (void)
 
 	for (i=0 ; i<6 ; i++)
 	{
-		GL_Bind (SKY_TEX + i);
+		GX_Bind (SKY_TEX + i);
 		sprintf (name, "gfx/env/bkgtst%s.tga", suf[i]);
 		COM_FOpenFile (name, &f);
 		if (!f)
@@ -658,14 +679,13 @@ void R_LoadSkys (void)
 		LoadTGA (f);
 //		LoadPCX (f);
 
-		glTexImage2D (GL_TEXTURE_2D, 0, gl_solid_format, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, targa_rgba);
-//		glTexImage2D (GL_TEXTURE_2D, 0, gl_solid_format, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, pcx_rgb);
+		GX_LoadAndBind (targa_rgba, 256 * 256 * 4, 256, 256, GX_TF_RGBA8);
+//		GX_LoadAndBind (pcx_rgb, 256 * 256 * 4, 256, 256, GX_TF_RGBA8);
 
 		free (targa_rgba);
 //		free (pcx_rgb);
 
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		GX_SetMinMag (GL_LINEAR, GL_LINEAR);
 	}
 }
 
@@ -898,10 +918,10 @@ void R_DrawSkyChain (msurface_t *s)
 
 	int		i;
 	vec3_t	verts[MAX_CLIP_VERTS];
-	glpoly_t	*p;
+	gxpoly_t	*p;
 
 	c_sky = 0;
-	GL_Bind(solidskytexture);
+	GX_Bind(solidskytexture);
 
 	// calculate vertex values for sky box
 
@@ -969,8 +989,9 @@ void MakeSkyVec (float s, float t, int axis)
 		t = 511.0/512;
 
 	t = 1.0 - t;
-	glTexCoord2f (s, t);
-	glVertex3fv (v);
+	GX_Position3f32(*v, *(v+1), *(v+2));
+	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_TexCoord2f32 (s, t);
 }
 
 /*
@@ -997,7 +1018,7 @@ glDisable (GL_DEPTH_TEST);
 		|| skymins[1][i] >= skymaxs[1][i])
 			continue;
 
-		GL_Bind (SKY_TEX+skytexorder[i]);
+		GX_Bind (SKY_TEX+skytexorder[i]);
 #if 0
 skymins[0][i] = -1;
 skymins[1][i] = -1;
@@ -1035,11 +1056,7 @@ void R_InitSky (texture_t *mt)
 {
 	int			i, j, p;
 	byte		*src;
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Allocating in big stack. Stack in this device is pretty small:
-	//unsigned	trans[128*128];
 	unsigned*	trans = Sys_BigStackAlloc(128*128 * sizeof(unsigned), "R_InitSky");
-// <<< FIX
 	unsigned	transpix;
 	int			r, g, b;
 	unsigned	*rgba;
@@ -1070,10 +1087,9 @@ void R_InitSky (texture_t *mt)
 
 	if (!solidskytexture)
 		solidskytexture = texture_extension_number++;
-	GL_Bind (solidskytexture );
-	glTexImage2D (GL_TEXTURE_2D, 0, gl_solid_format, 128, 128, 0, GL_RGBA, GL_UNSIGNED_BYTE, trans);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	GX_Bind (solidskytexture );
+	GX_LoadAndBind (trans, 128 * 128 * 4, 128, 128, GX_TF_RGBA8);
+	GX_SetMinMag (GX_LINEAR, GX_LINEAR);
 
 
 	for (i=0 ; i<128 ; i++)
@@ -1088,17 +1104,10 @@ void R_InitSky (texture_t *mt)
 
 	if (!alphaskytexture)
 		alphaskytexture = texture_extension_number++;
-	GL_Bind(alphaskytexture);
-	glTexImage2D (GL_TEXTURE_2D, 0, gl_alpha_format, 128, 128, 0, GL_RGBA, GL_UNSIGNED_BYTE, trans);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Deallocating from previous fix:
+	GX_Bind(alphaskytexture);
+	GX_LoadAndBind (trans, 128 * 128 * 4, 128, 128, GX_TF_RGBA8);
+	GX_SetMinMag (GX_LINEAR, GX_LINEAR);
 	Sys_BigStackFree(128*128 * sizeof(unsigned), "R_InitSky");
-// <<< FIX
 }
 
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Include only for the GL builds (part 2):
 #endif
-// <<< FIX

@@ -50,6 +50,10 @@ extern u8 gx_blend_src_value;
 
 extern u8 gx_blend_dst_value;
 
+extern u8 gx_alpha_test_lower;
+
+extern u8 gx_alpha_test_higher;
+
 extern u8 gx_cur_vertex_format;
 
 extern u8 gx_cur_r;
@@ -859,6 +863,7 @@ void R_DrawParticles (void)
 #ifdef GXQUAKE
 	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
+	GX_SetAlphaCompare(GX_GEQUAL, gx_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gx_alpha_test_higher);
 #elif GLQUAKE
 // <<< FIX
 	glEnd ();
