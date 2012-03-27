@@ -893,7 +893,7 @@ void Key_Event (int key, qboolean down)
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Allocating for previous fix:
-	cmd = Sys_Malloc(1024, "Key_Event");
+	cmd = Sys_BigStackAlloc(1024, "Key_Event");
 // <<< FIX
 
 //
@@ -922,7 +922,7 @@ void Key_Event (int key, qboolean down)
 		}
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
-		free(cmd);
+		Sys_BigStackFree(1024, "Key_Event");
 // <<< FIX
 		return;
 	}
@@ -935,7 +935,7 @@ void Key_Event (int key, qboolean down)
 		M_ToggleMenu_f ();
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
-		free(cmd);
+		Sys_BigStackFree(1024, "Key_Event");
 // <<< FIX
 		return;
 	}
@@ -963,7 +963,7 @@ void Key_Event (int key, qboolean down)
 		}
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
-		free(cmd);
+		Sys_BigStackFree(1024, "Key_Event");
 // <<< FIX
 		return;
 	}
@@ -971,7 +971,7 @@ void Key_Event (int key, qboolean down)
 	if (!down)
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
-		{free(cmd);
+		{Sys_BigStackFree(1024, "Key_Event");
 		return;}		// other systems only care about key down events
 // <<< FIX
 
@@ -997,7 +997,7 @@ void Key_Event (int key, qboolean down)
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
-	free(cmd);
+	Sys_BigStackFree(1024, "Key_Event");
 // <<< FIX
 }
 

@@ -82,7 +82,7 @@ float sys_frame_length;
 
 u8 sys_clear_buffers = GX_TRUE;
 
-u8 sys_clear_color_buffer = GX_TRUE;
+u8 sys_clear_color_buffer = GX_FALSE;
 
 /*
 ===============================================================================

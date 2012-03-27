@@ -1054,7 +1054,11 @@ cl.simangles[ROLL] = 0;	// FIXME @@@
 	R_PushDlights ();
 	R_RenderView ();
 	
-#ifndef GLQUAKE
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Support for GX hardware:
+//#ifndef GLQUAKE
+#if !defined(GXQUAKE) && !defined(GLQUAKE)
+// <<< FIX
 	if (crosshair.value)
 		Draw_Crosshair();
 #endif
