@@ -102,7 +102,7 @@ void CheckMultiTextureExtensions(void)
 {
 	if (!COM_CheckParm("-nomtex")) {
 		Con_Printf("Multitexture extensions found.\n");
-		//************************* ACTIVATE THIS ASAP: gx_mtexable = true;
+		gx_mtexable = true;
 	}
 }
 
