@@ -370,7 +370,7 @@ void Con_Printf (char *fmt, ...)
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Allocating in heap. Stack in this device is pretty small:
 	//char		msg[MAXPRINTMSG];
-	char*		msg = Sys_Malloc(MAXPRINTMSG, "Con_Printf");
+	char*		msg = Sys_BigStackAlloc(MAXPRINTMSG, "Con_Printf");
 // <<< FIX
 	static qboolean	inupdate;
 	
@@ -388,7 +388,7 @@ void Con_Printf (char *fmt, ...)
 	if (!con_initialized)
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
-		{free(msg);
+		{Sys_BigStackFree(MAXPRINTMSG, "Con_Printf");
 		return;}
 // <<< FIX
 		
@@ -410,7 +410,7 @@ void Con_Printf (char *fmt, ...)
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
-	free(msg);
+	Sys_BigStackFree(MAXPRINTMSG, "Con_Printf");
 // <<< FIX
 }
 
@@ -435,7 +435,7 @@ void Con_DPrintf (char *fmt, ...)
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Allocating for previous fix:
-	msg = Sys_Malloc(MAXPRINTMSG, "Con_DPrintf");
+	msg = Sys_BigStackAlloc(MAXPRINTMSG, "Con_DPrintf");
 // <<< FIX
 
 	va_start (argptr,fmt);
@@ -446,7 +446,7 @@ void Con_DPrintf (char *fmt, ...)
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
-	free(msg);
+	Sys_BigStackFree(MAXPRINTMSG, "Con_DPrintf");
 // <<< FIX
 }
 
@@ -719,7 +719,11 @@ Okay to call even when the screen can't be updated
 void Con_SafePrintf (char *fmt, ...)
 {
 	va_list		argptr;
-	char		msg[1024];
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Allocating in heap. Stack in this device is pretty small:
+	//char		msg[1024];
+	char*		msg = Sys_BigStackAlloc(1024, "Con_SafePrintf");
+// <<< FIX
 	int			temp;
 		
 	va_start (argptr,fmt);
@@ -730,5 +734,10 @@ void Con_SafePrintf (char *fmt, ...)
 	scr_disabled_for_loading = true;
 	Con_Printf ("%s", msg);
 	scr_disabled_for_loading = temp;
+
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+	Sys_BigStackFree(1024, "Con_SafePrintf");
+// <<< FIX
 }
 

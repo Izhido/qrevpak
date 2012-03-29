@@ -229,7 +229,7 @@ void Con_Init (void)
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Allocating in heap. Stack in this device is pretty small:
 	//char	temp[MAXGAMEDIRLEN+1];
-	char*	temp = Sys_Malloc(MAXGAMEDIRLEN+1, "Con_Init");
+	char*	temp = Sys_BigStackAlloc(MAXGAMEDIRLEN+1, "Con_Init");
 // <<< FIX
 	char	*t2 = "/qconsole.log";
 
@@ -263,7 +263,7 @@ void Con_Init (void)
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
-	free(temp);
+	Sys_BigStackFree(MAXGAMEDIRLEN+1, "Con_Init");
 // <<< FIX
 
 	con_initialized = true;
@@ -404,7 +404,7 @@ void Con_Printf (char *fmt, ...)
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Allocating in heap. Stack in this device is pretty small:
 	//char		msg[MAXPRINTMSG];
-	char*		msg = Sys_Malloc(MAXPRINTMSG, "Con_Printf");
+	char*		msg = Sys_BigStackAlloc(MAXPRINTMSG, "Con_Printf");
 // <<< FIX
 	static qboolean	inupdate;
 	
@@ -422,14 +422,14 @@ void Con_Printf (char *fmt, ...)
 	if (!con_initialized)
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
-		{free(msg);
+		{Sys_BigStackFree(MAXPRINTMSG, "Con_Printf");
 		return;}
 // <<< FIX
 		
 	if (cls.state == ca_dedicated)
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
-		{free(msg);
+		{Sys_BigStackFree(MAXPRINTMSG, "Con_Printf");
 		return;}		// no graphics mode
 // <<< FIX
 
@@ -451,7 +451,7 @@ void Con_Printf (char *fmt, ...)
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
-	free(msg);
+	Sys_BigStackFree(MAXPRINTMSG, "Con_Printf");
 // <<< FIX
 }
 
@@ -476,7 +476,7 @@ void Con_DPrintf (char *fmt, ...)
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Allocating for previous fix:
-	msg = Sys_Malloc(MAXPRINTMSG, "Con_DPrintf");
+	msg = Sys_BigStackAlloc(MAXPRINTMSG, "Con_DPrintf");
 // <<< FIX
 
 	va_start (argptr,fmt);
@@ -487,7 +487,7 @@ void Con_DPrintf (char *fmt, ...)
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
-	free(msg);
+	Sys_BigStackFree(MAXPRINTMSG, "Con_DPrintf");
 // <<< FIX
 }
 
@@ -505,7 +505,7 @@ void Con_SafePrintf (char *fmt, ...)
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Allocating in heap. Stack in this device is pretty small:
 	//char		msg[1024];
-	char*		msg = Sys_Malloc(1024, "Con_SafePrintf");
+	char*		msg = Sys_BigStackAlloc(1024, "Con_SafePrintf");
 // <<< FIX
 	int			temp;
 		
@@ -520,7 +520,7 @@ void Con_SafePrintf (char *fmt, ...)
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
-	free(msg);
+	Sys_BigStackFree(1024, "Con_SafePrintf");
 // <<< FIX
 }
 

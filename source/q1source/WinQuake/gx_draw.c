@@ -1539,7 +1539,7 @@ void GX_MipMap (byte *in, int width, int height)
 GX_Upload32
 ===============
 */
-void GX_Upload32 (unsigned *data, int length, int width, int height,  qboolean mipmap)
+void GX_Upload32 (unsigned *data, int length, int width, int height, qboolean mipmap)
 {
 static	unsigned	scaled[1024*512];	// [512*256];
 	int			scaled_width, scaled_height;
