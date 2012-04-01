@@ -405,9 +405,9 @@ void	NET_Shutdown (void)
 {
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Unfortunately, this particular variable name clashes with a network lib function in libogc. 
-// Renaming:
+// Renaming. Also, switching to the equivalent function in the library:
 	//close (net_socket);
-	close (net_socket_holder);
+	net_close (net_socket_holder);
 // <<< FIX
 }
 

@@ -482,12 +482,20 @@ void	NET_Config (qboolean multiplayer)
 		{
 			if (ip_sockets[i])
 			{
-				close (ip_sockets[i]);
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Switching to the equivalent function in the library:
+				//close (ip_sockets[i]);
+				net_close (ip_sockets[i]);
+// <<< FIX
 				ip_sockets[i] = 0;
 			}
 			if (ipx_sockets[i])
 			{
-				close (ipx_sockets[i]);
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Switching to the equivalent function in the library:
+				//close (ipx_sockets[i]);
+				net_close (ipx_sockets[i]);
+// <<< FIX
 				ipx_sockets[i] = 0;
 			}
 		}
@@ -580,7 +588,11 @@ int NET_Socket (char *net_interface, int port)
 // <<< FIX
 	{
 		Com_Printf ("ERROR: UDP_OpenSocket: bind: %s\n", NET_ErrorString());
-		close (newsocket);
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Switching to the equivalent function in the library:
+		//close (newsocket);
+		net_close (newsocket);
+// <<< FIX
 		return 0;
 	}
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc

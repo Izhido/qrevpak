@@ -216,7 +216,11 @@ int UDP_OpenSocket (int port)
 	return newsocket;
 
 ErrorReturn:
-	close (newsocket);
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Switching to the equivalent function in the library:
+	//close (newsocket);
+	net_close (newsocket);
+// <<< FIX
 	return -1;
 }
 
@@ -226,7 +230,11 @@ int UDP_CloseSocket (int socket)
 {
 	if (socket == net_broadcastsocket)
 		net_broadcastsocket = 0;
-	return close (socket);
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Switching to the equivalent function in the library:
+	//return close (socket);
+	return net_close (socket);
+// <<< FIX
 }
 
 
