@@ -116,11 +116,19 @@ Sends an out-of-band datagram
 void Netchan_OutOfBand (netadr_t adr, int length, byte *data)
 {
 	sizebuf_t	send;
-	byte		send_buf[MAX_MSGLEN + PACKET_HEADER];
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Allocating in big stack. Stack in this device is pretty small:
+	//byte		send_buf[MAX_MSGLEN + PACKET_HEADER];
+	byte*		send_buf = Sys_BigStackAlloc((MAX_MSGLEN + PACKET_HEADER) * sizeof(byte), "Netchan_OutOfBand");
+// <<< FIX
 
 // write the packet header
 	send.data = send_buf;
-	send.maxsize = sizeof(send_buf);
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Compensating for local variable change:
+	//send.maxsize = sizeof(send_buf);
+	send.maxsize = (MAX_MSGLEN + PACKET_HEADER) * sizeof(byte);
+// <<< FIX
 	send.cursize = 0;
 	
 	MSG_WriteLong (&send, -1);	// -1 sequence means out of band
@@ -132,6 +140,11 @@ void Netchan_OutOfBand (netadr_t adr, int length, byte *data)
 	if (!cls.demoplayback)
 #endif
 		NET_SendPacket (send.cursize, send.data, adr);
+
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+	Sys_BigStackFree((MAX_MSGLEN + PACKET_HEADER) * sizeof(byte), "Netchan_OutOfBand");
+// <<< FIX
 }
 
 /*

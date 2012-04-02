@@ -1016,8 +1016,13 @@ void CL_SetInfo (void)
 {
 	int		slot;
 	player_info_t	*player;
-	char key[MAX_MSGLEN];
-	char value[MAX_MSGLEN];
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Allocating in big stack. Stack in this device is pretty small:
+	//char key[MAX_MSGLEN];
+	//char value[MAX_MSGLEN];
+	char* key = Sys_BigStackAlloc(MAX_MSGLEN, "CL_SetInfo");
+	char* value = Sys_BigStackAlloc(MAX_MSGLEN, "CL_SetInfo");
+// <<< FIX
 
 	slot = MSG_ReadByte ();
 	if (slot >= MAX_CLIENTS)
@@ -1025,16 +1030,28 @@ void CL_SetInfo (void)
 
 	player = &cl.players[slot];
 
-	strncpy (key, MSG_ReadString(), sizeof(key) - 1);
-	key[sizeof(key) - 1] = 0;
-	strncpy (value, MSG_ReadString(), sizeof(value) - 1);
-	key[sizeof(value) - 1] = 0;
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Compensating for local variable change. Also, fixing a possible network communication bug:
+	//strncpy (key, MSG_ReadString(), sizeof(key) - 1);
+	//key[sizeof(key) - 1] = 0;
+	//strncpy (value, MSG_ReadString(), sizeof(value) - 1);
+	//key[sizeof(value) - 1] = 0;
+	strncpy (key, MSG_ReadString(), MAX_MSGLEN - 1);
+	key[MAX_MSGLEN - 1] = 0;
+	strncpy (value, MSG_ReadString(), MAX_MSGLEN - 1);
+	value[MAX_MSGLEN - 1] = 0;
+// <<< FIX
 
 	Con_DPrintf("SETINFO %s: %s=%s\n", player->name, key, value);
 
 	Info_SetValueForKey (player->userinfo, key, value, MAX_INFO_STRING);
 
 	CL_ProcessUserInfo (slot, player);
+
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+	Sys_BigStackFree(MAX_MSGLEN + MAX_MSGLEN, "CL_SetInfo");
+// <<< FIX
 }
 
 /*
@@ -1046,17 +1063,34 @@ void CL_ServerInfo (void)
 {
 	int		slot;
 	player_info_t	*player;
-	char key[MAX_MSGLEN];
-	char value[MAX_MSGLEN];
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Allocating in big stack. Stack in this device is pretty small:
+	//char key[MAX_MSGLEN];
+	//char value[MAX_MSGLEN];
+	char* key = Sys_BigStackAlloc(MAX_MSGLEN, "CL_ServerInfo");
+	char* value = Sys_BigStackAlloc(MAX_MSGLEN, "CL_ServerInfo");
+// <<< FIX
 
-	strncpy (key, MSG_ReadString(), sizeof(key) - 1);
-	key[sizeof(key) - 1] = 0;
-	strncpy (value, MSG_ReadString(), sizeof(value) - 1);
-	key[sizeof(value) - 1] = 0;
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Compensating for local variable change. Also, fixing a possible network communication bug:
+	//strncpy (key, MSG_ReadString(), sizeof(key) - 1);
+	//key[sizeof(key) - 1] = 0;
+	//strncpy (value, MSG_ReadString(), sizeof(value) - 1);
+	//key[sizeof(value) - 1] = 0;
+	strncpy (key, MSG_ReadString(), MAX_MSGLEN - 1);
+	key[MAX_MSGLEN - 1] = 0;
+	strncpy (value, MSG_ReadString(), MAX_MSGLEN - 1);
+	value[MAX_MSGLEN - 1] = 0;
+// <<< FIX
 
 	Con_DPrintf("SERVERINFO: %s=%s\n", key, value);
 
 	Info_SetValueForKey (cl.serverinfo, key, value, MAX_SERVERINFO_STRING);
+
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+	Sys_BigStackFree(MAX_MSGLEN + MAX_MSGLEN, "CL_ServerInfo");
+// <<< FIX
 }
 
 /*

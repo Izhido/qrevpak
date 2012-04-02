@@ -202,7 +202,11 @@ called by CL_Connect_f and CL_CheckResend
 void CL_SendConnectPacket (void)
 {
 	netadr_t	adr;
-	char	data[2048];
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deferring allocation. Stack in this device is pretty small:
+	//char	data[2048];
+	char*	data;
+// <<< FIX
 	double t1, t2;
 // JACK: Fixed bug where DNS lookups would cause two connects real fast
 //       Now, adds lookup time to the connect time.
@@ -237,10 +241,19 @@ void CL_SendConnectPacket (void)
 
 	Info_SetValueForStarKey (cls.userinfo, "*ip", NET_AdrToString(adr), MAX_INFO_STRING);
 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Allocating for previous fix in big stack:
+	data = Sys_BigStackAlloc(2048, "CL_SendConnectPacket");
+// <<< FIX
+
 //	Con_Printf ("Connecting to %s...\n", cls.servername);
 	sprintf (data, "%c%c%c%cconnect %i %i %i \"%s\"\n",
 		255, 255, 255, 255,	PROTOCOL_VERSION, cls.qport, cls.challenge, cls.userinfo);
 	NET_SendPacket (strlen(data), data, adr);
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+	Sys_BigStackFree(2048, "CL_SendConnectPacket");
+// <<< FIX
 }
 
 /*
@@ -254,7 +267,11 @@ Resend a connect message if the last one has timed out
 void CL_CheckForResend (void)
 {
 	netadr_t	adr;
-	char	data[2048];
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deferring allocation. Stack in this device is pretty small:
+	//char	data[2048];
+	char*	data;
+// <<< FIX
 	double t1, t2;
 
 	if (connect_time == -1)
@@ -284,9 +301,19 @@ void CL_CheckForResend (void)
 
 	connect_time = realtime+t2-t1;	// for retransmit requests
 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Allocating for previous fix in big stack:
+	data = Sys_BigStackAlloc(2048, "CL_CheckForResend");
+// <<< FIX
+
 	Con_Printf ("Connecting to %s...\n", cls.servername);
 	sprintf (data, "%c%c%c%cgetchallenge\n", 255, 255, 255, 255);
 	NET_SendPacket (strlen(data), data, adr);
+
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+	Sys_BigStackFree(2048, "CL_CheckForResend");
+// <<< FIX
 }
 
 void CL_BeginServerConnect(void)
@@ -692,7 +719,11 @@ Contents allows \n escape character
 */
 void CL_Packet_f (void)
 {
-	char	send[2048];
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deferring allocation. Stack in this device is pretty small:
+	//char	send[2048];
+	char*	send;
+// <<< FIX
 	int		i, l;
 	char	*in, *out;
 	netadr_t	adr;
@@ -708,6 +739,11 @@ void CL_Packet_f (void)
 		Con_Printf ("Bad address\n");
 		return;
 	}
+
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Allocating for previous fix in big stack:
+	send = Sys_BigStackAlloc(2048, "CL_Packet_f");
+// <<< FIX
 
 	in = Cmd_Argv(2);
 	out = send+4;
@@ -727,6 +763,11 @@ void CL_Packet_f (void)
 	*out = 0;
 
 	NET_SendPacket (out-send, send, adr);
+
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+	Sys_BigStackFree(2048, "CL_Packet_f");
+// <<< FIX
 }
 
 
