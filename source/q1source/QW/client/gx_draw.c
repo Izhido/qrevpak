@@ -1665,11 +1665,14 @@ static	unsigned	scaled[1024*512];	// [512*256];
 	if (scaled_height > gx_max_size.value)
 		scaled_height = gx_max_size.value;
 
+	// This is required in order to make small textures compatible with GX hardware:
+	if (scaled_width < 4)
+		scaled_width = 4;
+	if (scaled_height < 4)
+		scaled_height = 4;
+
 	if (scaled_width * scaled_height > sizeof(scaled)/4)
 		Sys_Error ("GX_LoadTexture: too big");
-
-	if (scaled_width * scaled_height < 16)
-		Sys_Error ("GX_LoadTexture: too small");
 
 #if 0
 	if (mipmap)

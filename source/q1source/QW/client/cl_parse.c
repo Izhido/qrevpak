@@ -334,7 +334,11 @@ A download message has been received from the server
 void CL_ParseDownload (void)
 {
 	int		size, percent;
-	byte	name[1024];
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deferring allocation. Stack in this device is pretty small:
+	//byte	name[1024];
+	byte*	name;
+// <<< FIX
 	int		r;
 
 
@@ -364,6 +368,10 @@ void CL_ParseDownload (void)
 	// open the file if not opened yet
 	if (!cls.download)
 	{
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Allocating for previous fix in big stack:
+		name = Sys_BigStackAlloc(1024 * sizeof(byte), "CL_ParseDownload");
+// <<< FIX
 		if (strncmp(cls.downloadtempname,"skins/",6))
 			sprintf (name, "%s/%s", com_gamedir, cls.downloadtempname);
 		else
@@ -377,8 +385,16 @@ void CL_ParseDownload (void)
 			msg_readcount += size;
 			Con_Printf ("Failed to open %s\n", cls.downloadtempname);
 			CL_RequestNextDownload ();
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+		Sys_BigStackFree(1024 * sizeof(byte), "CL_ParseDownload");
+// <<< FIX
 			return;
 		}
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+		Sys_BigStackFree(1024 * sizeof(byte), "CL_ParseDownload");
+// <<< FIX
 	}
 
 	fwrite (net_message.data + msg_readcount, 1, size, cls.download);
@@ -441,7 +457,11 @@ static int upload_size;
 
 void CL_NextUpload(void)
 {
-	byte	buffer[1024];
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deferring allocation. Stack in this device is pretty small:
+	//byte	buffer[1024];
+	byte*	buffer;
+// <<< FIX
 	int		r;
 	int		percent;
 	int		size;
@@ -452,6 +472,10 @@ void CL_NextUpload(void)
 	r = upload_size - upload_pos;
 	if (r > 768)
 		r = 768;
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Allocating for previous fix in big stack:
+	buffer = Sys_BigStackAlloc(1024 * sizeof(byte), "CL_NextUpload");
+// <<< FIX
 	memcpy(buffer, upload_data + upload_pos, r);
 	MSG_WriteByte (&cls.netchan.message, clc_upload);
 	MSG_WriteShort (&cls.netchan.message, r);
@@ -467,13 +491,21 @@ void CL_NextUpload(void)
 Con_DPrintf ("UPLOAD: %6d: %d written\n", upload_pos - r, r);
 
 	if (upload_pos != upload_size)
-		return;
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+		{Sys_BigStackFree(1024 * sizeof(byte), "CL_NextUpload");
+		return;}
+// <<< FIX
 
 	Con_Printf ("Upload completed\n");
 
 	free(upload_data);
 	upload_data = 0;
 	upload_pos = upload_size = 0;
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+	Sys_BigStackFree(1024 * sizeof(byte), "CL_NextUpload");
+// <<< FIX
 }
 
 void CL_StartUpload (byte *data, int size)
