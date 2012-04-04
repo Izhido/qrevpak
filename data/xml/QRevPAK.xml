@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <GameEntries>
-  <GameEntry crc="49186">
+  <GameEntry crc="46601">
     <name>Quake</name>
     <description>
       <line>From id Software's web site:</line>
@@ -10,12 +10,12 @@
       <line>the cannibalistic Ogre, fiendish Vore and</line>
       <line>indestructible Schambler using letal nails, fierce</line>
       <line>Thunderbolts and abominable Rocket and Grenade</line>
-      <line>Launchers." (Software rendered version.)</line>
+      <line>Launchers."</line>
     </description>
     <engine>Q1Rev-soft</engine>
     <parameters></parameters>
   </GameEntry>
-  <GameEntry crc="26655">
+  <GameEntry crc="24070">
     <name>QuakeWorld</name>
     <description>
       <line>From QuakeWorld.net:</line>
@@ -33,7 +33,7 @@
       <line>play deathmatch games over a TCP/IP network such</line>
       <line>as the Internet. It has no support for solo play,</line>
       <line>and you can't do anything with out connecting to</line>
-      <line>a special server." (Software rendered version.)</line>
+      <line>a special server."</line>
     </description>
     <engine>QWRev-soft</engine>
     <parameters></parameters>

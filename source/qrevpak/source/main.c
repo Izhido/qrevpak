@@ -6,6 +6,7 @@
 #include <wiiuse/wpad.h>
 #include "ezxml.h"
 #include "QRevPAK_xml.h"
+#include "QRevPAK_ini.h"
 #include "run_dol.h"
 #include <unistd.h>
 
@@ -39,6 +40,8 @@ typedef enum
 	ListScrollUpReleased,
 	ListScrollDownPressed,
 	ListScrollDownReleased,
+	ListUseGXPressed,
+	ListUseGXReleased,
 	Launch,
 	Finishing,
 	Finished
@@ -86,6 +89,12 @@ typedef struct
 	int Length;
 	int EntryIndex;
 } GameEntryLocation;
+
+typedef struct
+{
+	char* Engine;
+	char* GX;
+} GXEngineEntry;
 
 void ShutDown(s32 chan)
 {	
@@ -138,6 +147,12 @@ int main(int argc, char **argv)
 	int EntryIndicesCount;
 	int* EntryIndices;
 	GameEntryLocation* EntryLocations;
+	GXEngineEntry* GXEngines;
+	int GXEnginesCount;
+	ezxml_t datKey;
+	char* msgKey;
+	ezxml_t datValue;
+	char* msgValue;
 	int TopEntryIndex;
 	int SelectedEntryIndex;
 	int ScrollPosition;
@@ -155,6 +170,7 @@ int main(int argc, char **argv)
 	int TickCount;
 	AppState DefaultListState;
 	bool ScrollButtonInverted;
+	bool UseGXEngines;
 
 	VIDEO_Init();
 	WPAD_Init();
@@ -198,6 +214,9 @@ int main(int argc, char **argv)
 	EntryIndices = NULL;
 	EntryIndicesCount = 0;
 	EntryLocations = NULL;
+	GXEngines = NULL;
+	GXEnginesCount = 0;
+	UseGXEngines = false;
 	State = Start;
 	while(State != Finished) 
 	{
@@ -362,7 +381,7 @@ int main(int argc, char **argv)
 				ScreenCache[i * w + j].Background = 44;
 				ScreenCache[i * w + j].Char = 219;
 			};
-			msg = "Quake Rev Pak Release 2 (C) Heriberto Delgado.";
+			msg = "Quake Rev PAK Release 3 (C) Heriberto Delgado.";
 			i = h - 3;
 			j = 3;
 			printf("\x1b[40m\x1b[37m\x1b[%d;%dH%s", i, j, msg);
@@ -900,7 +919,7 @@ int main(int argc, char **argv)
 		{
 			printf("\x1b[46m\x1b[37;1m");
 			memset(EntryLocations, 0, EntryIndicesCount * sizeof(GameEntryLocation));
-			for(i = 4; i < (h - 4); i++)
+			for(i = 4; i < (h - 7); i++)
 			{
 				printf("\x1b[%d;5H", i);
 				for(j = 5; j < (w - 5); j++)
@@ -912,7 +931,7 @@ int main(int argc, char **argv)
 					ScreenCache[i * w + j].Char = 32;
 				};
 			};
-			i = h - 4;
+			i = h - 7;
 			j = 6;
 			printf("\x1b[44m\x1b[30;0m\x1b[%d;%dH", i, j);
 			for(; j < (w - 4); j++)
@@ -928,7 +947,7 @@ int main(int argc, char **argv)
 			ScreenCache[i * w + j].Foreground = 30;
 			ScreenCache[i * w + j].Background = 44;
 			ScreenCache[i * w + j].Char = 220;
-			for(i++; i < (h - 4); i++)
+			for(i++; i < (h - 7); i++)
 			{
 				printf("\x1b[%d;%dH%c", i, j, 219);
 				ScreenCache[i * w + j].Foreground = 30;
@@ -1044,7 +1063,7 @@ int main(int argc, char **argv)
 					ScreenCache[i * w + j].Bold = bl;
 					ScreenCache[i * w + j].Char = c;
 				};
-				if((i == 4) || (i == (h - 5)))
+				if((i == 4) || (i == (h - 8)))
 				{
 					if(ei == TopEntryIndex)
 					{
@@ -1104,7 +1123,7 @@ int main(int argc, char **argv)
 					p = 0;
 					while(m > 0)
 					{
-						if(i < (h - 4))
+						if(i < (h - 8))
 						{
 							if(ei == SelectedEntryIndex)
 							{
@@ -1120,7 +1139,7 @@ int main(int argc, char **argv)
 							ScreenCache[i * w + 21].Foreground = fg;
 							ScreenCache[i * w + 21].Bold = bl;
 							ScreenCache[i * w + 21].Char = 179;
-							if((i == 4) || (i == (h - 5)))
+							if((i == 4) || (i == (h - 8)))
 							{
 								printf("\x1b[%d;%dH%c", i, w - 6, c);
 								ScreenCache[i * w + w - 6].Foreground = fg;
@@ -1179,7 +1198,7 @@ int main(int argc, char **argv)
 						EntryLocations[ei].Complete = true;
 					};
 				};
-				if(i < (h - 4))
+				if(i < (h - 7))
 				{
 					ei++;
 				} else
@@ -1207,7 +1226,7 @@ int main(int argc, char **argv)
 			{
 				printf("\x1b[46m\x1b[30;0m");
 			};
-			for(i++; i < (h - 6); i++)
+			for(i++; i < (h - 9); i++)
 			{
 				printf("\x1b[%d;%dH%c", i, j, 176);
 				ScreenCache[i * w + j].Foreground = 30;
@@ -1236,6 +1255,34 @@ int main(int argc, char **argv)
 			ScreenCache[i * w + j].Foreground = 30;
 			ScreenCache[i * w + j].Bold = 0;
 			ScreenCache[i * w + j].Char = 219;
+			i = h - 5;
+			j = 4;
+			printf("\x1b[44m\x1b[37;1m\x1b[%d;%dH[", i, j);
+			ScreenCache[i * w + j].Foreground = 37;
+			ScreenCache[i * w + j].Bold = 0;
+			ScreenCache[i * w + j].Char = '[';
+			j++;
+			if(UseGXEngines)
+			{
+				c = 254;
+			} else
+			{
+				c = 32;
+			};
+			printf("\x1b[%d;%dH%c", i, j, c);
+			ScreenCache[i * w + j].Foreground = 37;
+			ScreenCache[i * w + j].Bold = 0;
+			ScreenCache[i * w + j].Char = c;
+			j++;
+			msg = "] Use GX-accelerated engines if available";
+			printf("\x1b[%d;%dH%s", i, j, msg);
+			l = strlen(msg);
+			for(p = 0; p < l; p++)
+			{
+				ScreenCache[i * w + j + p].Foreground = 37;
+				ScreenCache[i * w + j + p].Bold = 0;
+				ScreenCache[i * w + j + p].Char = msg[p];
+			};
 			msg = "Wiimote=Select A=Launch";
 			i = h - 3;
 			j = w - 26;
@@ -1894,7 +1941,10 @@ int main(int argc, char **argv)
 						};
 						ezxml_free(docDefault);
 						ezxml_free(docFromFile);
+						free(xmlDefault);
+						xmlDefault = NULL;
 						free(xmlFromFile);
+						xmlFromFile = NULL;
 						EntryLocations = (GameEntryLocation*)malloc(EntryIndicesCount * sizeof(GameEntryLocation));
 						ScrollLatched = false;
 						TickCount = 0;
@@ -1903,9 +1953,18 @@ int main(int argc, char **argv)
 						strcpy(xmlfname, basedir);
 						strcat(xmlfname, "QRevPAK.ini");
 						f = fopen(xmlfname, "rb");
+						if(f == NULL)
+						{
+							f = fopen(xmlfname, "wb");
+							if(f != NULL)
+							{
+								fwrite(QRevPAK_ini, 1, QRevPAK_ini_size, f);
+								fclose(f);
+								f = fopen(xmlfname, "rb");
+							};
+						};
 						if(f != NULL)
 						{
-							xmlFromFile = NULL;
 							fseek(f, 0, SEEK_END);
 							m = ftell(f);
 							fseek(f, 0, SEEK_SET);
@@ -1928,6 +1987,25 @@ int main(int argc, char **argv)
 								docFromFile = ezxml_parse_str(xmlFromFile, m);
 								if(docFromFile != NULL)
 								{
+									xmlDefault = (char*)malloc(QRevPAK_ini_size + 1);
+									memcpy(xmlDefault, QRevPAK_ini, QRevPAK_ini_size);
+									xmlDefault[QRevPAK_ini_size] = 0;
+									docDefault = ezxml_parse_str(xmlDefault, QRevPAK_ini_size);
+									GXEnginesCount = 0;
+									ent = ezxml_child(docFromFile, "GXEngine");
+									while(ent != NULL)
+									{
+										GXEnginesCount++;
+										ent = ent->next;
+									};
+									ent = ezxml_child(docDefault, "GXEngine");
+									while(ent != NULL)
+									{
+										GXEnginesCount++;
+										ent = ent->next;
+									};
+									GXEngines = (GXEngineEntry*)malloc(GXEnginesCount * sizeof(GXEngineEntry));
+									memset(GXEngines, 0, GXEnginesCount * sizeof(GXEngineEntry));
 									msg = NULL;
 									dat = ezxml_child(docFromFile, "SelectedEntryIndex");
 									if(dat != NULL)
@@ -1967,10 +2045,98 @@ int main(int argc, char **argv)
 											i++;
 										};
 									};
-									ezxml_free(docFromFile);
+									dat = ezxml_child(docFromFile, "UseGXEngines");
+									if(dat != NULL)
+									{
+										i = atoi(dat->txt);
+										UseGXEngines = (i != 0);
+									} else
+									{
+										UseGXEngines = false;
+									};
+									m = 0;
+									ent = ezxml_child(docFromFile, "GXEngine");
+									while(ent != NULL)
+									{
+										datKey = ezxml_child(ent, "engine");
+										if(datKey != NULL)
+										{
+											msgKey = datKey->txt;
+											if(msgKey != NULL)
+											{
+												if(strlen(msgKey) > 0)
+												{
+													i = 0;
+													while(i < m)
+													{
+														if(strcmp(GXEngines[i].Engine, msgKey) == 0)
+														{
+															break;
+														} else
+														{
+															i++;
+														};
+													};
+													if(i == m)
+													{
+														datValue = ezxml_child(ent, "gx");
+														if(datValue != NULL)
+														{
+															msgValue = datValue->txt;
+															if(msgValue != NULL)
+															{
+																if(strlen(msgValue) > 0)
+																{
+																	GXEngines[i].Engine = (char*)malloc(strlen(datKey->txt) + 1);
+																	strcpy(GXEngines[i].Engine, datKey->txt);
+																	GXEngines[i].GX = (char*)malloc(strlen(datValue->txt) + 1);
+																	strcpy(GXEngines[i].GX, datValue->txt);
+																	m++;
+																};
+															};
+														};
+													};
+												};
+											};
+										};
+										ent = ent->next;
+									};
+									ent = ezxml_child(docDefault, "GXEngine");
+									while(ent != NULL)
+									{
+										datKey = ezxml_child(ent, "engine");
+										msgKey = datKey->txt;
+										i = 0;
+										while(i < m)
+										{
+											if(strcmp(GXEngines[i].Engine, msgKey) == 0)
+											{
+												break;
+											} else
+											{
+												i++;
+											};
+										};
+										if(i == m)
+										{
+											datValue = ezxml_child(ent, "gx");
+											msgValue = datValue->txt;
+											GXEngines[i].Engine = (char*)malloc(strlen(datKey->txt) + 1);
+											strcpy(GXEngines[i].Engine, datKey->txt);
+											GXEngines[i].GX = (char*)malloc(strlen(datValue->txt) + 1);
+											strcpy(GXEngines[i].GX, datValue->txt);
+											m++;
+										};
+										ent = ent->next;
+									};
+									ezxml_free(docDefault);
+									free(xmlDefault);
+									xmlDefault = NULL;
 								};
+								ezxml_free(docFromFile);
 							};
 							free(xmlFromFile);
+							xmlFromFile = NULL;
 						};
 						if(TopEntryIndex < 0)
 						{
@@ -2040,6 +2206,16 @@ int main(int argc, char **argv)
 				free(ErrorLines);
 				ErrorLines = NULL;
 			};
+			if(GXEngines != NULL)
+			{
+				for(i = GXEnginesCount - 1; i >= 0; i--)
+				{
+					free(GXEngines[i].GX);
+					free(GXEngines[i].Engine);
+				};
+				free(GXEngines);
+				GXEngines = NULL;
+			};
 			if(Entries != NULL)
 			{
 				for(i = EntriesCount - 1; i >= 0; i--)
@@ -2081,7 +2257,7 @@ int main(int argc, char **argv)
 				if(!(EntryLocations[SelectedEntryIndex].InScreen))
 				{
 					TopEntryIndex = SelectedEntryIndex;
-					ScrollPosition = (h - 13) * TopEntryIndex / (EntryIndicesCount - 1);
+					ScrollPosition = (h - 16) * TopEntryIndex / (EntryIndicesCount - 1);
 					State = List;
 				};
 			};
@@ -2097,7 +2273,7 @@ int main(int argc, char **argv)
 				} else if(SelectedEntryIndex < (EntryIndicesCount - 1))
 				{
 					TopEntryIndex = SelectedEntryIndex;
-					ScrollPosition = (h - 13) * TopEntryIndex / (EntryIndicesCount - 1);
+					ScrollPosition = (h - 16) * TopEntryIndex / (EntryIndicesCount - 1);
 					State = List;
 				};
 			};
@@ -2105,7 +2281,7 @@ int main(int argc, char **argv)
 			if((!(EntryLocations[SelectedEntryIndex].Complete)) && (SelectedEntryIndex > TopEntryIndex))
 			{
 				TopEntryIndex++;
-				ScrollPosition = (h - 13) * TopEntryIndex / (EntryIndicesCount - 1);
+				ScrollPosition = (h - 16) * TopEntryIndex / (EntryIndicesCount - 1);
 			};
 		} else if((State == ListUpReleased) || (State == ListDownReleased))
 		{
@@ -2117,17 +2293,17 @@ int main(int argc, char **argv)
 			if(((TickCount == 0) || (TickCount == 30) || ((TickCount > 30) && ((TickCount % 6) == 0))) && (ScrollPosition > 0) && (wmPosX >= (w - 8)) && (wmPosX <= (w - 4)) && (wmPosY >= 4) && (wmPosY < 7))
 			{
 				ScrollPosition--;
-				TopEntryIndex = (EntryIndicesCount - 1) * ScrollPosition / (h - 13);
+				TopEntryIndex = (EntryIndicesCount - 1) * ScrollPosition / (h - 16);
 				ScrollButtonInverted = !ScrollButtonInverted;
 				State = List;
 			};
 			TickCount++;
 		} else if(State == ListScrollDownPressed)
 		{
-			if(((TickCount == 0) || (TickCount == 30) || ((TickCount > 30) && ((TickCount % 6) == 0))) && (ScrollPosition < (h - 13)) && (wmPosX >= (w - 8)) && (wmPosX <= (w - 4)) && (wmPosY >= (h - 7)) && (wmPosY < (h - 4)))
+			if(((TickCount == 0) || (TickCount == 30) || ((TickCount > 30) && ((TickCount % 6) == 0))) && (ScrollPosition < (h - 16)) && (wmPosX >= (w - 8)) && (wmPosX <= (w - 4)) && (wmPosY >= (h - 10)) && (wmPosY < (h - 7)))
 			{
 				ScrollPosition++;
-				TopEntryIndex = (EntryIndicesCount - 1) * ScrollPosition / (h - 13);
+				TopEntryIndex = (EntryIndicesCount - 1) * ScrollPosition / (h - 16);
 				ScrollButtonInverted = !ScrollButtonInverted;
 				State = List;
 			};
@@ -2144,6 +2320,11 @@ int main(int argc, char **argv)
 			{
 				State = DefaultListState;
 			};
+		} else if(State == ListUseGXReleased)
+		{
+			UseGXEngines = !UseGXEngines;
+			DefaultListState = ListWait;
+			State = List;
 		} else if(State == Launch)
 		{
 			strcpy(xmlfname, basedir);
@@ -2162,12 +2343,70 @@ int main(int argc, char **argv)
 				{
 					fwrite(msg, 1, strlen(msg), f);
 				};
-				msg = "</SelectedEntry>\n</Configuration>\n";
+				msg = "</SelectedEntry>\n  <UseGXEngines>";
+				fwrite(msg, 1, strlen(msg), f);
+				if(UseGXEngines)
+				{
+					msg = "1";
+				} else
+				{
+					msg = "0";
+				};
+				fwrite(msg, 1, strlen(msg), f);
+				msg = "</UseGXEngines>\n";
+				fwrite(msg, 1, strlen(msg), f);
+				for(i = 0; i < GXEnginesCount; i++)
+				{
+					if(GXEngines[i].Engine == NULL)
+					{
+						break;
+					} else
+					{
+						msg = "  <GXEngine>\n    <engine>";
+						fwrite(msg, 1, strlen(msg), f);
+						msg = GXEngines[i].Engine;
+						fwrite(msg, 1, strlen(msg), f);
+						msg = "</engine>\n    <gx>";
+						fwrite(msg, 1, strlen(msg), f);
+						msg = GXEngines[i].GX;
+						fwrite(msg, 1, strlen(msg), f);
+						msg = "</gx>\n  </GXEngine>\n";
+						fwrite(msg, 1, strlen(msg), f);
+					};
+				};
+				msg = "</Configuration>\n";
 				fwrite(msg, 1, strlen(msg), f);
 				fclose(f);
 			};
 			eng = (char*)malloc(MAXPATHLEN);
-			strcpy(eng, Entries[EntryIndices[SelectedEntryIndex]].Engine);
+			if(UseGXEngines)
+			{
+				i = 0;
+				while(i < GXEnginesCount)
+				{
+					if(GXEngines[i].Engine == NULL)
+					{
+						i = GXEnginesCount;
+						break;
+					} else if(strcmp(GXEngines[i].Engine, Entries[EntryIndices[SelectedEntryIndex]].Engine) == 0)
+					{
+						break;
+					} else
+					{
+						i++;
+					};
+				};
+				if(i < GXEnginesCount)
+				{
+					strcpy(eng, GXEngines[i].GX);
+				} else
+				{
+					strcpy(eng, Entries[EntryIndices[SelectedEntryIndex]].Engine);
+				};
+			} else
+			{
+				strcpy(eng, Entries[EntryIndices[SelectedEntryIndex]].Engine);
+			};
 			strcat(eng, ".dol");
 			newArgc = 0;
 			newArgv = NULL;
@@ -2297,7 +2536,7 @@ int main(int argc, char **argv)
 					wmPosY = -1000;
 				};
 			};
-			if((State == ListWait)&&(!ScrollLatched)&&(wmPosX >= 5)&&(wmPosX < (w - 8))&&(wmPosY >= 4)&&(wmPosY < (h - 4)))
+			if((State == ListWait)&&(!ScrollLatched)&&(wmPosX >= 5)&&(wmPosX < (w - 8))&&(wmPosY >= 4)&&(wmPosY < (h - 7)))
 			{
 				i = 0;
 				while(i < EntryIndicesCount)
@@ -2314,7 +2553,7 @@ int main(int argc, char **argv)
 							if((CursorHasMoved)&&(!(EntryLocations[i].Complete))&&(TopEntryIndex < EntryIndicesCount - 1))
 							{
 								TopEntryIndex++;
-								ScrollPosition = (h - 13) * TopEntryIndex / (EntryIndicesCount - 1);
+								ScrollPosition = (h - 16) * TopEntryIndex / (EntryIndicesCount - 1);
 								State = List;
 							};
 							break;
@@ -2346,7 +2585,7 @@ int main(int argc, char **argv)
 				{
 					if((wmPosX >= (w - 8))&&(wmPosX <= (w - 4)))
 					{
-						if((wmPosY >= 6)&&(wmPosY < (h - 6)))
+						if((wmPosY >= 6)&&(wmPosY < (h - 9)))
 						{
 							ScrollLatched = true;
 							DefaultListState = ListAPressed;
@@ -2355,11 +2594,15 @@ int main(int argc, char **argv)
 						{
 							DefaultListState = ListScrollUpPressed;
 							State = DefaultListState;
-						} else if((wmPosY >= (h - 6))&&(wmPosY < (h - 3)))
+						} else if((wmPosY >= (h - 9))&&(wmPosY < (h - 6)))
 						{
 							DefaultListState = ListScrollDownPressed;
 							State = DefaultListState;
 						}
+					} else if((wmPosX >= 3)&&(wmPosX <= 7)&&(wmPosY >= (h - 6))&&(wmPosY < (h - 3)))
+					{
+						DefaultListState = ListUseGXPressed;
+						State = DefaultListState;
 					} else if(EntryLocations[SelectedEntryIndex].InScreen) 
 					{
 						DefaultListState = ListAPressed;
@@ -2410,6 +2653,9 @@ int main(int argc, char **argv)
 				} else if(State == ListScrollDownPressed)
 				{
 					State = ListScrollDownReleased;
+				} else if(State == ListUseGXPressed)
+				{
+					State = ListUseGXReleased;
 				};
 			};
 			if((pressed & WPAD_BUTTON_B) == 0)
@@ -2436,21 +2682,21 @@ int main(int argc, char **argv)
 					State = ListDownReleased;
 				};
 			};
-			if((State == ListAPressed)&&(ScrollLatched)&&(wmPosX >= (w - 8))&&(wmPosX <= (w - 4))&&(wmPosY >= 4)&&(wmPosY < (h - 4)))
+			if((State == ListAPressed)&&(ScrollLatched)&&(wmPosX >= (w - 8))&&(wmPosX <= (w - 4))&&(wmPosY >= 4)&&(wmPosY < (h - 7)))
 			{
 				i = wmPosY - 6;
 				if(i < 0)
 				{
 					i = 0;
 				};
-				if(i > (h - 13))
+				if(i > (h - 16))
 				{
-					i = h - 13;
+					i = h - 16;
 				};
 				if(ScrollPosition != i)
 				{
 					ScrollPosition = i;
-					TopEntryIndex = (EntryIndicesCount - 1) * ScrollPosition / (h - 13);
+					TopEntryIndex = (EntryIndicesCount - 1) * ScrollPosition / (h - 16);
 					State = List;
 				};
 			};
@@ -2468,6 +2714,15 @@ int main(int argc, char **argv)
 			free(ErrorLines[i]); 
 		};
 		free(ErrorLines);
+	};
+	if(GXEngines != NULL)
+	{
+		for(i = GXEnginesCount - 1; i >= 0; i--)
+		{
+			free(GXEngines[i].GX);
+			free(GXEngines[i].Engine);
+		};
+		free(GXEngines);
 	};
 	if(Entries != NULL)
 	{
