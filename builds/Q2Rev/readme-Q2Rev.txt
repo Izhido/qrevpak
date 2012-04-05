@@ -8,7 +8,7 @@ The engine is feature-complete, with sound, network play and CD Music track play
 
 
 
-New features since Release 2 of Quake Rev PAK:
+New features since Release 3 of Quake Rev PAK:
 
 - CD Music track playback is now available! 
 - Key aliases. With the new "keyalias" command, you can map any key in your controller to any other one, letting you customize your controls any way you like.

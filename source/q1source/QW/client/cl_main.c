@@ -357,7 +357,11 @@ CL_Rcon_f
 */
 void CL_Rcon_f (void)
 {
-	char	message[1024];
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deferring allocation. Stack in this device is pretty small:
+	//char	message[1024];
+	char*	message;
+// <<< FIX
 	int		i;
 	netadr_t	to;
 
@@ -367,6 +371,11 @@ void CL_Rcon_f (void)
 					"issuing an rcon command.\n");
 		return;
 	}
+
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Allocating for previous fix in big stack:
+	message = Sys_BigStackAlloc(1024, "CL_Rcon_f");
+// <<< FIX
 
 	message[0] = 255;
 	message[1] = 255;
@@ -395,6 +404,11 @@ void CL_Rcon_f (void)
 						"or set the 'rcon_address' cvar\n"
 						"to issue rcon commands\n");
 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+			Sys_BigStackFree(1024, "CL_Rcon_f");
+// <<< FIX
+
 			return;
 		}
 		NET_StringToAdr (rcon_address.string, &to);
@@ -402,6 +416,11 @@ void CL_Rcon_f (void)
 	
 	NET_SendPacket (strlen(message)+1, message
 		, to);
+
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+	Sys_BigStackFree(1024, "CL_Rcon_f");
+// <<< FIX
 }
 
 
@@ -638,8 +657,14 @@ Casey was here :)
 */
 void CL_FullInfo_f (void)
 {
-	char	key[512];
-	char	value[512];
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Allocating in big stack. Stack in this device is pretty small:
+// (btw, Heriberto was here :D )
+	//char	key[512];
+	//char	value[512];
+	char*	key = Sys_BigStackAlloc(512, "CL_FullInfo_f");
+	char*	value = Sys_BigStackAlloc(512, "CL_FullInfo_f");
+// <<< FIX
 	char	*o;
 	char	*s;
 
@@ -662,6 +687,10 @@ void CL_FullInfo_f (void)
 		if (!*s)
 		{
 			Con_Printf ("MISSING VALUE\n");
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+			Sys_BigStackFree(512 + 512, "CL_FullInfo_f");
+// <<< FIX
 			return;
 		}
 
@@ -679,6 +708,10 @@ void CL_FullInfo_f (void)
 
 		Info_SetValueForKey (cls.userinfo, key, value, MAX_INFO_STRING);
 	}
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+	Sys_BigStackFree(512 + 512, "CL_FullInfo_f");
+// <<< FIX
 }
 
 /*
@@ -780,7 +813,11 @@ Called to play the next demo in the demo loop
 */
 void CL_NextDemo (void)
 {
-	char	str[1024];
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deferring allocation. Stack in this device is pretty small:
+	//char	str[1024];
+	char*	str;
+// <<< FIX
 
 	if (cls.demonum == -1)
 		return;		// don't play demos
@@ -796,9 +833,17 @@ void CL_NextDemo (void)
 		}
 	}
 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Allocating for previous fix in big stack:
+	str = Sys_BigStackAlloc(1024, "CL_NextDemo");
+// <<< FIX
 	sprintf (str,"playdemo %s\n", cls.demos[cls.demonum]);
 	Cbuf_InsertText (str);
 	cls.demonum++;
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+	Sys_BigStackFree(1024, "CL_NextDemo");
+// <<< FIX
 }
 
 
@@ -891,7 +936,11 @@ void CL_ConnectionlessPacket (void)
 	// remote command from gui front end
 	if (c == A2C_CLIENT_COMMAND)
 	{
-		char	cmdtext[2048];
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deferring allocation. Stack in this device is pretty small:
+		//char	cmdtext[2048];
+		char*	cmdtext;
+// <<< FIX
 
 		Con_Printf ("client command\n");
 
@@ -907,8 +956,18 @@ void CL_ConnectionlessPacket (void)
 #endif
 		s = MSG_ReadString ();
 
-		strncpy(cmdtext, s, sizeof(cmdtext) - 1);
-		cmdtext[sizeof(cmdtext) - 1] = 0;
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Allocating for previous fix in big stack:
+		cmdtext = Sys_BigStackAlloc(2048, "CL_ConnectionlessPacket");
+// <<< FIX
+
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Compensating for local variable change:
+		//strncpy(cmdtext, s, sizeof(cmdtext) - 1);
+		//cmdtext[sizeof(cmdtext) - 1] = 0;
+		strncpy(cmdtext, s, 2048 - 1);
+		cmdtext[2048 - 1] = 0;
+// <<< FIX
 
 		s = MSG_ReadString ();
 
@@ -924,6 +983,10 @@ void CL_ConnectionlessPacket (void)
 					"localid has been set.  You may need to upgrade your server "
 					"browser.\n");
 				Con_Printf("===========================\n");
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+				Sys_BigStackFree(2048, "CL_ConnectionlessPacket");
+// <<< FIX
 				return;
 			}
 			Con_Printf("===========================\n");
@@ -933,11 +996,19 @@ void CL_ConnectionlessPacket (void)
 				s, localid.string);
 			Con_Printf("===========================\n");
 			Cvar_Set("localid", "");
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+			Sys_BigStackFree(2048, "CL_ConnectionlessPacket");
+// <<< FIX
 			return;
 		}
 
 		Cbuf_AddText (cmdtext);
 		allowremotecmd = false;
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+		Sys_BigStackFree(2048, "CL_ConnectionlessPacket");
+// <<< FIX
 		return;
 	}
 	// print command from somewhere
@@ -1261,7 +1332,11 @@ Call this to drop to a console without exiting the qwcl
 void Host_EndGame (char *message, ...)
 {
 	va_list		argptr;
-	char		string[1024];
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Allocating in big stack. Stack in this device is pretty small:
+	//char		string[1024];
+	char*		string = Sys_BigStackAlloc(1024, "Host_EndGame");
+// <<< FIX
 	
 	va_start (argptr,message);
 	vsprintf (string,message,argptr);
@@ -1271,6 +1346,11 @@ void Host_EndGame (char *message, ...)
 	Con_Printf ("===========================\n\n");
 	
 	CL_Disconnect ();
+
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+	Sys_BigStackFree(1024, "Host_EndGame");
+// <<< FIX
 
 	longjmp (host_abort, 1);
 }
@@ -1285,17 +1365,31 @@ This shuts down the client and exits qwcl
 void Host_Error (char *error, ...)
 {
 	va_list		argptr;
-	char		string[1024];
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deferring allocation. Stack in this device is pretty small:
+	//char		string[1024];
+	char*		string;
+// <<< FIX
 	static	qboolean inerror = false;
 	
 	if (inerror)
 		Sys_Error ("Host_Error: recursively entered");
 	inerror = true;
 	
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Allocating for previous fix in big stack:
+	string = Sys_BigStackAlloc(1024, "Host_Error");
+// <<< FIX
+
 	va_start (argptr,error);
 	vsprintf (string,error,argptr);
 	va_end (argptr);
 	Con_Printf ("Host_Error: %s\n",string);
+
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+	Sys_BigStackFree(1024, "Host_Error");
+// <<< FIX
 	
 	CL_Disconnect ();
 	cls.demonum = -1;

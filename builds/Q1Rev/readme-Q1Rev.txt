@@ -8,11 +8,10 @@ The engine is feature-complete, with sound & network play. In that regard, it ca
 
 
 
-New features since Release 2 of Quake Rev PAK:
+New features since Release 3 of Quake Rev PAK:
 
-- CD Music track playback is now available!
-- Key aliases. With the new "keyalias" command, you can map any key in your controller to any other one, letting you customize your controls any way you like.
-- If a game crashes, and the engine is able to tell, it will create a "QRevPAK.err" file containing the date/time and the cause of the crash.
+- GX-accelerated build is now available! Runs at 60fps, and looks really gorgeous. It can be loaded from the launcher, by selecting a checkbox below the game entries list.
+- A few minor memory leaks, and a *big* one in the GX-accelerated build (coming from the original source code) were fixed. Also, stack memory handling was modified in many places so the engine becomes a little more stable.
 
 
 

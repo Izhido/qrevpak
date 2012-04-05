@@ -378,7 +378,11 @@ void CL_Record_f (void)
 	int		c;
 	char	name[MAX_OSPATH];
 	sizebuf_t	buf;
-	char	buf_data[MAX_MSGLEN];
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deferring allocation. Stack in this device is pretty small:
+	//char	buf_data[MAX_MSGLEN];
+	char*	buf_data;
+// <<< FIX
 	int n, i, j;
 	char *s;
 	entity_t *ent;
@@ -421,11 +425,20 @@ void CL_Record_f (void)
 
 /*-------------------------------------------------*/
 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Allocating for previous fix in big stack:
+	buf_data = Sys_BigStackAlloc(MAX_MSGLEN, "CL_Record_f");
+// <<< FIX
+
 // serverdata
 	// send the info about the new client to all connected clients
 	memset(&buf, 0, sizeof(buf));
 	buf.data = buf_data;
-	buf.maxsize = sizeof(buf_data);
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Compensating for local variable change:
+	//buf.maxsize = sizeof(buf_data);
+	buf.maxsize = MAX_MSGLEN;
+// <<< FIX
 
 // send the serverdata
 	MSG_WriteByte (&buf, svc_serverdata);
@@ -659,6 +672,10 @@ void CL_Record_f (void)
 	CL_WriteSetDemoMessage();
 
 	// done
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+	Sys_BigStackFree(MAX_MSGLEN, "CL_Record_f");
+// <<< FIX
 }
 
 /*

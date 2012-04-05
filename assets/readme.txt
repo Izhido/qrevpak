@@ -1,6 +1,6 @@
 *****************************************************************************
 Quake Rev PAK 
-Release 2
+Release 3
 *****************************************************************************
 
 In order to install Quake Rev PAK, copy all the files in this archive into
