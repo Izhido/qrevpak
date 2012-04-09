@@ -196,7 +196,10 @@ void CL_KeepaliveMessage (void)
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
 		//return;		// no need if server is local
-		{Sys_BigStackFree(8192 * sizeof(byte), "CL_KeepaliveMessage");return;}
+	{
+		Sys_BigStackFree(8192 * sizeof(byte), "CL_KeepaliveMessage");
+		return;
+	}
 // <<< FIX
 	lastmsg = time;
 
@@ -272,7 +275,7 @@ void CL_ParseServerInfo (void)
 //
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Allocating for previous fix:
+// Allocating for previous fix in big stack:
 	model_precache = Sys_BigStackAlloc(MAX_MODELS * sizeof(char*), "CL_ParseServerInfo");
 	for(i = 0; i < MAX_MODELS; i++)
 	{
@@ -307,7 +310,7 @@ void CL_ParseServerInfo (void)
 	}
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Allocating for previous fix:
+// Allocating for previous fix in big stack:
 	sound_precache = Sys_BigStackAlloc(MAX_SOUNDS * sizeof(char*), "CL_ParseServerInfo");
 	for(i = 0; i < MAX_SOUNDS; i++)
 	{

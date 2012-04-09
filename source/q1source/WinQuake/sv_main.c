@@ -190,9 +190,9 @@ void SV_SendServerinfo (client_t *client)
 {
 	char			**s;
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Allocating in heap. Stack in this device is pretty small:
+// Allocating in big stack. Stack in this device is pretty small:
 	//char			message[2048];
-	char*			message = Sys_Malloc(2048, "SV_SendServerinfo");
+	char*			message = Sys_BigStackAlloc(2048, "SV_SendServerinfo");
 // <<< FIX
 
 	MSG_WriteByte (&client->message, svc_print);
@@ -237,7 +237,7 @@ void SV_SendServerinfo (client_t *client)
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
-	free(message);
+	Sys_BigStackFree(2048, "SV_SendServerinfo");
 // <<< FIX
 }
 

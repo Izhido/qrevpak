@@ -514,7 +514,10 @@ pack_t *FS_LoadPackFile (char *packfile)
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
 		//return NULL;
-		{Sys_BigStackFree(MAX_FILES_IN_PACK * sizeof(dpackfile_t), "FS_LoadPackFile");return NULL;}
+	{
+		Sys_BigStackFree(MAX_FILES_IN_PACK * sizeof(dpackfile_t), "FS_LoadPackFile");
+		return NULL;
+	}
 // <<< FIX
 #endif
 // parse the directory

@@ -610,8 +610,8 @@ void Host_Loadgame_f (void)
 		return;
 	}
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Allocating for previous fix:
-	str = Sys_Malloc(32768, "Host_Loadgame_f");
+// Allocating for previous fix in big stack:
+	str = Sys_BigStackAlloc(32768, "Host_Loadgame_f");
 // <<< FIX
 	fscanf (f, "%s\n", str);
 	for (i=0 ; i<NUM_SPAWN_PARMS ; i++)
@@ -642,7 +642,7 @@ void Host_Loadgame_f (void)
 		Con_Printf ("Couldn't load map\n");
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
-		free(str);
+		Sys_BigStackFree(32768, "Host_Loadgame_f");
 		return;
 // <<< FIX
 	}
@@ -728,7 +728,7 @@ void Host_Loadgame_f (void)
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
-	free(str);
+	Sys_BigStackFree(32768, "Host_Loadgame_f");
 // <<< FIX
 }
 

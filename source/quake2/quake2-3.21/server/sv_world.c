@@ -334,8 +334,11 @@ void SV_LinkEdict (edict_t *ent)
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
 		//return;
-		{Sys_BigStackFree((MAX_TOTAL_ENT_LEAFS) * sizeof(int) 
-		                 + (MAX_TOTAL_ENT_LEAFS) * sizeof(int), "SV_LinkEdict");return;}
+	{
+		Sys_BigStackFree((MAX_TOTAL_ENT_LEAFS) * sizeof(int) 
+		               + (MAX_TOTAL_ENT_LEAFS) * sizeof(int), "SV_LinkEdict");
+		return;
+	}
 // <<< FIX
 
 // find the first node that the ent's box crosses
@@ -574,7 +577,10 @@ void SV_ClipMoveToEntities ( moveclip_t *clip )
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
 			//return;
-			{Sys_BigStackFree((MAX_EDICTS) * sizeof(edict_t*), "SV_ClipMoveToEntities");return;}
+		{
+			Sys_BigStackFree((MAX_EDICTS) * sizeof(edict_t*), "SV_ClipMoveToEntities");
+			return;
+		}
 // <<< FIX
 		if (clip->passedict)
 		{

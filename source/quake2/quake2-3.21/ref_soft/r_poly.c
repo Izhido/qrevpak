@@ -1198,7 +1198,10 @@ static void R_DrawPoly( int iswater )
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
 		//return;		// doesn't cross any scans at all
-		{Sys_BigStackFree((MAXHEIGHT+1) * sizeof(espan_t), "R_DrawPoly");return;}
+	{
+		Sys_BigStackFree((MAXHEIGHT+1) * sizeof(espan_t), "R_DrawPoly");
+		return;
+	}
 // <<< FIX
 
 	cachewidth = r_polydesc.pixel_width;

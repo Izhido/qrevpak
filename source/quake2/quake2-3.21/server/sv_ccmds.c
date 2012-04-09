@@ -256,7 +256,7 @@ void CopyFile (char *src, char *dst)
 	fclose (f2);
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Allocating for previous fix:
+// Deallocating from previous fix:
 	Sys_BigStackFree(65536, "CopyFile");
 // <<< FIX
 }

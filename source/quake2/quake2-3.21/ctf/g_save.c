@@ -449,7 +449,11 @@ void WriteGame (char *filename, qboolean autosave)
 		gi.error ("Couldn't open %s", filename);
 
 	memset (str, 0, sizeof(str));
-	strcpy (str, __DATE__);
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Setting the original compilation date of Quake II, in order to write compatible savegames:
+	//strcpy (str, __DATE__);
+	strcpy (str, "Oct 16 1998");
+// <<< FIX
 	fwrite (str, sizeof(str), 1, f);
 
 	game.autosaved = autosave;
@@ -475,7 +479,11 @@ void ReadGame (char *filename)
 		gi.error ("Couldn't open %s", filename);
 
 	fread (str, sizeof(str), 1, f);
-	if (strcmp (str, __DATE__))
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Using the original compilation date of Quake II, in order to be able to read old savegames:
+	//if (strcmp (str, __DATE__))
+	if (strcmp (str, "Oct 16 1998"))
+// <<< FIX
 	{
 		fclose (f);
 		gi.error ("Savegame from an older version.\n");

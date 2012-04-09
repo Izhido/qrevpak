@@ -1068,7 +1068,10 @@ void Key_Event (int key, qboolean down, unsigned time)
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
 		//return;		// other systems only care about key down events
-		{Sys_BigStackFree(1024, "Key_Event");return;}
+	{
+		Sys_BigStackFree(1024, "Key_Event");
+		return;
+	}
 // <<< FIX
 
 	if (shift_down)

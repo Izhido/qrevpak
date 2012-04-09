@@ -17,7 +17,7 @@ typedef unsigned long int UINT4;
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // External function for fix below:
-extern int LittleLong (int l);
+extern int LittleLong(int l);
 // <<< FIX
   
 /* MD4.H - header file for MD4C.C */

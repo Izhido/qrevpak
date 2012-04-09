@@ -190,7 +190,7 @@ void Con_Resize (console_t *con)
 			numchars = con_linewidth;
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Allocating for previous fix:
+// Allocating for previous fix in big stack:
 		tbuf = Sys_BigStackAlloc(CON_TEXTSIZE, "Con_CheckResize");
 // <<< FIX
 
@@ -434,7 +434,7 @@ void Con_DPrintf (char *fmt, ...)
 		return;			// don't confuse non-developers with techie stuff...
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Allocating for previous fix:
+// Allocating for previous fix in big stack:
 	msg = Sys_BigStackAlloc(MAXPRINTMSG, "Con_DPrintf");
 // <<< FIX
 

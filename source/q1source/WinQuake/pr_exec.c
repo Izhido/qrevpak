@@ -261,9 +261,9 @@ void PR_RunError (char *error, ...)
 {
 	va_list		argptr;
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Allocating in heap. Stack in this device is pretty small:
+// Allocating in big stack. Stack in this device is pretty small:
 	//char		string[1024];
-	char*		string = Sys_Malloc(1024, "PR_RunError");
+	char*		string = Sys_BigStackAlloc(1024, "PR_RunError");
 // <<< FIX
 
 	va_start (argptr,error);
@@ -278,7 +278,7 @@ void PR_RunError (char *error, ...)
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
-	free(string);
+	Sys_BigStackFree(1024, "PR_RunError");
 // <<< FIX
 
 	Host_Error ("Program error");

@@ -72,7 +72,10 @@ qboolean OnSameTeam (edict_t *ent1, edict_t *ent2)
 // Deallocating from previous fix:
 	//	return true;
 	//return false;
-		{Sys_BigStackFree(512 + 512, "OnSameTeam");return true;}
+	{
+		Sys_BigStackFree(512 + 512, "OnSameTeam");
+		return true;
+	}
 	Sys_BigStackFree(512 + 512, "OnSameTeam");
 	return false;
 // <<< FIX

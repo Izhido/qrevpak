@@ -271,8 +271,8 @@ model_t *Mod_LoadModel (model_t *mod, qboolean crash)
 // load the file
 //
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Allocating for previous fixes (and, this time, expanding the allocated size):
-	stackbuf = Sys_Malloc(4096 * sizeof(byte), "Mod_LoadModel");
+// Allocating for previous fixes (and, this time, expanding the allocated size), in big stack:
+	stackbuf = Sys_BigStackAlloc(4096 * sizeof(byte), "Mod_LoadModel");
 // <<< FIX
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Adjusting for previous fix:
@@ -285,7 +285,7 @@ model_t *Mod_LoadModel (model_t *mod, qboolean crash)
 			Sys_Error ("Mod_NumForName: %s not found", mod->name);
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fixes:
-		free(stackbuf);
+		Sys_BigStackFree(4096 * sizeof(byte), "Mod_LoadModel");
 // <<< FIX
 		return NULL;
 	}
@@ -321,7 +321,7 @@ model_t *Mod_LoadModel (model_t *mod, qboolean crash)
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fixes:
-	free(stackbuf);
+	Sys_BigStackFree(4096 * sizeof(byte), "Mod_LoadModel");
 // <<< FIX
 
 	return mod;

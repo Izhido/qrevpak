@@ -102,7 +102,11 @@ sfxcache_t *S_LoadSound (sfx_t *s)
 	int		len;
 	float	stepscale;
 	sfxcache_t	*sc;
-	byte	stackbuf[1*1024];		// avoid dirtying the cache heap
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deferring allocation. Stack in this device is pretty small:
+	//byte	stackbuf[1*1024];		// avoid dirtying the cache heap
+	byte*	stackbuf;
+// <<< FIX
 
 // see if still in memory
 	sc = Cache_Check (&s->cache);
@@ -116,11 +120,20 @@ sfxcache_t *S_LoadSound (sfx_t *s)
 
 //	Con_Printf ("loading %s\n",namebuffer);
 
-	data = COM_LoadStackFile(namebuffer, stackbuf, sizeof(stackbuf));
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Allocating for previous fix, and then using it, in big stack:
+	//data = COM_LoadStackFile(namebuffer, stackbuf, sizeof(stackbuf));
+	stackbuf = Sys_BigStackAlloc(1*1024, "S_LoadSound");
+	data = COM_LoadStackFile(namebuffer, stackbuf, 1*1024);
+// <<< FIX
 
 	if (!data)
 	{
 		Con_Printf ("Couldn't load %s\n", namebuffer);
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+		Sys_BigStackFree(1*1024, "S_LoadSound");
+// <<< FIX
 		return NULL;
 	}
 
@@ -128,6 +141,10 @@ sfxcache_t *S_LoadSound (sfx_t *s)
 	if (info.channels != 1)
 	{
 		Con_Printf ("%s is a stereo sample\n",s->name);
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+		Sys_BigStackFree(1*1024, "S_LoadSound");
+// <<< FIX
 		return NULL;
 	}
 
@@ -138,7 +155,14 @@ sfxcache_t *S_LoadSound (sfx_t *s)
 
 	sc = Cache_Alloc ( &s->cache, len + sizeof(sfxcache_t), s->name);
 	if (!sc)
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Adjusting for previous fix:
+		//return NULL;
+	{
+		Sys_BigStackFree(1*1024, "S_LoadSound");
 		return NULL;
+	};
+// <<< FIX
 	
 	sc->length = info.samples;
 	sc->loopstart = info.loopstart;
@@ -147,6 +171,11 @@ sfxcache_t *S_LoadSound (sfx_t *s)
 	sc->stereo = info.channels;
 
 	ResampleSfx (s, sc->speed, sc->width, data + info.dataofs);
+
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+	Sys_BigStackFree(1*1024, "S_LoadSound");
+// <<< FIX
 
 	return sc;
 }

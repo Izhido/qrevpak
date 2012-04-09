@@ -619,8 +619,8 @@ void Key_Bind_f (void)
 	}
 	
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Allocating for previous fix:
-	cmd = Sys_Malloc(1024, "Key_Bind_f");
+// Allocating for previous fix in big stack:
+	cmd = Sys_BigStackAlloc(1024, "Key_Bind_f");
 // <<< FIX
 
 // copy the rest of the command line
@@ -641,7 +641,7 @@ void Key_Bind_f (void)
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
-	free(cmd);
+	Sys_BigStackFree(1024, "Key_Bind_f");
 // <<< FIX
 }
 
@@ -892,7 +892,7 @@ void Key_Event (int key, qboolean down)
 	}
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Allocating for previous fix:
+// Allocating for previous fix in big stack:
 	cmd = Sys_BigStackAlloc(1024, "Key_Event");
 // <<< FIX
 

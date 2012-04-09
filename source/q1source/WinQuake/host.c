@@ -91,9 +91,9 @@ void Host_EndGame (char *message, ...)
 {
 	va_list		argptr;
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Allocating in heap. Stack in this device is pretty small:
+// Allocating in big stack. Stack in this device is pretty small:
 	//char		string[1024];
-	char*		string = Sys_Malloc(1024, "Host_EndGame");
+	char*		string = Sys_BigStackAlloc(1024, "Host_EndGame");
 // <<< FIX
 	
 	va_start (argptr,message);
@@ -107,16 +107,17 @@ void Host_EndGame (char *message, ...)
 	if (cls.state == ca_dedicated)
 		Sys_Error ("Host_EndGame: %s\n",string);	// dedicated servers exit
 	
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+	Sys_BigStackFree(1024, "Host_EndGame");
+// <<< FIX
+
 	if (cls.demonum != -1)
 		CL_NextDemo ();
 	else
 		CL_Disconnect ();
 
 	longjmp (host_abortserver, 1);
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Deallocating from previous fix:
-	free(string);
-// <<< FIX
 }
 
 /*
@@ -130,9 +131,9 @@ void Host_Error (char *error, ...)
 {
 	va_list		argptr;
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Allocating in heap. Stack in this device is pretty small:
+// Deferring allocation. Stack in this device is pretty small:
 	//char		string[1024];
-	char*		string = Sys_Malloc(1024, "Host_Error");
+	char*		string;
 // <<< FIX
 	static	qboolean inerror = false;
 	
@@ -141,6 +142,11 @@ void Host_Error (char *error, ...)
 	inerror = true;
 	
 	SCR_EndLoadingPlaque ();		// reenable screen updates
+
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Allocating for previous fix in big stack:
+	string = Sys_BigStackAlloc(1024, "Host_Error");
+// <<< FIX
 
 	va_start (argptr,error);
 	vsprintf (string,error,argptr);
@@ -152,6 +158,11 @@ void Host_Error (char *error, ...)
 
 	if (cls.state == ca_dedicated)
 		Sys_Error ("Host_Error: %s\n",string);	// dedicated servers exit
+
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix:
+	Sys_BigStackFree(1024, "Host_Error");
+// <<< FIX
 
 	CL_Disconnect ();
 	cls.demonum = -1;
@@ -299,9 +310,9 @@ void SV_ClientPrintf (char *fmt, ...)
 {
 	va_list		argptr;
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Allocating in heap. Stack in this device is pretty small:
+// Allocating in big stack. Stack in this device is pretty small:
 	//char		string[1024];
-	char*		string = Sys_Malloc(1024, "SV_ClientPrintf");
+	char*		string = Sys_BigStackAlloc(1024, "SV_ClientPrintf");
 // <<< FIX
 	
 	va_start (argptr,fmt);
@@ -313,7 +324,7 @@ void SV_ClientPrintf (char *fmt, ...)
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
-	free(string);
+	Sys_BigStackFree(1024, "SV_ClientPrintf");
 // <<< FIX
 }
 
@@ -328,9 +339,9 @@ void SV_BroadcastPrintf (char *fmt, ...)
 {
 	va_list		argptr;
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Allocating in heap. Stack in this device is pretty small:
+// Allocating in big stack. Stack in this device is pretty small:
 	//char		string[1024];
-	char*		string = Sys_Malloc(1024, "SV_BroadcastPrintf");
+	char*		string = Sys_BigStackAlloc(1024, "SV_BroadcastPrintf");
 // <<< FIX
 	
 	int			i;
@@ -348,7 +359,7 @@ void SV_BroadcastPrintf (char *fmt, ...)
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
-	free(string);
+	Sys_BigStackFree(1024, "SV_BroadcastPrintf");
 // <<< FIX
 }
 
@@ -363,9 +374,9 @@ void Host_ClientCommands (char *fmt, ...)
 {
 	va_list		argptr;
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Allocating in heap. Stack in this device is pretty small:
+// Allocating in big stack. Stack in this device is pretty small:
 	//char		string[1024];
-	char*		string = Sys_Malloc(1024, "Host_ClientCommands");
+	char*		string = Sys_BigStackAlloc(1024, "Host_ClientCommands");
 // <<< FIX
 	
 	va_start (argptr,fmt);
@@ -377,7 +388,7 @@ void Host_ClientCommands (char *fmt, ...)
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
-	free(string);
+	Sys_BigStackFree(1024, "Host_ClientCommands");
 // <<< FIX
 }
 

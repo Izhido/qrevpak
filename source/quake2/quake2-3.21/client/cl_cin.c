@@ -471,7 +471,7 @@ byte *SCR_ReadNextFrame (void)
 	FS_Read (&size, 4, cl.cinematic_file);
 	size = LittleLong(size);
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Allocating for previous fix:
+// Adjusting for previous fix:
 	//if (size > sizeof(compressed) || size < 1)
 	if (size > (0x20000 * sizeof(byte)) || size < 1)
 // <<< FIX

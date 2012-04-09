@@ -3652,7 +3652,10 @@ static qboolean IconOfSkinExists( char *skin, char **pcxfiles, int npcxfiles )
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
 			//return true;
-			{Sys_BigStackFree(1024, "IconOfSkinExists");return true;}
+		{
+			Sys_BigStackFree(1024, "IconOfSkinExists");
+			return true;
+		}
 // <<< FIX
 	}
 
@@ -3701,7 +3704,10 @@ static qboolean PlayerConfig_ScanDirectories( void )
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
 		//return false;
-		{Sys_BigStackFree(1024 + 1024, "PlayerConfig_ScanDirectories");return false;}
+	{
+		Sys_BigStackFree(1024 + 1024, "PlayerConfig_ScanDirectories");
+		return false;
+	}
 // <<< FIX
 
 	/*

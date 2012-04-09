@@ -144,7 +144,10 @@ void SV_CheckForSavegame (void)
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Adjusting for previous fix:
 		//return;		// no savegame
-		{Sys_BigStackFree(MAX_OSPATH, "SV_CheckForSavegame");return;}		// no savegame
+	{
+		Sys_BigStackFree(MAX_OSPATH, "SV_CheckForSavegame");
+		return;
+	}
 // <<< FIX
 
 	fclose (f);

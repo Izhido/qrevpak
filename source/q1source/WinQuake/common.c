@@ -1668,8 +1668,8 @@ pack_t *COM_LoadPackFile (char *packfile)
 		com_modified = true;    // not the original file
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Allocating for previous fix:
-	info = malloc(numpackfiles * sizeof(dpackfile_t));
+// Allocating for previous fix in big stack:
+	info = Sys_BigStackAlloc(MAX_FILES_IN_PACK * sizeof(dpackfile_t), "COM_LoadPackFile");
 // <<< FIX
 
 	newfiles = Hunk_AllocName (numpackfiles * sizeof(packfile_t), "packfile");
@@ -1702,7 +1702,7 @@ pack_t *COM_LoadPackFile (char *packfile)
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
-	free(info);
+	Sys_BigStackFree(MAX_FILES_IN_PACK * sizeof(dpackfile_t), "COM_LoadPackFile");
 // <<< FIX
 
 	return pack;

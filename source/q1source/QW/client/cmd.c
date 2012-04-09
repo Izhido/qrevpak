@@ -144,9 +144,9 @@ void Cbuf_Execute (void)
 	int		i;
 	char	*text;
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Allocating in heap. Stack in this device is pretty small:
+// Allocating in big stack. Stack in this device is pretty small:
 	//char	line[1024];
-	char*	line = Sys_Malloc(1024, "Cbuf_Execute");
+	char*	line = Sys_BigStackAlloc(1024, "Cbuf_Execute");
 // <<< FIX
 	int		quotes;
 	
@@ -195,7 +195,7 @@ void Cbuf_Execute (void)
 	}
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
-	free(line);
+	Sys_BigStackFree(1024, "Cbuf_Execute");
 // <<< FIX
 }
 
@@ -386,8 +386,8 @@ void Cmd_Alias_f (void)
 	strcpy (a->name, s);	
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Allocating for previous fix:
-	cmd = Sys_Malloc(1024, "Cmd_Alias_f");
+// Allocating for previous fix in big stack:
+	cmd = Sys_BigStackAlloc(1024, "Cmd_Alias_f");
 // <<< FIX
 
 // copy the rest of the command line
@@ -405,7 +405,7 @@ void Cmd_Alias_f (void)
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
-	free(cmd);
+	Sys_BigStackFree(1024, "Cmd_Alias_f");
 // <<< FIX
 }
 

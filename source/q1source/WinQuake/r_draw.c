@@ -816,11 +816,13 @@ void R_RenderPoly (msurface_t *fa, int clipflags)
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
 			//return;
-			{Sys_BigStackFree(sizeof(mvertex_t*) * 2 
-			                + sizeof(mvertex_t) * 100 
-			                + sizeof(mvertex_t) * 100 
-			                + sizeof(polyvert_t) * 100, "R_RenderPoly");
-			return;}
+		{
+			Sys_BigStackFree(sizeof(mvertex_t*) * 2 
+			               + sizeof(mvertex_t) * 100 
+			               + sizeof(mvertex_t) * 100 
+			               + sizeof(polyvert_t) * 100, "R_RenderPoly");
+			return;
+		}
 // <<< FIX
 
 		lnumverts = newverts;

@@ -199,7 +199,7 @@ void Com_DPrintf (char *fmt, ...)
 	Com_Printf ("%s", msg);
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Allocating for previous fix:
+// Deallocating from previous fix:
 	Sys_BigStackFree(MAXPRINTMSG, "Com_DPrintf");
 // <<< FIX
 

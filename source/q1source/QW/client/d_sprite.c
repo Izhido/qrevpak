@@ -606,7 +606,10 @@ void D_DrawSprite (void)
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Deallocating from previous fix:
 		//return;		// doesn't cross any scans at all
-		{Sys_BigStackFree(sizeof(sspan_t) * (MAXHEIGHT+1), "D_DrawSprite");return;}
+	{
+		Sys_BigStackFree(sizeof(sspan_t) * (MAXHEIGHT+1), "D_DrawSprite");
+		return;
+	}
 // <<< FIX
 
 	cachewidth = r_spritedesc.pspriteframe->width;
