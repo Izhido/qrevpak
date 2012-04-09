@@ -223,7 +223,13 @@ store:
 				t >>= 7;
 				if (t > 255)
 					t = 255;
-				dest[3] = 255-t;
+				if(gx_mtexable)
+				{
+					dest[0] = 255-t;
+					dest[1] = 255-t;
+					dest[2] = 255-t;
+				} else
+					dest[3] = 255-t;
 				dest += 4;
 			}
 		}
@@ -239,7 +245,12 @@ store:
 				t >>= 7;
 				if (t > 255)
 					t = 255;
-				dest[1] = (255-t) >> 4;
+				if(gx_mtexable)
+				{
+					dest[0] = ((255-t) & 240) | ((255-t) >> 4);
+					dest[1] = (255-t) & 240;
+				} else
+					dest[1] = (255-t) >> 4;
 				dest += 2;
 			}
 		}
@@ -368,7 +379,11 @@ void GX_SetTev1OpBlend()
 	GX_SetTevAlphaOp(GX_TEVSTAGE1,GX_TEV_ADD,GX_TB_ZERO,GX_CS_SCALE_1,GX_TRUE,GX_TEVPREV);
 }
 
-#ifndef _WIN32
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// This sets code in motion that causes unlighted, wavy walls when multitextured. Replacing:
+//#ifndef _WIN32
+#if 0
+// <<< FIX
 /*
 ================
 R_DrawSequentialPoly
@@ -832,6 +847,8 @@ void R_BlendLightmaps (void)
 	{
 		gx_blend_src_value = GX_BL_SRCALPHA;
 		gx_blend_dst_value = GX_BL_INVSRCALPHA;
+		if(gx_blend_enabled)
+			GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
 	}
 	else if (gx_lightmap_format == GX_TF_I8)
 	{
