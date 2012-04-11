@@ -389,8 +389,14 @@ void S_PaintChannelFrom8 (channel_t *ch, sfxcache_t *sc, int count, int offset)
 	for (i=0 ; i<count ; i++, samp++)
 	{
 		data = sfx[i];
-		samp->left += lscale[data];
-		samp->right += rscale[data];
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Left/right channel data in paintbuffer is not in the expected order 
+// for hardware. Inverting:
+		//samp->left += lscale[data];
+		//samp->right += rscale[data];
+		samp->left += rscale[data];
+		samp->right += lscale[data];
+// <<< FIX
 	}
 	
 	ch->pos += count;
@@ -490,8 +496,14 @@ void S_PaintChannelFrom16 (channel_t *ch, sfxcache_t *sc, int count, int offset)
 		data = sfx[i];
 		left = (data * leftvol)>>8;
 		right = (data * rightvol)>>8;
-		samp->left += left;
-		samp->right += right;
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Left/right channel data in paintbuffer is not in the expected order 
+// for hardware. Inverting:
+		//samp->left += left;
+		//samp->right += right;
+		samp->left += right;
+		samp->right += left;
+// <<< FIX
 	}
 
 	ch->pos += count;

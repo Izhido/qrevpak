@@ -362,8 +362,14 @@ void SND_PaintChannelFrom8 (channel_t *ch, sfxcache_t *sc, int count)
 	for (i=0 ; i<count ; i++)
 	{
 		data = sfx[i];
-		paintbuffer[i].left += lscale[data];
-		paintbuffer[i].right += rscale[data];
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Left/right channel data in paintbuffer is not in the expected order 
+// for hardware. Inverting:
+		//paintbuffer[i].left += lscale[data];
+		//paintbuffer[i].right += rscale[data];
+		paintbuffer[i].left += rscale[data];
+		paintbuffer[i].right += lscale[data];
+// <<< FIX
 	}
 	
 	ch->pos += count;
@@ -389,8 +395,14 @@ void SND_PaintChannelFrom16 (channel_t *ch, sfxcache_t *sc, int count)
 		data = sfx[i];
 		left = (data * leftvol) >> 8;
 		right = (data * rightvol) >> 8;
-		paintbuffer[i].left += left;
-		paintbuffer[i].right += right;
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Left/right channel data in paintbuffer is not in the expected order 
+// for hardware. Inverting:
+		//paintbuffer[i].left += left;
+		//paintbuffer[i].right += right;
+		paintbuffer[i].left += right;
+		paintbuffer[i].right += left;
+// <<< FIX
 	}
 
 	ch->pos += count;
