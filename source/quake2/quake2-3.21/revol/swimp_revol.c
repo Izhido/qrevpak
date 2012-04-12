@@ -30,7 +30,7 @@ struct y1cby2cr_palentry_t
 	u32 count;
 };
 
-extern void* sys_framebuffer[3];
+extern void* sys_framebuffer[2];
 
 extern cvar_t* in_osk;
 
