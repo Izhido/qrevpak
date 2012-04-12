@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 // models.c -- model loading and caching
 
-#include "gl_local.h"
+#include "gx_local.h"
 
 model_t	*loadmodel;
 int		modfilelen;
@@ -224,7 +224,11 @@ model_t *Mod_ForName (char *name, qboolean crash)
 	//
 	// load the file
 	//
-	modfilelen = ri.FS_LoadFile (mod->name, &buf);
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Precaching the model file if possible:
+	//modfilelen = ri.FS_LoadFile (mod->name, &buf);
+	modfilelen = ri.FS_LoadFile (mod->name, &buf, true);
+// <<< FIX
 	if (!buf)
 	{
 		if (crash)

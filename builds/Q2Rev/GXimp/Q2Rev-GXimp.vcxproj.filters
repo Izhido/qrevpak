@@ -11,20 +11,11 @@
     <Filter Include="Header Files\game">
       <UniqueIdentifier>{1480a592-581c-454c-bd13-2cd228550ca6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\glrevol">
-      <UniqueIdentifier>{689f569a-927f-4fce-94e3-03536d3a86ef}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\glrevol\GL">
-      <UniqueIdentifier>{871f3460-247e-433d-9e2c-0fc84091aedb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\oskrevol">
       <UniqueIdentifier>{8ab4326a-03f6-4346-9d2d-50e6876e39c2}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\qcommon">
       <UniqueIdentifier>{3a1ddae6-78f8-451a-80e5-20e37d8b7f3b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\ref_gl">
-      <UniqueIdentifier>{5427f42d-c8d1-488c-b1c5-670c0c20fcfb}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\server">
       <UniqueIdentifier>{5b07fa2c-fe03-4d53-902f-8c251563f338}</UniqueIdentifier>
@@ -43,17 +34,11 @@
     <Filter Include="Source Files\game">
       <UniqueIdentifier>{cbb1692c-6c51-499f-939c-abaddcdfabaa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\glrevol">
-      <UniqueIdentifier>{a0d922a9-74ed-4258-becf-bb1da318ca3b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\oskrevol">
       <UniqueIdentifier>{28817397-9e62-403b-bb50-e2cfe0bf4cf4}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\qcommon">
       <UniqueIdentifier>{a62b92f2-b15f-49c4-a893-20ac16fe551d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\ref_gl">
-      <UniqueIdentifier>{a66a1559-b47f-4b34-b631-d9c011673fdf}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\revol">
       <UniqueIdentifier>{19f75ff7-872d-433f-a58e-9e88ff5f013c}</UniqueIdentifier>
@@ -67,43 +52,22 @@
     <Filter Include="Header Files\oggplayer">
       <UniqueIdentifier>{863ae5c9-d90c-4e9c-a39c-541a4b5a83d0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\ref_gx">
+      <UniqueIdentifier>{5427f42d-c8d1-488c-b1c5-670c0c20fcfb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ref_gx\GL">
+      <UniqueIdentifier>{b4a6be73-ba24-425e-983d-528b540a847e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ref_gx">
+      <UniqueIdentifier>{a66a1559-b47f-4b34-b631-d9c011673fdf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\source\glrevol\source\glrevol.c">
-      <Filter>Source Files\glrevol</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\oskrevol\source\osk_revol.c">
       <Filter>Source Files\oskrevol</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\game\q_shared.c">
       <Filter>Source Files\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_draw.c">
-      <Filter>Source Files\ref_gl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_image.c">
-      <Filter>Source Files\ref_gl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_light.c">
-      <Filter>Source Files\ref_gl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_mesh.c">
-      <Filter>Source Files\ref_gl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_model.c">
-      <Filter>Source Files\ref_gl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_rmain.c">
-      <Filter>Source Files\ref_gl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_rmisc.c">
-      <Filter>Source Files\ref_gl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_rsurf.c">
-      <Filter>Source Files\ref_gl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_warp.c">
-      <Filter>Source Files\ref_gl</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\cd_revol.c">
       <Filter>Source Files\revol</Filter>
@@ -387,14 +351,38 @@
     <ClCompile Include="..\..\..\source\oggplayer\source\oggplayer.c">
       <Filter>Source Files\oggplayer</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gx\glrevol.c">
+      <Filter>Source Files\ref_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gx\gx_draw.c">
+      <Filter>Source Files\ref_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gx\gx_image.c">
+      <Filter>Source Files\ref_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gx\gx_light.c">
+      <Filter>Source Files\ref_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gx\gx_mesh.c">
+      <Filter>Source Files\ref_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gx\gx_model.c">
+      <Filter>Source Files\ref_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gx\gx_rmain.c">
+      <Filter>Source Files\ref_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gx\gx_rmisc.c">
+      <Filter>Source Files\ref_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gx\gx_rsurf.c">
+      <Filter>Source Files\ref_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gx\gx_warp.c">
+      <Filter>Source Files\ref_gx</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\source\glrevol\include\GL\gl.h">
-      <Filter>Header Files\glrevol\GL</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\glrevol\include\GL\glu.h">
-      <Filter>Header Files\glrevol\GL</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\source\oskrevol\include\osk_revol.h">
       <Filter>Header Files\oskrevol</Filter>
     </ClInclude>
@@ -485,24 +473,6 @@
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\qcommon\qfiles.h">
       <Filter>Header Files\qcommon</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gl\anorms.h">
-      <Filter>Header Files\ref_gl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gl\anormtab.h">
-      <Filter>Header Files\ref_gl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_local.h">
-      <Filter>Header Files\ref_gl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_model.h">
-      <Filter>Header Files\ref_gl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gl\qgl.h">
-      <Filter>Header Files\ref_gl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gl\warpsin.h">
-      <Filter>Header Files\ref_gl</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\server\server.h">
       <Filter>Header Files\server</Filter>
     </ClInclude>
@@ -556,6 +526,30 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\oggplayer\include\oggplayer.h">
       <Filter>Header Files\oggplayer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gx\anorms.h">
+      <Filter>Header Files\ref_gx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gx\anormtab.h">
+      <Filter>Header Files\ref_gx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gx\warpsin.h">
+      <Filter>Header Files\ref_gx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gx\GL\gl.h">
+      <Filter>Header Files\ref_gx\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gx\GL\glu.h">
+      <Filter>Header Files\ref_gx\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gx\gx_local.h">
+      <Filter>Header Files\ref_gx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gx\qgx.h">
+      <Filter>Header Files\ref_gx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gx\gx_model.h">
+      <Filter>Header Files\ref_gx</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

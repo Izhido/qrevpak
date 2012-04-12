@@ -1,4 +1,4 @@
-#include <GL/gl.h>
+#include "GL/gl.h"
 #include <gccore.h>
 #include <malloc.h>
 #include <string.h>

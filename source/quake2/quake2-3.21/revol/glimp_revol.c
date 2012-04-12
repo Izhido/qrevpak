@@ -20,9 +20,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Include only for the GL builds (part 1):
-#ifdef GLIMP
+#ifdef GXIMP
 // <<< FIX
-#include "../ref_gl/gl_local.h"
+#include "../ref_gx/gx_local.h"
 
 void		GLimp_BeginFrame( float camera_separation )
 {

@@ -12,7 +12,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F63F24A2-0F96-497A-8A82-D85E46C0C44E}</ProjectGuid>
-    <RootNamespace>Q2CTFRev-GLimp</RootNamespace>
+    <RootNamespace>Q2CTFRev-GXimp</RootNamespace>
     <Keyword>MakeFileProj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -41,19 +41,19 @@
 make</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">make clean</NMakeCleanCommandLine>
     <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
-    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">GAME_HARD_LINKED;REF_HARD_LINKED;GXIMP;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
     <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
     <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
     <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
-    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">make</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">make clean
-make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMakeReBuildCommandLine>
+make</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">make clean</NMakeCleanCommandLine>
     <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
-    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ARM9;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">GAME_HARD_LINKED;REF_HARD_LINKED;GXIMP;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
     <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
     <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
@@ -62,7 +62,6 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\source\glrevol\source\glrevol.c" />
     <ClCompile Include="..\..\..\source\oggplayer\source\oggplayer.c" />
     <ClCompile Include="..\..\..\source\oskrevol\source\osk_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\g_ai.c" />
@@ -91,15 +90,16 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\p_view.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\p_weapon.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\q_shared.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_draw.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_image.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_light.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_mesh.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_model.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_rmain.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_rmisc.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_rsurf.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_warp.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gx\glrevol.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gx\gx_draw.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gx\gx_image.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gx\gx_light.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gx\gx_mesh.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gx\gx_model.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gx\gx_rmain.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gx\gx_rmisc.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gx\gx_rsurf.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gx\gx_warp.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\cd_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\glimp_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\in_revol.c" />
@@ -148,8 +148,6 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\client\x86.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\source\glrevol\include\GL\gl.h" />
-    <ClInclude Include="..\..\..\source\glrevol\include\GL\glu.h" />
     <ClInclude Include="..\..\..\source\oggplayer\include\oggplayer.h" />
     <ClInclude Include="..\..\..\source\oskrevol\include\osk_revol.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ctf\game.h" />
@@ -158,15 +156,17 @@ make -r 2&gt;&amp;1 | sed -e ’s/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/’</NMak
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ctf\m_player.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ctf\p_menu.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ctf\q_shared.h" />
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gl\anorms.h" />
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gl\anormtab.h" />
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_local.h" />
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gl\gl_model.h" />
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gl\qgl.h" />
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gl\warpsin.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\qcommon\crc.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\qcommon\qcommon.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\qcommon\qfiles.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gx\anorms.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gx\anormtab.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gx\GL\gl.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gx\GL\glu.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gx\gx_local.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gx\gx_model.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gx\qgx.h" />
+    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gx\warpsin.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\server\server.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\client\adivtab.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\client\anorms.h" />

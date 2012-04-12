@@ -1139,7 +1139,7 @@ int main (int argc, char **argv)
 
 	sys_framebuffer[0] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(sys_rmode));
 	sys_framebuffer[1] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(sys_rmode));
-#ifdef GLIMP
+#ifdef GXIMP
 	sys_framebuffer[2] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(sys_rmode));
 #endif
 
@@ -1147,7 +1147,7 @@ int main (int argc, char **argv)
 
 	CON_Init(sys_framebuffer[0], 20, 20, sys_rmode->fbWidth, sys_rmode->xfbHeight, sys_rmode->fbWidth * VI_DISPLAY_PIX_SZ);
 
-#ifndef GLIMP
+#ifndef GXIMP
 	VIDEO_ClearFrameBuffer(sys_rmode, sys_framebuffer[1], COLOR_BLACK);
 #endif
 
@@ -1160,7 +1160,7 @@ int main (int argc, char **argv)
 		VIDEO_WaitVSync();
 	};
 
-#ifdef GLIMP
+#ifdef GXIMP
 	GXColor background = {0, 0, 0, 0xff};
 	sys_currentframebuf = 1;
 	sys_gpfifo = memalign(32, SYS_FIFO_SIZE);
@@ -1237,7 +1237,7 @@ int main (int argc, char **argv)
 
 	WPAD_SetPowerButtonCallback(Sys_PowerOff);
 
-#ifdef GLIMP
+#ifdef GXIMP
 	VIDEO_SetNextFramebuffer(sys_framebuffer[sys_currentframebuf]);
 #else
 	VIDEO_SetNextFramebuffer(sys_framebuffer[1]);
@@ -1256,7 +1256,7 @@ int main (int argc, char **argv)
 			sys_mouse_event.button = 0;
 		};
 		Qcommon_Frame (1000 / 30);
-#ifdef GLIMP
+#ifdef GXIMP
 		GX_DrawDone();
 		if(sys_currentframebuf == 1)
 		{

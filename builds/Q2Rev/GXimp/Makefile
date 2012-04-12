@@ -15,16 +15,15 @@ include $(DEVKITPPC)/wii_rules
 # SOURCES is a list of directories containing source code
 # INCLUDES is a list of directories containing extra header files
 #---------------------------------------------------------------------------------
-TARGET		:=	Q2Rev-GLimp
+TARGET		:=	Q2Rev-GXimp
 BUILD		:=	build
 SOURCES		:=	../../../source/quake2/quake2-3.21/revol \
                 ../../../source/quake2/quake2-3.21/qcommon \
                 ../../../source/quake2/quake2-3.21/game \
                 ../../../source/quake2/quake2-3.21/server \
                 ../../../source/quake2/quake2-3.21/client \
-                ../../../source/quake2/quake2-3.21/ref_gl \
+                ../../../source/quake2/quake2-3.21/ref_gx \
                 ../../../source/oskrevol/source \
-                ../../../source/glrevol/source \
                 ../../../source/oggplayer/source
 DATA		:=	../../../data  
 INCLUDES	:=  ../../../source/quake2/quake2-3.21/revol \
@@ -32,7 +31,7 @@ INCLUDES	:=  ../../../source/quake2/quake2-3.21/revol \
                 ../../../source/quake2/quake2-3.21/game \
                 ../../../source/quake2/quake2-3.21/server \
                 ../../../source/quake2/quake2-3.21/client \
-                ../../../source/quake2/quake2-3.21/ref_gl
+                ../../../source/quake2/quake2-3.21/ref_gx
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -41,7 +40,7 @@ INCLUDES	:=  ../../../source/quake2/quake2-3.21/revol \
 CFLAGS	= -g -O2 -Wall $(MACHDEP) $(INCLUDE) \
           -DGAME_HARD_LINKED \
           -DREF_HARD_LINKED \
-          -DGLIMP
+          -DGXIMP
 CXXFLAGS	=	$(CFLAGS)
 
 LDFLAGS	=	-g $(MACHDEP) -Wl,-Map,$(notdir $@).map
@@ -57,7 +56,6 @@ LIBS	:=	 -lwiikeyboard -lvorbisidec -lasnd -lwiiuse -lbte -lfat -logc -lm
 #---------------------------------------------------------------------------------
 LIBDIRS	:= $(PORTLIBS) \
            $(CURDIR)/../../../source/oskrevol \
-           $(CURDIR)/../../../source/glrevol \
            $(CURDIR)/../../../source/oggplayer
 
 #---------------------------------------------------------------------------------
