@@ -1285,7 +1285,7 @@ int main (int argc, char **argv)
 		KEYBOARD_FlushEvents();
 		VIDEO_Flush();
 		VIDEO_WaitVSync();
-#ifndef GXQUAKE
+#ifndef GXIMP
 		while((Sys_Milliseconds() - sys_previous_time) < (1000 / 45))
 		{
 			VIDEO_WaitVSync();
