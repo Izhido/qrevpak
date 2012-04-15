@@ -2421,7 +2421,7 @@ int main(int argc, char **argv)
 				msg = (char*)malloc(m + 1);
 				strcpy(msg, Entries[EntryIndices[SelectedEntryIndex]].Parameters);
 				t = AtBeginning;
-				newArgc = 1;
+				newArgc++;
 				j = 0;
 				while(msg[j] != 0)
 				{
@@ -2439,8 +2439,10 @@ int main(int argc, char **argv)
 					j++;
 				};
 				newArgv = (char**)malloc(newArgc * sizeof(char*));
-				newArgv[0] = engFullPath;
-				i = 1;
+				i = 0;
+				newArgv[i] = engFullPath;
+				i++;
+				t = AtBeginning;
 				j = 0;
 				while(msg[j] != 0)
 				{
