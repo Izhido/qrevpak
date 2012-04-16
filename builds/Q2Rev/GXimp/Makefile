@@ -24,7 +24,8 @@ SOURCES		:=	../../../source/quake2/quake2-3.21/revol \
                 ../../../source/quake2/quake2-3.21/client \
                 ../../../source/quake2/quake2-3.21/ref_gx \
                 ../../../source/oskrevol/source \
-                ../../../source/oggplayer/source
+                ../../../source/oggplayer/source \
+                ../../../source/gxutils/source
 DATA		:=	../../../data  
 INCLUDES	:=  ../../../source/quake2/quake2-3.21/revol \
                 ../../../source/quake2/quake2-3.21/qcommon \
@@ -56,7 +57,8 @@ LIBS	:=	 -lwiikeyboard -lvorbisidec -lasnd -lwiiuse -lbte -lfat -logc -lm
 #---------------------------------------------------------------------------------
 LIBDIRS	:= $(PORTLIBS) \
            $(CURDIR)/../../../source/oskrevol \
-           $(CURDIR)/../../../source/oggplayer
+           $(CURDIR)/../../../source/oggplayer \
+           $(CURDIR)/../../../source/gxutils
 
 #---------------------------------------------------------------------------------
 # no real need to edit anything past this point unless you need to add additional

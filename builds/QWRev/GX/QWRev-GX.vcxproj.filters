@@ -25,6 +25,12 @@
     <Filter Include="Header Files\oggplayer">
       <UniqueIdentifier>{cc93a0c7-4627-4e29-b657-f5235f167d44}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\gxutils">
+      <UniqueIdentifier>{d251fd55-b163-44ee-8fd7-36d39726a731}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\gxutils">
+      <UniqueIdentifier>{9fd34ace-d7b9-4310-bd11-b708ddc4bf54}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\oskrevol\source\osk_revol.c">
@@ -174,6 +180,9 @@
     <ClCompile Include="..\..\..\source\q1source\QW\client\gx_warp.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\gxutils\source\gxutils.c">
+      <Filter>Source Files\gxutils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\oskrevol\include\osk_revol.h">
@@ -319,6 +328,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\q1source\QW\client\gxquake.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\gxutils\include\gxutils.h">
+      <Filter>Header Files\gxutils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

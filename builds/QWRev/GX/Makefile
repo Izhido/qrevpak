@@ -18,8 +18,9 @@ include $(DEVKITPPC)/wii_rules
 TARGET		:=	QWRev-GX
 BUILD		:=	build
 SOURCES		:=	../../../source/q1source/QW/client \
-                ../../../source/oskrevol/source\
-                ../../../source/oggplayer/source
+                ../../../source/oskrevol/source \
+                ../../../source/oggplayer/source \
+                ../../../source/gxutils/source
 DATA		:=	../../../data  
 INCLUDES	:=  ../../../source/q1source/QW/client
 
@@ -44,7 +45,8 @@ LIBS	:=	 -lwiikeyboard -lvorbisidec -lasnd -lwiiuse -lbte -lfat -logc -lm
 #---------------------------------------------------------------------------------
 LIBDIRS	:= $(PORTLIBS) \
            $(CURDIR)/../../../source/oskrevol \
-           $(CURDIR)/../../../source/oggplayer
+           $(CURDIR)/../../../source/oggplayer \
+           $(CURDIR)/../../../source/gxutils
 
 #---------------------------------------------------------------------------------
 # no real need to edit anything past this point unless you need to add additional

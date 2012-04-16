@@ -61,6 +61,12 @@
     <Filter Include="Header Files\ref_gx\GL">
       <UniqueIdentifier>{8be92576-442c-496e-9c34-f5e3ff217e00}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\gxutils">
+      <UniqueIdentifier>{59054582-fe11-42b8-945c-8cdaf1cb8098}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\gxutils">
+      <UniqueIdentifier>{7d00b4ba-af62-4534-a0ef-acd373180162}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\oskrevol\source\osk_revol.c">
@@ -315,6 +321,9 @@
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gx\gx_warp.c">
       <Filter>Source Files\ref_gx</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\gxutils\source\gxutils.c">
+      <Filter>Source Files\gxutils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\oskrevol\include\osk_revol.h">
@@ -424,6 +433,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gx\qgx.h">
       <Filter>Header Files\ref_gx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\gxutils\include\gxutils.h">
+      <Filter>Header Files\gxutils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

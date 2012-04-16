@@ -28,6 +28,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "quakedef.h"
 
+#include "gxutils.h"
+
 unsigned	d_8to24table[256];
 
 int		texture_mode = GX_LINEAR;
@@ -113,6 +115,7 @@ void QGX_Init (void)
 {
 	CheckMultiTextureExtensions();
 
+	gxu_background_color.r = 1.0f;
 	gx_cull_mode = GX_CULL_BACK;
 	if(gx_cull_enabled)
 	{

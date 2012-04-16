@@ -202,7 +202,7 @@ void GX_SubdivideSurface (msurface_t *fa)
 
 	SubdividePolygon (numverts, verts[0]);
 
-	Sys_BigStackFree(64 * sizeof(vec3_t) + 64 * sizeof(float), "GX_SubdivideSurface");
+	Sys_BigStackFree(64 * sizeof(vec3_t), "GX_SubdivideSurface");
 }
 
 //=========================================================

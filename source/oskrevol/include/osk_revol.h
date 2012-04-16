@@ -1,4 +1,8 @@
+#ifndef OSK_REVOL_H
+#define OSK_REVOL_H
+
 #include <gccore.h>
+
 #define BOOL_IMPLEMENTED 1
 
 #define OSK_WIDTH 606
@@ -26,3 +30,5 @@ oskkey_t* OSK_KeyAt(int x, int y);
 int OSK_HandleKeys(bool KeyPressed);
 
 void OSK_Draw(GXRModeObj* rmode, void* dest);
+
+#endif

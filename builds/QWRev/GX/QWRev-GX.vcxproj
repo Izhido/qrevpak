@@ -63,6 +63,7 @@ make</NMakeReBuildCommandLine>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\source\gxutils\source\gxutils.c" />
     <ClCompile Include="..\..\..\source\oggplayer\source\oggplayer.c" />
     <ClCompile Include="..\..\..\source\oskrevol\source\osk_revol.c" />
     <ClCompile Include="..\..\..\source\q1source\QW\client\cd_revol.c" />
@@ -114,6 +115,7 @@ make</NMakeReBuildCommandLine>
     <ClCompile Include="..\..\..\source\q1source\QW\client\zone.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\source\gxutils\include\gxutils.h" />
     <ClInclude Include="..\..\..\source\oggplayer\include\oggplayer.h" />
     <ClInclude Include="..\..\..\source\oskrevol\include\osk_revol.h" />
     <ClInclude Include="..\..\..\source\q1source\QW\client\adivtab.h" />

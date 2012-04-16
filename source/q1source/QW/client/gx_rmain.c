@@ -25,6 +25,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "quakedef.h"
 
+#include "gxutils.h"
+
 extern Mtx44 gx_projection_matrix;
 
 extern Mtx gx_modelview_matrices[32];
@@ -70,10 +72,6 @@ extern f32 gx_viewport_y;
 extern f32 gx_viewport_width;
 
 extern f32 gx_viewport_height;
-
-extern u8 sys_clear_buffers;
-
-extern u8 sys_clear_color_buffer;
 
 entity_t	r_worldentity;
 
@@ -1126,11 +1124,11 @@ void R_Clear (void)
 	{
 		if (gx_clear.value)
 		{
-			sys_clear_color_buffer = GX_TRUE;
+			gxu_clear_color_buffer = GX_TRUE;
 			Sbar_Changed();
 		} else
-			sys_clear_color_buffer = GX_FALSE;
-		sys_clear_buffers = GX_TRUE;
+			gxu_clear_color_buffer = GX_FALSE;
+		gxu_clear_buffers = GX_TRUE;
 		gxdepthmin = 0;
 		gxdepthmax = 0.5;
 		GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
@@ -1139,7 +1137,7 @@ void R_Clear (void)
 	{
 		static int trickframe;
 
-		sys_clear_buffers = GX_FALSE;
+		gxu_clear_buffers = GX_FALSE;
 
 		trickframe++;
 		if (trickframe & 1)
@@ -1159,11 +1157,11 @@ void R_Clear (void)
 	{
 		if (gx_clear.value)
 		{
-			sys_clear_color_buffer = GX_TRUE;
+			gxu_clear_color_buffer = GX_TRUE;
 			Sbar_Changed();
 		} else
-			sys_clear_color_buffer = GX_FALSE;
-		sys_clear_buffers = GX_TRUE;
+			gxu_clear_color_buffer = GX_FALSE;
+		gxu_clear_buffers = GX_TRUE;
 		gxdepthmin = 0;
 		gxdepthmax = 1;
 		GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);

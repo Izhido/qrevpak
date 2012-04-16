@@ -25,6 +25,12 @@
     <Filter Include="Header Files\oggplayer">
       <UniqueIdentifier>{b5f30fa8-e886-439d-b336-da6dddabba16}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\gxutils">
+      <UniqueIdentifier>{314584ab-8b58-4540-94df-df2860296b49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\gxutils">
+      <UniqueIdentifier>{572ad52d-ee66-4738-ac0c-b0ee7269b8bd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\oskrevol\source\osk_revol.c">
@@ -197,6 +203,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\q1source\WinQuake\gx_model.c">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\gxutils\source\gxutils.c">
+      <Filter>Source Files\gxutils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -379,6 +388,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\q1source\WinQuake\gx_warp_sin.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\gxutils\include\gxutils.h">
+      <Filter>Header Files\gxutils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
