@@ -81,9 +81,10 @@ void SubdividePolygon (int numverts, float *verts)
 	vec3_t	mins, maxs;
 	float	m;
 	float	*v;
-	vec3_t	front[64], back[64];
+	vec3_t*	front = Sys_BigStackAlloc(64 * sizeof(vec3_t), "SubdividePolygon");
+	vec3_t*	back = Sys_BigStackAlloc(64 * sizeof(vec3_t), "SubdividePolygon");
+	float*	dist = Sys_BigStackAlloc(64 * sizeof(float), "SubdividePolygon");
 	int		f, b;
-	float	dist[64];
 	float	frac;
 	gxpoly_t	*poly;
 	float	s, t;
@@ -141,6 +142,9 @@ void SubdividePolygon (int numverts, float *verts)
 
 		SubdividePolygon (f, front[0]);
 		SubdividePolygon (b, back[0]);
+
+		Sys_BigStackFree(128 * sizeof(vec3_t) + 64 * sizeof(float), "SubdividePolygon");
+
 		return;
 	}
 
@@ -156,6 +160,8 @@ void SubdividePolygon (int numverts, float *verts)
 		poly->verts[i][3] = s;
 		poly->verts[i][4] = t;
 	}
+
+	Sys_BigStackFree(128 * sizeof(vec3_t) + 64 * sizeof(float), "SubdividePolygon");
 }
 
 /*
@@ -169,7 +175,7 @@ can be done reasonably.
 */
 void GX_SubdivideSurface (msurface_t *fa)
 {
-	vec3_t		verts[64];
+	vec3_t*		verts = Sys_BigStackAlloc(64 * sizeof(vec3_t), "GX_SubdivideSurface");
 	int			numverts;
 	int			i;
 	int			lindex;
@@ -194,6 +200,8 @@ void GX_SubdivideSurface (msurface_t *fa)
 	}
 
 	SubdividePolygon (numverts, verts[0]);
+
+	Sys_BigStackFree(64 * sizeof(vec3_t), "GX_SubdivideSurface");
 }
 
 //=========================================================

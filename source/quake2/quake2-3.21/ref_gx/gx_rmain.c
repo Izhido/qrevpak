@@ -996,11 +996,7 @@ void R_Register( void )
 	gl_modulate = ri.Cvar_Get ("gl_modulate", "1", CVAR_ARCHIVE );
 	gl_log = ri.Cvar_Get( "gl_log", "0", 0 );
 	gl_bitdepth = ri.Cvar_Get( "gl_bitdepth", "0", 0 );
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// For the time being, there is no mode 3 in the current implementation. Replacing:
-	//gl_mode = ri.Cvar_Get( "gl_mode", "3", CVAR_ARCHIVE );
-	gl_mode = ri.Cvar_Get( "gl_mode", "0", CVAR_ARCHIVE );
-// <<< FIX
+	gl_mode = ri.Cvar_Get( "gl_mode", "0", CVAR_ARCHIVE ); // There is no mode "3" in GX
 	gl_lightmap = ri.Cvar_Get ("gl_lightmap", "0", 0);
 	gl_shadows = ri.Cvar_Get ("gl_shadows", "0", CVAR_ARCHIVE );
 	gl_dynamic = ri.Cvar_Get ("gl_dynamic", "1", 0);
@@ -1106,11 +1102,7 @@ qboolean R_SetMode (void)
 R_Init
 ===============
 */
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// BUG - This is not the right declaration. Replacing:
-//int R_Init( void *hinstance, void *hWnd )
 qboolean R_Init( void *hinstance, void *hWnd )
-// <<< FIX
 {	
 	char renderer_buffer[1000];
 	char vendor_buffer[1000];
@@ -1400,10 +1392,7 @@ qboolean R_Init( void *hinstance, void *hWnd )
 	err = qglGetError();
 	if ( err != GL_NO_ERROR )
 		ri.Con_Printf (PRINT_ALL, "glGetError() = 0x%x\n", err);
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// BUG - Missing return value (though even this particular one is suspected not being the right one):
 	return (err == GL_NO_ERROR );
-// <<< FIX
 }
 
 /*
@@ -1477,14 +1466,15 @@ void R_BeginFrame( float camera_separation )
 
 		if ( gl_config.renderer & ( GL_RENDERER_VOODOO ) )
 		{
-			char envbuffer[1024];
+			char* envbuffer = Sys_BigStackAlloc(1024, "R_BeginFrame");
 			float g;
 
 			g = 2.00 * ( 0.8 - ( vid_gamma->value - 0.5 ) ) + 1.0F;
-			Com_sprintf( envbuffer, sizeof(envbuffer), "SSTV2_GAMMA=%f", g );
+			Com_sprintf( envbuffer, 1024, "SSTV2_GAMMA=%f", g );
 			putenv( envbuffer );
-			Com_sprintf( envbuffer, sizeof(envbuffer), "SST_GAMMA=%f", g );
+			Com_sprintf( envbuffer, 1024, "SST_GAMMA=%f", g );
 			putenv( envbuffer );
+			Sys_BigStackFree(1024, "R_BeginFrame");
 		}
 	}
 

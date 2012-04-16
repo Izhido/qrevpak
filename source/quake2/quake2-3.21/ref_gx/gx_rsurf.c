@@ -541,7 +541,7 @@ dynamic:
 	{
 		if ( ( fa->styles[maps] >= 32 || fa->styles[maps] == 0 ) && ( fa->dlightframe != r_framecount ) )
 		{
-			unsigned	temp[34*34];
+			unsigned*	temp = Sys_BigStackAlloc(34*34 * sizeof(unsigned), "R_RenderBrushPoly");
 			int			smax, tmax;
 
 			smax = (fa->extents[0]>>4)+1;
@@ -560,6 +560,8 @@ dynamic:
 
 			fa->lightmapchain = gl_lms.lightmap_surfaces[fa->lightmaptexturenum];
 			gl_lms.lightmap_surfaces[fa->lightmaptexturenum] = fa;
+
+			Sys_BigStackFree(34*34 * sizeof(unsigned), "R_RenderBrushPoly");
 		}
 		else
 		{
@@ -730,7 +732,7 @@ dynamic:
 
 	if ( is_dynamic )
 	{
-		unsigned	temp[128*128];
+		unsigned*	temp = Sys_BigStackAlloc(128*128 * sizeof(unsigned), "GL_RenderLightmappedPoly");
 		int			smax, tmax;
 
 		if ( ( surf->styles[map] >= 32 || surf->styles[map] == 0 ) && ( surf->dlightframe != r_framecount ) )
@@ -751,6 +753,7 @@ dynamic:
 							  GL_LIGHTMAP_FORMAT, 
 							  GL_UNSIGNED_BYTE, temp );
 
+			Sys_BigStackFree(128*128 * sizeof(unsigned), "GL_RenderLightmappedPoly");
 		}
 		else
 		{
@@ -1264,7 +1267,7 @@ cluster
 void R_MarkLeaves (void)
 {
 	byte	*vis;
-	byte	fatvis[MAX_MAP_LEAFS/8];
+	byte*	fatvis;
 	mnode_t	*node;
 	int		i, c;
 	mleaf_t	*leaf;
@@ -1291,6 +1294,8 @@ void R_MarkLeaves (void)
 			r_worldmodel->nodes[i].visframe = r_visframecount;
 		return;
 	}
+
+	fatvis = Sys_BigStackAlloc(MAX_MAP_LEAFS/8 * sizeof(byte), "R_MarkLeaves");
 
 	vis = Mod_ClusterPVS (r_viewcluster, r_worldmodel);
 	// may have to combine two clusters because of solid water boundaries
@@ -1338,6 +1343,7 @@ void R_MarkLeaves (void)
 		}
 	}
 #endif
+	Sys_BigStackFree(MAX_MAP_LEAFS/8 * sizeof(byte), "R_MarkLeaves");
 }
 
 
@@ -1565,7 +1571,7 @@ void GL_BeginBuildingLightmaps (model_t *m)
 {
 	static lightstyle_t	lightstyles[MAX_LIGHTSTYLES];
 	int				i;
-	unsigned		dummy[128*128];
+	unsigned*		dummy = Sys_BigStackAlloc(128*128 * sizeof(unsigned), "GL_BeginBuildingLightmaps");
 
 	memset( gl_lms.allocated, 0, sizeof(gl_lms.allocated) );
 
@@ -1647,6 +1653,8 @@ void GL_BeginBuildingLightmaps (model_t *m)
 				   GL_LIGHTMAP_FORMAT, 
 				   GL_UNSIGNED_BYTE, 
 				   dummy );
+
+	Sys_BigStackFree(128*128 * sizeof(unsigned), "GL_BeginBuildingLightmaps");
 }
 
 /*

@@ -318,8 +318,8 @@ extern unsigned	r_rawpalette[256];
 
 void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data)
 {
-	unsigned	image32[256*256];
-	unsigned char image8[256*256];
+	unsigned*	image32 = Sys_BigStackAlloc(256*256 * sizeof(unsigned), "Draw_StretchRaw");
+	unsigned char* image8 = Sys_BigStackAlloc(256*256, "Draw_StretchRaw");
 	int			i, j, trows;
 	byte		*source;
 	int			frac, fracstep;
@@ -411,5 +411,7 @@ void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data
 
 	if ( ( gl_config.renderer == GL_RENDERER_MCD ) || ( gl_config.renderer & GL_RENDERER_RENDITION ) ) 
 		qglEnable (GL_ALPHA_TEST);
+
+	Sys_BigStackFree(256*256 * sizeof(unsigned) + 256*256, "Draw_StretchRaw");
 }
 

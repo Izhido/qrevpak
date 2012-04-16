@@ -47,7 +47,7 @@ int		gl_filter_max = GL_LINEAR;
 void GL_SetTexturePalette( unsigned palette[256] )
 {
 	int i;
-	unsigned char temptable[768];
+	unsigned char* temptable = Sys_BigStackAlloc(768, "GL_SetTexturePalette");
 
 	if ( qglColorTableEXT && gl_ext_palettedtexture->value )
 	{
@@ -65,6 +65,7 @@ void GL_SetTexturePalette( unsigned palette[256] )
 						   GL_UNSIGNED_BYTE,
 						   temptable );
 	}
+	Sys_BigStackFree(768, "GL_SetTexturePalette");
 }
 
 void GL_EnableMultitexture( qboolean enable )
@@ -444,11 +445,7 @@ void LoadPCX (char *filename, byte **pic, byte **palette, int *width, int *heigh
 	//
 	// load the file
 	//
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Precaching the pcx file if possible:
-	//len = ri.FS_LoadFile (filename, (void **)&raw);
 	len = ri.FS_LoadFile (filename, (void **)&raw, true);
-// <<< FIX
 	if (!raw)
 	{
 		ri.Con_Printf (PRINT_DEVELOPER, "Bad pcx file %s\n", filename);
@@ -568,11 +565,7 @@ void LoadTGA (char *name, byte **pic, int *width, int *height)
 	//
 	// load the file
 	//
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Precaching the targa file if possible:
-	//length = ri.FS_LoadFile (name, (void **)&buffer);
 	length = ri.FS_LoadFile (name, (void **)&buffer, true);
-// <<< FIX
 	if (!buffer)
 	{
 		ri.Con_Printf (PRINT_DEVELOPER, "Bad tga file %s\n", name);
@@ -780,7 +773,7 @@ typedef struct
 void R_FloodFillSkin( byte *skin, int skinwidth, int skinheight )
 {
 	byte				fillcolor = *skin; // assume this is the pixel to fill
-	floodfill_t			fifo[FLOODFILL_FIFO_SIZE];
+	floodfill_t*		fifo;
 	int					inpt = 0, outpt = 0;
 	int					filledcolor = -1;
 	int					i;
@@ -804,6 +797,8 @@ void R_FloodFillSkin( byte *skin, int skinwidth, int skinheight )
 		return;
 	}
 
+	fifo = Sys_BigStackAlloc(FLOODFILL_FIFO_SIZE * sizeof(floodfill_t), "R_FloodFillSkin");
+
 	fifo[inpt].x = 0, fifo[inpt].y = 0;
 	inpt = (inpt + 1) & FLOODFILL_FIFO_MASK;
 
@@ -820,7 +815,8 @@ void R_FloodFillSkin( byte *skin, int skinwidth, int skinheight )
 		if (y > 0)				FLOODFILL_STEP( -skinwidth, 0, -1 );
 		if (y < skinheight - 1)	FLOODFILL_STEP( skinwidth, 0, 1 );
 		skin[x + skinwidth * y] = fdc;
-	}
+	};
+	Sys_BigStackFree(FLOODFILL_FIFO_SIZE * sizeof(floodfill_t), "R_FloodFillSkin");
 }
 
 //=======================================================
@@ -836,7 +832,8 @@ void GL_ResampleTexture (unsigned *in, int inwidth, int inheight, unsigned *out,
 	int		i, j;
 	unsigned	*inrow, *inrow2;
 	unsigned	frac, fracstep;
-	unsigned	p1[1024], p2[1024];
+	unsigned*	p1 = Sys_BigStackAlloc(1024 * sizeof(unsigned), "GL_ResampleTexture");
+	unsigned*	p2 = Sys_BigStackAlloc(1024 * sizeof(unsigned), "GL_ResampleTexture");
 	byte		*pix1, *pix2, *pix3, *pix4;
 
 	fracstep = inwidth*0x10000/outwidth;
@@ -870,7 +867,9 @@ void GL_ResampleTexture (unsigned *in, int inwidth, int inheight, unsigned *out,
 			((byte *)(out+j))[2] = (pix1[2] + pix2[2] + pix3[2] + pix4[2])>>2;
 			((byte *)(out+j))[3] = (pix1[3] + pix2[3] + pix3[3] + pix4[3])>>2;
 		}
-	}
+	};
+
+	Sys_BigStackFree(2048 * sizeof(unsigned), "GL_ResampleTexture");
 }
 
 /*
@@ -975,8 +974,8 @@ qboolean uploaded_paletted;
 qboolean GL_Upload32 (unsigned *data, int width, int height,  qboolean mipmap)
 {
 	int			samples;
-	unsigned	scaled[256*256];
-	unsigned char paletted_texture[256*256];
+	unsigned*	scaled = Sys_BigStackAlloc(256*256 * sizeof(unsigned), "GL_Upload32");
+	unsigned char* paletted_texture = Sys_BigStackAlloc(256*256, "GL_Upload32");
 	int			scaled_width, scaled_height;
 	int			i, c;
 	byte		*scan;
@@ -1014,7 +1013,7 @@ qboolean GL_Upload32 (unsigned *data, int width, int height,  qboolean mipmap)
 	upload_width = scaled_width;
 	upload_height = scaled_height;
 
-	if (scaled_width * scaled_height > sizeof(scaled)/4)
+	if (scaled_width * scaled_height > (256*256 * sizeof(unsigned))/4)
 		ri.Sys_Error (ERR_DROP, "GL_Upload32: too big");
 
 	// scan the texture for any non-255 alpha
@@ -1142,6 +1141,7 @@ qboolean GL_Upload32 (unsigned *data, int width, int height,  qboolean mipmap)
 done: ;
 #endif
 
+	Sys_BigStackFree(256*256 * sizeof(unsigned) + 256*256, "GL_Upload32");
 
 	if (mipmap)
 	{
@@ -1183,13 +1183,14 @@ static qboolean IsPowerOf2( int value )
 
 qboolean GL_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboolean is_sky )
 {
-	unsigned	trans[512*256];
+	unsigned*	trans = Sys_BigStackAlloc(512*256 * sizeof(unsigned),"GL_Upload8");
 	int			i, s;
 	int			p;
+	qboolean	ret;
 
 	s = width*height;
 
-	if (s > sizeof(trans)/4)
+	if (s > (512*256 * sizeof(unsigned))/4)
 		ri.Sys_Error (ERR_DROP, "GL_Upload8: too large");
 
 	if ( qglColorTableEXT && 
@@ -1237,8 +1238,12 @@ qboolean GL_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboole
 			}
 		}
 
-		return GL_Upload32 (trans, width, height, mipmap);
-	}
+		ret = GL_Upload32 (trans, width, height, mipmap);
+		Sys_BigStackFree(512*256 * sizeof(unsigned),"GL_Upload8");
+		return ret;
+	};
+
+	Sys_BigStackFree(512*256 * sizeof(unsigned),"GL_Upload8");
 }
 
 
@@ -1340,11 +1345,7 @@ image_t *GL_LoadWal (char *name)
 	int			width, height, ofs;
 	image_t		*image;
 
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Precaching the wal file if possible:
-	//ri.FS_LoadFile (name, (void **)&mt);
 	ri.FS_LoadFile (name, (void **)&mt, true);
-// <<< FIX
 	if (!mt)
 	{
 		ri.Con_Printf (PRINT_ALL, "GL_FindImage: can't load %s\n", name);
@@ -1534,11 +1535,7 @@ void	GL_InitImages (void)
 
 	if ( qglColorTableEXT )
 	{
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Precaching the palette file if possible:
-		//ri.FS_LoadFile( "pics/16to8.dat", &gl_state.d_16to8table );
 		ri.FS_LoadFile( "pics/16to8.dat", &gl_state.d_16to8table, true);
-// <<< FIX
 		if ( !gl_state.d_16to8table )
 			ri.Sys_Error( ERR_FATAL, "Couldn't load pics/16to8.pcx");
 	}
