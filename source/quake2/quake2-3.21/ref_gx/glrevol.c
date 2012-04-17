@@ -192,10 +192,6 @@ void glColor3f(GLfloat red, GLfloat green, GLfloat blue)
 	glColor4ub(red * 255.0, green * 255.0, blue * 255.0, 255);
 }
 
-void glBindTexture(GLenum target, GLuint texture)
-{
-}
-
 void glTexCoord2f(GLfloat s, GLfloat t)
 {
 }

@@ -28,47 +28,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "quakedef.h"
 
-extern Mtx44 gx_projection_matrix;
-
-extern Mtx gx_modelview_matrices[32];
-
-extern int gx_cur_modelview_matrix;
-
-extern qboolean gx_cull_enabled;
-
-extern u8 gx_z_test_enabled;
-
-extern u8 gx_z_write_enabled;
-
-extern qboolean gx_blend_enabled;
-
-extern u8 gx_blend_src_value;
-
-extern u8 gx_blend_dst_value;
-
-extern qboolean gx_alpha_test_enabled;
-
-extern u8 gx_alpha_test_lower;
-
-extern u8 gx_alpha_test_higher;
-
-extern u8 gx_cur_vertex_format;
-
-extern u8 gx_cur_r;
-
-extern u8 gx_cur_g;
-
-extern u8 gx_cur_b;
-
-extern u8 gx_cur_a;
-
-extern f32 gx_viewport_x;
-
-extern f32 gx_viewport_y;
-
-extern f32 gx_viewport_width;
-
-extern f32 gx_viewport_height;
+#include "gxutils.h"
 
 cvar_t		gx_nobind = {"gx_nobind", "0"};
 cvar_t		gx_max_size = {"gx_max_size", "1024"};
@@ -1035,18 +995,18 @@ void Draw_Character (int x, int y, int num)
 
 	GX_Bind (char_texture);
 
-	GX_Begin (GX_QUADS, gx_cur_vertex_format, 4);
+	GX_Begin (GX_QUADS, gxu_cur_vertex_format, 4);
 	GX_Position3f32(x, y, 0);
-	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (fcol, frow);
 	GX_Position3f32(x+8, y, 0);
-	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (fcol + size, frow);
 	GX_Position3f32(x+8, y+8, 0);
-	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (fcol + size, frow + size);
 	GX_Position3f32(x, y+8, 0);
-	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (fcol, frow + size);
 	GX_End ();
 }
@@ -1095,33 +1055,33 @@ void Draw_AlphaPic (int x, int y, qpic_t *pic, float alpha)
 		Scrap_Upload ();
 	gx = (gxpic_t *)pic->data;
 	GX_SetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
-	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP);
-	gx_cur_r = 255;
-	gx_cur_g = 255;
-	gx_cur_b = 255;
+	GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
+	gxu_cur_r = 255;
+	gxu_cur_g = 255;
+	gxu_cur_b = 255;
 	if(alpha < 0.0)
 		alpha = 0.0;
 	if(alpha > 1.0)
 		alpha = 1.0;
-	gx_cur_a = alpha * 255.0;
+	gxu_cur_a = alpha * 255.0;
 	GX_Bind (gx->texnum);
-	GX_Begin (GX_QUADS, gx_cur_vertex_format, 4);
+	GX_Begin (GX_QUADS, gxu_cur_vertex_format, 4);
 	GX_Position3f32(x, y, 0);
-	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (gx->sl, gx->tl);
 	GX_Position3f32(x+pic->width, y, 0);
-	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (gx->sh, gx->tl);
 	GX_Position3f32(x+pic->width, y+pic->height, 0);
-	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (gx->sh, gx->th);
 	GX_Position3f32(x, y+pic->height, 0);
-	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (gx->sl, gx->th);
 	GX_End ();
-	gx_cur_a = 255;
-	GX_SetAlphaCompare(GX_GEQUAL, gx_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gx_alpha_test_higher);
-	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+	gxu_cur_a = 255;
+	GX_SetAlphaCompare(GX_GEQUAL, gxu_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gxu_alpha_test_higher);
+	GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 }
 
 
@@ -1140,23 +1100,23 @@ void Draw_Pic (int x, int y, qpic_t *pic)
 	if (scrap_dirty)
 		Scrap_Upload ();
 	gx = (gxpic_t *)pic->data;
-	gx_cur_r = 255;
-	gx_cur_g = 255;
-	gx_cur_b = 255;
-	gx_cur_a = 255;
+	gxu_cur_r = 255;
+	gxu_cur_g = 255;
+	gxu_cur_b = 255;
+	gxu_cur_a = 255;
 	GX_Bind (gx->texnum);
-	GX_Begin (GX_QUADS, gx_cur_vertex_format, 4);
+	GX_Begin (GX_QUADS, gxu_cur_vertex_format, 4);
 	GX_Position3f32(x, y, 0);
-	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (gx->sl, gx->tl);
 	GX_Position3f32(x+pic->width, y, 0);
-	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (gx->sh, gx->tl);
 	GX_Position3f32(x+pic->width, y+pic->height, 0);
-	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (gx->sh, gx->th);
 	GX_Position3f32(x, y+pic->height, 0);
-	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (gx->sl, gx->th);
 	GX_End ();
 }
@@ -1220,22 +1180,22 @@ void Draw_TransPicTranslate (int x, int y, qpic_t *pic, byte *translation)
 
 	GX_SetMinMag (GX_LINEAR, GX_LINEAR);
 
-	gx_cur_r = 255;
-	gx_cur_g = 255;
-	gx_cur_b = 255;
-	gx_cur_a = 255;
-	GX_Begin (GX_QUADS, gx_cur_vertex_format, 4);
+	gxu_cur_r = 255;
+	gxu_cur_g = 255;
+	gxu_cur_b = 255;
+	gxu_cur_a = 255;
+	GX_Begin (GX_QUADS, gxu_cur_vertex_format, 4);
 	GX_Position3f32(x, y, 0);
-	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (0, 0);
 	GX_Position3f32(x+pic->width, y, 0);
-	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (1, 0);
 	GX_Position3f32(x+pic->width, y+pic->height, 0);
-	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (1, 1);
 	GX_Position3f32(x, y+pic->height, 0);
-	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (0, 1);
 	GX_End ();
 	Sys_BigStackFree(64*64 * sizeof(unsigned), "Draw_TransPicTranslate");
@@ -1269,23 +1229,23 @@ refresh window.
 */
 void Draw_TileClear (int x, int y, int w, int h)
 {
-	gx_cur_r = 255;
-	gx_cur_g = 255;
-	gx_cur_b = 255;
-	gx_cur_a = 255;
+	gxu_cur_r = 255;
+	gxu_cur_g = 255;
+	gxu_cur_b = 255;
+	gxu_cur_a = 255;
 	GX_Bind (*(int *)draw_backtile->data);
-	GX_Begin (GX_QUADS, gx_cur_vertex_format, 4);
+	GX_Begin (GX_QUADS, gxu_cur_vertex_format, 4);
 	GX_Position3f32(x, y, 0);
-	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (x/64.0, y/64.0);
 	GX_Position3f32(x+w, y, 0);
-	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 ( (x+w)/64.0, y/64.0);
 	GX_Position3f32(x+w, y+h, 0);
-	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 ( (x+w)/64.0, (y+h)/64.0);
 	GX_Position3f32(x, y+h, 0);
-	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (x/64.0, (y+h)/64.0);
 	GX_End ();
 }
@@ -1332,7 +1292,7 @@ Draw_FadeScreen
 */
 void Draw_FadeScreen (void)
 {
-	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+	GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
  	GX_SetVtxDesc(GX_VA_TEX0, GX_NONE);
 	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
 	GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
@@ -1349,7 +1309,7 @@ void Draw_FadeScreen (void)
  	GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
  	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
 	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
-	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+	GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 
 	Sbar_Changed();
 }
@@ -1395,34 +1355,34 @@ Setup as if the screen was 320*200
 */
 void GX_Set2D (void)
 {
-	gx_viewport_x = gxx;
-	gx_viewport_y = gxy;
-	gx_viewport_width = gxwidth;
-	gx_viewport_height = gxheight;
-	GX_SetViewport (gx_viewport_x, gx_viewport_y, gx_viewport_width, gx_viewport_height, gxdepthmin, gxdepthmax);
+	gxu_viewport_x = gxx;
+	gxu_viewport_y = gxy;
+	gxu_viewport_width = gxwidth;
+	gxu_viewport_height = gxheight;
+	GX_SetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxdepthmin, gxdepthmax);
 
-	GX_Ortho(gx_projection_matrix, 0, vid.height, 0, vid.width, 0, 300); //-99999, 99999);
-	GX_LoadProjectionMtx(gx_projection_matrix, GX_ORTHOGRAPHIC);
+	GX_Ortho(gxu_projection_matrix, 0, vid.height, 0, vid.width, 0, 300); //-99999, 99999);
+	GX_LoadProjectionMtx(gxu_projection_matrix, GX_ORTHOGRAPHIC);
 
-	guMtxIdentity(gx_modelview_matrices[gx_cur_modelview_matrix]);
-	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
+	guMtxIdentity(gxu_modelview_matrices[gxu_cur_modelview_matrix]);
+	GX_LoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 
-	gx_z_test_enabled = GX_FALSE;
-	GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
-	gx_cull_enabled = false;
+	gxu_z_test_enabled = GX_FALSE;
+	GX_SetZMode(gxu_z_test_enabled, GX_LEQUAL, gxu_z_write_enabled);
+	gxu_cull_enabled = false;
 	GX_SetCullMode(GX_CULL_NONE);
-	gx_blend_enabled = false;
-	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
-	gx_alpha_test_enabled = true;
-	GX_SetAlphaCompare(GX_GEQUAL, gx_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gx_alpha_test_higher);
-//		gx_alpha_test_enabled = false;
+	gxu_blend_enabled = false;
+	GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
+	gxu_alpha_test_enabled = true;
+	GX_SetAlphaCompare(GX_GEQUAL, gxu_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gxu_alpha_test_higher);
+//		gxu_alpha_test_enabled = false;
 //		GX_SetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
 
 
-	gx_cur_r = 255;
-	gx_cur_g = 255;
-	gx_cur_b = 255;
-	gx_cur_a = 255;
+	gxu_cur_r = 255;
+	gxu_cur_g = 255;
+	gxu_cur_b = 255;
+	gxu_cur_a = 255;
 }
 
 //====================================================================

@@ -16,6 +16,50 @@ u8 gxu_clear_buffers = GX_TRUE;
 
 u8 gxu_clear_color_buffer = GX_TRUE;
 
+Mtx44 gxu_projection_matrix;
+
+Mtx gxu_modelview_matrices[32];
+
+int gxu_cur_modelview_matrix = 0;
+
+bool gxu_cull_enabled = false;
+
+u8 gxu_cull_mode = GX_CULL_FRONT;
+
+u8 gxu_z_test_enabled = GX_FALSE;
+
+u8 gxu_z_write_enabled = GX_TRUE;
+
+bool gxu_blend_enabled = false;
+
+u8 gxu_blend_src_value = GX_BL_ONE;
+
+u8 gxu_blend_dst_value = GX_BL_ZERO;
+
+bool gxu_alpha_test_enabled = false;
+
+u8 gxu_alpha_test_lower = 0;
+
+u8 gxu_alpha_test_higher = 255;
+
+u8 gxu_cur_vertex_format = GX_VTXFMT0;
+
+u8 gxu_cur_r;
+
+u8 gxu_cur_g;
+
+u8 gxu_cur_b;
+
+u8 gxu_cur_a;
+
+f32 gxu_viewport_x;
+
+f32 gxu_viewport_y;
+
+f32 gxu_viewport_width;
+
+f32 gxu_viewport_height;
+
 void GXU_Init(GXRModeObj* rmode, void* framebuffer)
 {
 	gxu_gpfifo = memalign(32, GXU_FIFO_SIZE);

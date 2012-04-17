@@ -36,6 +36,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "../client/ref.h"
 
+#include <gccore.h>
+
 #include "qgx.h"
 
 #define	REF_VERSION	"GL 0.01"
@@ -99,11 +101,20 @@ typedef struct image_s
 	qboolean paletted;
 } image_t;
 
+typedef struct
+{
+	GXTexObj texobj;
+	u16 width;
+	u16 height;
+	void* data;
+	u32 length;
+} gxtexobj_t;
+
 #define	TEXNUM_LIGHTMAPS	1024
 #define	TEXNUM_SCRAPS		1152
 #define	TEXNUM_IMAGES		1153
 
-#define		MAX_GLTEXTURES	1024
+#define		MAX_GXTEXTURES	1024
 
 //===================================================================
 
@@ -142,8 +153,9 @@ typedef struct
 
 //====================================================
 
-extern	image_t		gltextures[MAX_GLTEXTURES];
-extern	int			numgltextures;
+extern	image_t		gxtextures[MAX_GXTEXTURES];
+extern	gxtexobj_t	gxtexobjs[TEXNUM_IMAGES + MAX_GXTEXTURES];
+extern	int			numgxtextures;
 
 
 extern	image_t		*r_notexture;
@@ -250,7 +262,7 @@ extern	int		c_visible_textures;
 extern	float	r_world_matrix[16];
 
 void R_TranslatePlayerSkin (int playernum);
-void GL_Bind (int texnum);
+void GX_Bind (int texnum);
 void GL_MBind( GLenum target, int texnum );
 void GL_TexEnv( GLenum value );
 void GL_EnableMultitexture( qboolean enable );

@@ -25,25 +25,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "quakedef.h"
 
-extern u8 gx_z_test_enabled;
-
-extern u8 gx_z_write_enabled;
-
-extern qboolean gx_blend_enabled;
-
-extern u8 gx_blend_src_value;
-
-extern u8 gx_blend_dst_value;
-
-extern u8 gx_cur_vertex_format;
-
-extern u8 gx_cur_r;
-
-extern u8 gx_cur_g;
-
-extern u8 gx_cur_b;
-
-extern u8 gx_cur_a;
+#include "gxutils.h"
 
 
 int	r_dlightframecount;
@@ -170,16 +152,16 @@ void R_RenderDlights (void)
 
 	r_dlightframecount = r_framecount + 1;	// because the count hasn't
 											//  advanced yet for this frame
-	gx_z_write_enabled = GX_FALSE;
-	GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
-	gx_cur_vertex_format = GX_VTXFMT0;
+	gxu_z_write_enabled = GX_FALSE;
+	GX_SetZMode(gxu_z_test_enabled, GX_LEQUAL, gxu_z_write_enabled);
+	gxu_cur_vertex_format = GX_VTXFMT0;
  	GX_SetVtxDesc(GX_VA_TEX0, GX_NONE);
 	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
 	GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
 	glShadeModel (GL_SMOOTH);
-	gx_blend_src_value = GX_BL_ONE;
-	gx_blend_dst_value = GX_BL_ONE;
-	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+	gxu_blend_src_value = GX_BL_ONE;
+	gxu_blend_dst_value = GX_BL_ONE;
+	GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 	l = cl_dlights;
 	for (i=0 ; i<MAX_DLIGHTS ; i++, l++)
 	{
@@ -187,19 +169,19 @@ void R_RenderDlights (void)
 			continue;
 		R_RenderDlight (l);
 	}
-	gx_cur_r = 255;
-	gx_cur_g = 255;
-	gx_cur_b = 255;
-	gx_cur_a = 255;
-	gx_cur_vertex_format = GX_VTXFMT1;
+	gxu_cur_r = 255;
+	gxu_cur_g = 255;
+	gxu_cur_b = 255;
+	gxu_cur_a = 255;
+	gxu_cur_vertex_format = GX_VTXFMT1;
  	GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
  	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
 	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
-	gx_blend_src_value = GX_BL_SRCALPHA;
-	gx_blend_dst_value = GX_BL_INVSRCALPHA;
-	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
-	gx_z_write_enabled = GX_TRUE;
-	GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
+	gxu_blend_src_value = GX_BL_SRCALPHA;
+	gxu_blend_dst_value = GX_BL_INVSRCALPHA;
+	GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
+	gxu_z_write_enabled = GX_TRUE;
+	GX_SetZMode(gxu_z_test_enabled, GX_LEQUAL, gxu_z_write_enabled);
 }
 
 

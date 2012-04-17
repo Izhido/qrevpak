@@ -27,51 +27,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "gxutils.h"
 
-extern Mtx44 gx_projection_matrix;
-
-extern Mtx gx_modelview_matrices[32];
-
-extern int gx_cur_modelview_matrix;
-
-extern qboolean gx_cull_enabled;
-
-extern u8 gx_cull_mode;
-
-extern u8 gx_z_test_enabled;
-
-extern u8 gx_z_write_enabled;
-
-extern qboolean gx_blend_enabled;
-
-extern u8 gx_blend_src_value;
-
-extern u8 gx_blend_dst_value;
-
-extern qboolean gx_alpha_test_enabled;
-
-extern u8 gx_alpha_test_lower;
-
-extern u8 gx_alpha_test_higher;
-
-extern u8 gx_cur_vertex_format;
-
-extern u8 gx_cur_r;
-
-extern u8 gx_cur_g;
-
-extern u8 gx_cur_b;
-
-extern u8 gx_cur_a;
-
 extern int gx_tex_allocated;
-
-extern f32 gx_viewport_x;
-
-extern f32 gx_viewport_y;
-
-extern f32 gx_viewport_width;
-
-extern f32 gx_viewport_height;
 
 entity_t	r_worldentity;
 
@@ -178,21 +134,21 @@ void R_RotateForEntity (entity_t *e)
 	guVector a;
 
 	guMtxTrans(m, e->origin[0],  e->origin[1],  e->origin[2]);
-	guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
+	guMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
 	a.x = 0;
 	a.y = 0;
 	a.z = 1;
 	guMtxRotAxisDeg(m, &a, e->angles[1]);
-	guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
+	guMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
 	a.y = 1;
 	a.z = 0;
 	guMtxRotAxisDeg(m, &a, -e->angles[0]);
-	guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
+	guMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
 	//ZOID: fixed z angle
 	a.x = 1;
 	a.y = 0;
 	guMtxRotAxisDeg(m, &a, e->angles[2]);
-	guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
+	guMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
 }
 
 /*
@@ -286,40 +242,40 @@ void R_DrawSpriteModel (entity_t *e)
 		right = vright;
 	}
 
-	gx_cur_r = 255;
-	gx_cur_g = 255;
-	gx_cur_b = 255;
-	gx_cur_a = 255;
+	gxu_cur_r = 255;
+	gxu_cur_g = 255;
+	gxu_cur_b = 255;
+	gxu_cur_a = 255;
 
 	GX_DisableMultitexture();
 
     GX_Bind(frame->gx_texturenum);
 
-	GX_SetAlphaCompare(GX_GEQUAL, gx_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gx_alpha_test_higher);
-	GX_Begin (GX_QUADS, gx_cur_vertex_format, 4);
+	GX_SetAlphaCompare(GX_GEQUAL, gxu_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gxu_alpha_test_higher);
+	GX_Begin (GX_QUADS, gxu_cur_vertex_format, 4);
 
 	VectorMA (e->origin, frame->down, up, point);
 	VectorMA (point, frame->left, right, point);
 	GX_Position3f32(*(point), *(point + 1), *(point + 2));
-	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (0, 1);
 
 	VectorMA (e->origin, frame->up, up, point);
 	VectorMA (point, frame->left, right, point);
 	GX_Position3f32(*(point), *(point + 1), *(point + 2));
-	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (0, 0);
 
 	VectorMA (e->origin, frame->up, up, point);
 	VectorMA (point, frame->right, right, point);
 	GX_Position3f32(*(point), *(point + 1), *(point + 2));
-	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (1, 0);
 
 	VectorMA (e->origin, frame->down, up, point);
 	VectorMA (point, frame->right, right, point);
 	GX_Position3f32(*(point), *(point + 1), *(point + 2));
-	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (1, 1);
 	
 	GX_End ();
@@ -373,7 +329,7 @@ lastposenum = posenum;
 	verts += posenum * paliashdr->poseverts;
 	order = (int *)((byte *)paliashdr + paliashdr->commands);
 
-	gx_cur_a = 255;
+	gxu_cur_a = 255;
 
 	while (1)
 	{
@@ -384,10 +340,10 @@ lastposenum = posenum;
 		if (count < 0)
 		{
 			count = -count;
-			GX_Begin(GX_TRIANGLEFAN, gx_cur_vertex_format, count);
+			GX_Begin(GX_TRIANGLEFAN, gxu_cur_vertex_format, count);
 		}
 		else
-			GX_Begin(GX_TRIANGLESTRIP, gx_cur_vertex_format, count);
+			GX_Begin(GX_TRIANGLESTRIP, gxu_cur_vertex_format, count);
 		do
 		{
 			// normals and vertexes come from the frame list
@@ -398,8 +354,8 @@ lastposenum = posenum;
 				l = 0.0;
 			if(l > 1.0)
 				l = 1.0;
-			gx_cur_r = gx_cur_g = gx_cur_b = (l * 255.0);
-			GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+			gxu_cur_r = gxu_cur_g = gxu_cur_b = (l * 255.0);
+			GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 			// texture coordinates come from the draw list
 			GX_TexCoord2f32 (((float *)order)[0], ((float *)order)[1]);
 			order += 2;
@@ -464,7 +420,7 @@ void GX_DrawAliasShadow (aliashdr_t *paliashdr, int posenum)
 			point[2] = height;
 //			height -= 0.001;
 			GX_Position3f32(point[0], point[1], point[2]);
-			GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+			GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 
 			verts++;
 		} while (--count);
@@ -603,26 +559,26 @@ void R_DrawAliasModel (entity_t *e)
 
 	GX_DisableMultitexture();
 
-	guMtxCopy(gx_modelview_matrices[gx_cur_modelview_matrix], gx_modelview_matrices[gx_cur_modelview_matrix + 1]);
-	gx_cur_modelview_matrix++;
+	guMtxCopy(gxu_modelview_matrices[gxu_cur_modelview_matrix], gxu_modelview_matrices[gxu_cur_modelview_matrix + 1]);
+	gxu_cur_modelview_matrix++;
 
 	R_RotateForEntity (e);
 
 	if (!strcmp (clmodel->name, "progs/eyes.mdl") ) {
 		guMtxTrans(m, paliashdr->scale_origin[0], paliashdr->scale_origin[1], paliashdr->scale_origin[2] - (22 + 8));
-		guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
+		guMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
 
 // double size of eyes, since they are really hard to see while hardware rendering
 		guMtxScale(m, paliashdr->scale[0]*2, paliashdr->scale[1]*2, paliashdr->scale[2]*2);
-		guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
+		guMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
 	} else {
 		guMtxTrans(m, paliashdr->scale_origin[0], paliashdr->scale_origin[1], paliashdr->scale_origin[2]);
-		guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
+		guMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
 		guMtxScale(m, paliashdr->scale[0], paliashdr->scale[1], paliashdr->scale[2]);
-		guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
+		guMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
 	}
 
-	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
+	GX_LoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 
 	anim = (int)(cl.time*10) & 3;
     GX_Bind(paliashdr->gx_texturenum[currententity->skinnum][anim]);
@@ -655,36 +611,36 @@ void R_DrawAliasModel (entity_t *e)
 	if (gx_affinemodels.value)
 		glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
-	gx_cur_modelview_matrix--;
-	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
+	gxu_cur_modelview_matrix--;
+	GX_LoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 
 	if (r_shadows.value)
 	{
-		guMtxCopy(gx_modelview_matrices[gx_cur_modelview_matrix], gx_modelview_matrices[gx_cur_modelview_matrix + 1]);
-		gx_cur_modelview_matrix++;
+		guMtxCopy(gxu_modelview_matrices[gxu_cur_modelview_matrix], gxu_modelview_matrices[gxu_cur_modelview_matrix + 1]);
+		gxu_cur_modelview_matrix++;
 		R_RotateForEntity (e);
-		GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
-		gx_cur_vertex_format = GX_VTXFMT0;
+		GX_LoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
+		gxu_cur_vertex_format = GX_VTXFMT0;
  		GX_SetVtxDesc(GX_VA_TEX0, GX_NONE);
 		GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
 		GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
-		GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
-		gx_cur_r = 0;
-		gx_cur_g = 0;
-		gx_cur_b = 0;
-		gx_cur_a = 127;
+		GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
+		gxu_cur_r = 0;
+		gxu_cur_g = 0;
+		gxu_cur_b = 0;
+		gxu_cur_a = 127;
 		GX_DrawAliasShadow (paliashdr, lastposenum);
-		gx_cur_vertex_format = GX_VTXFMT1;
+		gxu_cur_vertex_format = GX_VTXFMT1;
  		GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
  		GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
 		GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
-		GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
-		gx_cur_r = 255;
-		gx_cur_g = 255;
-		gx_cur_b = 255;
-		gx_cur_a = 255;
-		gx_cur_modelview_matrix--;
-		GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
+		GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
+		gxu_cur_r = 255;
+		gxu_cur_g = 255;
+		gxu_cur_b = 255;
+		gxu_cur_a = 255;
+		gxu_cur_modelview_matrix--;
+		GX_LoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 	}
 
 }
@@ -801,9 +757,9 @@ void R_DrawViewModel (void)
 	diffuse[0] = diffuse[1] = diffuse[2] = diffuse[3] = (float)shadelight / 128;
 
 	// hack the depth range to prevent view model from poking into walls
-	GX_SetViewport (gx_viewport_x, gx_viewport_y, gx_viewport_width, gx_viewport_height, gxdepthmin, gxdepthmin + 0.3*(gxdepthmax-gxdepthmin));
+	GX_SetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxdepthmin, gxdepthmin + 0.3*(gxdepthmax-gxdepthmin));
 	R_DrawAliasModel (currententity);
-	GX_SetViewport (gx_viewport_x, gx_viewport_y, gx_viewport_width, gx_viewport_height, gxdepthmin, gxdepthmax);
+	GX_SetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxdepthmin, gxdepthmax);
 }
 
 
@@ -828,9 +784,9 @@ void R_PolyBlend (void)
  	GX_DisableMultitexture();
 
 	GX_SetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
-	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
-	gx_z_test_enabled = GX_FALSE;
-	GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
+	GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
+	gxu_z_test_enabled = GX_FALSE;
+	GX_SetZMode(gxu_z_test_enabled, GX_LEQUAL, gxu_z_write_enabled);
  	GX_SetVtxDesc(GX_VA_TEX0, GX_NONE);
 	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
 	GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
@@ -838,13 +794,13 @@ void R_PolyBlend (void)
 	v.x = 1;
 	v.y = 0;
 	v.z = 0;
-	guMtxRotAxisDeg(gx_modelview_matrices[gx_cur_modelview_matrix], &v, -90); // put Z going up
+	guMtxRotAxisDeg(gxu_modelview_matrices[gxu_cur_modelview_matrix], &v, -90); // put Z going up
 	v.x = 0;
 	v.z = 1;
 	guMtxRotAxisDeg(m, &v, 90); 
-	guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]); // put Z going up
+	guMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]); // put Z going up
 
-	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
+	GX_LoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 
 	r = v_blend[0] * 255.0;
 	g = v_blend[1] * 255.0;
@@ -862,11 +818,11 @@ void R_PolyBlend (void)
 	GX_Color4u8(r, g, b, a);
 	GX_End ();
 
-	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+	GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
  	GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
  	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
 	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
-	GX_SetAlphaCompare(GX_GEQUAL, gx_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gx_alpha_test_higher);
+	GX_SetAlphaCompare(GX_GEQUAL, gxu_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gxu_alpha_test_higher);
 }
 
 
@@ -999,13 +955,13 @@ void R_SetupGX (void)
 		w = h = 256;
 	}
 
-	gx_viewport_x = gxx + x;
-	gx_viewport_y = gxy/* + y2*/;
-	gx_viewport_width = w;
-	gx_viewport_height = h;
-	GX_SetViewport (gx_viewport_x, gx_viewport_y, gx_viewport_width, gx_viewport_height, gxdepthmin, gxdepthmax);
+	gxu_viewport_x = gxx + x;
+	gxu_viewport_y = gxy/* + y2*/;
+	gxu_viewport_width = w;
+	gxu_viewport_height = h;
+	GX_SetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxdepthmin, gxdepthmax);
 	
-	guPerspective(gx_projection_matrix, r_refdef.fov_y, (float)r_refdef.vrect.width/r_refdef.vrect.height, 4, 4096);
+	guPerspective(gxu_projection_matrix, r_refdef.fov_y, (float)r_refdef.vrect.width/r_refdef.vrect.height, 4, 4096);
 
 	if (mirror)
 	{
@@ -1014,65 +970,65 @@ void R_SetupGX (void)
 		else
 			guMtxScale(m, -1, 1, 1);
 
-		guMtxConcat(gx_projection_matrix, m, gx_projection_matrix);
-		gx_cull_mode = GX_CULL_FRONT;
+		guMtxConcat(gxu_projection_matrix, m, gxu_projection_matrix);
+		gxu_cull_mode = GX_CULL_FRONT;
 	}
 	else
-		gx_cull_mode = GX_CULL_BACK;
+		gxu_cull_mode = GX_CULL_BACK;
 
-	if(gx_cull_enabled)
+	if(gxu_cull_enabled)
 	{
-		GX_SetCullMode(gx_cull_mode);
+		GX_SetCullMode(gxu_cull_mode);
 	};
 
-	GX_LoadProjectionMtx(gx_projection_matrix, GX_PERSPECTIVE);
+	GX_LoadProjectionMtx(gxu_projection_matrix, GX_PERSPECTIVE);
 
 	a.x = 1;
 	a.y = 0;
 	a.z = 0;
-	guMtxRotAxisDeg(gx_modelview_matrices[gx_cur_modelview_matrix], &a, -90);
+	guMtxRotAxisDeg(gxu_modelview_matrices[gxu_cur_modelview_matrix], &a, -90);
 	a.x = 0;
 	a.z = 1;
 	guMtxRotAxisDeg(m, &a, 90);
-	guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]); // put Z going up
+	guMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]); // put Z going up
 	a.x = 1;
 	a.z = 0;
 	guMtxRotAxisDeg(m, &a, -r_refdef.viewangles[2]);
-	guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
+	guMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
 	a.x = 0;
 	a.y = 1;
 	guMtxRotAxisDeg(m, &a, -r_refdef.viewangles[0]);
-	guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
+	guMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
 	a.y = 0;
 	a.z = 1;
 	guMtxRotAxisDeg(m, &a, -r_refdef.viewangles[1]);
-	guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
+	guMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
 	guMtxTrans(m, -r_refdef.vieworg[0], -r_refdef.vieworg[1], -r_refdef.vieworg[2]);
-	guMtxConcat(gx_modelview_matrices[gx_cur_modelview_matrix], m, gx_modelview_matrices[gx_cur_modelview_matrix]);
+	guMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
 
-	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
+	GX_LoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 
-	guMtxCopy(gx_modelview_matrices[gx_cur_modelview_matrix], r_world_matrix);
+	guMtxCopy(gxu_modelview_matrices[gxu_cur_modelview_matrix], r_world_matrix);
 
 	//
 	// set drawing parms
 	//
 	if (gx_cull.value)
 	{
-		gx_cull_enabled = true;
-		GX_SetCullMode(gx_cull_mode);
+		gxu_cull_enabled = true;
+		GX_SetCullMode(gxu_cull_mode);
 	} else
 	{
-		gx_cull_enabled = false;
+		gxu_cull_enabled = false;
 		GX_SetCullMode(GX_CULL_NONE);
 	};
 
-	gx_blend_enabled = false;
-	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
-	gx_alpha_test_enabled = false;
+	gxu_blend_enabled = false;
+	GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
+	gxu_alpha_test_enabled = false;
 	GX_SetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
-	gx_z_test_enabled = GX_TRUE;
-	GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
+	gxu_z_test_enabled = GX_TRUE;
+	GX_SetZMode(gxu_z_test_enabled, GX_LEQUAL, gxu_z_write_enabled);
 }
 
 /*
@@ -1131,7 +1087,7 @@ void R_Clear (void)
 		gxu_clear_buffers = GX_TRUE;
 		gxdepthmin = 0;
 		gxdepthmax = 0.5;
-		GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
+		GX_SetZMode(gxu_z_test_enabled, GX_LEQUAL, gxu_z_write_enabled);
 	}
 	else if (gx_ztrick.value)
 	{
@@ -1144,13 +1100,13 @@ void R_Clear (void)
 		{
 			gxdepthmin = 0;
 			gxdepthmax = 0.49999;
-			GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
+			GX_SetZMode(gxu_z_test_enabled, GX_LEQUAL, gxu_z_write_enabled);
 		}
 		else
 		{
 			gxdepthmin = 1;
 			gxdepthmax = 0.5;
-			GX_SetZMode(gx_z_test_enabled, GX_GEQUAL, gx_z_write_enabled);
+			GX_SetZMode(gxu_z_test_enabled, GX_GEQUAL, gxu_z_write_enabled);
 		}
 	}
 	else
@@ -1164,10 +1120,10 @@ void R_Clear (void)
 		gxu_clear_buffers = GX_TRUE;
 		gxdepthmin = 0;
 		gxdepthmax = 1;
-		GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);
+		GX_SetZMode(gxu_z_test_enabled, GX_LEQUAL, gxu_z_write_enabled);
 	}
 
-	GX_SetViewport (gx_viewport_x, gx_viewport_y, gx_viewport_width, gx_viewport_height, gxdepthmin, gxdepthmax);
+	GX_SetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxdepthmin, gxdepthmax);
 }
 
 #if 0 //!!! FIXME, Zoid, mirror is disabled for now

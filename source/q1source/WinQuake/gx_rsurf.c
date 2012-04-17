@@ -26,29 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "quakedef.h"
 
-extern Mtx gx_modelview_matrices[32];
-
-extern int gx_cur_modelview_matrix;
-
-extern u8 gx_z_test_enabled;
-
-extern u8 gx_z_write_enabled;
-
-extern qboolean gx_blend_enabled;
-
-extern u8 gx_blend_src_value;
-
-extern u8 gx_blend_dst_value;
-
-extern u8 gx_cur_vertex_format;
-
-extern u8 gx_cur_r;
-
-extern u8 gx_cur_g;
-
-extern u8 gx_cur_b;
-
-extern u8 gx_cur_a;
+#include "gxutils.h"
 
 extern Mtx r_world_matrix;
 
@@ -405,29 +383,29 @@ void R_DrawSequentialPoly (msurface_t *s)
 
 		t = R_TextureAnimation (s->texinfo->texture);
 		GX_Bind (t->gx_texturenum);
-		GX_Begin (GX_TRIANGLEFAN, gx_cur_vertex_format, p->numverts);
+		GX_Begin (GX_TRIANGLEFAN, gxu_cur_vertex_format, p->numverts);
 		v = p->verts[0];
 		for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 		{
 			GX_Position3f32(v[0], v[1], v[2]);
-			GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+			GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 			GX_TexCoord2f32 (v[3], v[4]);
 		}
 		GX_End ();
 
 		GX_Bind (lightmap_textures + s->lightmaptexturenum);
-		GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
-		GX_Begin (GX_TRIANGLEFAN, gx_cur_vertex_format, p->numverts);
+		GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
+		GX_Begin (GX_TRIANGLEFAN, gxu_cur_vertex_format, p->numverts);
 		v = p->verts[0];
 		for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 		{
 			GX_Position3f32(v[0], v[1], v[2]);
-			GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+			GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 			GX_TexCoord2f32 (v[5], v[6]);
 		}
 		GX_End ();
 
-		GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+		GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 
 		return;
 	}
@@ -453,20 +431,20 @@ void R_DrawSequentialPoly (msurface_t *s)
 
 		EmitSkyPolys (s);
 
-		gx_blend_src_value = GX_BL_SRCALPHA;
-		gx_blend_dst_value = GX_BL_INVSRCALPHA;
-		GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+		gxu_blend_src_value = GX_BL_SRCALPHA;
+		gxu_blend_dst_value = GX_BL_INVSRCALPHA;
+		GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 		GX_Bind (alphaskytexture);
 		speedscale = realtime*16;
 		speedscale -= (int)speedscale;
 		EmitSkyPolys (s);
 		if (gx_lightmap_format == GX_TF_IA4)
 		{
-			gx_blend_src_value = GX_BL_ZERO;
-			gx_blend_dst_value = GX_BL_INVSRCCLR;
+			gxu_blend_src_value = GX_BL_ZERO;
+			gxu_blend_dst_value = GX_BL_INVSRCCLR;
 		};
 
-		GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+		GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 	}
 
 	//
@@ -479,9 +457,9 @@ void R_DrawSequentialPoly (msurface_t *s)
 	DrawGXWaterPoly (p);
 
 	GX_Bind (lightmap_textures + s->lightmaptexturenum);
-	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+	GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 	DrawGLWaterPolyLightmap (p);
-	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+	GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 }
 #else
 /*
@@ -533,12 +511,12 @@ void R_DrawSequentialPoly (msurface_t *s)
 				theRect->w = 0;
 			}
 			GX_SetTev1OpBlend();
-			GX_Begin(GX_TRIANGLEFAN, gx_cur_vertex_format, p->numverts);
+			GX_Begin(GX_TRIANGLEFAN, gxu_cur_vertex_format, p->numverts);
 			v = p->verts[0];
 			for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 			{
 				GX_Position3f32(v[0], v[1], v[2]);
-				GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+				GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 				GX_TexCoord2f32 (v[3], v[4]);
 				GX_TexCoord2f32 (v[5], v[6]);
 			}
@@ -549,29 +527,29 @@ void R_DrawSequentialPoly (msurface_t *s)
 
 			t = R_TextureAnimation (s->texinfo->texture);
 			GX_Bind (t->gx_texturenum);
-			GX_Begin(GX_TRIANGLEFAN, gx_cur_vertex_format, p->numverts);
+			GX_Begin(GX_TRIANGLEFAN, gxu_cur_vertex_format, p->numverts);
 			v = p->verts[0];
 			for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 			{
 				GX_Position3f32(v[0], v[1], v[2]);
-				GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+				GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 				GX_TexCoord2f32 (v[3], v[4]);
 			}
 			GX_End();
 
 			GX_Bind (lightmap_textures + s->lightmaptexturenum);
-			GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
-			GX_Begin(GX_TRIANGLEFAN, gx_cur_vertex_format, p->numverts);
+			GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
+			GX_Begin(GX_TRIANGLEFAN, gxu_cur_vertex_format, p->numverts);
 			v = p->verts[0];
 			for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 			{
 				GX_Position3f32(v[0], v[1], v[2]);
-				GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+				GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 				GX_TexCoord2f32 (v[5], v[6]);
 			}
 			GX_End();
 
-			GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+			GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 		}
 
 		return;
@@ -601,13 +579,13 @@ void R_DrawSequentialPoly (msurface_t *s)
 
 		EmitSkyPolys (s);
 
-		GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+		GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 		GX_Bind (alphaskytexture);
 		speedscale = realtime*16;
 		speedscale -= (int)speedscale & ~127;
 		EmitSkyPolys (s);
 
-		GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+		GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 		return;
 	}
 
@@ -636,7 +614,7 @@ void R_DrawSequentialPoly (msurface_t *s)
 			theRect->w = 0;
 		}
 		GX_SetTev1OpBlend();
-		GX_Begin(GX_TRIANGLEFAN, gx_cur_vertex_format, p->numverts);
+		GX_Begin(GX_TRIANGLEFAN, gxu_cur_vertex_format, p->numverts);
 		v = p->verts[0];
 		for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 		{
@@ -645,7 +623,7 @@ void R_DrawSequentialPoly (msurface_t *s)
 			nv[2] = v[2];
 
 			GX_Position3f32(nv[0], nv[1], nv[2]);
-			GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+			GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 			GX_TexCoord2f32 (v[3], v[4]);
 			GX_TexCoord2f32 (v[5], v[6]);
 		}
@@ -659,9 +637,9 @@ void R_DrawSequentialPoly (msurface_t *s)
 		DrawGXWaterPoly (p);
 
 		GX_Bind (lightmap_textures + s->lightmaptexturenum);
-		GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+		GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 		DrawGXWaterPolyLightmap (p);
-		GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+		GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 	}
 }
 #endif
@@ -683,7 +661,7 @@ void DrawGXWaterPoly (gxpoly_t *p)
 
 	GX_DisableMultitexture();
 
-	GX_Begin (GX_TRIANGLEFAN, gx_cur_vertex_format, p->numverts);
+	GX_Begin (GX_TRIANGLEFAN, gxu_cur_vertex_format, p->numverts);
 	v = p->verts[0];
 	for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 	{
@@ -692,7 +670,7 @@ void DrawGXWaterPoly (gxpoly_t *p)
 		nv[2] = v[2];
 
 		GX_Position3f32(nv[0], nv[1], nv[2]);
-		GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+		GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 		GX_TexCoord2f32 (v[3], v[4]);
 	}
 	GX_End ();
@@ -707,7 +685,7 @@ void DrawGXWaterPolyLightmap (gxpoly_t *p)
 
 	GX_DisableMultitexture();
 
-	GX_Begin (GX_TRIANGLEFAN, gx_cur_vertex_format, p->numverts);
+	GX_Begin (GX_TRIANGLEFAN, gxu_cur_vertex_format, p->numverts);
 	v = p->verts[0];
 	for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 	{
@@ -716,7 +694,7 @@ void DrawGXWaterPolyLightmap (gxpoly_t *p)
 		nv[2] = v[2];
 
 		GX_Position3f32(nv[0], nv[1], nv[2]);
-		GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+		GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 		GX_TexCoord2f32 (v[5], v[6]);
 	}
 	GX_End ();
@@ -732,12 +710,12 @@ void DrawGXPoly (gxpoly_t *p)
 	int		i;
 	float	*v;
 
-	GX_Begin(GX_TRIANGLEFAN, gx_cur_vertex_format, p->numverts);
+	GX_Begin(GX_TRIANGLEFAN, gxu_cur_vertex_format, p->numverts);
 	v = p->verts[0];
 	for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 	{
 		GX_Position3f32(v[0], v[1], v[2]);
-		GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+		GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 		GX_TexCoord2f32 (v[3], v[4]);
 	}
 	GX_End ();
@@ -761,33 +739,33 @@ void R_BlendLightmaps (void)
 	if (!gx_texsort.value)
 		return;
 
-	gx_z_write_enabled = GX_FALSE;
-	GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);		// don't bother writing Z
+	gxu_z_write_enabled = GX_FALSE;
+	GX_SetZMode(gxu_z_test_enabled, GX_LEQUAL, gxu_z_write_enabled);		// don't bother writing Z
 
 	if (gx_lightmap_format == GX_TF_IA4)
 	{
-		gx_blend_src_value = GX_BL_ZERO;
-		gx_blend_dst_value = GX_BL_INVSRCCLR;
+		gxu_blend_src_value = GX_BL_ZERO;
+		gxu_blend_dst_value = GX_BL_INVSRCCLR;
 	}
 	else if (gx_lightmap_format == GX_TF_I8)
 	{
 		GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
-		gx_cur_r = 0;
-		gx_cur_g = 0;
-		gx_cur_b = 0;
-		gx_cur_a = 255;
-		gx_blend_src_value = GX_BL_SRCALPHA;
-		gx_blend_dst_value = GX_BL_INVSRCALPHA;
+		gxu_cur_r = 0;
+		gxu_cur_g = 0;
+		gxu_cur_b = 0;
+		gxu_cur_a = 255;
+		gxu_blend_src_value = GX_BL_SRCALPHA;
+		gxu_blend_dst_value = GX_BL_INVSRCALPHA;
 	}
 
 	if (!r_lightmap.value)
 	{
-		gx_blend_enabled = true;
+		gxu_blend_enabled = true;
 	}
 
-	if(gx_blend_enabled)
+	if(gxu_blend_enabled)
 	{
-		GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+		GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 	};
 
 	for (i=0 ; i<MAX_LIGHTMAPS ; i++)
@@ -814,12 +792,12 @@ void R_BlendLightmaps (void)
 				DrawGXWaterPolyLightmap (p);
 			else
 			{
-				GX_Begin (GX_TRIANGLEFAN, gx_cur_vertex_format, p->numverts);
+				GX_Begin (GX_TRIANGLEFAN, gxu_cur_vertex_format, p->numverts);
 				v = p->verts[0];
 				for (j=0 ; j<p->numverts ; j++, v+= VERTEXSIZE)
 				{
 					GX_Position3f32(v[0], v[1], v[2]);
-					GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+					GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 					GX_TexCoord2f32 (v[5], v[6]);
 				}
 				GX_End ();
@@ -827,26 +805,26 @@ void R_BlendLightmaps (void)
 		}
 	}
 
-	gx_blend_enabled = false;
-	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+	gxu_blend_enabled = false;
+	GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 	if (gx_lightmap_format == GX_TF_IA4)
 	{
-		gx_blend_src_value = GX_BL_SRCALPHA;
-		gx_blend_dst_value = GX_BL_INVSRCALPHA;
-		if(gx_blend_enabled)
-			GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+		gxu_blend_src_value = GX_BL_SRCALPHA;
+		gxu_blend_dst_value = GX_BL_INVSRCALPHA;
+		if(gxu_blend_enabled)
+			GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 	}
 	else if (gx_lightmap_format == GX_TF_I8)
 	{
 		GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
-		gx_cur_r = 255;
-		gx_cur_g = 255;
-		gx_cur_b = 255;
-		gx_cur_a = 255;
+		gxu_cur_r = 255;
+		gxu_cur_g = 255;
+		gxu_cur_b = 255;
+		gxu_cur_a = 255;
 	}
 
-	gx_z_write_enabled = GX_TRUE;
-	GX_SetZMode(gx_z_test_enabled, GX_LEQUAL, gx_z_write_enabled);		// back to normal Z buffering
+	gxu_z_write_enabled = GX_TRUE;
+	GX_SetZMode(gxu_z_test_enabled, GX_LEQUAL, gxu_z_write_enabled);		// back to normal Z buffering
 }
 
 /*
@@ -1018,19 +996,19 @@ void R_DrawWaterSurfaces (void)
 	//
 	// go back to the world matrix
 	//
-	guMtxCopy(r_world_matrix, gx_modelview_matrices[gx_cur_modelview_matrix]);
-	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
+	guMtxCopy(r_world_matrix, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
+	GX_LoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 
-	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+	GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 	a = r_wateralpha.value;
 	if(a < 0.0)
 		a = 0.0;
 	if(a > 1.0)
 		a = 1.0;
-	gx_cur_r = 255;
-	gx_cur_g = 255;
-	gx_cur_b = 255;
-	gx_cur_a = a * 255.0;
+	gxu_cur_r = 255;
+	gxu_cur_g = 255;
+	gxu_cur_b = 255;
+	gxu_cur_a = a * 255.0;
 	GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
 
 	for (i=0 ; i<cl.worldmodel->numtextures ; i++)
@@ -1055,11 +1033,11 @@ void R_DrawWaterSurfaces (void)
 
 	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
 
-	gx_cur_r = 255;
-	gx_cur_g = 255;
-	gx_cur_b = 255;
-	gx_cur_a = 255;
-	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+	gxu_cur_r = 255;
+	gxu_cur_g = 255;
+	gxu_cur_b = 255;
+	gxu_cur_a = 255;
+	GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 }
 #else
 /*
@@ -1081,20 +1059,20 @@ void R_DrawWaterSurfaces (void)
 	// go back to the world matrix
 	//
 
-	guMtxCopy(r_world_matrix, gx_modelview_matrices[gx_cur_modelview_matrix]);
-	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
+	guMtxCopy(r_world_matrix, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
+	GX_LoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 
 	if (r_wateralpha.value < 1.0) {
-		GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+		GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 		a = r_wateralpha.value;
 		if(a < 0.0)
 			a = 0.0;
 		if(a > 1.0)
 			a = 1.0;
-		gx_cur_r = 255;
-		gx_cur_g = 255;
-		gx_cur_b = 255;
-		gx_cur_a = a * 255,0;
+		gxu_cur_r = 255;
+		gxu_cur_g = 255;
+		gxu_cur_b = 255;
+		gxu_cur_a = a * 255,0;
 		GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
 	}
 
@@ -1136,11 +1114,11 @@ void R_DrawWaterSurfaces (void)
 	if (r_wateralpha.value < 1.0) {
 		GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
 
-		gx_cur_r = 255;
-		gx_cur_g = 255;
-		gx_cur_b = 255;
-		gx_cur_a = 255;
-		GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+		gxu_cur_r = 255;
+		gxu_cur_g = 255;
+		gxu_cur_b = 255;
+		gxu_cur_a = 255;
+		GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 	}
 
 }
@@ -1236,10 +1214,10 @@ void R_DrawBrushModel (entity_t *e)
 	if (R_CullBox (mins, maxs))
 		return;
 
-	gx_cur_r = 255;
-	gx_cur_g = 255;
-	gx_cur_b = 255;
-	gx_cur_a = 255;
+	gxu_cur_r = 255;
+	gxu_cur_g = 255;
+	gxu_cur_b = 255;
+	gxu_cur_a = 255;
 	memset (lightmap_polys, 0, sizeof(lightmap_polys));
 
 	VectorSubtract (r_refdef.vieworg, e->origin, modelorg);
@@ -1272,11 +1250,11 @@ void R_DrawBrushModel (entity_t *e)
 		}
 	}
 
-	guMtxCopy(gx_modelview_matrices[gx_cur_modelview_matrix], gx_modelview_matrices[gx_cur_modelview_matrix + 1]);
-	gx_cur_modelview_matrix++;
+	guMtxCopy(gxu_modelview_matrices[gxu_cur_modelview_matrix], gxu_modelview_matrices[gxu_cur_modelview_matrix + 1]);
+	gxu_cur_modelview_matrix++;
 e->angles[0] = -e->angles[0];	// stupid quake bug
 	R_RotateForEntity (e);
-	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
+	GX_LoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 e->angles[0] = -e->angles[0];	// stupid quake bug
 
 	//
@@ -1302,8 +1280,8 @@ e->angles[0] = -e->angles[0];	// stupid quake bug
 
 	R_BlendLightmaps ();
 
-	gx_cur_modelview_matrix--;
-	GX_LoadPosMtxImm(gx_modelview_matrices[gx_cur_modelview_matrix], GX_PNMTX0);
+	gxu_cur_modelview_matrix--;
+	GX_LoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 }
 
 /*
@@ -1458,10 +1436,10 @@ void R_DrawWorld (void)
 	currententity = &ent;
 	currenttexture = -1;
 
-	gx_cur_r = 255;
-	gx_cur_g = 255;
-	gx_cur_b = 255;
-	gx_cur_a = 255;
+	gxu_cur_r = 255;
+	gxu_cur_g = 255;
+	gxu_cur_b = 255;
+	gxu_cur_a = 255;
 	memset (lightmap_polys, 0, sizeof(lightmap_polys));
 #ifdef QUAKE2
 	R_ClearSkyBox ();

@@ -20,9 +20,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "gx_local.h"
 
-image_t		gltextures[MAX_GLTEXTURES];
-int			numgltextures;
-int			base_textureid;		// gltextures[i] = base_textureid+i
+image_t		gxtextures[MAX_GXTEXTURES];
+gxtexobj_t	gxtexobjs[TEXNUM_IMAGES + MAX_GXTEXTURES];
+int			numgxtextures;
+int			base_textureid;		// gxtextures[i] = base_textureid+i
 
 static byte			 intensitytable[256];
 static unsigned char gammatable[256];
@@ -134,7 +135,7 @@ void GL_TexEnv( GLenum mode )
 	}
 }
 
-void GL_Bind (int texnum)
+void GX_Bind (int texnum)
 {
 	extern	image_t	*draw_chars;
 
@@ -143,7 +144,8 @@ void GL_Bind (int texnum)
 	if ( gl_state.currenttextures[gl_state.currenttmu] == texnum)
 		return;
 	gl_state.currenttextures[gl_state.currenttmu] = texnum;
-	qglBindTexture (GL_TEXTURE_2D, texnum);
+	if(gxtexobjs[texnum].data != NULL)
+		qgxLoadTexObj(&gxtexobjs[texnum].texobj, gl_state.currenttmu - GX_TEXMAP0);
 }
 
 void GL_MBind( GLenum target, int texnum )
@@ -159,7 +161,7 @@ void GL_MBind( GLenum target, int texnum )
 		if ( gl_state.currenttextures[1] == texnum )
 			return;
 	}
-	GL_Bind( texnum );
+	GX_Bind( texnum );
 }
 
 typedef struct
@@ -236,11 +238,11 @@ void GL_TextureMode( char *string )
 	gl_filter_max = modes[i].maximize;
 
 	// change all the existing mipmap texture objects
-	for (i=0, glt=gltextures ; i<numgltextures ; i++, glt++)
+	for (i=0, glt=gxtextures ; i<numgxtextures ; i++, glt++)
 	{
 		if (glt->type != it_pic && glt->type != it_sky )
 		{
-			GL_Bind (glt->texnum);
+			GX_Bind (glt->texnum);
 			qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
 			qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
 		}
@@ -314,7 +316,7 @@ void	GL_ImageList_f (void)
 	ri.Con_Printf (PRINT_ALL, "------------------\n");
 	texels = 0;
 
-	for (i=0, image=gltextures ; i<numgltextures ; i++, image++)
+	for (i=0, image=gxtextures ; i<numgxtextures ; i++, image++)
 	{
 		if (image->texnum <= 0)
 			continue;
@@ -411,7 +413,7 @@ int	scrap_uploads;
 void Scrap_Upload (void)
 {
 	scrap_uploads++;
-	GL_Bind(TEXNUM_SCRAPS);
+	GX_Bind(TEXNUM_SCRAPS);
 	GL_Upload8 (scrap_texels[0], BLOCK_WIDTH, BLOCK_HEIGHT, false, false );
 	scrap_dirty = false;
 }
@@ -1260,18 +1262,18 @@ image_t *GL_LoadPic (char *name, byte *pic, int width, int height, imagetype_t t
 	int			i;
 
 	// find a free image_t
-	for (i=0, image=gltextures ; i<numgltextures ; i++,image++)
+	for (i=0, image=gxtextures ; i<numgxtextures ; i++,image++)
 	{
 		if (!image->texnum)
 			break;
 	}
-	if (i == numgltextures)
+	if (i == numgxtextures)
 	{
-		if (numgltextures == MAX_GLTEXTURES)
-			ri.Sys_Error (ERR_DROP, "MAX_GLTEXTURES");
-		numgltextures++;
+		if (numgxtextures == MAX_GXTEXTURES)
+			ri.Sys_Error (ERR_DROP, "MAX_GXTEXTURES");
+		numgxtextures++;
 	}
-	image = &gltextures[i];
+	image = &gxtextures[i];
 
 	if (strlen(name) >= sizeof(image->name))
 		ri.Sys_Error (ERR_DROP, "Draw_LoadPic: \"%s\" is too long", name);
@@ -1315,8 +1317,8 @@ image_t *GL_LoadPic (char *name, byte *pic, int width, int height, imagetype_t t
 	{
 nonscrap:
 		image->scrap = false;
-		image->texnum = TEXNUM_IMAGES + (image - gltextures);
-		GL_Bind(image->texnum);
+		image->texnum = TEXNUM_IMAGES + (image - gxtextures);
+		GX_Bind(image->texnum);
 		if (bits == 8)
 			image->has_alpha = GL_Upload8 (pic, width, height, (image->type != it_pic && image->type != it_sky), image->type == it_sky );
 		else
@@ -1384,7 +1386,7 @@ image_t	*GL_FindImage (char *name, imagetype_t type)
 		return NULL;	//	ri.Sys_Error (ERR_DROP, "GL_FindImage: bad name: %s", name);
 
 	// look for it
-	for (i=0, image=gltextures ; i<numgltextures ; i++,image++)
+	for (i=0, image=gxtextures ; i<numgxtextures ; i++,image++)
 	{
 		if (!strcmp(name, image->name))
 		{
@@ -1458,7 +1460,7 @@ void GL_FreeUnusedImages (void)
 	r_notexture->registration_sequence = registration_sequence;
 	r_particletexture->registration_sequence = registration_sequence;
 
-	for (i=0, image=gltextures ; i<numgltextures ; i++, image++)
+	for (i=0, image=gxtextures ; i<numgxtextures ; i++, image++)
 	{
 		if (image->registration_sequence == registration_sequence)
 			continue;		// used this sequence
@@ -1583,7 +1585,7 @@ void	GL_ShutdownImages (void)
 	int		i;
 	image_t	*image;
 
-	for (i=0, image=gltextures ; i<numgltextures ; i++, image++)
+	for (i=0, image=gxtextures ; i<numgxtextures ; i++, image++)
 	{
 		if (!image->registration_sequence)
 			continue;		// free image_t slot

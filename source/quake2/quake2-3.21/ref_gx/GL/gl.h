@@ -221,8 +221,6 @@ void glEnd(void);
 
 void glColor3f(GLfloat red, GLfloat green, GLfloat blue);
 
-void glBindTexture(GLenum target, GLuint texture);
-
 void glTexCoord2f(GLfloat s, GLfloat t);
 
 void glDrawBuffer(GLenum mode);
@@ -304,8 +302,6 @@ GLboolean glAreTexturesResident(GLsizei n, const GLuint *textures, GLboolean *re
 void glArrayElement(GLint i);
 
 void glBegin(GLenum mode);
-
-void glBindTexture(GLenum target, GLuint texture);
 
 void glBitmap(GLsizei width, GLsizei height, GLfloat xorig, GLfloat yorig, GLfloat xmove, GLfloat ymove, const GLubyte *bitmap);
 

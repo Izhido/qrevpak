@@ -25,17 +25,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "quakedef.h"
 
+#include "gxutils.h"
+
 extern byte		*draw_chars;				// 8*8 graphic characters
-
-extern u8 gx_cur_vertex_format;
-
-extern u8 gx_cur_r;
-
-extern u8 gx_cur_g;
-
-extern u8 gx_cur_b;
-
-extern u8 gx_cur_a;
 
 int	netgraphtexture;	// netgraph texture
 
@@ -137,22 +129,22 @@ void R_NetGraph (void)
 	GX_SetMinMag (GX_LINEAR, GX_LINEAR);
 
 	x = 8;
-	gx_cur_r = 255;
-	gx_cur_g = 255;
-	gx_cur_b = 255;
-	gx_cur_a = 255;
-	GX_Begin (GX_QUADS, gx_cur_vertex_format, 4);
+	gxu_cur_r = 255;
+	gxu_cur_g = 255;
+	gxu_cur_b = 255;
+	gxu_cur_a = 255;
+	GX_Begin (GX_QUADS, gxu_cur_vertex_format, 4);
 	GX_Position3f32(x, y, 0);
-	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (0, 0);
 	GX_Position3f32(x+NET_TIMINGS, y, 0);
-	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (1, 0);
 	GX_Position3f32(x+NET_TIMINGS, y+NET_GRAPHHEIGHT, 0);
-	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (1, 1);
 	GX_Position3f32(x, y+NET_GRAPHHEIGHT, 0);
-	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (0, 1);
 	GX_End ();
 }

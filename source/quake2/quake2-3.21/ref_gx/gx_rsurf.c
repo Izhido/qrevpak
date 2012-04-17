@@ -375,7 +375,7 @@ void R_BlendLightmaps (void)
 		{
 			if (currentmodel == r_worldmodel)
 				c_visible_lightmaps++;
-			GL_Bind( gl_state.lightmap_textures + i);
+			GX_Bind( gl_state.lightmap_textures + i);
 
 			for ( surf = gl_lms.lightmap_surfaces[i]; surf != 0; surf = surf->lightmapchain )
 			{
@@ -392,7 +392,7 @@ void R_BlendLightmaps (void)
 	{
 		LM_InitBlock();
 
-		GL_Bind( gl_state.lightmap_textures+0 );
+		GX_Bind( gl_state.lightmap_textures+0 );
 
 		if (currentmodel == r_worldmodel)
 			c_visible_lightmaps++;
@@ -486,7 +486,7 @@ void R_RenderBrushPoly (msurface_t *fa)
 
 	if (fa->flags & SURF_DRAWTURB)
 	{	
-		GL_Bind( image->texnum );
+		GX_Bind( image->texnum );
 
 		// warp texture, no lightmaps
 		GL_TexEnv( GL_MODULATE );
@@ -501,7 +501,7 @@ void R_RenderBrushPoly (msurface_t *fa)
 	}
 	else
 	{
-		GL_Bind( image->texnum );
+		GX_Bind( image->texnum );
 
 		GL_TexEnv( GL_REPLACE );
 	}
@@ -550,7 +550,7 @@ dynamic:
 			R_BuildLightMap( fa, (void *)temp, smax*4 );
 			R_SetCacheState( fa );
 
-			GL_Bind( gl_state.lightmap_textures + fa->lightmaptexturenum );
+			GX_Bind( gl_state.lightmap_textures + fa->lightmaptexturenum );
 
 			qglTexSubImage2D( GL_TEXTURE_2D, 0,
 							  fa->light_s, fa->light_t, 
@@ -605,7 +605,7 @@ void R_DrawAlphaSurfaces (void)
 
 	for (s=r_alpha_surfaces ; s ; s=s->texturechain)
 	{
-		GL_Bind(s->texinfo->image->texnum);
+		GX_Bind(s->texinfo->image->texnum);
 		c_brush_polys++;
 		if (s->texinfo->flags & SURF_TRANS33)
 			qglColor4f (intens,intens,intens,0.33);
@@ -645,7 +645,7 @@ void DrawTextureChains (void)
 
 	if ( !qglSelectTextureSGIS && !qglActiveTextureARB )
 	{
-		for ( i = 0, image=gltextures ; i<numgltextures ; i++,image++)
+		for ( i = 0, image=gxtextures ; i<numgxtextures ; i++,image++)
 		{
 			if (!image->registration_sequence)
 				continue;
@@ -662,7 +662,7 @@ void DrawTextureChains (void)
 	}
 	else
 	{
-		for ( i = 0, image=gltextures ; i<numgltextures ; i++,image++)
+		for ( i = 0, image=gxtextures ; i<numgxtextures ; i++,image++)
 		{
 			if (!image->registration_sequence)
 				continue;
@@ -678,7 +678,7 @@ void DrawTextureChains (void)
 		}
 
 		GL_EnableMultitexture( false );
-		for ( i = 0, image=gltextures ; i<numgltextures ; i++,image++)
+		for ( i = 0, image=gxtextures ; i<numgxtextures ; i++,image++)
 		{
 			if (!image->registration_sequence)
 				continue;
@@ -1375,7 +1375,7 @@ static void LM_UploadBlock( qboolean dynamic )
 		texture = gl_lms.current_lightmap_texture;
 	}
 
-	GL_Bind( gl_state.lightmap_textures + texture );
+	GX_Bind( gl_state.lightmap_textures + texture );
 	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -1642,7 +1642,7 @@ void GL_BeginBuildingLightmaps (model_t *m)
 	/*
 	** initialize the dynamic lightmap texture
 	*/
-	GL_Bind( gl_state.lightmap_textures + 0 );
+	GX_Bind( gl_state.lightmap_textures + 0 );
 	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	qglTexImage2D( GL_TEXTURE_2D, 

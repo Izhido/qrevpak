@@ -48,50 +48,6 @@ extern GXRModeObj* sys_rmode;
 
 extern cvar_t in_osk;
 
-Mtx44 gx_projection_matrix;
-
-Mtx gx_modelview_matrices[32];
-
-int gx_cur_modelview_matrix = 0;
-
-qboolean gx_cull_enabled = false;
-
-u8 gx_cull_mode;
-
-u8 gx_z_test_enabled = GX_FALSE;
-
-u8 gx_z_write_enabled = GX_TRUE;
-
-qboolean gx_blend_enabled = false;
-
-u8 gx_blend_src_value = GX_BL_ONE;
-
-u8 gx_blend_dst_value = GX_BL_ZERO;
-
-qboolean gx_alpha_test_enabled = false;
-
-u8 gx_alpha_test_lower = 0;
-
-u8 gx_alpha_test_higher = 255;
-
-u8 gx_cur_vertex_format = GX_VTXFMT0;
-
-u8 gx_cur_r;
-
-u8 gx_cur_g;
-
-u8 gx_cur_b;
-
-u8 gx_cur_a;
-
-f32 gx_viewport_x;
-
-f32 gx_viewport_y;
-
-f32 gx_viewport_width;
-
-f32 gx_viewport_height;
-
 double vid_guide_increment;
 
 int vid_pal_increment;
@@ -116,30 +72,30 @@ void QGX_Init (void)
 	CheckMultiTextureExtensions();
 
 	gxu_background_color.r = 1.0f;
-	gx_cull_mode = GX_CULL_BACK;
-	if(gx_cull_enabled)
+	gxu_cull_mode = GX_CULL_BACK;
+	if(gxu_cull_enabled)
 	{
-		GX_SetCullMode(gx_cull_mode);
+		GX_SetCullMode(gxu_cull_mode);
 	};
-	gx_cur_vertex_format = GX_VTXFMT1;
+	gxu_cur_vertex_format = GX_VTXFMT1;
  	GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
  	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
 	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
 
-	gx_alpha_test_lower = 170;
-	gx_alpha_test_higher = 255;
-	gx_alpha_test_enabled = true;
-	GX_SetAlphaCompare(GX_GEQUAL, gx_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gx_alpha_test_higher);
+	gxu_alpha_test_lower = 170;
+	gxu_alpha_test_higher = 255;
+	gxu_alpha_test_enabled = true;
+	GX_SetAlphaCompare(GX_GEQUAL, gxu_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gxu_alpha_test_higher);
 
 	glShadeModel (GL_FLAT);
 
 	GX_SetMinMag (GX_NEAR, GX_NEAR);
 
-	gx_blend_enabled = false;
-	gx_blend_src_value = GX_BL_SRCALPHA;
-	gx_blend_dst_value = GX_BL_INVSRCALPHA;
-	if(gx_blend_enabled)
-		GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP);
+	gxu_blend_enabled = false;
+	gxu_blend_src_value = GX_BL_SRCALPHA;
+	gxu_blend_dst_value = GX_BL_INVSRCALPHA;
+	if(gxu_blend_enabled)
+		GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 
 	GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
 }
@@ -221,18 +177,18 @@ void VID_DrawWmoteGuide(void)
 			GX_Bind(vid_guide_texture);
 			GX_LoadAndBind(guide, sw*sw * 4, sw, sw, GX_TF_RGBA8);
 
-			GX_Begin (GX_QUADS, gx_cur_vertex_format, 4);
+			GX_Begin (GX_QUADS, gxu_cur_vertex_format, 4);
 			GX_Position3f32(p.x - hsw, p.y - hsw, 0);
-			GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+			GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 			GX_TexCoord2f32 (0, 0);
 			GX_Position3f32(p.x + hsw, p.y - hsw, 0);
-			GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+			GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 			GX_TexCoord2f32 (1, 0);
 			GX_Position3f32(p.x + hsw, p.y + hsw, 0);
-			GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+			GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 			GX_TexCoord2f32 (1, 1);
 			GX_Position3f32(p.x - hsw, p.y + hsw, 0);
-			GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+			GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 			GX_TexCoord2f32 (0, 1);
 			GX_End ();
 

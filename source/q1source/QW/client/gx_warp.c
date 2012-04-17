@@ -25,6 +25,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "quakedef.h"
 
+#include "gxutils.h"
+
 extern	model_t	*loadmodel;
 
 int		skytexturenum;
@@ -36,26 +38,6 @@ float	speedscale;		// for top sky and bottom sky
 msurface_t	*warpface;
 
 extern cvar_t gx_subdivide_size;
-
-extern u8 gx_z_test_enabled;
-
-extern u8 gx_z_write_enabled;
-
-extern qboolean gx_blend_enabled;
-
-extern u8 gx_blend_src_value;
-
-extern u8 gx_blend_dst_value;
-
-extern u8 gx_cur_vertex_format;
-
-extern u8 gx_cur_r;
-
-extern u8 gx_cur_g;
-
-extern u8 gx_cur_b;
-
-extern u8 gx_cur_a;
 
 void BoundPoly (int numverts, float *verts, vec3_t mins, vec3_t maxs)
 {
@@ -232,7 +214,7 @@ void EmitWaterPolys (msurface_t *fa)
 
 	for (p=fa->polys ; p ; p=p->next)
 	{
-		GX_Begin (GX_TRIANGLEFAN, gx_cur_vertex_format, p->numverts);
+		GX_Begin (GX_TRIANGLEFAN, gxu_cur_vertex_format, p->numverts);
 		for (i=0,v=p->verts[0] ; i<p->numverts ; i++, v+=VERTEXSIZE)
 		{
 			os = v[3];
@@ -245,7 +227,7 @@ void EmitWaterPolys (msurface_t *fa)
 			t *= (1.0/64);
 
 			GX_Position3f32(*v, *(v+1), *(v+2));
-			GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+			GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 			GX_TexCoord2f32 (s, t);
 		}
 		GX_End ();
@@ -271,7 +253,7 @@ void EmitSkyPolys (msurface_t *fa)
 
 	for (p=fa->polys ; p ; p=p->next)
 	{
-		GX_Begin (GX_TRIANGLEFAN, gx_cur_vertex_format, p->numverts);
+		GX_Begin (GX_TRIANGLEFAN, gxu_cur_vertex_format, p->numverts);
 		for (i=0,v=p->verts[0] ; i<p->numverts ; i++, v+=VERTEXSIZE)
 		{
 			VectorSubtract (v, r_origin, dir);
@@ -288,7 +270,7 @@ void EmitSkyPolys (msurface_t *fa)
 			t = (speedscale + dir[1]) * (1.0/128);
 
 			GX_Position3f32(*v, *(v+1), *(v+2));
-			GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+			GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 			GX_TexCoord2f32 (s, t);
 		}
 		GX_End ();
@@ -314,14 +296,14 @@ void EmitBothSkyLayers (msurface_t *fa)
 
 	EmitSkyPolys (fa);
 
-	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+	GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 	GX_Bind (alphaskytexture);
 	speedscale = realtime*16;
 	speedscale -= (int)speedscale & ~127 ;
 
 	EmitSkyPolys (fa);
 
-	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+	GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 }
 
 #ifndef QUAKE2
@@ -344,7 +326,7 @@ void R_DrawSkyChain (msurface_t *s)
 	for (fa=s ; fa ; fa=fa->texturechain)
 		EmitSkyPolys (fa);
 
-	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+	GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 	GX_Bind (alphaskytexture);
 	speedscale = realtime*16;
 	speedscale -= (int)speedscale & ~127 ;
@@ -352,7 +334,7 @@ void R_DrawSkyChain (msurface_t *s)
 	for (fa=s ; fa ; fa=fa->texturechain)
 		EmitSkyPolys (fa);
 
-	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+	GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 }
 
 #endif
@@ -998,7 +980,7 @@ void MakeSkyVec (float s, float t, int axis)
 
 	t = 1.0 - t;
 	GX_Position3f32(*v, *(v+1), *(v+2));
-	GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (s, t);
 }
 

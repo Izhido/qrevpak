@@ -19,12 +19,17 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Support for GX hardware:
+// Support for GX hardware, part 1:
 #include <gccore.h>
 // <<< FIX
 
 #include "quakedef.h"
 #include "r_local.h"
+
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Support for GX hardware, part 2:
+#include "gxutils.h"
+// <<< FIX
 
 #define MAX_PARTICLES			2048	// default max # of particles at one
 										//  time
@@ -41,25 +46,6 @@ particle_t	*particles;
 int			r_numparticles;
 
 vec3_t			r_pright, r_pup, r_ppn;
-
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Support for GX hardware:
-extern qboolean gx_blend_enabled;
-
-extern u8 gx_blend_src_value;
-
-extern u8 gx_blend_dst_value;
-
-extern u8 gx_cur_vertex_format;
-
-extern u8 gx_cur_r;
-
-extern u8 gx_cur_g;
-
-extern u8 gx_cur_b;
-
-extern u8 gx_cur_a;
-// <<< FIX
 
 /*
 ===============
@@ -486,7 +472,7 @@ void R_DrawParticles (void)
 	float			scale;
 
     GX_Bind(particletexture);
-	GX_SetBlendMode(GX_BM_BLEND, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+	GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 	GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
 
 	VectorScale (vup, 1.5, up);
@@ -572,21 +558,21 @@ void R_DrawParticles (void)
 //			theAlpha = 255*(8-p->ramp)/8;
 		else
 			theAlpha = 255;
-		gx_cur_r = *at;
-		gx_cur_g = *(at+1);
-		gx_cur_b = *(at+2);
-		gx_cur_a = theAlpha;
+		gxu_cur_r = *at;
+		gxu_cur_g = *(at+1);
+		gxu_cur_b = *(at+2);
+		gxu_cur_a = theAlpha;
 //		glColor3ubv (at);
 //		glColor3ubv ((byte *)&d_8to24table[(int)p->color]);
-		GX_Begin (GX_TRIANGLES, gx_cur_vertex_format, 3);
+		GX_Begin (GX_TRIANGLES, gxu_cur_vertex_format, 3);
 		GX_Position3f32(p->org[0], p->org[1], p->org[2]);
-		GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+		GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 		GX_TexCoord2f32 (0,0);
 		GX_Position3f32(p->org[0] + up[0]*scale, p->org[1] + up[1]*scale, p->org[2] + up[2]*scale);
-		GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+		GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 		GX_TexCoord2f32 (1,0);
 		GX_Position3f32(p->org[0] + right[0]*scale, p->org[1] + right[1]*scale, p->org[2] + right[2]*scale);
-		GX_Color4u8(gx_cur_r, gx_cur_g, gx_cur_b, gx_cur_a);
+		GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 		GX_TexCoord2f32 (0,1);
 		GX_End();
 
@@ -683,7 +669,7 @@ void R_DrawParticles (void)
 // Support for GX hardware:
 //#ifdef GLQUAKE
 #ifdef GXQUAKE
-	GX_SetBlendMode(GX_BM_NONE, gx_blend_src_value, gx_blend_dst_value, GX_LO_NOOP); 
+	GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
 #elif GLQUAKE
 // <<< FIX
