@@ -24,10 +24,6 @@ int gl_modelview_matrix = 0;
 Mtx44 gl_projection_matrices[2];
 int gl_projection_matrix = 0;
 
-void glTexImage2D(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid* data)
-{
-} 
-
 void glTexParameterf(GLenum target, GLenum pname, GLfloat param)
 {
 }
@@ -1604,10 +1600,6 @@ void glTexGeni(GLenum coord, GLenum pname, GLint param)
 }
 
 void glTexGeniv(GLenum coord, GLenum pname, const GLint *params)
-{
-}
-
-void glTexImage1D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLint border, GLenum format, GLenum type, const GLvoid *pixels)
 {
 }
 

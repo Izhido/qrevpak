@@ -339,8 +339,6 @@ void ( APIENTRY * qglTexGenf )(GLenum coord, GLenum pname, GLfloat param);
 void ( APIENTRY * qglTexGenfv )(GLenum coord, GLenum pname, const GLfloat *params);
 void ( APIENTRY * qglTexGeni )(GLenum coord, GLenum pname, GLint param);
 void ( APIENTRY * qglTexGeniv )(GLenum coord, GLenum pname, const GLint *params);
-void ( APIENTRY * qglTexImage1D )(GLenum target, GLint level, GLint internalformat, GLsizei width, GLint border, GLenum format, GLenum type, const GLvoid *pixels);
-void ( APIENTRY * qglTexImage2D )(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid *pixels);
 void ( APIENTRY * qglTexParameterf )(GLenum target, GLenum pname, GLfloat param);
 void ( APIENTRY * qglTexParameterfv )(GLenum target, GLenum pname, const GLfloat *params);
 void ( APIENTRY * qglTexParameteri )(GLenum target, GLenum pname, GLint param);
@@ -2942,8 +2940,6 @@ void QGL_Shutdown( void )
 	qglTexGenfv                  = NULL;
 	qglTexGeni                   = NULL;
 	qglTexGeniv                  = NULL;
-	qglTexImage1D                = NULL;
-	qglTexImage2D                = NULL;
 	qglTexParameterf             = NULL;
 	qglTexParameterfv            = NULL;
 	qglTexParameteri             = NULL;
@@ -3300,8 +3296,6 @@ qboolean QGL_Init( const char *dllname )
 	qglTexGenfv                  = 	dllTexGenfv                  = glTexGenfv;
 	qglTexGeni                   = 	dllTexGeni                   = glTexGeni;
 	qglTexGeniv                  = 	dllTexGeniv                  = glTexGeniv;
-	qglTexImage1D                = 	dllTexImage1D                = glTexImage1D;
-	qglTexImage2D                = 	dllTexImage2D                = glTexImage2D;
 	qglTexParameterf             = 	dllTexParameterf             = glTexParameterf;
 	qglTexParameterfv            = 	dllTexParameterfv            = glTexParameterfv;
 	qglTexParameteri             = 	dllTexParameteri             = glTexParameteri;
@@ -3676,8 +3670,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglTexGenfv                  = 	logTexGenfv                  ;
 		qglTexGeni                   = 	logTexGeni                   ;
 		qglTexGeniv                  = 	logTexGeniv                  ;
-		qglTexImage1D                = 	logTexImage1D                ;
-		qglTexImage2D                = 	logTexImage2D                ;
 		qglTexParameterf             = 	logTexParameterf             ;
 		qglTexParameterfv            = 	logTexParameterfv            ;
 		qglTexParameteri             = 	logTexParameteri             ;
@@ -4018,8 +4010,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglTexGenfv                  = 	dllTexGenfv                  ;
 		qglTexGeni                   = 	dllTexGeni                   ;
 		qglTexGeniv                  = 	dllTexGeniv                  ;
-		qglTexImage1D                = 	dllTexImage1D                ;
-		qglTexImage2D                = 	dllTexImage2D                ;
 		qglTexParameterf             = 	dllTexParameterf             ;
 		qglTexParameterfv            = 	dllTexParameterfv            ;
 		qglTexParameteri             = 	dllTexParameteri             ;

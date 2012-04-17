@@ -195,8 +195,6 @@ typedef unsigned short GLushort;
 
 #define GL_LUMINANCE8 77
 
-void glTexImage2D(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid* data);
-
 void glTexParameterf(GLenum target, GLenum pname, GLfloat param);
 
 void glViewport(GLint x, GLint y, GLsizei width, GLsizei height);
@@ -890,10 +888,6 @@ void glTexGenfv(GLenum coord, GLenum pname, const GLfloat *params);
 void glTexGeni(GLenum coord, GLenum pname, GLint param);
 
 void glTexGeniv(GLenum coord, GLenum pname, const GLint *params);
-
-void glTexImage1D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLint border, GLenum format, GLenum type, const GLvoid *pixels);
-
-void glTexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid *pixels);
 
 void glTexParameterf(GLenum target, GLenum pname, GLfloat param);
 

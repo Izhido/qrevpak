@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "gx_local.h"
+#include <malloc.h>
 
 image_t		gxtextures[MAX_GXTEXTURES];
 gxtexobj_t	gxtexobjs[TEXNUM_IMAGES + MAX_GXTEXTURES];
@@ -44,6 +45,8 @@ int		gl_tex_alpha_format = 4;
 
 int		gl_filter_min = GL_LINEAR_MIPMAP_NEAREST;
 int		gl_filter_max = GL_LINEAR;
+
+int		gx_tex_allocated; // To track amount of memory used for textures
 
 void GL_SetTexturePalette( unsigned palette[256] )
 {
@@ -167,25 +170,25 @@ void GL_MBind( GLenum target, int texnum )
 qboolean GX_ReallocTex(int length, int width, int height)
 {
 	qboolean changed = false;
-	if(gxtexobjs[currenttexture].length < length)
+	if(gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].length < length)
 	{
-		if(gxtexobjs[currenttexture].data != NULL)
+		if(gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data != NULL)
 		{
-			free(gxtexobjs[currenttexture].data);
-			gxtexobjs[currenttexture].data = NULL;
-			gx_tex_allocated -= gxtexobjs[currenttexture].length;
+			free(gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data);
+			gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data = NULL;
+			gx_tex_allocated -= gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].length;
 		};
-		gxtexobjs[currenttexture].data = memalign(32, length);
-		if(gxtexobjs[currenttexture].data == NULL)
+		gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data = memalign(32, length);
+		if(gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data == NULL)
 		{
 			Sys_Error("GX_ReallocTex: allocation failed on %i bytes", length);
 		};
-		gxtexobjs[currenttexture].length = length;
+		gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].length = length;
 		gx_tex_allocated += length;
 		changed = true;
 	};
-	gxtexobjs[currenttexture].width = width;
-	gxtexobjs[currenttexture].height = height;
+	gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].width = width;
+	gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].height = height;
 	return changed;
 }
 
@@ -348,9 +351,9 @@ byte* GX_CopyTexIA4(byte* src, int width, int height, byte* dst)
 
 void GX_BindCurrentTex(qboolean changed, int format, int mipmap)
 {
-	DCFlushRange(gxtexobjs[currenttexture].data, gxtexobjs[currenttexture].length);
-	qgxInitTexObj(&gxtexobjs[currenttexture].texobj, gxtexobjs[currenttexture].data, gxtexobjs[currenttexture].width, gxtexobjs[currenttexture].height, format, GX_REPEAT, GX_REPEAT, mipmap);
-	qgxLoadTexObj(&gxtexobjs[currenttexture].texobj, oldtarget - GX_TEXMAP0);
+	DCFlushRange(gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data, gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].length);
+	qgxInitTexObj(&gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].texobj, gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data, gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].width, gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].height, format, GX_REPEAT, GX_REPEAT, mipmap);
+	qgxLoadTexObj(&gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].texobj, gl_state.currenttmu - GX_TEXMAP0);
 	if(changed)
 		qgxInvalidateTexAll();
 }
@@ -361,17 +364,17 @@ void GX_LoadAndBind (void* data, int length, int width, int height, int format)
 	switch(format)
 	{
 	case GX_TF_RGBA8:
-		GX_CopyTexRGBA8((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
+		GX_CopyTexRGBA8((byte*)data, width, height, (byte*)(gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data));
 		break;
 	case GX_TF_RGB5A3:
-		GX_CopyTexRGB5A3((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
+		GX_CopyTexRGB5A3((byte*)data, width, height, (byte*)(gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data));
 		break;
 	case GX_TF_I8:
 	case GX_TF_A8:
-		GX_CopyTexV8((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
+		GX_CopyTexV8((byte*)data, width, height, (byte*)(gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data));
 		break;
 	case GX_TF_IA4:
-		GX_CopyTexIA4((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
+		GX_CopyTexIA4((byte*)data, width, height, (byte*)(gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data));
 		break;
 	};
 	GX_BindCurrentTex(changed, format, GX_FALSE);
@@ -397,11 +400,11 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 
 	if(format == GX_TF_RGBA8)
 	{
-		dst = (byte*)(gxtexobjs[currenttexture].data);
+		dst = (byte*)(gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data);
 		if(dst != NULL)
 		{
-			tex_width = gxtexobjs[currenttexture].width;
-			tex_height = gxtexobjs[currenttexture].height;
+			tex_width = gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].width;
+			tex_height = gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].height;
 			ybegin = (yoffset >> 2) << 2;
 			if(ybegin < 0) 
 				ybegin = 0;
@@ -466,11 +469,11 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 		GX_BindCurrentTex(true, format, GX_FALSE);
 	} else if(format == GX_TF_RGB5A3)
 	{
-		dst = (byte*)(gxtexobjs[currenttexture].data);
+		dst = (byte*)(gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data);
 		if(dst != NULL)
 		{
-			tex_width = gxtexobjs[currenttexture].width;
-			tex_height = gxtexobjs[currenttexture].height;
+			tex_width = gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].width;
+			tex_height = gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].height;
 			ybegin = (yoffset >> 2) << 2;
 			if(ybegin < 0) 
 				ybegin = 0;
@@ -516,11 +519,11 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 		GX_BindCurrentTex(true, format, GX_FALSE);
 	} else if((format == GX_TF_A8)||(format == GX_TF_I8))
 	{
-		dst = (byte*)(gxtexobjs[currenttexture].data);
+		dst = (byte*)(gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data);
 		if(dst != NULL)
 		{
-			tex_width = gxtexobjs[currenttexture].width;
-			tex_height = gxtexobjs[currenttexture].height;
+			tex_width = gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].width;
+			tex_height = gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].height;
 			ybegin = (yoffset >> 2) << 2;
 			if(ybegin < 0) 
 				ybegin = 0;
@@ -563,11 +566,11 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 		GX_BindCurrentTex(true, format, GX_FALSE);
 	} else if(format == GX_TF_IA4)
 	{
-		dst = (byte*)(gxtexobjs[currenttexture].data);
+		dst = (byte*)(gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data);
 		if(dst != NULL)
 		{
-			tex_width = gxtexobjs[currenttexture].width;
-			tex_height = gxtexobjs[currenttexture].height;
+			tex_width = gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].width;
+			tex_height = gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].height;
 			ybegin = (yoffset >> 2) << 2;
 			if(ybegin < 0) 
 				ybegin = 0;
@@ -614,9 +617,9 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 
 void GX_SetMinMag (int minfilt, int magfilt)
 {
-	if(gxtexobjs[currenttexture].data != NULL)
+	if(gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data != NULL)
 	{
-		qgxInitTexObjFilterMode(&gxtexobjs[currenttexture].texobj, minfilt, magfilt);
+		qgxInitTexObjFilterMode(&gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].texobj, minfilt, magfilt);
 	};
 }
 

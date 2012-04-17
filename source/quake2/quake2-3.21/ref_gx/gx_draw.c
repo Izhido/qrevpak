@@ -318,8 +318,8 @@ extern unsigned	r_rawpalette[256];
 
 void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data)
 {
-	unsigned*	image32 = Sys_BigStackAlloc(256*256 * sizeof(unsigned), "Draw_StretchRaw");
-	unsigned char* image8 = Sys_BigStackAlloc(256*256, "Draw_StretchRaw");
+	unsigned*	image32;
+	unsigned char* image8;
 	int			i, j, trows;
 	byte		*source;
 	int			frac, fracstep;
@@ -343,6 +343,8 @@ void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data
 
 	if ( !qglColorTableEXT )
 	{
+		image32 = Sys_BigStackAlloc(256*256 * sizeof(unsigned), "Draw_StretchRaw");
+
 		unsigned *dest;
 
 		for (i=0 ; i<trows ; i++)
@@ -361,10 +363,14 @@ void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data
 			}
 		}
 
-		qglTexImage2D (GL_TEXTURE_2D, 0, gl_tex_solid_format, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, image32);
+		GX_LoadAndBind(image32, 256 * 256 * sizeof(unsigned int), 256, 256, GX_TF_RGBA8);
+
+		Sys_BigStackFree(256*256 * sizeof(unsigned), "Draw_StretchRaw");
 	}
 	else
 	{
+		image8 = Sys_BigStackAlloc(256*256, "Draw_StretchRaw");
+
 		unsigned char *dest;
 
 		for (i=0 ; i<trows ; i++)
@@ -383,14 +389,9 @@ void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data
 			}
 		}
 
-		qglTexImage2D( GL_TEXTURE_2D, 
-			           0, 
-					   GL_COLOR_INDEX8_EXT, 
-					   256, 256, 
-					   0, 
-					   GL_COLOR_INDEX, 
-					   GL_UNSIGNED_BYTE, 
-					   image8 );
+		GX_LoadAndBind(image8, 256 * 256, 256, 256, GX_TF_CI8);
+
+		Sys_BigStackFree(256*256, "Draw_StretchRaw");
 	}
 	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -411,7 +412,5 @@ void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data
 
 	if ( ( gl_config.renderer == GL_RENDERER_MCD ) || ( gl_config.renderer & GL_RENDERER_RENDITION ) ) 
 		qglEnable (GL_ALPHA_TEST);
-
-	Sys_BigStackFree(256*256 * sizeof(unsigned) + 256*256, "Draw_StretchRaw");
 }
 
