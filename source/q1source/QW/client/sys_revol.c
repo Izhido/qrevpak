@@ -19,7 +19,9 @@
 #include "osk_revol.h"
 #include "Keys_dat.h"
 
+#ifdef GXQUAKE
 #include "gxutils.h"
+#endif
 
 qboolean isDedicated;
 

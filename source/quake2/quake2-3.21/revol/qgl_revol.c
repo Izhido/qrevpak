@@ -41,7 +41,6 @@ void ( APIENTRY * qglAlphaFunc )(GLenum func, GLclampf ref);
 GLboolean ( APIENTRY * qglAreTexturesResident )(GLsizei n, const GLuint *textures, GLboolean *residences);
 void ( APIENTRY * qglArrayElement )(GLint i);
 void ( APIENTRY * qglBegin )(GLenum mode);
-void ( APIENTRY * qgxLoadTexObj )(GXTexObj *obj, u8 mapid);
 void ( APIENTRY * qglBitmap )(GLsizei width, GLsizei height, GLfloat xorig, GLfloat yorig, GLfloat xmove, GLfloat ymove, const GLubyte *bitmap);
 void ( APIENTRY * qglBlendFunc )(GLenum sfactor, GLenum dfactor);
 void ( APIENTRY * qglCallList )(GLuint list);
@@ -178,7 +177,10 @@ void ( APIENTRY * qglIndexsv )(const GLshort *c);
 void ( APIENTRY * qglIndexub )(GLubyte c);
 void ( APIENTRY * qglIndexubv )(const GLubyte *c);
 void ( APIENTRY * qglInitNames )(void);
+void ( APIENTRY * qgxInitTexObj )(GXTexObj *obj, void *img_ptr, u16 wd, u16 ht, u8 fmt, u8 wrap_s, u8 wrap_t, u8 mipmap);
+void ( APIENTRY * qgxInitTexObjFilterMode )(GXTexObj *obj, u8 minfilt, u8 magfilt);
 void ( APIENTRY * qglInterleavedArrays )(GLenum format, GLsizei stride, const GLvoid *pointer);
+void ( APIENTRY * qgxInvalidateTexAll )(void);
 GLboolean ( APIENTRY * qglIsEnabled )(GLenum cap);
 GLboolean ( APIENTRY * qglIsList )(GLuint list);
 GLboolean ( APIENTRY * qglIsTexture )(GLuint texture);
@@ -197,6 +199,7 @@ void ( APIENTRY * qglLoadIdentity )(void);
 void ( APIENTRY * qglLoadMatrixd )(const GLdouble *m);
 void ( APIENTRY * qglLoadMatrixf )(const GLfloat *m);
 void ( APIENTRY * qglLoadName )(GLuint name);
+void ( APIENTRY * qgxLoadTexObj )(GXTexObj *obj, u8 mapid);
 void ( APIENTRY * qglLogicOp )(GLenum opcode);
 void ( APIENTRY * qglMap1d )(GLenum target, GLdouble u1, GLdouble u2, GLint stride, GLint order, const GLdouble *points);
 void ( APIENTRY * qglMap1f )(GLenum target, GLfloat u1, GLfloat u2, GLint stride, GLint order, const GLfloat *points);
@@ -389,7 +392,6 @@ static void ( APIENTRY * dllAlphaFunc )(GLenum func, GLclampf ref);
 GLboolean ( APIENTRY * dllAreTexturesResident )(GLsizei n, const GLuint *textures, GLboolean *residences);
 static void ( APIENTRY * dllArrayElement )(GLint i);
 static void ( APIENTRY * dllBegin )(GLenum mode);
-static void ( APIENTRY * dllLoadTexObj )(GXTexObj *obj, u8 mapid);
 static void ( APIENTRY * dllBitmap )(GLsizei width, GLsizei height, GLfloat xorig, GLfloat yorig, GLfloat xmove, GLfloat ymove, const GLubyte *bitmap);
 static void ( APIENTRY * dllBlendFunc )(GLenum sfactor, GLenum dfactor);
 static void ( APIENTRY * dllCallList )(GLuint list);
@@ -526,7 +528,10 @@ static void ( APIENTRY * dllIndexsv )(const GLshort *c);
 static void ( APIENTRY * dllIndexub )(GLubyte c);
 static void ( APIENTRY * dllIndexubv )(const GLubyte *c);
 static void ( APIENTRY * dllInitNames )(void);
+static void ( APIENTRY * dllInitTexObj )(GXTexObj *obj, void *img_ptr, u16 wd, u16 ht, u8 fmt, u8 wrap_s, u8 wrap_t, u8 mipmap);
+static void ( APIENTRY * dllInitTexObjFilterMode )(GXTexObj *obj, u8 minfilt, u8 magfilt);
 static void ( APIENTRY * dllInterleavedArrays )(GLenum format, GLsizei stride, const GLvoid *pointer);
+static void ( APIENTRY * dllInvalidateTexAll )(void);
 GLboolean ( APIENTRY * dllIsEnabled )(GLenum cap);
 GLboolean ( APIENTRY * dllIsList )(GLuint list);
 GLboolean ( APIENTRY * dllIsTexture )(GLuint texture);
@@ -545,6 +550,7 @@ static void ( APIENTRY * dllLoadIdentity )(void);
 static void ( APIENTRY * dllLoadMatrixd )(const GLdouble *m);
 static void ( APIENTRY * dllLoadMatrixf )(const GLfloat *m);
 static void ( APIENTRY * dllLoadName )(GLuint name);
+static void ( APIENTRY * dllLoadTexObj )(GXTexObj *obj, u8 mapid);
 static void ( APIENTRY * dllLogicOp )(GLenum opcode);
 static void ( APIENTRY * dllMap1d )(GLenum target, GLdouble u1, GLdouble u2, GLint stride, GLint order, const GLdouble *points);
 static void ( APIENTRY * dllMap1f )(GLenum target, GLfloat u1, GLfloat u2, GLint stride, GLint order, const GLfloat *points);
@@ -749,12 +755,6 @@ static void APIENTRY logBegin(GLenum mode)
 {
 	fprintf( log_fp, "glBegin( 0x%x )\n", mode );
 	dllBegin( mode );
-}
-
-static void APIENTRY logLoadTexObj(GXTexObj *obj, u8 mapid)
-{
-	fprintf( log_fp, "GX_LoadTexObj( 0x%x, %u )\n", (unsigned int)obj, mapid );
-	dllLoadTexObj( obj, mapid );
 }
 
 static void APIENTRY logBitmap(GLsizei width, GLsizei height, GLfloat xorig, GLfloat yorig, GLfloat xmove, GLfloat ymove, const GLubyte *bitmap)
@@ -1552,10 +1552,28 @@ static void APIENTRY logInitNames(void)
 	dllInitNames();
 }
 
+static void APIENTRY logInitTexObj(GXTexObj *obj, void *img_ptr, u16 wd, u16 ht, u8 fmt, u8 wrap_s, u8 wrap_t, u8 mipmap)
+{
+	SIG( "GX_InitTexObj" );
+	dllInitTexObj(obj, img_ptr, wd, ht, fmt, wrap_s, wrap_t, mipmap);
+}
+
+static void APIENTRY logInitTexObjFilterMode(GXTexObj *obj,u8 minfilt,u8 magfilt)
+{
+	SIG( "GX_InitTexObjFilterMode" );
+	dllInitTexObjFilterMode(obj, minfilt, magfilt);
+}
+
 static void APIENTRY logInterleavedArrays(GLenum format, GLsizei stride, const void *pointer)
 {
 	SIG( "glInterleavedArrays" );
 	dllInterleavedArrays( format, stride, pointer );
+}
+
+static void APIENTRY logInvalidateTexAll(void)
+{
+	SIG( "GX_InvalidateTexAll" );
+	dllInvalidateTexAll();
 }
 
 static GLboolean APIENTRY logIsEnabled(GLenum cap)
@@ -1663,6 +1681,12 @@ static void APIENTRY logLoadName(GLuint name)
 {
 	SIG( "glLoadName" );
 	dllLoadName( name );
+}
+
+static void APIENTRY logLoadTexObj(GXTexObj *obj, u8 mapid)
+{
+	fprintf( log_fp, "GX_LoadTexObj( 0x%x, %u )\n", (unsigned int)obj, mapid );
+	dllLoadTexObj( obj, mapid );
 }
 
 static void APIENTRY logLogicOp(GLenum opcode)
@@ -2620,7 +2644,6 @@ void QGL_Shutdown( void )
 	qglAreTexturesResident       = NULL;
 	qglArrayElement              = NULL;
 	qglBegin                     = NULL;
-	qgxLoadTexObj               = NULL;
 	qglBitmap                    = NULL;
 	qglBlendFunc                 = NULL;
 	qglCallList                  = NULL;
@@ -2757,7 +2780,10 @@ void QGL_Shutdown( void )
 	qglIndexub                   = NULL;
 	qglIndexubv                  = NULL;
 	qglInitNames                 = NULL;
+	qgxInitTexObj                = NULL;
+	qgxInitTexObjFilterMode      = NULL;
 	qglInterleavedArrays         = NULL;
+	qgxInvalidateTexAll          = NULL;
 	qglIsEnabled                 = NULL;
 	qglIsList                    = NULL;
 	qglIsTexture                 = NULL;
@@ -2776,6 +2802,7 @@ void QGL_Shutdown( void )
 	qglLoadMatrixd               = NULL;
 	qglLoadMatrixf               = NULL;
 	qglLoadName                  = NULL;
+	qgxLoadTexObj                = NULL;
 	qglLogicOp                   = NULL;
 	qglMap1d                     = NULL;
 	qglMap1f                     = NULL;
@@ -2975,7 +3002,6 @@ qboolean QGL_Init( const char *dllname )
 	qglAreTexturesResident       = dllAreTexturesResident = glAreTexturesResident;
 	qglArrayElement              = dllArrayElement = glArrayElement;
 	qglBegin                     = dllBegin = glBegin;
-	qgxLoadTexObj                = dllLoadTexObj = GX_LoadTexObj;
 	qglBitmap                    = dllBitmap = glBitmap;
 	qglBlendFunc                 = dllBlendFunc = glBlendFunc;
 	qglCallList                  = dllCallList = glCallList;
@@ -3112,7 +3138,10 @@ qboolean QGL_Init( const char *dllname )
 	qglIndexub                   = 	dllIndexub                   = glIndexub;
 	qglIndexubv                  = 	dllIndexubv                  = glIndexubv;
 	qglInitNames                 = 	dllInitNames                 = glInitNames;
+	qgxInitTexObj                =  dllInitTexObj                = GX_InitTexObj;
+	qgxInitTexObjFilterMode      =  dllInitTexObjFilterMode      = GX_InitTexObjFilterMode;
 	qglInterleavedArrays         = 	dllInterleavedArrays         = glInterleavedArrays;
+	qgxInvalidateTexAll          =  dllInvalidateTexAll          = GX_InvalidateTexAll;
 	qglIsEnabled                 = 	dllIsEnabled                 = glIsEnabled;
 	qglIsList                    = 	dllIsList                    = glIsList;
 	qglIsTexture                 = 	dllIsTexture                 = glIsTexture;
@@ -3131,6 +3160,7 @@ qboolean QGL_Init( const char *dllname )
 	qglLoadMatrixd               = 	dllLoadMatrixd               = glLoadMatrixd;
 	qglLoadMatrixf               = 	dllLoadMatrixf               = glLoadMatrixf;
 	qglLoadName                  = 	dllLoadName                  = glLoadName;
+	qgxLoadTexObj                =  dllLoadTexObj                = GX_LoadTexObj;
 	qglLogicOp                   = 	dllLogicOp                   = glLogicOp;
 	qglMap1d                     = 	dllMap1d                     = glMap1d;
 	qglMap1f                     = 	dllMap1f                     = glMap1f;
@@ -3348,7 +3378,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglAreTexturesResident       = logAreTexturesResident;
 		qglArrayElement              = logArrayElement;
 		qglBegin                     = logBegin;
-		qgxLoadTexObj                = logLoadTexObj;
 		qglBitmap                    = logBitmap;
 		qglBlendFunc                 = logBlendFunc;
 		qglCallList                  = logCallList;
@@ -3485,7 +3514,10 @@ void GLimp_EnableLogging( qboolean enable )
 		qglIndexub                   = 	logIndexub                   ;
 		qglIndexubv                  = 	logIndexubv                  ;
 		qglInitNames                 = 	logInitNames                 ;
+		qgxInitTexObj                =  logInitTexObj                ;
+		qgxInitTexObjFilterMode      =  logInitTexObjFilterMode      ;
 		qglInterleavedArrays         = 	logInterleavedArrays         ;
+		qgxInvalidateTexAll          =  logInvalidateTexAll          ;
 		qglIsEnabled                 = 	logIsEnabled                 ;
 		qglIsList                    = 	logIsList                    ;
 		qglIsTexture                 = 	logIsTexture                 ;
@@ -3504,6 +3536,7 @@ void GLimp_EnableLogging( qboolean enable )
 		qglLoadMatrixd               = 	logLoadMatrixd               ;
 		qglLoadMatrixf               = 	logLoadMatrixf               ;
 		qglLoadName                  = 	logLoadName                  ;
+		qgxLoadTexObj                =  logLoadTexObj                ;
 		qglLogicOp                   = 	logLogicOp                   ;
 		qglMap1d                     = 	logMap1d                     ;
 		qglMap1f                     = 	logMap1f                     ;
@@ -3687,7 +3720,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglAreTexturesResident       = dllAreTexturesResident;
 		qglArrayElement              = dllArrayElement;
 		qglBegin                     = dllBegin;
-		qgxLoadTexObj                = dllLoadTexObj;
 		qglBitmap                    = dllBitmap;
 		qglBlendFunc                 = dllBlendFunc;
 		qglCallList                  = dllCallList;
@@ -3824,7 +3856,10 @@ void GLimp_EnableLogging( qboolean enable )
 		qglIndexub                   = 	dllIndexub                   ;
 		qglIndexubv                  = 	dllIndexubv                  ;
 		qglInitNames                 = 	dllInitNames                 ;
+		qgxInitTexObj                =  dllInitTexObj                ;
+		qgxInitTexObjFilterMode      =  dllInitTexObjFilterMode      ;
 		qglInterleavedArrays         = 	dllInterleavedArrays         ;
+		qgxInvalidateTexAll          =  dllInvalidateTexAll          ;
 		qglIsEnabled                 = 	dllIsEnabled                 ;
 		qglIsList                    = 	dllIsList                    ;
 		qglIsTexture                 = 	dllIsTexture                 ;
@@ -3843,6 +3878,7 @@ void GLimp_EnableLogging( qboolean enable )
 		qglLoadMatrixd               = 	dllLoadMatrixd               ;
 		qglLoadMatrixf               = 	dllLoadMatrixf               ;
 		qglLoadName                  = 	dllLoadName                  ;
+		qgxLoadTexObj                =  dllLoadTexObj                ;
 		qglLogicOp                   = 	dllLogicOp                   ;
 		qglMap1d                     = 	dllMap1d                     ;
 		qglMap1f                     = 	dllMap1f                     ;

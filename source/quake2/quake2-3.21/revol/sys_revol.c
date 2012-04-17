@@ -38,7 +38,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "../client/keys.h"
 #include "osk_revol.h"
 #include "Keys_dat.h"
+#ifdef GXIMP
 #include "gxutils.h"
+#endif
 
 
 #define SYS_FIFO_SIZE (256*1024)

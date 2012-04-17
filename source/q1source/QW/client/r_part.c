@@ -28,7 +28,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Support for GX hardware, part 2:
+#ifdef GXQUAKE
 #include "gxutils.h"
+#endif
 // <<< FIX
 
 #define MAX_PARTICLES			2048	// default max # of particles at one

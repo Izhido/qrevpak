@@ -369,7 +369,7 @@ just do everything as it passes with no need to sort
 */
 void R_DrawSequentialPoly (msurface_t *s)
 {
-	gxpoly_t	*p;
+	glpoly_t	*p;
 	float		*v;
 	int			i;
 	texture_t	*t;
@@ -382,30 +382,28 @@ void R_DrawSequentialPoly (msurface_t *s)
 		p = s->polys;
 
 		t = R_TextureAnimation (s->texinfo->texture);
-		GX_Bind (t->gx_texturenum);
-		GX_Begin (GX_TRIANGLEFAN, gxu_cur_vertex_format, p->numverts);
+		GL_Bind (t->gl_texturenum);
+		glBegin (GL_POLYGON);
 		v = p->verts[0];
 		for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 		{
-			GX_Position3f32(v[0], v[1], v[2]);
-			GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
-			GX_TexCoord2f32 (v[3], v[4]);
+			glTexCoord2f (v[3], v[4]);
+			glVertex3fv (v);
 		}
-		GX_End ();
+		glEnd ();
 
-		GX_Bind (lightmap_textures + s->lightmaptexturenum);
-		GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
-		GX_Begin (GX_TRIANGLEFAN, gxu_cur_vertex_format, p->numverts);
+		GL_Bind (lightmap_textures + s->lightmaptexturenum);
+		glEnable (GL_BLEND);
+		glBegin (GL_POLYGON);
 		v = p->verts[0];
 		for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 		{
-			GX_Position3f32(v[0], v[1], v[2]);
-			GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
-			GX_TexCoord2f32 (v[5], v[6]);
+			glTexCoord2f (v[5], v[6]);
+			glVertex3fv (v);
 		}
-		GX_End ();
+		glEnd ();
 
-		GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
+		glDisable (GL_BLEND);
 
 		return;
 	}
@@ -415,7 +413,7 @@ void R_DrawSequentialPoly (msurface_t *s)
 	//
 	if (s->flags & SURF_DRAWTURB)
 	{
-		GX_Bind (s->texinfo->texture->gx_texturenum);
+		GL_Bind (s->texinfo->texture->gl_texturenum);
 		EmitWaterPolys (s);
 		return;
 	}
@@ -425,26 +423,22 @@ void R_DrawSequentialPoly (msurface_t *s)
 	//
 	if (s->flags & SURF_DRAWSKY)
 	{
-		GX_Bind (solidskytexture);
+		GL_Bind (solidskytexture);
 		speedscale = realtime*8;
 		speedscale -= (int)speedscale;
 
 		EmitSkyPolys (s);
 
-		gxu_blend_src_value = GX_BL_SRCALPHA;
-		gxu_blend_dst_value = GX_BL_INVSRCALPHA;
-		GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
-		GX_Bind (alphaskytexture);
+		glEnable (GL_BLEND);
+		glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		GL_Bind (alphaskytexture);
 		speedscale = realtime*16;
 		speedscale -= (int)speedscale;
 		EmitSkyPolys (s);
-		if (gx_lightmap_format == GX_TF_IA4)
-		{
-			gxu_blend_src_value = GX_BL_ZERO;
-			gxu_blend_dst_value = GX_BL_INVSRCCLR;
-		};
+		if (gl_lightmap_format == GL_LUMINANCE)
+			glBlendFunc (GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
 
-		GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
+		glDisable (GL_BLEND);
 	}
 
 	//
@@ -453,13 +447,13 @@ void R_DrawSequentialPoly (msurface_t *s)
 	p = s->polys;
 
 	t = R_TextureAnimation (s->texinfo->texture);
-	GX_Bind (t->gx_texturenum);
-	DrawGXWaterPoly (p);
+	GL_Bind (t->gl_texturenum);
+	DrawGLWaterPoly (p);
 
-	GX_Bind (lightmap_textures + s->lightmaptexturenum);
-	GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
+	GL_Bind (lightmap_textures + s->lightmaptexturenum);
+	glEnable (GL_BLEND);
 	DrawGLWaterPolyLightmap (p);
-	GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
+	glDisable (GL_BLEND);
 }
 #else
 /*
@@ -988,7 +982,6 @@ void R_DrawWaterSurfaces (void)
 	int			i;
 	msurface_t	*s;
 	texture_t	*t;
-	float		a;
 
 	if (r_wateralpha.value == 1.0)
 		return;
@@ -996,20 +989,11 @@ void R_DrawWaterSurfaces (void)
 	//
 	// go back to the world matrix
 	//
-	guMtxCopy(r_world_matrix, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
-	GX_LoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
+    glLoadMatrixf (r_world_matrix);
 
-	GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
-	a = r_wateralpha.value;
-	if(a < 0.0)
-		a = 0.0;
-	if(a > 1.0)
-		a = 1.0;
-	gxu_cur_r = 255;
-	gxu_cur_g = 255;
-	gxu_cur_b = 255;
-	gxu_cur_a = a * 255.0;
-	GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
+	glEnable (GL_BLEND);
+	glColor4f (1,1,1,r_wateralpha.value);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
 	for (i=0 ; i<cl.worldmodel->numtextures ; i++)
 	{
@@ -1023,7 +1007,7 @@ void R_DrawWaterSurfaces (void)
 			continue;
 
 		// set modulate mode explicitly
-		GX_Bind (t->gx_texturenum);
+		GL_Bind (t->gl_texturenum);
 
 		for ( ; s ; s=s->texturechain)
 			R_RenderBrushPoly (s);
@@ -1031,13 +1015,10 @@ void R_DrawWaterSurfaces (void)
 		t->texturechain = NULL;
 	}
 
-	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
-	gxu_cur_r = 255;
-	gxu_cur_g = 255;
-	gxu_cur_b = 255;
-	gxu_cur_a = 255;
-	GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
+	glColor4f (1,1,1,1);
+	glDisable (GL_BLEND);
 }
 #else
 /*

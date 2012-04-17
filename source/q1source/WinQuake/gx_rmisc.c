@@ -309,7 +309,7 @@ void R_TranslatePlayerSkin (int playernum)
 
 
 	// don't mipmap these, because it takes too long
-	GX_Upload8 (translated, paliashdr->skinwidth, paliashdr->skinheight, false, false);
+	GL_Upload8 (translated, paliashdr->skinwidth, paliashdr->skinheight, false, false, true);
 #else
 	scaled_width = gx_max_size.value < 512 ? gx_max_size.value : 512;
 	scaled_height = gx_max_size.value < 256 ? gx_max_size.value : 256;
