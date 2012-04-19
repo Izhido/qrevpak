@@ -20,6 +20,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // r_main.c
 #include "gx_local.h"
 
+extern int gx_tex_allocated;
+
 void R_Clear (void);
 
 viddef_t	vid;
@@ -852,11 +854,12 @@ void R_RenderView (refdef_t *fd)
 
 	if (r_speeds->value)
 	{
-		ri.Con_Printf (PRINT_ALL, "%4i wpoly %4i epoly %i tex %i lmaps\n",
+		ri.Con_Printf (PRINT_ALL, "%4i wpoly %4i epoly %i tex %i lmaps %9i bytes\n",
 			c_brush_polys, 
 			c_alias_polys, 
 			c_visible_textures, 
-			c_visible_lightmaps); 
+			c_visible_lightmaps,
+			gx_tex_allocated); 
 	}
 }
 

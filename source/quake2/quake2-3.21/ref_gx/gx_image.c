@@ -1466,10 +1466,11 @@ qboolean GL_Upload32 (unsigned *data, int width, int height,  qboolean mipmap)
 	if (scaled_height > 256)
 		scaled_height = 256;
 
-	if (scaled_width < 1)
-		scaled_width = 1;
-	if (scaled_height < 1)
-		scaled_height = 1;
+	// This is required in order to make small textures compatible with GX hardware:
+	if (scaled_width < 4)
+		scaled_width = 4;
+	if (scaled_height < 4)
+		scaled_height = 4;
 
 	upload_width = scaled_width;
 	upload_height = scaled_height;
@@ -1522,19 +1523,11 @@ qboolean GL_Upload32 (unsigned *data, int width, int height,  qboolean mipmap)
 			{
 				uploaded_paletted = true;
 				GL_BuildPalettedTexture( paletted_texture, ( unsigned char * ) data, scaled_width, scaled_height );
-				qglTexImage2D( GL_TEXTURE_2D,
-							  0,
-							  GL_COLOR_INDEX8_EXT,
-							  scaled_width,
-							  scaled_height,
-							  0,
-							  GL_COLOR_INDEX,
-							  GL_UNSIGNED_BYTE,
-							  paletted_texture );
+				GX_LoadAndBind(paletted_texture, scaled_width * scaled_height, scaled_width, scaled_height, GX_TF_CI8);
 			}
 			else
 			{
-				qglTexImage2D (GL_TEXTURE_2D, 0, comp, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+				GX_LoadAndBind(data, scaled_width * scaled_height * 4, scaled_width, scaled_height, GX_TF_RGBA8);
 			}
 			goto done;
 		}
@@ -1549,24 +1542,16 @@ qboolean GL_Upload32 (unsigned *data, int width, int height,  qboolean mipmap)
 	{
 		uploaded_paletted = true;
 		GL_BuildPalettedTexture( paletted_texture, ( unsigned char * ) scaled, scaled_width, scaled_height );
-		qglTexImage2D( GL_TEXTURE_2D,
-					  0,
-					  GL_COLOR_INDEX8_EXT,
-					  scaled_width,
-					  scaled_height,
-					  0,
-					  GL_COLOR_INDEX,
-					  GL_UNSIGNED_BYTE,
-					  paletted_texture );
+		GX_LoadAndBind(paletted_texture, scaled_width * scaled_height, scaled_width, scaled_height, GX_TF_CI8);
 	}
 	else
 	{
-		qglTexImage2D( GL_TEXTURE_2D, 0, comp, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaled );
+		GX_LoadAndBind(scaled, scaled_width * scaled_height * sizeof(unsigned), scaled_width, scaled_height, GX_TF_RGBA8);
 	}
 
 	if (mipmap)
 	{
-		int		miplevel;
+		/*int		miplevel;
 
 		miplevel = 0;
 		while (scaled_width > 1 || scaled_height > 1)
@@ -1597,7 +1582,7 @@ qboolean GL_Upload32 (unsigned *data, int width, int height,  qboolean mipmap)
 			{
 				qglTexImage2D (GL_TEXTURE_2D, miplevel, comp, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaled);
 			}
-		}
+		}*/
 	}
 done: ;
 #endif
@@ -1644,7 +1629,7 @@ static qboolean IsPowerOf2( int value )
 
 qboolean GL_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboolean is_sky )
 {
-	unsigned*	trans = Sys_BigStackAlloc(512*256 * sizeof(unsigned),"GL_Upload8");
+	unsigned*	trans;
 	int			i, s;
 	int			p;
 	qboolean	ret;
@@ -1658,21 +1643,14 @@ qboolean GL_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboole
 		 gl_ext_palettedtexture->value && 
 		 is_sky )
 	{
-		qglTexImage2D( GL_TEXTURE_2D,
-					  0,
-					  GL_COLOR_INDEX8_EXT,
-					  width,
-					  height,
-					  0,
-					  GL_COLOR_INDEX,
-					  GL_UNSIGNED_BYTE,
-					  data );
+		GX_LoadAndBind(data, width * height, width, height, GX_TF_CI8);
 
 		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_max);
 		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
 	}
 	else
 	{
+		trans = Sys_BigStackAlloc(512*256 * sizeof(unsigned),"GL_Upload8");
 		for (i=0 ; i<s ; i++)
 		{
 			p = data[i];
@@ -1703,8 +1681,6 @@ qboolean GL_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboole
 		Sys_BigStackFree(512*256 * sizeof(unsigned),"GL_Upload8");
 		return ret;
 	};
-
-	Sys_BigStackFree(512*256 * sizeof(unsigned),"GL_Upload8");
 }
 
 
@@ -1778,10 +1754,11 @@ nonscrap:
 		image->scrap = false;
 		image->texnum = TEXNUM_IMAGES + (image - gxtextures);
 		GX_Bind(image->texnum);
+		// Mipmaps disabled; pointless for this engine in GX hardware:
 		if (bits == 8)
-			image->has_alpha = GL_Upload8 (pic, width, height, (image->type != it_pic && image->type != it_sky), image->type == it_sky );
+			image->has_alpha = GL_Upload8 (pic, width, height, false/*(image->type != it_pic && image->type != it_sky)*/, image->type == it_sky );
 		else
-			image->has_alpha = GL_Upload32 ((unsigned *)pic, width, height, (image->type != it_pic && image->type != it_sky) );
+			image->has_alpha = GL_Upload32 ((unsigned *)pic, width, height, false/*(image->type != it_pic && image->type != it_sky)*/ );
 		image->upload_width = upload_width;		// after power of 2 and scales
 		image->upload_height = upload_height;
 		image->paletted = uploaded_paletted;

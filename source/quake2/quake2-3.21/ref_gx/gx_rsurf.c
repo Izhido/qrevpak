@@ -39,7 +39,9 @@ msurface_t	*r_alpha_surfaces;
 int		c_visible_lightmaps;
 int		c_visible_textures;
 
-#define GL_LIGHTMAP_FORMAT GL_RGBA
+#define GX_LIGHTMAP_FORMAT GX_TF_RGBA8
+
+#define GX_LIGHTMAP_SIZE 4
 
 typedef struct
 {
@@ -555,7 +557,7 @@ dynamic:
 			qglTexSubImage2D( GL_TEXTURE_2D, 0,
 							  fa->light_s, fa->light_t, 
 							  smax, tmax, 
-							  GL_LIGHTMAP_FORMAT, 
+							  GX_LIGHTMAP_FORMAT, 
 							  GL_UNSIGNED_BYTE, temp );
 
 			fa->lightmapchain = gl_lms.lightmap_surfaces[fa->lightmaptexturenum];
@@ -750,7 +752,7 @@ dynamic:
 			qglTexSubImage2D( GL_TEXTURE_2D, 0,
 							  surf->light_s, surf->light_t, 
 							  smax, tmax, 
-							  GL_LIGHTMAP_FORMAT, 
+							  GX_LIGHTMAP_FORMAT, 
 							  GL_UNSIGNED_BYTE, temp );
 
 			Sys_BigStackFree(128*128 * sizeof(unsigned), "GL_RenderLightmappedPoly");
@@ -769,7 +771,7 @@ dynamic:
 			qglTexSubImage2D( GL_TEXTURE_2D, 0,
 							  surf->light_s, surf->light_t, 
 							  smax, tmax, 
-							  GL_LIGHTMAP_FORMAT, 
+							  GX_LIGHTMAP_FORMAT, 
 							  GL_UNSIGNED_BYTE, temp );
 
 		}
@@ -1393,20 +1395,13 @@ static void LM_UploadBlock( qboolean dynamic )
 						  0,
 						  0, 0,
 						  BLOCK_WIDTH, height,
-						  GL_LIGHTMAP_FORMAT,
+						  GX_LIGHTMAP_FORMAT,
 						  GL_UNSIGNED_BYTE,
 						  gl_lms.lightmap_buffer );
 	}
 	else
 	{
-		qglTexImage2D( GL_TEXTURE_2D, 
-					   0, 
-					   gl_lms.internal_format,
-					   BLOCK_WIDTH, BLOCK_HEIGHT, 
-					   0, 
-					   GL_LIGHTMAP_FORMAT, 
-					   GL_UNSIGNED_BYTE, 
-					   gl_lms.lightmap_buffer );
+		GX_LoadAndBind(gl_lms.lightmap_buffer, BLOCK_WIDTH * BLOCK_HEIGHT * GX_LIGHTMAP_SIZE, BLOCK_WIDTH, BLOCK_HEIGHT, GX_LIGHTMAP_FORMAT);
 		if ( ++gl_lms.current_lightmap_texture == MAX_LIGHTMAPS )
 			ri.Sys_Error( ERR_DROP, "LM_UploadBlock() - MAX_LIGHTMAPS exceeded\n" );
 	}
@@ -1645,14 +1640,7 @@ void GL_BeginBuildingLightmaps (model_t *m)
 	GX_Bind( gl_state.lightmap_textures + 0 );
 	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	qglTexImage2D( GL_TEXTURE_2D, 
-				   0, 
-				   gl_lms.internal_format,
-				   BLOCK_WIDTH, BLOCK_HEIGHT, 
-				   0, 
-				   GL_LIGHTMAP_FORMAT, 
-				   GL_UNSIGNED_BYTE, 
-				   dummy );
+	GX_LoadAndBind(dummy, BLOCK_WIDTH * BLOCK_HEIGHT * GX_LIGHTMAP_SIZE, BLOCK_WIDTH, BLOCK_HEIGHT, GX_LIGHTMAP_FORMAT);
 
 	Sys_BigStackFree(128*128 * sizeof(unsigned), "GL_BeginBuildingLightmaps");
 }

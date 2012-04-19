@@ -363,7 +363,7 @@ void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data
 			}
 		}
 
-		GX_LoadAndBind(image32, 256 * 256 * sizeof(unsigned int), 256, 256, GX_TF_RGBA8);
+		GX_LoadAndBind(image32, 256 * 256 * sizeof(unsigned), 256, 256, GX_TF_RGBA8);
 
 		Sys_BigStackFree(256*256 * sizeof(unsigned), "Draw_StretchRaw");
 	}
