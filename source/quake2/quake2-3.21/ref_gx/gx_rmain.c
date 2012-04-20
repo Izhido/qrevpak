@@ -20,6 +20,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // r_main.c
 #include "gx_local.h"
 
+#include "gxutils.h"
+
 extern int gx_tex_allocated;
 
 void R_Clear (void);
@@ -239,7 +241,7 @@ void R_DrawSpriteModel (entity_t *e)
 	else
 		qglDisable( GL_ALPHA_TEST );
 
-	qglBegin (GL_QUADS);
+	qgxBegin (GX_QUADS, gxu_cur_vertex_format, 4);
 
 	qglTexCoord2f (0, 1);
 	VectorMA (e->origin, -frame->origin_y, up, point);
@@ -295,13 +297,13 @@ void R_DrawNullModel (void)
 	qglDisable (GL_TEXTURE_2D);
 	qglColor3fv (shadelight);
 
-	qglBegin (GL_TRIANGLE_FAN);
+	qgxBegin (GX_TRIANGLEFAN, GX_VTXFMT0, 5);
 	qglVertex3f (0, 0, -16);
 	for (i=0 ; i<=4 ; i++)
 		qglVertex3f (16*cos(i*M_PI/2), 16*sin(i*M_PI/2), 0);
 	qglEnd ();
 
-	qglBegin (GL_TRIANGLE_FAN);
+	qgxBegin (GX_TRIANGLEFAN, GX_VTXFMT0, 5);
 	qglVertex3f (0, 0, 16);
 	for (i=4 ; i>=0 ; i--)
 		qglVertex3f (16*cos(i*M_PI/2), 16*sin(i*M_PI/2), 0);
@@ -420,7 +422,7 @@ void GL_DrawParticles( int num_particles, const particle_t particles[], const un
 	qglDepthMask( GL_FALSE );		// no z buffering
 	qglEnable( GL_BLEND );
 	GL_TexEnv( GL_MODULATE );
-	qglBegin( GL_TRIANGLES );
+	qgxBegin (GX_TRIANGLEFAN, gxu_cur_vertex_format, num_particles * 3);
 
 	VectorScale (vup, 1.5, up);
 	VectorScale (vright, 1.5, right);
@@ -482,7 +484,7 @@ void R_DrawParticles (void)
 
 		qglPointSize( gl_particle_size->value );
 
-		qglBegin( GL_POINTS );
+		qgxBegin (GX_POINTS, GX_VTXFMT0, r_newrefdef.num_particles);
 		for ( i = 0, p = r_newrefdef.particles; i < r_newrefdef.num_particles; i++, p++ )
 		{
 			*(int *)color = d_8to24table[p->color];
@@ -531,7 +533,7 @@ void R_PolyBlend (void)
 
 	qglColor4fv (v_blend);
 
-	qglBegin (GL_QUADS);
+	qgxBegin (GX_QUADS, GX_VTXFMT0, 4);
 
 	qglVertex3f (10, 100, 100);
 	qglVertex3f (10, -100, 100);
@@ -906,7 +908,7 @@ static void GL_DrawStereoPattern( void )
 
 	for ( i = 0; i < 20; i++ )
 	{
-		qglBegin( GL_LINES );
+		qgxBegin (GX_LINES, GX_VTXFMT0, 32);
 			GL_DrawColoredStereoLinePair( 1, 0, 0, 0 );
 			GL_DrawColoredStereoLinePair( 1, 0, 0, 2 );
 			GL_DrawColoredStereoLinePair( 1, 0, 0, 4 );
@@ -1642,7 +1644,7 @@ void R_DrawBeam( entity_t *e )
 
 	qglColor4f( r, g, b, e->alpha );
 
-	qglBegin( GL_TRIANGLE_STRIP );
+	qgxBegin (GX_TRIANGLESTRIP, GX_VTXFMT0, NUM_BEAM_SEGS * 4);
 	for ( i = 0; i < NUM_BEAM_SEGS; i++ )
 	{
 		qglVertex3fv( start_points[i] );

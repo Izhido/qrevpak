@@ -118,3 +118,8 @@ void GXU_EndFrame(void* framebuffer)
 	GX_SetAlphaUpdate(GX_TRUE);
 	VIDEO_SetNextFramebuffer(framebuffer);
 }
+
+void GXU_CallGXEnd(void)
+{
+	GX_End();
+}

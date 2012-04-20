@@ -211,8 +211,6 @@ void glDisable(GLenum cap);
 
 void glColor4f(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
 
-void glBegin(GLenum mode);
-
 void glVertex2f(GLfloat x, GLfloat y);
 
 void glEnd(void);
@@ -298,8 +296,6 @@ void glAlphaFunc(GLenum func, GLclampf ref);
 GLboolean glAreTexturesResident(GLsizei n, const GLuint *textures, GLboolean *residences);
 
 void glArrayElement(GLint i);
-
-void glBegin(GLenum mode);
 
 void glBitmap(GLsizei width, GLsizei height, GLfloat xorig, GLfloat yorig, GLfloat xmove, GLfloat ymove, const GLubyte *bitmap);
 

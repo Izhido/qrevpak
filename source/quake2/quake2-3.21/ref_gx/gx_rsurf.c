@@ -22,6 +22,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "gx_local.h"
 
+#include "gxutils.h"
+
 static vec3_t	modelorg;		// relative to viewpoint
 
 msurface_t	*r_alpha_surfaces;
@@ -184,7 +186,7 @@ void DrawGLPoly (glpoly_t *p)
 	int		i;
 	float	*v;
 
-	qglBegin (GL_POLYGON);
+	qgxBegin (GX_TRIANGLEFAN, gxu_cur_vertex_format, p->numverts);
 	v = p->verts[0];
 	for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 	{
@@ -214,7 +216,7 @@ void DrawGLFlowingPoly (msurface_t *fa)
 	if(scroll == 0.0)
 		scroll = -64.0;
 
-	qglBegin (GL_POLYGON);
+	qgxBegin (GX_TRIANGLEFAN, gxu_cur_vertex_format, p->numverts);
 	v = p->verts[0];
 	for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 	{
@@ -252,7 +254,7 @@ void R_DrawTriangleOutlines (void)
 			{
 				for (j=2 ; j<p->numverts ; j++ )
 				{
-					qglBegin (GL_LINE_STRIP);
+					qgxBegin (GX_LINESTRIP, GX_VTXFMT0, 4);
 					qglVertex3fv (p->verts[0]);
 					qglVertex3fv (p->verts[j-1]);
 					qglVertex3fv (p->verts[j]);
@@ -279,7 +281,7 @@ void DrawGLPolyChain( glpoly_t *p, float soffset, float toffset )
 			float *v;
 			int j;
 
-			qglBegin (GL_POLYGON);
+			qgxBegin (GX_TRIANGLEFAN, gxu_cur_vertex_format, p->numverts);
 			v = p->verts[0];
 			for (j=0 ; j<p->numverts ; j++, v+= VERTEXSIZE)
 			{
@@ -296,7 +298,7 @@ void DrawGLPolyChain( glpoly_t *p, float soffset, float toffset )
 			float *v;
 			int j;
 
-			qglBegin (GL_POLYGON);
+			qgxBegin (GX_TRIANGLEFAN, gxu_cur_vertex_format, p->numverts);
 			v = p->verts[0];
 			for (j=0 ; j<p->numverts ; j++, v+= VERTEXSIZE)
 			{
@@ -794,7 +796,7 @@ dynamic:
 			for ( p = surf->polys; p; p = p->chain )
 			{
 				v = p->verts[0];
-				qglBegin (GL_POLYGON);
+				qgxBegin (GX_TRIANGLEFAN, gxu_cur_vertex_format, nv);
 				for (i=0 ; i< nv; i++, v+= VERTEXSIZE)
 				{
 					qglMTexCoord2fSGIS( GL_TEXTURE0, (v[3]+scroll), v[4]);
@@ -809,7 +811,7 @@ dynamic:
 			for ( p = surf->polys; p; p = p->chain )
 			{
 				v = p->verts[0];
-				qglBegin (GL_POLYGON);
+				qgxBegin (GX_TRIANGLEFAN, gxu_cur_vertex_format, nv);
 				for (i=0 ; i< nv; i++, v+= VERTEXSIZE)
 				{
 					qglMTexCoord2fSGIS( GL_TEXTURE0, v[3], v[4]);
@@ -842,7 +844,7 @@ dynamic:
 			for ( p = surf->polys; p; p = p->chain )
 			{
 				v = p->verts[0];
-				qglBegin (GL_POLYGON);
+				qgxBegin (GX_TRIANGLEFAN, gxu_cur_vertex_format, nv);
 				for (i=0 ; i< nv; i++, v+= VERTEXSIZE)
 				{
 					qglMTexCoord2fSGIS( GL_TEXTURE0, (v[3]+scroll), v[4]);
@@ -859,7 +861,7 @@ dynamic:
 			for ( p = surf->polys; p; p = p->chain )
 			{
 				v = p->verts[0];
-				qglBegin (GL_POLYGON);
+				qgxBegin (GX_TRIANGLEFAN, gxu_cur_vertex_format, nv);
 				for (i=0 ; i< nv; i++, v+= VERTEXSIZE)
 				{
 					qglMTexCoord2fSGIS( GL_TEXTURE0, v[3], v[4]);

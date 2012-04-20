@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "gx_local.h"
 
+#include "gxutils.h"
+
 extern	model_t	*loadmodel;
 
 char	skyname[MAX_QPATH];
@@ -233,7 +235,7 @@ void EmitWaterPolys (msurface_t *fa)
 	{
 		p = bp;
 
-		qglBegin (GL_TRIANGLE_FAN);
+		qgxBegin (GX_TRIANGLEFAN, gxu_cur_vertex_format, p->numverts);
 		for (i=0,v=p->verts[0] ; i<p->numverts ; i++, v+=VERTEXSIZE)
 		{
 			os = v[3];
@@ -607,7 +609,7 @@ qglRotatef (r_newrefdef.time * skyrotate, skyaxis[0], skyaxis[1], skyaxis[2]);
 
 		GX_Bind (sky_images[skytexorder[i]]->texnum);
 
-		qglBegin (GL_QUADS);
+		qgxBegin (GX_TRIANGLEFAN, gxu_cur_vertex_format, 4);
 		MakeSkyVec (skymins[0][i], skymins[1][i], i);
 		MakeSkyVec (skymins[0][i], skymaxs[1][i], i);
 		MakeSkyVec (skymaxs[0][i], skymaxs[1][i], i);

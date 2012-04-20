@@ -52,7 +52,7 @@ void R_RenderDlight (dlight_t *light)
 	}
 #endif
 
-	qglBegin (GL_TRIANGLE_FAN);
+	qgxBegin (GX_TRIANGLEFAN, GX_VTXFMT0, 18);
 	qglColor3f (light->color[0]*0.2, light->color[1]*0.2, light->color[2]*0.2);
 	for (i=0 ; i<3 ; i++)
 		v[i] = light->origin[i] - vpn[i]*rad;

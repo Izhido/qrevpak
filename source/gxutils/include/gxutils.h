@@ -57,4 +57,6 @@ void GXU_Init(GXRModeObj* rmode, void* framebuffer);
 
 void GXU_EndFrame(void* framebuffer);
 
+void GXU_CallGXEnd(void);
+
 #endif

@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "gx_local.h"
 
+#include "gxutils.h"
+
 /*
 =============================================================
 
@@ -191,19 +193,19 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 			count = *order++;
 			if (!count)
 				break;		// done
-			if (count < 0)
-			{
-				count = -count;
-				qglBegin (GL_TRIANGLE_FAN);
-			}
-			else
-			{
-				qglBegin (GL_TRIANGLE_STRIP);
-			}
 
 			// PMM - added double damage shell
 			if ( currententity->flags & ( RF_SHELL_RED | RF_SHELL_GREEN | RF_SHELL_BLUE | RF_SHELL_DOUBLE | RF_SHELL_HALF_DAM) )
 			{
+				if (count < 0)
+				{
+					count = -count;
+					qgxBegin (GX_TRIANGLEFAN, GX_VTXFMT0, count);
+				}
+				else
+				{
+					qgxBegin (GX_TRIANGLESTRIP, GX_VTXFMT0, count);
+				};
 				do
 				{
 					index_xyz = order[2];
@@ -215,6 +217,15 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 			}
 			else
 			{
+				if (count < 0)
+				{
+					count = -count;
+					qgxBegin (GX_TRIANGLEFAN, gxu_cur_vertex_format, count);
+				}
+				else
+				{
+					qgxBegin (GX_TRIANGLESTRIP, gxu_cur_vertex_format, count);
+				};
 				do
 				{
 					// texture coordinates come from the draw list
@@ -245,18 +256,18 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 			count = *order++;
 			if (!count)
 				break;		// done
-			if (count < 0)
-			{
-				count = -count;
-				qglBegin (GL_TRIANGLE_FAN);
-			}
-			else
-			{
-				qglBegin (GL_TRIANGLE_STRIP);
-			}
 
 			if ( currententity->flags & ( RF_SHELL_RED | RF_SHELL_GREEN | RF_SHELL_BLUE ) )
 			{
+				if (count < 0)
+				{
+					count = -count;
+					qgxBegin (GX_TRIANGLEFAN, GX_VTXFMT0, count);
+				}
+				else
+				{
+					qgxBegin (GX_TRIANGLESTRIP, GX_VTXFMT0, count);
+				};
 				do
 				{
 					index_xyz = order[2];
@@ -269,6 +280,15 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 			}
 			else
 			{
+				if (count < 0)
+				{
+					count = -count;
+					qgxBegin (GX_TRIANGLEFAN, gxu_cur_vertex_format, count);
+				}
+				else
+				{
+					qgxBegin (GX_TRIANGLESTRIP, gxu_cur_vertex_format, count);
+				};
 				do
 				{
 					// texture coordinates come from the draw list
@@ -333,10 +353,10 @@ void GL_DrawAliasShadow (dmdl_t *paliashdr, int posenum)
 		if (count < 0)
 		{
 			count = -count;
-			qglBegin (GL_TRIANGLE_FAN);
+			qgxBegin (GX_TRIANGLEFAN, GX_VTXFMT0, count);
 		}
 		else
-			qglBegin (GL_TRIANGLE_STRIP);
+			qgxBegin (GX_TRIANGLESTRIP, GX_VTXFMT0, count);
 
 		do
 		{

@@ -999,9 +999,9 @@ void Draw_Character (int x, int y, int num)
 
 	GX_Bind (char_texture);
 
-	GX_Begin (GX_QUADS,gxu_cur_vertex_format, 4);
+	GX_Begin (GX_QUADS, gxu_cur_vertex_format, 4);
 	GX_Position3f32(x, y, 0);
-	GX_Color4u8(gxu_cur_r,gxu_cur_g,gxu_cur_b, gxu_cur_a);
+	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (fcol, frow);
 	GX_Position3f32(x+8, y, 0);
 	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
