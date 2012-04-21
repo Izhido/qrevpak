@@ -209,14 +209,6 @@ void glEnable(GLenum cap);
 
 void glDisable(GLenum cap);
 
-void glColor4f(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
-
-void glVertex2f(GLfloat x, GLfloat y);
-
-void glEnd(void);
-
-void glColor3f(GLfloat red, GLfloat green, GLfloat blue);
-
 void glTexCoord2f(GLfloat s, GLfloat t);
 
 void glDrawBuffer(GLenum mode);
@@ -240,12 +232,6 @@ void glScalef(GLfloat x, GLfloat y, GLfloat z);
 void glCullFace(GLenum mode);
 
 void glGetFloatv(GLenum pname, GLfloat* params);
-
-void glColor4fv(const GLfloat* v);
-
-void glVertex3f(GLfloat x, GLfloat y, GLfloat z);
-
-void glVertex3fv(const GLfloat* v);
 
 void glPushMatrix(void);
 
@@ -281,13 +267,7 @@ void glAlphaFunc(GLenum func, GLclampf ref);
 
 void glPolygonMode(GLenum face, GLenum mode);
 
-void glColor3ubv(const GLubyte* v);
-
-void glColor4ubv(const GLubyte* v);
-
 GLboolean glIsEnabled(GLenum cap);
-
-void glColor4ub(GLubyte red, GLubyte green, GLubyte blue, GLubyte alpha); 
 
 void glAccum(GLenum op, GLfloat value);
 
@@ -318,70 +298,6 @@ void glClearIndex(GLfloat c);
 void glClearStencil(GLint s);
 
 void glClipPlane(GLenum plane, const GLdouble *equation);
-
-void glColor3b(GLbyte red, GLbyte green, GLbyte blue);
-
-void glColor3bv(const GLbyte *v);
-
-void glColor3d(GLdouble red, GLdouble green, GLdouble blue);
-
-void glColor3dv(const GLdouble *v);
-
-void glColor3f(GLfloat red, GLfloat green, GLfloat blue);
-
-void glColor3fv(const GLfloat *v);
-
-void glColor3i(GLint red, GLint green, GLint blue);
-
-void glColor3iv(const GLint *v);
-
-void glColor3s(GLshort red, GLshort green, GLshort blue);
-
-void glColor3sv(const GLshort *v);
-
-void glColor3ub(GLubyte red, GLubyte green, GLubyte blue);
-
-void glColor3ubv(const GLubyte *v);
-
-void glColor3ui(GLuint red, GLuint green, GLuint blue);
-
-void glColor3uiv(const GLuint *v);
-
-void glColor3us(GLushort red, GLushort green, GLushort blue);
-
-void glColor3usv(const GLushort *v);
-
-void glColor4b(GLbyte red, GLbyte green, GLbyte blue, GLbyte alpha);
-
-void glColor4bv(const GLbyte *v);
-
-void glColor4d(GLdouble red, GLdouble green, GLdouble blue, GLdouble alpha);
-
-void glColor4dv(const GLdouble *v);
-
-void glColor4f(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
-
-void glColor4fv(const GLfloat *v);
-
-void glColor4i(GLint red, GLint green, GLint blue, GLint alpha);
-
-void glColor4iv(const GLint *v);
-
-void glColor4s(GLshort red, GLshort green, GLshort blue, GLshort alpha);
-
-void glColor4sv(const GLshort *v);
-
-void glColor4ub(GLubyte red, GLubyte green, GLubyte blue, GLubyte alpha);
-
-void glColor4ubv(const GLubyte *v);
-
-void glColor4ui(GLuint red, GLuint green, GLuint blue, GLuint alpha);
-
-void glColor4uiv(const GLuint *v);
-
-void glColor4us(GLushort red, GLushort green, GLushort blue, GLushort alpha);
-
-void glColor4usv(const GLushort *v);
 
 void glColorMask(GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha);
 
@@ -432,8 +348,6 @@ void glEdgeFlagv(const GLboolean *flag);
 void glEnable(GLenum cap);
 
 void glEnableClientState(GLenum array);
-
-void glEnd(void);
 
 void glEndList(void);
 
@@ -900,54 +814,6 @@ void glTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, G
 void glTranslated(GLdouble x, GLdouble y, GLdouble z);
 
 void glTranslatef(GLfloat x, GLfloat y, GLfloat z);
-
-void glVertex2d(GLdouble x, GLdouble y);
-
-void glVertex2dv(const GLdouble *v);
-
-void glVertex2f(GLfloat x, GLfloat y);
-
-void glVertex2fv(const GLfloat *v);
-
-void glVertex2i(GLint x, GLint y);
-
-void glVertex2iv(const GLint *v);
-
-void glVertex2s(GLshort x, GLshort y);
-
-void glVertex2sv(const GLshort *v);
-
-void glVertex3d(GLdouble x, GLdouble y, GLdouble z);
-
-void glVertex3dv(const GLdouble *v);
-
-void glVertex3f(GLfloat x, GLfloat y, GLfloat z);
-
-void glVertex3fv(const GLfloat *v);
-
-void glVertex3i(GLint x, GLint y, GLint z);
-
-void glVertex3iv(const GLint *v);
-
-void glVertex3s(GLshort x, GLshort y, GLshort z);
-
-void glVertex3sv(const GLshort *v);
-
-void glVertex4d(GLdouble x, GLdouble y, GLdouble z, GLdouble w);
-
-void glVertex4dv(const GLdouble *v);
-
-void glVertex4f(GLfloat x, GLfloat y, GLfloat z, GLfloat w);
-
-void glVertex4fv(const GLfloat *v);
-
-void glVertex4i(GLint x, GLint y, GLint z, GLint w);
-
-void glVertex4iv(const GLint *v);
-
-void glVertex4s(GLshort x, GLshort y, GLshort z, GLshort w);
-
-void glVertex4sv(const GLshort *v);
 
 void glVertexPointer(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer);
 

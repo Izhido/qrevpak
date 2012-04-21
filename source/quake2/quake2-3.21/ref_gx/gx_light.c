@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "gx_local.h"
 
+#include "gxutils.h"
+
 int	r_dlightframecount;
 
 #define	DLIGHT_CUTOFF	64
@@ -53,20 +55,24 @@ void R_RenderDlight (dlight_t *light)
 #endif
 
 	qgxBegin (GX_TRIANGLEFAN, GX_VTXFMT0, 18);
-	qglColor3f (light->color[0]*0.2, light->color[1]*0.2, light->color[2]*0.2);
 	for (i=0 ; i<3 ; i++)
 		v[i] = light->origin[i] - vpn[i]*rad;
-	qglVertex3fv (v);
-	qglColor3f (0,0,0);
+	qgxPosition3f32 (v[0], v[1], v[2]);
+	qgxColor4u8 (light->color[0]*51.2, light->color[1]*51.2, light->color[2]*51.2, 255);
+	gxu_cur_r = 0;
+	gxu_cur_g = 0;
+	gxu_cur_b = 0;
+	gxu_cur_a = 255;
 	for (i=16 ; i>=0 ; i--)
 	{
 		a = i/16.0 * M_PI*2;
 		for (j=0 ; j<3 ; j++)
 			v[j] = light->origin[j] + vright[j]*cos(a)*rad
 				+ vup[j]*sin(a)*rad;
-		qglVertex3fv (v);
+		qgxPosition3f32 (v[0], v[1], v[2]);
+		qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	}
-	qglEnd ();
+	qgxEnd ();
 }
 
 /*
@@ -94,7 +100,10 @@ void R_RenderDlights (void)
 	for (i=0 ; i<r_newrefdef.num_dlights ; i++, l++)
 		R_RenderDlight (l);
 
-	qglColor3f (1,1,1);
+	gxu_cur_r = 255;
+	gxu_cur_g = 255;
+	gxu_cur_b = 255;
+	gxu_cur_a = 255;
 	qglDisable (GL_BLEND);
 	qglEnable (GL_TEXTURE_2D);
 	qglBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

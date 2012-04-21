@@ -119,6 +119,16 @@ void GXU_EndFrame(void* framebuffer)
 	VIDEO_SetNextFramebuffer(framebuffer);
 }
 
+void GXU_CallGXColor4u8(u8 r,u8 g,u8 b,u8 a)
+{
+	GX_Color4u8(r, g, b, a);
+}
+
+void GXU_CallGXPosition3f32(f32 x, f32 y, f32 z)
+{
+	GX_Position3f32(x, y, z);
+}
+
 void GXU_CallGXEnd(void)
 {
 	GX_End();

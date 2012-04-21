@@ -257,9 +257,10 @@ void EmitWaterPolys (msurface_t *fa)
 			t *= (1.0/64);
 
 			qglTexCoord2f (s, t);
-			qglVertex3fv (v);
+			qgxPosition3f32 (v[0], v[1], v[2]);
+			qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 		}
-		qglEnd ();
+		qgxEnd ();
 	}
 }
 
@@ -560,7 +561,8 @@ void MakeSkyVec (float s, float t, int axis)
 
 	t = 1.0 - t;
 	qglTexCoord2f (s, t);
-	qglVertex3fv (v);
+	qgxPosition3f32 (v[0], v[1], v[2]);
+	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 }
 
 /*
@@ -614,7 +616,7 @@ qglRotatef (r_newrefdef.time * skyrotate, skyaxis[0], skyaxis[1], skyaxis[2]);
 		MakeSkyVec (skymins[0][i], skymaxs[1][i], i);
 		MakeSkyVec (skymaxs[0][i], skymaxs[1][i], i);
 		MakeSkyVec (skymaxs[0][i], skymins[1][i], i);
-		qglEnd ();
+		qgxEnd ();
 	}
 qglPopMatrix ();
 #if 0

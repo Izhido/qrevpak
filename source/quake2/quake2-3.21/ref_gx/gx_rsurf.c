@@ -191,9 +191,10 @@ void DrawGLPoly (glpoly_t *p)
 	for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 	{
 		qglTexCoord2f (v[3], v[4]);
-		qglVertex3fv (v);
+		qgxPosition3f32 (v[0], v[1], v[2]);
+		qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	}
-	qglEnd ();
+	qgxEnd ();
 }
 
 //============
@@ -221,9 +222,10 @@ void DrawGLFlowingPoly (msurface_t *fa)
 	for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 	{
 		qglTexCoord2f ((v[3] + scroll), v[4]);
-		qglVertex3fv (v);
+		qgxPosition3f32 (v[0], v[1], v[2]);
+		qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	}
-	qglEnd ();
+	qgxEnd ();
 }
 //PGM
 //============
@@ -241,7 +243,10 @@ void R_DrawTriangleOutlines (void)
 
 	qglDisable (GL_TEXTURE_2D);
 	qglDisable (GL_DEPTH_TEST);
-	qglColor4f (1,1,1,1);
+	gxu_cur_r = 255;
+	gxu_cur_g = 255;
+	gxu_cur_b = 255;
+	gxu_cur_a = 255;
 
 	for (i=0 ; i<MAX_LIGHTMAPS ; i++)
 	{
@@ -255,11 +260,15 @@ void R_DrawTriangleOutlines (void)
 				for (j=2 ; j<p->numverts ; j++ )
 				{
 					qgxBegin (GX_LINESTRIP, GX_VTXFMT0, 4);
-					qglVertex3fv (p->verts[0]);
-					qglVertex3fv (p->verts[j-1]);
-					qglVertex3fv (p->verts[j]);
-					qglVertex3fv (p->verts[0]);
-					qglEnd ();
+					qgxPosition3f32 (p->verts[0][0], p->verts[0][1], p->verts[0][2]);
+					qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
+					qgxPosition3f32 (p->verts[j-1][0], p->verts[j-1][1], p->verts[j-1][2]);
+					qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
+					qgxPosition3f32 (p->verts[j][0], p->verts[j][1], p->verts[j][2]);
+					qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
+					qgxPosition3f32 (p->verts[0][0], p->verts[0][1], p->verts[0][2]);
+					qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
+					qgxEnd ();
 				}
 			}
 		}
@@ -286,9 +295,10 @@ void DrawGLPolyChain( glpoly_t *p, float soffset, float toffset )
 			for (j=0 ; j<p->numverts ; j++, v+= VERTEXSIZE)
 			{
 				qglTexCoord2f (v[5], v[6] );
-				qglVertex3fv (v);
+				qgxPosition3f32 (v[0], v[1], v[2]);
+				qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 			}
-			qglEnd ();
+			qgxEnd ();
 		}
 	}
 	else
@@ -303,9 +313,10 @@ void DrawGLPolyChain( glpoly_t *p, float soffset, float toffset )
 			for (j=0 ; j<p->numverts ; j++, v+= VERTEXSIZE)
 			{
 				qglTexCoord2f (v[5] - soffset, v[6] - toffset );
-				qglVertex3fv (v);
+				qgxPosition3f32 (v[0], v[1], v[2]);
+				qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 			}
-			qglEnd ();
+			qgxEnd ();
 		}
 	}
 }
@@ -494,10 +505,10 @@ void R_RenderBrushPoly (msurface_t *fa)
 
 		// warp texture, no lightmaps
 		GL_TexEnv( GL_MODULATE );
-		qglColor4f( gl_state.inverse_intensity, 
-			        gl_state.inverse_intensity,
-					gl_state.inverse_intensity,
-					1.0F );
+		gxu_cur_r = gl_state.inverse_intensity*255;
+		gxu_cur_g = gl_state.inverse_intensity*255;
+		gxu_cur_b = gl_state.inverse_intensity*255;
+		gxu_cur_a = 255;
 		EmitWaterPolys (fa);
 		GL_TexEnv( GL_REPLACE );
 
@@ -611,12 +622,15 @@ void R_DrawAlphaSurfaces (void)
 	{
 		GX_Bind(s->texinfo->image->texnum);
 		c_brush_polys++;
+		gxu_cur_r = intens*255;
+		gxu_cur_g = intens*255;
+		gxu_cur_b = intens*255;
 		if (s->texinfo->flags & SURF_TRANS33)
-			qglColor4f (intens,intens,intens,0.33);
+			gxu_cur_a = 85;
 		else if (s->texinfo->flags & SURF_TRANS66)
-			qglColor4f (intens,intens,intens,0.66);
+			gxu_cur_a = 171;
 		else
-			qglColor4f (intens,intens,intens,1);
+			gxu_cur_a = 255;
 		if (s->flags & SURF_DRAWTURB)
 			EmitWaterPolys (s);
 		else if(s->texinfo->flags & SURF_FLOWING)			// PGM	9/16/98
@@ -626,7 +640,10 @@ void R_DrawAlphaSurfaces (void)
 	}
 
 	GL_TexEnv( GL_REPLACE );
-	qglColor4f (1,1,1,1);
+	gxu_cur_r = 255;
+	gxu_cur_g = 255;
+	gxu_cur_b = 255;
+	gxu_cur_a = 255;
 	qglDisable (GL_BLEND);
 
 	r_alpha_surfaces = NULL;
@@ -801,9 +818,10 @@ dynamic:
 				{
 					qglMTexCoord2fSGIS( GL_TEXTURE0, (v[3]+scroll), v[4]);
 					qglMTexCoord2fSGIS( GL_TEXTURE1, v[5], v[6]);
-					qglVertex3fv (v);
+					qgxPosition3f32 (v[0], v[1], v[2]);
+					qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 				}
-				qglEnd ();
+				qgxEnd ();
 			}
 		}
 		else
@@ -816,9 +834,10 @@ dynamic:
 				{
 					qglMTexCoord2fSGIS( GL_TEXTURE0, v[3], v[4]);
 					qglMTexCoord2fSGIS( GL_TEXTURE1, v[5], v[6]);
-					qglVertex3fv (v);
+					qgxPosition3f32 (v[0], v[1], v[2]);
+					qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 				}
-				qglEnd ();
+				qgxEnd ();
 			}
 		}
 //PGM
@@ -849,9 +868,10 @@ dynamic:
 				{
 					qglMTexCoord2fSGIS( GL_TEXTURE0, (v[3]+scroll), v[4]);
 					qglMTexCoord2fSGIS( GL_TEXTURE1, v[5], v[6]);
-					qglVertex3fv (v);
+					qgxPosition3f32 (v[0], v[1], v[2]);
+					qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 				}
-				qglEnd ();
+				qgxEnd ();
 			}
 		}
 		else
@@ -866,9 +886,10 @@ dynamic:
 				{
 					qglMTexCoord2fSGIS( GL_TEXTURE0, v[3], v[4]);
 					qglMTexCoord2fSGIS( GL_TEXTURE1, v[5], v[6]);
-					qglVertex3fv (v);
+					qgxPosition3f32 (v[0], v[1], v[2]);
+					qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 				}
-				qglEnd ();
+				qgxEnd ();
 			}
 //==========
 //PGM
@@ -906,7 +927,10 @@ void R_DrawInlineBModel (void)
 	if ( currententity->flags & RF_TRANSLUCENT )
 	{
 		qglEnable (GL_BLEND);
-		qglColor4f (1,1,1,0.25);
+		gxu_cur_r = 255;
+		gxu_cur_g = 255;
+		gxu_cur_b = 255;
+		gxu_cur_a = 63;
 		GL_TexEnv( GL_MODULATE );
 	}
 
@@ -950,7 +974,10 @@ void R_DrawInlineBModel (void)
 	else
 	{
 		qglDisable (GL_BLEND);
-		qglColor4f (1,1,1,1);
+		gxu_cur_r = 255;
+		gxu_cur_g = 255;
+		gxu_cur_b = 255;
+		gxu_cur_a = 255;
 		GL_TexEnv( GL_REPLACE );
 	}
 }
@@ -991,7 +1018,10 @@ void R_DrawBrushModel (entity_t *e)
 	if (R_CullBox (mins, maxs))
 		return;
 
-	qglColor3f (1,1,1);
+	gxu_cur_r = 255;
+	gxu_cur_g = 255;
+	gxu_cur_b = 255;
+	gxu_cur_a = 255;
 	memset (gl_lms.lightmap_surfaces, 0, sizeof(gl_lms.lightmap_surfaces));
 
 	VectorSubtract (r_newrefdef.vieworg, e->origin, modelorg);
@@ -1221,7 +1251,10 @@ void R_DrawWorld (void)
 
 	gl_state.currenttextures[0] = gl_state.currenttextures[1] = -1;
 
-	qglColor3f (1,1,1);
+	gxu_cur_r = 255;
+	gxu_cur_g = 255;
+	gxu_cur_b = 255;
+	gxu_cur_a = 255;
 	memset (gl_lms.lightmap_surfaces, 0, sizeof(gl_lms.lightmap_surfaces));
 	R_ClearSkyBox ();
 

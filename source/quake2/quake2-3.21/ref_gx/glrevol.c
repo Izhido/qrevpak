@@ -93,101 +93,6 @@ void glDisable(GLenum cap)
 {
 }
 
-void glColor4f(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
-{
-	glColor4ub(red * 255.0, green * 255.0, blue * 255.0, alpha * 255.0);
-}
-
-void glBegin(GLenum mode)
-{
-	gl_primitive_mode = mode;
-	gl_vertex_count = 0;
-}
-
-void glVertex2f(GLfloat x, GLfloat y)
-{
-	glVertex3f(x, y, 0);
-}
-
-void glEnd(void)
-{
-	int i;
-	int m;
-
-	switch(gl_primitive_mode)
-	{
-		case GL_QUADS:
-		{
-			m = gl_vertex_count / 4;
-			if(m > 0)
-			{
-				m = m * 4;
-				GX_Begin(GX_QUADS, GX_VTXFMT0, m);
-				for(i = 0; i < m; i++)
-				{
-					GX_Position3f32(gl_vertices[i].x, gl_vertices[i].y, gl_vertices[i].z);
-					GX_Color4u8(gl_vertices[i].r, gl_vertices[i].g, gl_vertices[i].b, gl_vertices[i].a);
-				};
-				GX_End();
-			};
-			break;
-		};
-		case GL_POLYGON:
-		case GL_TRIANGLE_FAN:
-		{
-			m = gl_vertex_count;
-			if(m >= 3)
-			{
-				GX_Begin(GX_TRIANGLEFAN, GX_VTXFMT0, m);
-				for(i = 0; i < m; i++)
-				{
-					GX_Position3f32(gl_vertices[i].x, gl_vertices[i].y, gl_vertices[i].z);
-					GX_Color4u8(gl_vertices[i].r, gl_vertices[i].g, gl_vertices[i].b, gl_vertices[i].a);
-				};
-				GX_End();
-			};
-			break;
-		};
-		case GL_TRIANGLE_STRIP:
-		{
-			m = gl_vertex_count;
-			if(m >= 3)
-			{
-				GX_Begin(GX_TRIANGLESTRIP, GX_VTXFMT0, m);
-				for(i = 0; i < m; i++)
-				{
-					GX_Position3f32(gl_vertices[i].x, gl_vertices[i].y, gl_vertices[i].z);
-					GX_Color4u8(gl_vertices[i].r, gl_vertices[i].g, gl_vertices[i].b, gl_vertices[i].a);
-				};
-				GX_End();
-			};
-			break;
-		};
-		case GL_TRIANGLES:
-		{
-			m = gl_vertex_count / 3;
-			if(m > 0)
-			{
-				m = m * 3;
-				GX_Begin(GX_TRIANGLES, GX_VTXFMT0, m);
-				for(i = 0; i < m; i++)
-				{
-					GX_Position3f32(gl_vertices[i].x, gl_vertices[i].y, gl_vertices[i].z);
-					GX_Color4u8(gl_vertices[i].r, gl_vertices[i].g, gl_vertices[i].b, gl_vertices[i].a);
-				};
-				GX_End();
-			};
-			break;
-		};
-	};
-	gl_primitive_mode = -1;
-}
-
-void glColor3f(GLfloat red, GLfloat green, GLfloat blue)
-{
-	glColor4ub(red * 255.0, green * 255.0, blue * 255.0, 255);
-}
-
 void glTexCoord2f(GLfloat s, GLfloat t)
 {
 }
@@ -303,40 +208,6 @@ void glGetFloatv(GLenum pname, GLfloat* params)
 			break;
 		};
 	};
-}
-
-void glColor4fv(const GLfloat* v)
-{
-	glColor4ub((*(v)) * 255.0, (*(v + 1)) * 255.0, (*(v + 2)) * 255.0, (*(v + 3)) * 255.0);
-}
-
-void glVertex3f(GLfloat x, GLfloat y, GLfloat z)
-{
-	int newsize;
-	gl_vertex_t* newlist;
-
-	if(gl_vertex_count >= gl_vertices_size)
-	{
-		newsize = gl_vertices_size + 1024;
-		newlist = malloc(newsize * sizeof(gl_vertex_t));
-		memset(newlist, 0, newsize * sizeof(gl_vertex_t));
-		if(gl_vertices != 0)
-		{
-			memcpy(newlist, gl_vertices, gl_vertices_size);
-			free(gl_vertices);
-		};
-		gl_vertices = newlist;
-		gl_vertices_size = newsize;
-	};
-	gl_vertices[gl_vertex_count].x = x;
-	gl_vertices[gl_vertex_count].y = y;
-	gl_vertices[gl_vertex_count].z = z;
-	gl_vertex_count++;
-}
-
-void glVertex3fv(const GLfloat* v)
-{
-	glVertex3f(*(v), *(v + 1), *(v + 2));
 }
 
 void glPushMatrix(void)
@@ -527,44 +398,10 @@ void glPolygonMode(GLenum face, GLenum mode)
 {
 }
 
-void glColor3ubv(const GLubyte* v)
-{
-	glColor4ub(*(v), *(v + 1), *(v + 2), 255);
-}
-
-void glColor4ubv(const GLubyte* v)
-{
-	glColor4f(*(v), *(v + 1), *(v + 2), *(v + 3));
-}
-
 GLboolean glIsEnabled(GLenum cap)
 {
 	return false;
 } 
-
-void glColor4ub(GLubyte red, GLubyte green, GLubyte blue, GLubyte alpha)
-{
-	int newsize;
-	gl_vertex_t* newlist;
-
-	if(gl_vertex_count >= gl_vertices_size)
-	{
-		newsize = gl_vertices_size + 1024;
-		newlist = malloc(newsize * sizeof(gl_vertex_t));
-		memset(newlist, 0, newsize * sizeof(gl_vertex_t));
-		if(gl_vertices != 0)
-		{
-			memcpy(newlist, gl_vertices, gl_vertices_size);
-			free(gl_vertices);
-		};
-		gl_vertices = newlist;
-		gl_vertices_size = newsize;
-	};
-	gl_vertices[gl_vertex_count].r = red;
-	gl_vertices[gl_vertex_count].g = green;
-	gl_vertices[gl_vertex_count].b = blue;
-	gl_vertices[gl_vertex_count].a = alpha;
-}
 
 void glAccum(GLenum op, GLfloat value)
 {
@@ -607,110 +444,6 @@ void glClearStencil(GLint s)
 }
 
 void glClipPlane(GLenum plane, const GLdouble *equation)
-{
-}
-
-void glColor3b(GLbyte red, GLbyte green, GLbyte blue)
-{
-}
-
-void glColor3bv(const GLbyte *v)
-{
-}
-
-void glColor3d(GLdouble red, GLdouble green, GLdouble blue)
-{
-}
-
-void glColor3dv(const GLdouble *v)
-{
-}
-
-void glColor3fv(const GLfloat *v)
-{
-}
-
-void glColor3i(GLint red, GLint green, GLint blue)
-{
-}
-
-void glColor3iv(const GLint *v)
-{
-}
-
-void glColor3s(GLshort red, GLshort green, GLshort blue)
-{
-}
-
-void glColor3sv(const GLshort *v)
-{
-}
-
-void glColor3ub(GLubyte red, GLubyte green, GLubyte blue)
-{
-}
-
-void glColor3ui(GLuint red, GLuint green, GLuint blue)
-{
-}
-
-void glColor3uiv(const GLuint *v)
-{
-}
-
-void glColor3us(GLushort red, GLushort green, GLushort blue)
-{
-}
-
-void glColor3usv(const GLushort *v)
-{
-}
-
-void glColor4b(GLbyte red, GLbyte green, GLbyte blue, GLbyte alpha)
-{
-}
-
-void glColor4bv(const GLbyte *v)
-{
-}
-
-void glColor4d(GLdouble red, GLdouble green, GLdouble blue, GLdouble alpha)
-{
-}
-
-void glColor4dv(const GLdouble *v)
-{
-}
-
-void glColor4i(GLint red, GLint green, GLint blue, GLint alpha)
-{
-}
-
-void glColor4iv(const GLint *v)
-{
-}
-
-void glColor4s(GLshort red, GLshort green, GLshort blue, GLshort alpha)
-{
-}
-
-void glColor4sv(const GLshort *v)
-{
-}
-
-void glColor4ui(GLuint red, GLuint green, GLuint blue, GLuint alpha)
-{
-}
-
-void glColor4uiv(const GLuint *v)
-{
-}
-
-void glColor4us(GLushort red, GLushort green, GLushort blue, GLushort alpha)
-{
-}
-
-void glColor4usv(const GLushort *v)
 {
 }
 
@@ -1620,90 +1353,6 @@ void glTexSubImage1D(GLenum target, GLint level, GLint xoffset, GLsizei width, G
 }
 
 void glTranslated(GLdouble x, GLdouble y, GLdouble z)
-{
-}
-
-void glVertex2d(GLdouble x, GLdouble y)
-{
-}
-
-void glVertex2dv(const GLdouble *v)
-{
-}
-
-void glVertex2fv(const GLfloat *v)
-{
-}
-
-void glVertex2i(GLint x, GLint y)
-{
-}
-
-void glVertex2iv(const GLint *v)
-{
-}
-
-void glVertex2s(GLshort x, GLshort y)
-{
-}
-
-void glVertex2sv(const GLshort *v)
-{
-}
-
-void glVertex3d(GLdouble x, GLdouble y, GLdouble z)
-{
-}
-
-void glVertex3dv(const GLdouble *v)
-{
-}
-
-void glVertex3i(GLint x, GLint y, GLint z)
-{
-}
-
-void glVertex3iv(const GLint *v)
-{
-}
-
-void glVertex3s(GLshort x, GLshort y, GLshort z)
-{
-}
-
-void glVertex3sv(const GLshort *v)
-{
-}
-
-void glVertex4d(GLdouble x, GLdouble y, GLdouble z, GLdouble w)
-{
-}
-
-void glVertex4dv(const GLdouble *v)
-{
-}
-
-void glVertex4f(GLfloat x, GLfloat y, GLfloat z, GLfloat w)
-{
-}
-
-void glVertex4fv(const GLfloat *v)
-{
-}
-
-void glVertex4i(GLint x, GLint y, GLint z, GLint w)
-{
-}
-
-void glVertex4iv(const GLint *v)
-{
-}
-
-void glVertex4s(GLshort x, GLshort y, GLshort z, GLshort w)
-{
-}
-
-void glVertex4sv(const GLshort *v)
 {
 }
 

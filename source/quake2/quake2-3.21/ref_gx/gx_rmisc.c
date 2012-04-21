@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "gx_local.h"
 
+#include "gxutils.h"
+
 /*
 ==================
 R_InitParticleTexture
@@ -186,7 +188,10 @@ void GL_SetDefaultState( void )
 	qglDisable (GL_CULL_FACE);
 	qglDisable (GL_BLEND);
 
-	qglColor4f (1,1,1,1);
+	gxu_cur_r = 255;
+	gxu_cur_g = 255;
+	gxu_cur_b = 255;
+	gxu_cur_a = 255;
 
 	qglPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
 	qglShadeModel (GL_FLAT);

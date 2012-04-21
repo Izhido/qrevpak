@@ -155,7 +155,7 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 
 	if ( gl_vertex_arrays->value )
 	{
-		float colorArray[MAX_VERTS*4];
+		float* colorArray = Sys_BigStackAlloc(MAX_VERTS*4 * sizeof(float), "GL_DrawAliasFrameLerp");
 
 		qglEnableClientState( GL_VERTEX_ARRAY );
 		qglVertexPointer( 3, GL_FLOAT, 16, s_lerped );	// padded for SIMD
@@ -164,7 +164,10 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 		// PMM - added double damage shell
 		if ( currententity->flags & ( RF_SHELL_RED | RF_SHELL_GREEN | RF_SHELL_BLUE | RF_SHELL_DOUBLE | RF_SHELL_HALF_DAM) )
 		{
-			qglColor4f( shadelight[0], shadelight[1], shadelight[2], alpha );
+			gxu_cur_r = shadelight[0] * 255;
+			gxu_cur_g = shadelight[1] * 255;
+			gxu_cur_b = shadelight[2] * 255;
+			gxu_cur_a = alpha * 255;
 		}
 		else
 		{
@@ -211,7 +214,8 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 					index_xyz = order[2];
 					order += 3;
 
-					qglVertex3fv( s_lerped[index_xyz] );
+					qgxPosition3f32( s_lerped[index_xyz][0], s_lerped[index_xyz][1], s_lerped[index_xyz][2] );
+					qgxColor4u8 ( gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a );
 
 				} while (--count);
 			}
@@ -238,12 +242,16 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 //					l = shadedots[verts[index_xyz].lightnormalindex];
 					
 //					qglColor4f (l* shadelight[0], l*shadelight[1], l*shadelight[2], alpha);
-					qglArrayElement( index_xyz );
+					//qglArrayElement( index_xyz );
+					qgxPosition3f32 (s_lerped[index_xyz][0], s_lerped[index_xyz][1], s_lerped[index_xyz][2]);
+					qgxColor4u8 (colorArray[3*index_xyz]*255, colorArray[3*index_xyz + 1]*255, colorArray[3*index_xyz + 2]*255, 255);
 
 				} while (--count);
 			}
-			qglEnd ();
+			qgxEnd ();
 		}
+
+		Sys_BigStackFree(MAX_VERTS*4 * sizeof(float), "GL_DrawAliasFrameLerp");
 
 		if ( qglUnlockArraysEXT != 0 )
 			qglUnlockArraysEXT();
@@ -273,8 +281,13 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 					index_xyz = order[2];
 					order += 3;
 
-					qglColor4f( shadelight[0], shadelight[1], shadelight[2], alpha);
-					qglVertex3fv (s_lerped[index_xyz]);
+					gxu_cur_r = shadelight[0] * 255;
+					gxu_cur_g = shadelight[1] * 255;
+					gxu_cur_b = shadelight[2] * 255;
+					gxu_cur_a = alpha * 255;
+
+					qgxPosition3f32 (s_lerped[index_xyz][0], s_lerped[index_xyz][1], s_lerped[index_xyz][2]);
+					qgxColor4u8 ( gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a );
 
 				} while (--count);
 			}
@@ -299,12 +312,17 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 					// normals and vertexes come from the frame list
 					l = shadedots[verts[index_xyz].lightnormalindex];
 					
-					qglColor4f (l* shadelight[0], l*shadelight[1], l*shadelight[2], alpha);
-					qglVertex3fv (s_lerped[index_xyz]);
+					gxu_cur_r = l * shadelight[0] * 255;
+					gxu_cur_g = l * shadelight[1] * 255;
+					gxu_cur_b = l * shadelight[2] * 255;
+					gxu_cur_a = alpha * 255;
+
+					qgxPosition3f32 (s_lerped[index_xyz][0], s_lerped[index_xyz][1], s_lerped[index_xyz][2]);
+					qgxColor4u8 ( gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a );
 				} while (--count);
 			}
 
-			qglEnd ();
+			qgxEnd ();
 		}
 	}
 
@@ -373,7 +391,8 @@ void GL_DrawAliasShadow (dmdl_t *paliashdr, int posenum)
 			point[1] -= shadevector[1]*(point[2]+lheight);
 			point[2] = height;
 //			height -= 0.001;
-			qglVertex3fv (point);
+			qgxPosition3f32 (point[0], point[1], point[2]);
+			qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 
 			order += 3;
 
@@ -381,7 +400,7 @@ void GL_DrawAliasShadow (dmdl_t *paliashdr, int posenum)
 
 		} while (--count);
 
-		qglEnd ();
+		qgxEnd ();
 	}	
 }
 
@@ -868,14 +887,20 @@ void R_DrawAliasModel (entity_t *e)
 		R_RotateForEntity (e);
 		qglDisable (GL_TEXTURE_2D);
 		qglEnable (GL_BLEND);
-		qglColor4f (0,0,0,0.5);
+		gxu_cur_r = 0;
+		gxu_cur_g = 0;
+		gxu_cur_b = 0;
+		gxu_cur_a = 127;
 		GL_DrawAliasShadow (paliashdr, currententity->frame );
 		qglEnable (GL_TEXTURE_2D);
 		qglDisable (GL_BLEND);
 		qglPopMatrix ();
 	}
 #endif
-	qglColor4f (1,1,1,1);
+	gxu_cur_r = 255;
+	gxu_cur_g = 255;
+	gxu_cur_b = 255;
+	gxu_cur_a = 255;
 }
 
 

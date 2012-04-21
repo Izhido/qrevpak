@@ -230,8 +230,6 @@ void R_DrawSpriteModel (entity_t *e)
 	if ( alpha != 1.0F )
 		qglEnable( GL_BLEND );
 
-	qglColor4f( 1, 1, 1, alpha );
-
     GX_Bind(currentmodel->skins[e->frame]->texnum);
 
 	GL_TexEnv( GL_MODULATE );
@@ -246,32 +244,34 @@ void R_DrawSpriteModel (entity_t *e)
 	qglTexCoord2f (0, 1);
 	VectorMA (e->origin, -frame->origin_y, up, point);
 	VectorMA (point, -frame->origin_x, right, point);
-	qglVertex3fv (point);
+	qgxPosition3f32 (point[0], point[1], point[2]);
+	qgxColor4u8(255, 255, 255, alpha * 255);
 
 	qglTexCoord2f (0, 0);
 	VectorMA (e->origin, frame->height - frame->origin_y, up, point);
 	VectorMA (point, -frame->origin_x, right, point);
-	qglVertex3fv (point);
+	qgxPosition3f32 (point[0], point[1], point[2]);
+	qgxColor4u8(255, 255, 255, alpha * 255);
 
 	qglTexCoord2f (1, 0);
 	VectorMA (e->origin, frame->height - frame->origin_y, up, point);
 	VectorMA (point, frame->width - frame->origin_x, right, point);
-	qglVertex3fv (point);
+	qgxPosition3f32 (point[0], point[1], point[2]);
+	qgxColor4u8(255, 255, 255, alpha * 255);
 
 	qglTexCoord2f (1, 1);
 	VectorMA (e->origin, -frame->origin_y, up, point);
 	VectorMA (point, frame->width - frame->origin_x, right, point);
-	qglVertex3fv (point);
+	qgxPosition3f32 (point[0], point[1], point[2]);
+	qgxColor4u8(255, 255, 255, alpha * 255);
 	
-	qglEnd ();
+	qgxEnd ();
 
 	qglDisable (GL_ALPHA_TEST);
 	GL_TexEnv( GL_REPLACE );
 
 	if ( alpha != 1.0F )
 		qglDisable( GL_BLEND );
-
-	qglColor4f( 1, 1, 1, 1 );
 }
 
 //==================================================================================
@@ -295,21 +295,27 @@ void R_DrawNullModel (void)
 	R_RotateForEntity (currententity);
 
 	qglDisable (GL_TEXTURE_2D);
-	qglColor3fv (shadelight);
 
-	qgxBegin (GX_TRIANGLEFAN, GX_VTXFMT0, 5);
-	qglVertex3f (0, 0, -16);
+	qgxBegin (GX_TRIANGLEFAN, GX_VTXFMT0, 6);
+	qgxPosition3f32 (0, 0, -16);
+	qgxColor4u8(shadelight[0]*255, shadelight[1]*255, shadelight[2]*255, 255);
 	for (i=0 ; i<=4 ; i++)
-		qglVertex3f (16*cos(i*M_PI/2), 16*sin(i*M_PI/2), 0);
-	qglEnd ();
+	{
+		qgxPosition3f32 (16*cos(i*M_PI/2), 16*sin(i*M_PI/2), 0);
+		qgxColor4u8(shadelight[0]*255, shadelight[1]*255, shadelight[2]*255, 255);
+	};
+	qgxEnd ();
 
-	qgxBegin (GX_TRIANGLEFAN, GX_VTXFMT0, 5);
-	qglVertex3f (0, 0, 16);
+	qgxBegin (GX_TRIANGLEFAN, GX_VTXFMT0, 6);
+	qgxPosition3f32 (0, 0, 16);
+	qgxColor4u8(shadelight[0]*255, shadelight[1]*255, shadelight[2]*255, 255);
 	for (i=4 ; i>=0 ; i--)
-		qglVertex3f (16*cos(i*M_PI/2), 16*sin(i*M_PI/2), 0);
-	qglEnd ();
+	{
+		qgxPosition3f32 (16*cos(i*M_PI/2), 16*sin(i*M_PI/2), 0);
+		qgxColor4u8(shadelight[0]*255, shadelight[1]*255, shadelight[2]*255, 255);
+	};
+	qgxEnd ();
 
-	qglColor3f (1,1,1);
 	qglPopMatrix ();
 	qglEnable (GL_TEXTURE_2D);
 }
@@ -422,7 +428,7 @@ void GL_DrawParticles( int num_particles, const particle_t particles[], const un
 	qglDepthMask( GL_FALSE );		// no z buffering
 	qglEnable( GL_BLEND );
 	GL_TexEnv( GL_MODULATE );
-	qgxBegin (GX_TRIANGLEFAN, gxu_cur_vertex_format, num_particles * 3);
+	qgxBegin (GX_TRIANGLES, gxu_cur_vertex_format, num_particles * 3);
 
 	VectorScale (vup, 1.5, up);
 	VectorScale (vright, 1.5, right);
@@ -442,25 +448,29 @@ void GL_DrawParticles( int num_particles, const particle_t particles[], const un
 		*(int *)color = colortable[p->color];
 		color[3] = p->alpha*255;
 
-		qglColor4ubv( color );
-
 		qglTexCoord2f( 0.0625, 0.0625 );
-		qglVertex3fv( p->origin );
-
+		qgxPosition3f32( p->origin[0], p->origin[1], p->origin[2] );
+		qgxColor4u8(color[0], color[1], color[2], color[3]);
+		
 		qglTexCoord2f( 1.0625, 0.0625 );
-		qglVertex3f( p->origin[0] + up[0]*scale, 
-			         p->origin[1] + up[1]*scale, 
-					 p->origin[2] + up[2]*scale);
+		qgxPosition3f32( p->origin[0] + up[0]*scale, 
+			             p->origin[1] + up[1]*scale, 
+					     p->origin[2] + up[2]*scale);
+		qgxColor4u8(color[0], color[1], color[2], color[3]);
 
 		qglTexCoord2f( 0.0625, 1.0625 );
-		qglVertex3f( p->origin[0] + right[0]*scale, 
-			         p->origin[1] + right[1]*scale, 
-					 p->origin[2] + right[2]*scale);
+		qgxPosition3f32( p->origin[0] + right[0]*scale, 
+			             p->origin[1] + right[1]*scale, 
+					     p->origin[2] + right[2]*scale);
+		qgxColor4u8(color[0], color[1], color[2], color[3]);
 	}
 
-	qglEnd ();
+	qgxEnd ();
 	qglDisable( GL_BLEND );
-	qglColor4f( 1,1,1,1 );
+	gxu_cur_r = 255;
+	gxu_cur_g = 255;
+	gxu_cur_b = 255;
+	gxu_cur_a = 255;
 	qglDepthMask( 1 );		// back to normal Z buffering
 	GL_TexEnv( GL_REPLACE );
 }
@@ -490,14 +500,16 @@ void R_DrawParticles (void)
 			*(int *)color = d_8to24table[p->color];
 			color[3] = p->alpha*255;
 
-			qglColor4ubv( color );
-
-			qglVertex3fv( p->origin );
+			qgxPosition3f32( p->origin[0], p->origin[1], p->origin[2] );
+			qgxColor4u8(color[0], color[1], color[2], color[3]);
 		}
-		qglEnd();
+		qgxEnd();
 
 		qglDisable( GL_BLEND );
-		qglColor4f( 1.0F, 1.0F, 1.0F, 1.0F );
+		gxu_cur_r = 255;
+		gxu_cur_g = 255;
+		gxu_cur_b = 255;
+		gxu_cur_a = 255;
 		qglDepthMask( GL_TRUE );
 		qglEnable( GL_TEXTURE_2D );
 
@@ -531,21 +543,21 @@ void R_PolyBlend (void)
     qglRotatef (-90,  1, 0, 0);	    // put Z going up
     qglRotatef (90,  0, 0, 1);	    // put Z going up
 
-	qglColor4fv (v_blend);
-
 	qgxBegin (GX_QUADS, GX_VTXFMT0, 4);
 
-	qglVertex3f (10, 100, 100);
-	qglVertex3f (10, -100, 100);
-	qglVertex3f (10, -100, -100);
-	qglVertex3f (10, 100, -100);
-	qglEnd ();
+	qgxPosition3f32 (10, 100, 100);
+	qgxColor4u8(v_blend[0]*255, v_blend[1]*255, v_blend[2]*255, v_blend[3]*255);
+	qgxPosition3f32 (10, -100, 100);
+	qgxColor4u8(v_blend[0]*255, v_blend[1]*255, v_blend[2]*255, v_blend[3]*255);
+	qgxPosition3f32 (10, -100, -100);
+	qgxColor4u8(v_blend[0]*255, v_blend[1]*255, v_blend[2]*255, v_blend[3]*255);
+	qgxPosition3f32 (10, 100, -100);
+	qgxColor4u8(v_blend[0]*255, v_blend[1]*255, v_blend[2]*255, v_blend[3]*255);
+	qgxEnd ();
 
 	qglDisable (GL_BLEND);
 	qglEnable (GL_TEXTURE_2D);
 	qglEnable (GL_ALPHA_TEST);
-
-	qglColor4f(1,1,1,1);
 }
 
 //=======================================================================
@@ -872,24 +884,33 @@ void	R_SetGL2D (void)
 	qglViewport (0,0, vid.width, vid.height);
 	qglMatrixMode(GL_PROJECTION);
     qglLoadIdentity ();
-	qglOrtho  (0, vid.width, vid.height, 0, -99999, 99999);
+	qglOrtho  (0, vid.width, vid.height, 0, 0, 300); //-99999, 99999);
 	qglMatrixMode(GL_MODELVIEW);
     qglLoadIdentity ();
 	qglDisable (GL_DEPTH_TEST);
 	qglDisable (GL_CULL_FACE);
 	qglDisable (GL_BLEND);
 	qglEnable (GL_ALPHA_TEST);
-	qglColor4f (1,1,1,1);
+	gxu_cur_r = 255;
+	gxu_cur_g = 255;
+	gxu_cur_b = 255;
+	gxu_cur_a = 255;
 }
 
 static void GL_DrawColoredStereoLinePair( float r, float g, float b, float y )
 {
-	qglColor3f( r, g, b );
-	qglVertex2f( 0, y );
-	qglVertex2f( vid.width, y );
-	qglColor3f( 0, 0, 0 );
-	qglVertex2f( 0, y + 1 );
-	qglVertex2f( vid.width, y + 1 );
+	qgxPosition3f32( 0, y, 0 );
+	qgxColor4u8( r * 255, g * 255, b * 255, 255 );
+	qgxPosition3f32( vid.width, y, 0 );
+	qgxColor4u8( r * 255, g * 255, b * 255, 255 );
+	gxu_cur_r = 0;
+	gxu_cur_g = 0;
+	gxu_cur_b = 0;
+	gxu_cur_a = 255;
+	qgxPosition3f32( 0, y + 1, 0 );
+	qgxColor4u8( gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a );
+	qgxPosition3f32( vid.width, y + 1, 0 );
+	qgxColor4u8( gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a );
 }
 
 static void GL_DrawStereoPattern( void )
@@ -917,7 +938,7 @@ static void GL_DrawStereoPattern( void )
 			GL_DrawColoredStereoLinePair( 1, 1, 0, 10);
 			GL_DrawColoredStereoLinePair( 1, 1, 0, 12);
 			GL_DrawColoredStereoLinePair( 0, 1, 0, 14);
-		qglEnd();
+		qgxEnd();
 		
 		GLimp_EndFrame();
 	}
@@ -1500,7 +1521,10 @@ void R_BeginFrame( float camera_separation )
 	qglDisable (GL_CULL_FACE);
 	qglDisable (GL_BLEND);
 	qglEnable (GL_ALPHA_TEST);
-	qglColor4f (1,1,1,1);
+	gxu_cur_r = 255;
+	gxu_cur_g = 255;
+	gxu_cur_b = 255;
+	gxu_cur_a = 255;
 
 	/*
 	** draw buffer stuff
@@ -1642,17 +1666,24 @@ void R_DrawBeam( entity_t *e )
 	g *= 1/255.0F;
 	b *= 1/255.0F;
 
-	qglColor4f( r, g, b, e->alpha );
+	gxu_cur_r = r * 255;
+	gxu_cur_g = g * 255;
+	gxu_cur_b = b * 255;
+	gxu_cur_a = e->alpha * 255;
 
 	qgxBegin (GX_TRIANGLESTRIP, GX_VTXFMT0, NUM_BEAM_SEGS * 4);
 	for ( i = 0; i < NUM_BEAM_SEGS; i++ )
 	{
-		qglVertex3fv( start_points[i] );
-		qglVertex3fv( end_points[i] );
-		qglVertex3fv( start_points[(i+1)%NUM_BEAM_SEGS] );
-		qglVertex3fv( end_points[(i+1)%NUM_BEAM_SEGS] );
+		qgxPosition3f32( start_points[i][0], start_points[i][1], start_points[i][2] );
+		qgxColor4u8( gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a );
+		qgxPosition3f32( end_points[i][0], end_points[i][1], end_points[i][2] );
+		qgxColor4u8( gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a );
+		qgxPosition3f32( start_points[(i+1)%NUM_BEAM_SEGS][0], start_points[(i+1)%NUM_BEAM_SEGS][1], start_points[(i+1)%NUM_BEAM_SEGS][2] );
+		qgxColor4u8( gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a );
+		qgxPosition3f32( end_points[(i+1)%NUM_BEAM_SEGS][0], end_points[(i+1)%NUM_BEAM_SEGS][1], end_points[(i+1)%NUM_BEAM_SEGS][2] );
+		qgxColor4u8( gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a );
 	}
-	qglEnd();
+	qgxEnd();
 
 	qglEnable( GL_TEXTURE_2D );
 	qglDisable( GL_BLEND );

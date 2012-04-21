@@ -79,14 +79,18 @@ void Draw_Char (int x, int y, int num)
 
 	qgxBegin (GX_QUADS, gxu_cur_vertex_format, 4);
 	qglTexCoord2f (fcol, frow);
-	qglVertex2f (x, y);
+	qgxPosition3f32 (x, y, 0);
+	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qglTexCoord2f (fcol + size, frow);
-	qglVertex2f (x+8, y);
+	qgxPosition3f32 (x+8, y, 0);
+	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qglTexCoord2f (fcol + size, frow + size);
-	qglVertex2f (x+8, y+8);
+	qgxPosition3f32 (x+8, y+8, 0);
+	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qglTexCoord2f (fcol, frow + size);
-	qglVertex2f (x, y+8);
-	qglEnd ();
+	qgxPosition3f32 (x, y+8, 0);
+	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
+	qgxEnd ();
 }
 
 /*
@@ -154,14 +158,18 @@ void Draw_StretchPic (int x, int y, int w, int h, char *pic)
 	GX_Bind (gl->texnum);
 	qgxBegin (GX_QUADS, gxu_cur_vertex_format, 4);
 	qglTexCoord2f (gl->sl, gl->tl);
-	qglVertex2f (x, y);
+	qgxPosition3f32 (x, y, 0);
+	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qglTexCoord2f (gl->sh, gl->tl);
-	qglVertex2f (x+w, y);
+	qgxPosition3f32 (x+w, y, 0);
+	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qglTexCoord2f (gl->sh, gl->th);
-	qglVertex2f (x+w, y+h);
+	qgxPosition3f32 (x+w, y+h, 0);
+	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qglTexCoord2f (gl->sl, gl->th);
-	qglVertex2f (x, y+h);
-	qglEnd ();
+	qgxPosition3f32 (x, y+h, 0);
+	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
+	qgxEnd ();
 
 	if ( ( ( gl_config.renderer == GL_RENDERER_MCD ) || ( gl_config.renderer & GL_RENDERER_RENDITION ) ) && !gl->has_alpha)
 		qglEnable (GL_ALPHA_TEST);
@@ -192,14 +200,18 @@ void Draw_Pic (int x, int y, char *pic)
 	GX_Bind (gl->texnum);
 	qgxBegin (GX_QUADS, gxu_cur_vertex_format, 4);
 	qglTexCoord2f (gl->sl, gl->tl);
-	qglVertex2f (x, y);
+	qgxPosition3f32 (x, y, 0);
+	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qglTexCoord2f (gl->sh, gl->tl);
-	qglVertex2f (x+gl->width, y);
+	qgxPosition3f32 (x+gl->width, y, 0);
+	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qglTexCoord2f (gl->sh, gl->th);
-	qglVertex2f (x+gl->width, y+gl->height);
+	qgxPosition3f32 (x+gl->width, y+gl->height, 0);
+	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qglTexCoord2f (gl->sl, gl->th);
-	qglVertex2f (x, y+gl->height);
-	qglEnd ();
+	qgxPosition3f32 (x, y+gl->height, 0);
+	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
+	qgxEnd ();
 
 	if ( ( ( gl_config.renderer == GL_RENDERER_MCD ) || ( gl_config.renderer & GL_RENDERER_RENDITION ) )  && !gl->has_alpha)
 		qglEnable (GL_ALPHA_TEST);
@@ -230,14 +242,18 @@ void Draw_TileClear (int x, int y, int w, int h, char *pic)
 	GX_Bind (image->texnum);
 	qgxBegin (GX_QUADS, gxu_cur_vertex_format, 4);
 	qglTexCoord2f (x/64.0, y/64.0);
-	qglVertex2f (x, y);
+	qgxPosition3f32 (x, y, 0);
+	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qglTexCoord2f ( (x+w)/64.0, y/64.0);
-	qglVertex2f (x+w, y);
+	qgxPosition3f32 (x+w, y, 0);
+	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qglTexCoord2f ( (x+w)/64.0, (y+h)/64.0);
-	qglVertex2f (x+w, y+h);
+	qgxPosition3f32 (x+w, y+h, 0);
+	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qglTexCoord2f ( x/64.0, (y+h)/64.0 );
-	qglVertex2f (x, y+h);
-	qglEnd ();
+	qgxPosition3f32 (x, y+h, 0);
+	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
+	qgxEnd ();
 
 	if ( ( ( gl_config.renderer == GL_RENDERER_MCD ) || ( gl_config.renderer & GL_RENDERER_RENDITION ) )  && !image->has_alpha)
 		qglEnable (GL_ALPHA_TEST);
@@ -265,19 +281,19 @@ void Draw_Fill (int x, int y, int w, int h, int c)
 	qglDisable (GL_TEXTURE_2D);
 
 	color.c = d_8to24table[c];
-	qglColor3f (color.v[0]/255.0,
-		color.v[1]/255.0,
-		color.v[2]/255.0);
 
 	qgxBegin (GX_QUADS, GX_VTXFMT0, 4);
 
-	qglVertex2f (x,y);
-	qglVertex2f (x+w, y);
-	qglVertex2f (x+w, y+h);
-	qglVertex2f (x, y+h);
+	qgxPosition3f32 (x, y, 0);
+	qgxColor4u8 (color.v[0], color.v[1], color.v[2], 255);
+	qgxPosition3f32 (x+w, y, 0);
+	qgxColor4u8 (color.v[0], color.v[1], color.v[2], 255);
+	qgxPosition3f32 (x+w, y+h, 0);
+	qgxColor4u8 (color.v[0], color.v[1], color.v[2], 255);
+	qgxPosition3f32 (x, y+h, 0);
+	qgxColor4u8 (color.v[0], color.v[1], color.v[2], 255);
 
-	qglEnd ();
-	qglColor3f (1,1,1);
+	qgxEnd ();
 	qglEnable (GL_TEXTURE_2D);
 }
 
@@ -293,16 +309,18 @@ void Draw_FadeScreen (void)
 {
 	qglEnable (GL_BLEND);
 	qglDisable (GL_TEXTURE_2D);
-	qglColor4f (0, 0, 0, 0.8);
 	qgxBegin (GX_QUADS, GX_VTXFMT0, 4);
 
-	qglVertex2f (0,0);
-	qglVertex2f (vid.width, 0);
-	qglVertex2f (vid.width, vid.height);
-	qglVertex2f (0, vid.height);
+	qgxPosition3f32 (0, 0, 0);
+	qgxColor4u8 (0, 0, 0, 205);
+	qgxPosition3f32 (vid.width, 0, 0);
+	qgxColor4u8 (0, 0, 0, 205);
+	qgxPosition3f32 (vid.width, vid.height, 0);
+	qgxColor4u8 (0, 0, 0, 205);
+	qgxPosition3f32 (0, vid.height, 0);
+	qgxColor4u8 (0, 0, 0, 205);
 
-	qglEnd ();
-	qglColor4f (1,1,1,1);
+	qgxEnd ();
 	qglEnable (GL_TEXTURE_2D);
 	qglDisable (GL_BLEND);
 }
@@ -403,14 +421,18 @@ void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data
 
 	qgxBegin (GX_QUADS, gxu_cur_vertex_format, 4);
 	qglTexCoord2f (0, 0);
-	qglVertex2f (x, y);
+	qgxPosition3f32 (x, y, 0);
+	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qglTexCoord2f (1, 0);
-	qglVertex2f (x+w, y);
+	qgxPosition3f32 (x+w, y, 0);
+	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qglTexCoord2f (1, t);
-	qglVertex2f (x+w, y+h);
+	qgxPosition3f32 (x+w, y+h, 0);
+	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qglTexCoord2f (0, t);
-	qglVertex2f (x, y+h);
-	qglEnd ();
+	qgxPosition3f32 (x, y+h, 0);
+	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
+	qgxEnd ();
 
 	if ( ( gl_config.renderer == GL_RENDERER_MCD ) || ( gl_config.renderer & GL_RENDERER_RENDITION ) ) 
 		qglEnable (GL_ALPHA_TEST);
