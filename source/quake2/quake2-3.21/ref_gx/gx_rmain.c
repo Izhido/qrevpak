@@ -64,8 +64,8 @@ vec3_t	vpn;
 vec3_t	vright;
 vec3_t	r_origin;
 
-float	r_world_matrix[16];
-float	r_base_world_matrix[16];
+Mtx		r_world_matrix;
+Mtx		r_base_world_matrix;
 
 //
 // screen size info
@@ -755,7 +755,7 @@ void R_SetupGL (void)
 //	if ( gl_state.camera_separation != 0 && gl_state.stereo_enabled )
 //		qglTranslatef ( gl_state.camera_separation, 0, 0 );
 
-	qglGetFloatv (GL_MODELVIEW_MATRIX, r_world_matrix);
+	qguMtxCopy(gxu_modelview_matrices[gxu_cur_modelview_matrix], r_world_matrix);
 
 	//
 	// set drawing parms

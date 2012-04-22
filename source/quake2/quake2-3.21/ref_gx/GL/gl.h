@@ -231,8 +231,6 @@ void glScalef(GLfloat x, GLfloat y, GLfloat z);
 
 void glCullFace(GLenum mode);
 
-void glGetFloatv(GLenum pname, GLfloat* params);
-
 void glPushMatrix(void);
 
 void glTexEnvf(GLenum target, GLenum pname, GLfloat param);
@@ -242,8 +240,6 @@ void glShadeModel(GLenum mode);
 void glPopMatrix(void);
 
 void glHint(GLenum target, GLenum mode);
-
-void glLoadMatrixf(const GLfloat* m);
 
 void glFinish(void);
 
@@ -405,8 +401,6 @@ void glGetDoublev(GLenum pname, GLdouble *params);
 
 GLenum glGetError(void);
 
-void glGetFloatv(GLenum pname, GLfloat *params);
-
 void glGetIntegerv(GLenum pname, GLint *params);
 
 void glGetLightfv(GLenum light, GLenum pname, GLfloat *params);
@@ -514,10 +508,6 @@ void glLineWidth(GLfloat width);
 void glListBase(GLuint base);
 
 void glLoadIdentity(void);
-
-void glLoadMatrixd(const GLdouble *m);
-
-void glLoadMatrixf(const GLfloat *m);
 
 void glLoadName(GLuint name);
 

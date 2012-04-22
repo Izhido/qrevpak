@@ -119,6 +119,11 @@ void GXU_EndFrame(void* framebuffer)
 	VIDEO_SetNextFramebuffer(framebuffer);
 }
 
+void GXU_CallguMtxRotAxisDeg(Mtx mt, guVector* axis, f32 deg)
+{
+	guMtxRotAxisDeg(mt, axis, deg);
+}
+
 void GXU_CallGXColor4u8(u8 r,u8 g,u8 b,u8 a)
 {
 	GX_Color4u8(r, g, b, a);

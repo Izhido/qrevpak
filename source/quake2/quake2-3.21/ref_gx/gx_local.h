@@ -259,7 +259,7 @@ extern	int		gl_tex_alpha_format;
 extern	int		c_visible_lightmaps;
 extern	int		c_visible_textures;
 
-extern	float	r_world_matrix[16];
+extern	Mtx		r_world_matrix;
 
 void R_TranslatePlayerSkin (int playernum);
 void GX_Bind (int texnum);

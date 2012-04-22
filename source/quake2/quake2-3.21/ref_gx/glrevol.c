@@ -183,33 +183,6 @@ void glCullFace(GLenum mode)
 {
 }
 
-void glGetFloatv(GLenum pname, GLfloat* params)
-{
-	switch(pname)
-	{
-		case GL_MODELVIEW_MATRIX:
-		{
-			params[0] = gl_modelview_matrices[gl_modelview_matrix][0][0];
-			params[1] = gl_modelview_matrices[gl_modelview_matrix][0][1];
-			params[2] = gl_modelview_matrices[gl_modelview_matrix][0][2];
-			params[3] = gl_modelview_matrices[gl_modelview_matrix][0][3];
-			params[4] = gl_modelview_matrices[gl_modelview_matrix][1][0];
-			params[5] = gl_modelview_matrices[gl_modelview_matrix][1][1];
-			params[6] = gl_modelview_matrices[gl_modelview_matrix][1][2];
-			params[7] = gl_modelview_matrices[gl_modelview_matrix][1][3];
-			params[8] = gl_modelview_matrices[gl_modelview_matrix][2][0];
-			params[9] = gl_modelview_matrices[gl_modelview_matrix][2][1];
-			params[10] = gl_modelview_matrices[gl_modelview_matrix][2][2];
-			params[11] = gl_modelview_matrices[gl_modelview_matrix][2][3];
-			params[12] = 0;
-			params[13] = 0;
-			params[14] = 0;
-			params[15] = 1;
-			break;
-		};
-	};
-}
-
 void glPushMatrix(void)
 {
 	switch(gl_matrix_mode)
@@ -284,51 +257,6 @@ void glPopMatrix(void)
 
 void glHint(GLenum target, GLenum mode)
 {
-}
-
-void glLoadMatrixf(const GLfloat* m)
-{
-	switch(gl_matrix_mode)
-	{
-		case GL_MODELVIEW:
-		{
-			gl_modelview_matrices[gl_modelview_matrix][0][0] = m[0];
-			gl_modelview_matrices[gl_modelview_matrix][0][1] = m[1];
-			gl_modelview_matrices[gl_modelview_matrix][0][2] = m[2];
-			gl_modelview_matrices[gl_modelview_matrix][0][3] = m[3];
-			gl_modelview_matrices[gl_modelview_matrix][1][0] = m[4];
-			gl_modelview_matrices[gl_modelview_matrix][1][1] = m[5];
-			gl_modelview_matrices[gl_modelview_matrix][1][2] = m[6];
-			gl_modelview_matrices[gl_modelview_matrix][1][3] = m[7];
-			gl_modelview_matrices[gl_modelview_matrix][2][0] = m[8];
-			gl_modelview_matrices[gl_modelview_matrix][2][1] = m[9];
-			gl_modelview_matrices[gl_modelview_matrix][2][2] = m[10];
-			gl_modelview_matrices[gl_modelview_matrix][2][3] = m[11];
-			GX_LoadPosMtxImm(gl_modelview_matrices[gl_modelview_matrix], GX_PNMTX0);
-			break;
-		};
-		case GL_PROJECTION:
-		{
-			gl_projection_matrices[gl_projection_matrix][0][0] = m[0];
-			gl_projection_matrices[gl_projection_matrix][0][1] = m[1];
-			gl_projection_matrices[gl_projection_matrix][0][2] = m[2];
-			gl_projection_matrices[gl_projection_matrix][0][3] = m[3];
-			gl_projection_matrices[gl_projection_matrix][1][0] = m[4];
-			gl_projection_matrices[gl_projection_matrix][1][1] = m[5];
-			gl_projection_matrices[gl_projection_matrix][1][2] = m[6];
-			gl_projection_matrices[gl_projection_matrix][1][3] = m[7];
-			gl_projection_matrices[gl_projection_matrix][2][0] = m[8];
-			gl_projection_matrices[gl_projection_matrix][2][1] = m[9];
-			gl_projection_matrices[gl_projection_matrix][2][2] = m[10];
-			gl_projection_matrices[gl_projection_matrix][2][3] = m[11];
-			gl_projection_matrices[gl_projection_matrix][3][0] = m[12];
-			gl_projection_matrices[gl_projection_matrix][3][1] = m[13];
-			gl_projection_matrices[gl_projection_matrix][3][2] = m[14];
-			gl_projection_matrices[gl_projection_matrix][3][3] = m[15];
-			GX_LoadProjectionMtx(gl_projection_matrices[gl_projection_matrix], GX_PERSPECTIVE);
-			break;
-		};
-	};
 }
 
 void glFinish(void)
@@ -817,10 +745,6 @@ void glLineWidth(GLfloat width)
 }
 
 void glListBase(GLuint base)
-{
-}
-
-void glLoadMatrixd(const GLdouble *m)
 {
 }
 

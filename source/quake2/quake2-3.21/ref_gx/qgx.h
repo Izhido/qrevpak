@@ -42,6 +42,10 @@ void     QGL_Shutdown( void );
 #  define APIENTRY
 #endif
 
+extern  void ( APIENTRY * qguMtxConcat )(Mtx a, Mtx b, Mtx ab);
+extern  void ( APIENTRY * qguMtxCopy )(Mtx src, Mtx dst);
+extern	void ( APIENTRY * qguMtxRotAxisDeg )(Mtx mt, guVector* axis, f32 deg);
+extern  void ( APIENTRY * qguMtxTrans )(Mtx mt, f32 xT, f32 yT, f32 zT);
 extern  void ( APIENTRY * qglAccum )(GLenum op, GLfloat value);
 extern  void ( APIENTRY * qglAlphaFunc )(GLenum func, GLclampf ref);
 extern  GLboolean ( APIENTRY * qglAreTexturesResident )(GLsizei n, const GLuint *textures, GLboolean *residences);
@@ -113,7 +117,6 @@ extern  void ( APIENTRY * qglGetBooleanv )(GLenum pname, GLboolean *params);
 extern  void ( APIENTRY * qglGetClipPlane )(GLenum plane, GLdouble *equation);
 extern  void ( APIENTRY * qglGetDoublev )(GLenum pname, GLdouble *params);
 extern  GLenum ( APIENTRY * qglGetError )(void);
-extern  void ( APIENTRY * qglGetFloatv )(GLenum pname, GLfloat *params);
 extern  void ( APIENTRY * qglGetIntegerv )(GLenum pname, GLint *params);
 extern  void ( APIENTRY * qglGetLightfv )(GLenum light, GLenum pname, GLfloat *params);
 extern  void ( APIENTRY * qglGetLightiv )(GLenum light, GLenum pname, GLint *params);
@@ -171,9 +174,8 @@ extern  void ( APIENTRY * qglLineStipple )(GLint factor, GLushort pattern);
 extern  void ( APIENTRY * qglLineWidth )(GLfloat width);
 extern  void ( APIENTRY * qglListBase )(GLuint base);
 extern  void ( APIENTRY * qglLoadIdentity )(void);
-extern  void ( APIENTRY * qglLoadMatrixd )(const GLdouble *m);
-extern  void ( APIENTRY * qglLoadMatrixf )(const GLfloat *m);
 extern  void ( APIENTRY * qglLoadName )(GLuint name);
+extern	void ( APIENTRY * qgxLoadPosMtxImm )(Mtx mt, u32 pnidx);
 extern  void ( APIENTRY * qgxLoadTexObj )(GXTexObj *obj, u8 mapid);
 extern  void ( APIENTRY * qglLogicOp )(GLenum opcode);
 extern  void ( APIENTRY * qglMap1d )(GLenum target, GLdouble u1, GLdouble u2, GLint stride, GLint order, const GLdouble *points);

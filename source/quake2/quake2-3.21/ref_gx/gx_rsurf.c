@@ -609,7 +609,8 @@ void R_DrawAlphaSurfaces (void)
 	//
 	// go back to the world matrix
 	//
-    qglLoadMatrixf (r_world_matrix);
+	qguMtxCopy(r_world_matrix, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
+	qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 
 	qglEnable (GL_BLEND);
 	GL_TexEnv( GL_MODULATE );
