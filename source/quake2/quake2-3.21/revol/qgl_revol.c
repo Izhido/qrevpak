@@ -260,8 +260,6 @@ void ( APIENTRY * qglRectiv )(const GLint *v1, const GLint *v2);
 void ( APIENTRY * qglRects )(GLshort x1, GLshort y1, GLshort x2, GLshort y2);
 void ( APIENTRY * qglRectsv )(const GLshort *v1, const GLshort *v2);
 GLint ( APIENTRY * qglRenderMode )(GLenum mode);
-void ( APIENTRY * qglRotated )(GLdouble angle, GLdouble x, GLdouble y, GLdouble z);
-void ( APIENTRY * qglRotatef )(GLfloat angle, GLfloat x, GLfloat y, GLfloat z);
 void ( APIENTRY * qglScaled )(GLdouble x, GLdouble y, GLdouble z);
 void ( APIENTRY * qglScalef )(GLfloat x, GLfloat y, GLfloat z);
 void ( APIENTRY * qglScissor )(GLint x, GLint y, GLsizei width, GLsizei height);
@@ -319,8 +317,6 @@ void ( APIENTRY * qglTexParameteri )(GLenum target, GLenum pname, GLint param);
 void ( APIENTRY * qglTexParameteriv )(GLenum target, GLenum pname, const GLint *params);
 void ( APIENTRY * qglTexSubImage1D )(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const GLvoid *pixels);
 void ( APIENTRY * qglTexSubImage2D )(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels);
-void ( APIENTRY * qglTranslated )(GLdouble x, GLdouble y, GLdouble z);
-void ( APIENTRY * qglTranslatef )(GLfloat x, GLfloat y, GLfloat z);
 void ( APIENTRY * qglVertexPointer )(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer);
 void ( APIENTRY * qglViewport )(GLint x, GLint y, GLsizei width, GLsizei height);
 
@@ -557,8 +553,6 @@ static void ( APIENTRY * dllRectiv )(const GLint *v1, const GLint *v2);
 static void ( APIENTRY * dllRects )(GLshort x1, GLshort y1, GLshort x2, GLshort y2);
 static void ( APIENTRY * dllRectsv )(const GLshort *v1, const GLshort *v2);
 GLint ( APIENTRY * dllRenderMode )(GLenum mode);
-static void ( APIENTRY * dllRotated )(GLdouble angle, GLdouble x, GLdouble y, GLdouble z);
-static void ( APIENTRY * dllRotatef )(GLfloat angle, GLfloat x, GLfloat y, GLfloat z);
 static void ( APIENTRY * dllScaled )(GLdouble x, GLdouble y, GLdouble z);
 static void ( APIENTRY * dllScalef )(GLfloat x, GLfloat y, GLfloat z);
 static void ( APIENTRY * dllScissor )(GLint x, GLint y, GLsizei width, GLsizei height);
@@ -618,8 +612,6 @@ static void ( APIENTRY * dllTexParameteri )(GLenum target, GLenum pname, GLint p
 static void ( APIENTRY * dllTexParameteriv )(GLenum target, GLenum pname, const GLint *params);
 static void ( APIENTRY * dllTexSubImage1D )(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const GLvoid *pixels);
 static void ( APIENTRY * dllTexSubImage2D )(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels);
-static void ( APIENTRY * dllTranslated )(GLdouble x, GLdouble y, GLdouble z);
-static void ( APIENTRY * dllTranslatef )(GLfloat x, GLfloat y, GLfloat z);
 static void ( APIENTRY * dllVertexPointer )(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer);
 static void ( APIENTRY * dllViewport )(GLint x, GLint y, GLsizei width, GLsizei height);
 
@@ -1903,17 +1895,6 @@ static GLint APIENTRY logRenderMode(GLenum mode)
 	SIG( "glRenderMode" );
 	return dllRenderMode( mode );
 }
-static void APIENTRY logRotated(GLdouble angle, GLdouble x, GLdouble y, GLdouble z)
-{
-	SIG( "glRotated" );
-	dllRotated( angle, x, y, z );
-}
-
-static void APIENTRY logRotatef(GLfloat angle, GLfloat x, GLfloat y, GLfloat z)
-{
-	SIG( "glRotatef" );
-	dllRotatef( angle, x, y, z );
-}
 
 static void APIENTRY logScaled(GLdouble x, GLdouble y, GLdouble z)
 {
@@ -2229,17 +2210,6 @@ static void APIENTRY logTexSubImage2D(GLenum target, GLint level, GLint xoffset,
 	SIG( "glTexSubImage2D" );
 	dllTexSubImage2D( target, level, xoffset, yoffset, width, height, format, type, pixels );
 }
-static void APIENTRY logTranslated(GLdouble x, GLdouble y, GLdouble z)
-{
-	SIG( "glTranslated" );
-	dllTranslated( x, y, z );
-}
-
-static void APIENTRY logTranslatef(GLfloat x, GLfloat y, GLfloat z)
-{
-	SIG( "glTranslatef" );
-	dllTranslatef( x, y, z );
-}
 
 static void APIENTRY logVertexPointer(GLint size, GLenum type, GLsizei stride, const void *pointer)
 {
@@ -2481,8 +2451,6 @@ void QGL_Shutdown( void )
 	qglRects                     = NULL;
 	qglRectsv                    = NULL;
 	qglRenderMode                = NULL;
-	qglRotated                   = NULL;
-	qglRotatef                   = NULL;
 	qglScaled                    = NULL;
 	qglScalef                    = NULL;
 	qglScissor                   = NULL;
@@ -2540,8 +2508,6 @@ void QGL_Shutdown( void )
 	qglTexParameteriv            = NULL;
 	qglTexSubImage1D             = NULL;
 	qglTexSubImage2D             = NULL;
-	qglTranslated                = NULL;
-	qglTranslatef                = NULL;
 	qglVertexPointer             = NULL;
 	qglViewport                  = NULL;
 
@@ -2785,8 +2751,6 @@ qboolean QGL_Init( const char *dllname )
 	qglRects                     = 	dllRects                     = glRects;
 	qglRectsv                    = 	dllRectsv                    = glRectsv;
 	qglRenderMode                = 	dllRenderMode                = glRenderMode;
-	qglRotated                   = 	dllRotated                   = glRotated;
-	qglRotatef                   = 	dllRotatef                   = glRotatef;
 	qglScaled                    = 	dllScaled                    = glScaled;
 	qglScalef                    = 	dllScalef                    = glScalef;
 	qglScissor                   = 	dllScissor                   = glScissor;
@@ -2844,8 +2808,6 @@ qboolean QGL_Init( const char *dllname )
 	qglTexParameteriv            = 	dllTexParameteriv            = glTexParameteriv;
 	qglTexSubImage1D             = 	dllTexSubImage1D             = glTexSubImage1D;
 	qglTexSubImage2D             = 	dllTexSubImage2D             = glTexSubImage2D;
-	qglTranslated                = 	dllTranslated                = glTranslated;
-	qglTranslatef                = 	dllTranslatef                = glTranslatef;
 	qglVertexPointer             = 	dllVertexPointer             = glVertexPointer;
 	qglViewport                  = 	dllViewport                  = glViewport;
 
@@ -3107,8 +3069,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglRects                     = 	logRects                     ;
 		qglRectsv                    = 	logRectsv                    ;
 		qglRenderMode                = 	logRenderMode                ;
-		qglRotated                   = 	logRotated                   ;
-		qglRotatef                   = 	logRotatef                   ;
 		qglScaled                    = 	logScaled                    ;
 		qglScalef                    = 	logScalef                    ;
 		qglScissor                   = 	logScissor                   ;
@@ -3166,8 +3126,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglTexParameteriv            = 	logTexParameteriv            ;
 		qglTexSubImage1D             = 	logTexSubImage1D             ;
 		qglTexSubImage2D             = 	logTexSubImage2D             ;
-		qglTranslated                = 	logTranslated                ;
-		qglTranslatef                = 	logTranslatef                ;
 		qglVertexPointer             = 	logVertexPointer             ;
 		qglViewport                  = 	logViewport                  ;
 	}
@@ -3395,8 +3353,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglRects                     = 	dllRects                     ;
 		qglRectsv                    = 	dllRectsv                    ;
 		qglRenderMode                = 	dllRenderMode                ;
-		qglRotated                   = 	dllRotated                   ;
-		qglRotatef                   = 	dllRotatef                   ;
 		qglScaled                    = 	dllScaled                    ;
 		qglScalef                    = 	dllScalef                    ;
 		qglScissor                   = 	dllScissor                   ;
@@ -3454,8 +3410,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglTexParameteriv            = 	dllTexParameteriv            ;
 		qglTexSubImage1D             = 	dllTexSubImage1D             ;
 		qglTexSubImage2D             = 	dllTexSubImage2D             ;
-		qglTranslated                = 	dllTranslated                ;
-		qglTranslatef                = 	dllTranslatef                ;
 		qglVertexPointer             = 	dllVertexPointer             ;
 		qglViewport                  = 	dllViewport                  ;
 	}

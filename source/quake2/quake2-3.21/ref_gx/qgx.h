@@ -264,8 +264,6 @@ extern  void ( APIENTRY * qglRectiv )(const GLint *v1, const GLint *v2);
 extern  void ( APIENTRY * qglRects )(GLshort x1, GLshort y1, GLshort x2, GLshort y2);
 extern  void ( APIENTRY * qglRectsv )(const GLshort *v1, const GLshort *v2);
 extern  GLint ( APIENTRY * qglRenderMode )(GLenum mode);
-extern  void ( APIENTRY * qglRotated )(GLdouble angle, GLdouble x, GLdouble y, GLdouble z);
-extern  void ( APIENTRY * qglRotatef )(GLfloat angle, GLfloat x, GLfloat y, GLfloat z);
 extern  void ( APIENTRY * qglScaled )(GLdouble x, GLdouble y, GLdouble z);
 extern  void ( APIENTRY * qglScalef )(GLfloat x, GLfloat y, GLfloat z);
 extern  void ( APIENTRY * qglScissor )(GLint x, GLint y, GLsizei width, GLsizei height);
@@ -323,8 +321,6 @@ extern  void ( APIENTRY * qglTexParameteri )(GLenum target, GLenum pname, GLint 
 extern  void ( APIENTRY * qglTexParameteriv )(GLenum target, GLenum pname, const GLint *params);
 extern  void ( APIENTRY * qglTexSubImage1D )(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const GLvoid *pixels);
 extern  void ( APIENTRY * qglTexSubImage2D )(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels);
-extern  void ( APIENTRY * qglTranslated )(GLdouble x, GLdouble y, GLdouble z);
-extern  void ( APIENTRY * qglTranslatef )(GLfloat x, GLfloat y, GLfloat z);
 extern  void ( APIENTRY * qglVertexPointer )(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer);
 extern  void ( APIENTRY * qglViewport )(GLint x, GLint y, GLsizei width, GLsizei height);
 

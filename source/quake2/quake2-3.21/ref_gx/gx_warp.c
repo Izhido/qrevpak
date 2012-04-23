@@ -574,6 +574,8 @@ int	skytexorder[6] = {0,2,1,3,4,5};
 void R_DrawSkyBox (void)
 {
 	int		i;
+	Mtx m;
+	guVector a;
 
 #if 0
 qglEnable (GL_BLEND);
@@ -592,8 +594,14 @@ qglDisable (GL_DEPTH_TEST);
 	}
 
 qglPushMatrix ();
-qglTranslatef (r_origin[0], r_origin[1], r_origin[2]);
-qglRotatef (r_newrefdef.time * skyrotate, skyaxis[0], skyaxis[1], skyaxis[2]);
+qguMtxTrans(m, r_origin[0], r_origin[1], r_origin[2]);
+qguMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
+a.x = skyaxis[0];
+a.y = skyaxis[1];
+a.z = skyaxis[2];
+qguMtxRotAxisDeg(m, &a, r_newrefdef.time * skyrotate); // put Z going up
+qguMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
+qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 
 	for (i=0 ; i<6 ; i++)
 	{

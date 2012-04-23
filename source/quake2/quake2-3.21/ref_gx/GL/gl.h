@@ -221,10 +221,6 @@ void glDepthFunc(GLenum func);
 
 void glDepthRange(GLclampd nearVal, GLclampd farVal);
 
-void glTranslatef(GLfloat x, GLfloat y, GLfloat z);
-
-void glRotatef(GLfloat angle, GLfloat x, GLfloat y, GLfloat z);
-
 void glFrustum(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble nearVal, GLdouble farVal);
 
 void glScalef(GLfloat x, GLfloat y, GLfloat z);
@@ -683,10 +679,6 @@ void glRectsv(const GLshort *v1, const GLshort *v2);
 
 GLint glRenderMode(GLenum mode);
 
-void glRotated(GLdouble angle, GLdouble x, GLdouble y, GLdouble z);
-
-void glRotatef(GLfloat angle, GLfloat x, GLfloat y, GLfloat z);
-
 void glScaled(GLdouble x, GLdouble y, GLdouble z);
 
 void glScalef(GLfloat x, GLfloat y, GLfloat z);
@@ -800,10 +792,6 @@ void glTexParameteriv(GLenum target, GLenum pname, const GLint *params);
 void glTexSubImage1D(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const GLvoid *pixels);
 
 void glTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels);
-
-void glTranslated(GLdouble x, GLdouble y, GLdouble z);
-
-void glTranslatef(GLfloat x, GLfloat y, GLfloat z);
 
 void glVertexPointer(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer);
 

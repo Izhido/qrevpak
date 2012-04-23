@@ -2,6 +2,7 @@
 #include <gccore.h>
 #include <malloc.h>
 #include <string.h>
+#include "gxutils.h"
 
 typedef struct
 {
@@ -19,8 +20,6 @@ gl_vertex_t* gl_vertices = 0;
 int gl_vertices_size = 0;
 int gl_vertex_count = 0;
 GLenum gl_matrix_mode = GL_MODELVIEW;
-Mtx gl_modelview_matrices[32];
-int gl_modelview_matrix = 0;
 Mtx44 gl_projection_matrices[2];
 int gl_projection_matrix = 0;
 
@@ -44,8 +43,8 @@ void glLoadIdentity(void)
 	{
 		case GL_MODELVIEW:
 		{
-			guMtxIdentity(gl_modelview_matrices[gl_modelview_matrix]);
-			GX_LoadPosMtxImm(gl_modelview_matrices[gl_modelview_matrix], GX_PNMTX0);
+			guMtxIdentity(gxu_modelview_matrices[gxu_cur_modelview_matrix]);
+			GX_LoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 			break;
 		};
 		case GL_PROJECTION:
@@ -113,23 +112,6 @@ void glDepthRange(GLclampd nearVal, GLclampd farVal)
 {
 }
 
-void glTranslatef(GLfloat x, GLfloat y, GLfloat z)
-{
-	Mtx m;
-
-	switch(gl_matrix_mode)
-	{
-		case GL_MODELVIEW:
-		{
-			guMtxIdentity(m);
-			guMtxTrans(m, x, y, z);
-			guMtxConcat(gl_modelview_matrices[gl_modelview_matrix], m, gl_modelview_matrices[gl_modelview_matrix]);
-			GX_LoadPosMtxImm(gl_modelview_matrices[gl_modelview_matrix], GX_PNMTX0);
-			break;
-		};
-	};
-}
-
 void glRotatef(GLfloat angle, GLfloat x, GLfloat y, GLfloat z)
 {
 	guVector a;
@@ -143,8 +125,8 @@ void glRotatef(GLfloat angle, GLfloat x, GLfloat y, GLfloat z)
 			a.y = y;
 			a.z = z;
 			guMtxRotAxisDeg(m, &a, angle);
-			guMtxConcat(gl_modelview_matrices[gl_modelview_matrix], m, gl_modelview_matrices[gl_modelview_matrix]);
-			GX_LoadPosMtxImm(gl_modelview_matrices[gl_modelview_matrix], GX_PNMTX0);
+			guMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
+			GX_LoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 			break;
 		};
 	};
@@ -172,8 +154,8 @@ void glScalef(GLfloat x, GLfloat y, GLfloat z)
 		case GL_MODELVIEW:
 		{
 			guMtxScale(m, x, y, z);
-			guMtxConcat(gl_modelview_matrices[gl_modelview_matrix], m, gl_modelview_matrices[gl_modelview_matrix]);
-			GX_LoadPosMtxImm(gl_modelview_matrices[gl_modelview_matrix], GX_PNMTX0);
+			guMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
+			GX_LoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 			break;
 		};
 	};
@@ -189,19 +171,19 @@ void glPushMatrix(void)
 	{
 		case GL_MODELVIEW:
 		{
-			gl_modelview_matrices[gl_modelview_matrix + 1][0][0] = gl_modelview_matrices[gl_modelview_matrix][0][0];
-			gl_modelview_matrices[gl_modelview_matrix + 1][0][1] = gl_modelview_matrices[gl_modelview_matrix][0][1];
-			gl_modelview_matrices[gl_modelview_matrix + 1][0][2] = gl_modelview_matrices[gl_modelview_matrix][0][2];
-			gl_modelview_matrices[gl_modelview_matrix + 1][0][3] = gl_modelview_matrices[gl_modelview_matrix][0][3];
-			gl_modelview_matrices[gl_modelview_matrix + 1][1][0] = gl_modelview_matrices[gl_modelview_matrix][1][0];
-			gl_modelview_matrices[gl_modelview_matrix + 1][1][1] = gl_modelview_matrices[gl_modelview_matrix][1][1];
-			gl_modelview_matrices[gl_modelview_matrix + 1][1][2] = gl_modelview_matrices[gl_modelview_matrix][1][2];
-			gl_modelview_matrices[gl_modelview_matrix + 1][1][3] = gl_modelview_matrices[gl_modelview_matrix][1][3];
-			gl_modelview_matrices[gl_modelview_matrix + 1][2][0] = gl_modelview_matrices[gl_modelview_matrix][2][0];
-			gl_modelview_matrices[gl_modelview_matrix + 1][2][1] = gl_modelview_matrices[gl_modelview_matrix][2][1];
-			gl_modelview_matrices[gl_modelview_matrix + 1][2][2] = gl_modelview_matrices[gl_modelview_matrix][2][2];
-			gl_modelview_matrices[gl_modelview_matrix + 1][2][3] = gl_modelview_matrices[gl_modelview_matrix][2][3];
-			gl_modelview_matrix++;
+			gxu_modelview_matrices[gxu_cur_modelview_matrix + 1][0][0] = gxu_modelview_matrices[gxu_cur_modelview_matrix][0][0];
+			gxu_modelview_matrices[gxu_cur_modelview_matrix + 1][0][1] = gxu_modelview_matrices[gxu_cur_modelview_matrix][0][1];
+			gxu_modelview_matrices[gxu_cur_modelview_matrix + 1][0][2] = gxu_modelview_matrices[gxu_cur_modelview_matrix][0][2];
+			gxu_modelview_matrices[gxu_cur_modelview_matrix + 1][0][3] = gxu_modelview_matrices[gxu_cur_modelview_matrix][0][3];
+			gxu_modelview_matrices[gxu_cur_modelview_matrix + 1][1][0] = gxu_modelview_matrices[gxu_cur_modelview_matrix][1][0];
+			gxu_modelview_matrices[gxu_cur_modelview_matrix + 1][1][1] = gxu_modelview_matrices[gxu_cur_modelview_matrix][1][1];
+			gxu_modelview_matrices[gxu_cur_modelview_matrix + 1][1][2] = gxu_modelview_matrices[gxu_cur_modelview_matrix][1][2];
+			gxu_modelview_matrices[gxu_cur_modelview_matrix + 1][1][3] = gxu_modelview_matrices[gxu_cur_modelview_matrix][1][3];
+			gxu_modelview_matrices[gxu_cur_modelview_matrix + 1][2][0] = gxu_modelview_matrices[gxu_cur_modelview_matrix][2][0];
+			gxu_modelview_matrices[gxu_cur_modelview_matrix + 1][2][1] = gxu_modelview_matrices[gxu_cur_modelview_matrix][2][1];
+			gxu_modelview_matrices[gxu_cur_modelview_matrix + 1][2][2] = gxu_modelview_matrices[gxu_cur_modelview_matrix][2][2];
+			gxu_modelview_matrices[gxu_cur_modelview_matrix + 1][2][3] = gxu_modelview_matrices[gxu_cur_modelview_matrix][2][3];
+			gxu_cur_modelview_matrix++;
 			break;
 		};
 		case GL_PROJECTION:
@@ -242,8 +224,8 @@ void glPopMatrix(void)
 	{
 		case GL_MODELVIEW:
 		{
-			gl_modelview_matrix--;
-			GX_LoadPosMtxImm(gl_modelview_matrices[gl_modelview_matrix], GX_PNMTX0);
+			gxu_cur_modelview_matrix--;
+			GX_LoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 			break;
 		};
 		case GL_PROJECTION:
@@ -1068,10 +1050,6 @@ GLint glRenderMode(GLenum mode)
 {
 }
 
-void glRotated(GLdouble angle, GLdouble x, GLdouble y, GLdouble z)
-{
-}
-
 void glScaled(GLdouble x, GLdouble y, GLdouble z)
 {
 }
@@ -1273,10 +1251,6 @@ void glTexParameteriv(GLenum target, GLenum pname, const GLint *params)
 }
 
 void glTexSubImage1D(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const GLvoid *pixels)
-{
-}
-
-void glTranslated(GLdouble x, GLdouble y, GLdouble z)
 {
 }
 

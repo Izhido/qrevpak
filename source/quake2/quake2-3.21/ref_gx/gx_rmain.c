@@ -162,11 +162,25 @@ qboolean R_CullBox (vec3_t mins, vec3_t maxs)
 
 void R_RotateForEntity (entity_t *e)
 {
-    qglTranslatef (e->origin[0],  e->origin[1],  e->origin[2]);
+	Mtx m;
+	guVector a;
 
-    qglRotatef (e->angles[1],  0, 0, 1);
-    qglRotatef (-e->angles[0],  0, 1, 0);
-    qglRotatef (-e->angles[2],  1, 0, 0);
+	qguMtxTrans(m, e->origin[0],  e->origin[1],  e->origin[2]);
+	qguMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
+	a.x = 0;
+	a.y = 0;
+	a.z = 1;
+	qguMtxRotAxisDeg(m, &a, e->angles[1]);
+	qguMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
+	a.y = 1;
+	a.z = 0;
+	qguMtxRotAxisDeg(m, &a, -e->angles[0]);
+	qguMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
+	a.x = 1;
+	a.y = 0;
+	qguMtxRotAxisDeg(m, &a, -e->angles[2]);
+	qguMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
+	qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 }
 
 /*
@@ -527,6 +541,9 @@ R_PolyBlend
 */
 void R_PolyBlend (void)
 {
+	Mtx m;
+	guVector a;
+
 	if (!gl_polyblend->value)
 		return;
 	if (!v_blend[3])
@@ -540,8 +557,15 @@ void R_PolyBlend (void)
     qglLoadIdentity ();
 
 	// FIXME: get rid of these
-    qglRotatef (-90,  1, 0, 0);	    // put Z going up
-    qglRotatef (90,  0, 0, 1);	    // put Z going up
+	a.x = 1;
+	a.y = 0;
+	a.z = 0;
+	qguMtxRotAxisDeg(gxu_modelview_matrices[gxu_cur_modelview_matrix], &a, -90); // put Z going up
+	a.x = 0;
+	a.z = 1;
+	qguMtxRotAxisDeg(m, &a, 90); // put Z going up
+	qguMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
+	qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 
 	qgxBegin (GX_QUADS, GX_VTXFMT0, 4);
 
@@ -717,6 +741,8 @@ void R_SetupGL (void)
 	float	screenaspect;
 //	float	yfov;
 	int		x, x2, y2, y, w, h;
+	Mtx m;
+	guVector a;
 
 	//
 	// set up viewport
@@ -745,12 +771,29 @@ void R_SetupGL (void)
 	qglMatrixMode(GL_MODELVIEW);
     qglLoadIdentity ();
 
-    qglRotatef (-90,  1, 0, 0);	    // put Z going up
-    qglRotatef (90,  0, 0, 1);	    // put Z going up
-    qglRotatef (-r_newrefdef.viewangles[2],  1, 0, 0);
-    qglRotatef (-r_newrefdef.viewangles[0],  0, 1, 0);
-    qglRotatef (-r_newrefdef.viewangles[1],  0, 0, 1);
-    qglTranslatef (-r_newrefdef.vieworg[0],  -r_newrefdef.vieworg[1],  -r_newrefdef.vieworg[2]);
+	a.x = 1;
+	a.y = 0;
+	a.z = 0;
+	qguMtxRotAxisDeg(gxu_modelview_matrices[gxu_cur_modelview_matrix], &a, -90); // put Z going up
+	a.x = 0;
+	a.z = 1;
+	qguMtxRotAxisDeg(m, &a, 90); // put Z going up
+	qguMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
+	a.x = 1;
+	a.z = 0;
+	qguMtxRotAxisDeg(m, &a, -r_newrefdef.viewangles[2]);
+	qguMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
+	a.x = 0;
+	a.y = 1;
+	qguMtxRotAxisDeg(m, &a, -r_newrefdef.viewangles[0]);
+	qguMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
+	a.y = 0;
+	a.z = 1;
+	qguMtxRotAxisDeg(m, &a, -r_newrefdef.viewangles[1]);
+	qguMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
+	qguMtxTrans(m, -r_newrefdef.vieworg[0], -r_newrefdef.vieworg[1], -r_newrefdef.vieworg[2]);
+	qguMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
+	qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 
 //	if ( gl_state.camera_separation != 0 && gl_state.stereo_enabled )
 //		qglTranslatef ( gl_state.camera_separation, 0, 0 );

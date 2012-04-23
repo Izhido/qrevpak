@@ -945,7 +945,8 @@ void R_SetupGX (void)
 	int			i;
 	extern	int gxwidth, gxheight;
 	int			x, x2, y2, y, w, h;
-	Mtx44		m;
+	Mtx44		pm;
+	Mtx			mm;
 	guVector	a;
 
 	//
@@ -986,11 +987,11 @@ void R_SetupGX (void)
 	if (mirror)
 	{
 		if (mirror_plane->normal[2])
-			guMtxScale(m, 1, -1, 1);
+			guMtxScale(pm, 1, -1, 1);
 		else
-			guMtxScale(m, -1, 1, 1);
+			guMtxScale(pm, -1, 1, 1);
 
-		guMtxConcat(gxu_projection_matrix, m, gxu_projection_matrix);
+		guMtxConcat(gxu_projection_matrix, pm, gxu_projection_matrix);
 		gxu_cull_mode = GX_CULL_FRONT;
 	}
 	else
@@ -1009,22 +1010,22 @@ void R_SetupGX (void)
 	guMtxRotAxisDeg(gxu_modelview_matrices[gxu_cur_modelview_matrix], &a, -90);
 	a.x = 0;
 	a.z = 1;
-	guMtxRotAxisDeg(m, &a, 90);
-	guMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]); // put Z going up
+	guMtxRotAxisDeg(mm, &a, 90);
+	guMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], mm, gxu_modelview_matrices[gxu_cur_modelview_matrix]); // put Z going up
 	a.x = 1;
 	a.z = 0;
-	guMtxRotAxisDeg(m, &a, -r_refdef.viewangles[2]);
-	guMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
+	guMtxRotAxisDeg(mm, &a, -r_refdef.viewangles[2]);
+	guMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], mm, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
 	a.x = 0;
 	a.y = 1;
-	guMtxRotAxisDeg(m, &a, -r_refdef.viewangles[0]);
-	guMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
+	guMtxRotAxisDeg(mm, &a, -r_refdef.viewangles[0]);
+	guMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], mm, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
 	a.y = 0;
 	a.z = 1;
-	guMtxRotAxisDeg(m, &a, -r_refdef.viewangles[1]);
-	guMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
-	guMtxTrans(m, -r_refdef.vieworg[0], -r_refdef.vieworg[1], -r_refdef.vieworg[2]);
-	guMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
+	guMtxRotAxisDeg(mm, &a, -r_refdef.viewangles[1]);
+	guMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], mm, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
+	guMtxTrans(mm, -r_refdef.vieworg[0], -r_refdef.vieworg[1], -r_refdef.vieworg[2]);
+	guMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], mm, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
 
 	GX_LoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 
