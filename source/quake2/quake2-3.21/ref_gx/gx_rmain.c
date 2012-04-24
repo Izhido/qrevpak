@@ -330,7 +330,8 @@ void R_DrawNullModel (void)
 	};
 	qgxEnd ();
 
-	qglPopMatrix ();
+	gxu_cur_modelview_matrix--;
+	qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 	qglEnable (GL_TEXTURE_2D);
 }
 

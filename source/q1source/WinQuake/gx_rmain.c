@@ -982,7 +982,7 @@ void R_SetupGX (void)
 	gxu_viewport_height = h;
 	GX_SetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxdepthmin, gxdepthmax);
 	
-	guPerspective(gxu_projection_matrix, r_refdef.fov_y, (float)r_refdef.vrect.width/r_refdef.vrect.height, 4, 4096);
+	guPerspective(gxu_projection_matrices[gxu_cur_projection_matrix], r_refdef.fov_y, (float)r_refdef.vrect.width/r_refdef.vrect.height, 4, 4096);
 
 	if (mirror)
 	{
@@ -991,7 +991,7 @@ void R_SetupGX (void)
 		else
 			guMtxScale(pm, -1, 1, 1);
 
-		guMtxConcat(gxu_projection_matrix, pm, gxu_projection_matrix);
+		guMtxConcat(gxu_projection_matrices[gxu_cur_projection_matrix], pm, gxu_projection_matrices[gxu_cur_projection_matrix]);
 		gxu_cull_mode = GX_CULL_FRONT;
 	}
 	else
@@ -1002,7 +1002,7 @@ void R_SetupGX (void)
 		GX_SetCullMode(gxu_cull_mode);
 	};
 
-	GX_LoadProjectionMtx(gxu_projection_matrix, GX_PERSPECTIVE);
+	GX_LoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], GX_PERSPECTIVE);
 
 	a.x = 1;
 	a.y = 0;
@@ -1201,8 +1201,8 @@ void R_Mirror (void)
 		guMtxScale(sproj, 1, -1, 1);
 	else
 		guMtxScale(sproj, -1, 1, 1);
-	guMtxConcat(gxu_projection_matrix, sproj, gxu_projection_matrix);
-	GX_LoadProjectionMtx(gxu_projection_matrix, GX_PERSPECTIVE);
+	guMtxConcat(gxu_projection_matrices[gxu_cur_projection_matrix], sproj, gxu_projection_matrices[gxu_cur_projection_matrix]);
+	GX_LoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], GX_PERSPECTIVE);
 
 	gxu_cull_mode = GX_CULL_BACK;
 	if(gxu_cull_enabled)

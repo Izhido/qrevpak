@@ -9,7 +9,9 @@ extern u8 gxu_clear_buffers;
 
 extern u8 gxu_clear_color_buffer;
 
-extern Mtx44 gxu_projection_matrix;
+extern Mtx44 gxu_projection_matrices[];
+
+extern int gxu_cur_projection_matrix;
 
 extern Mtx gxu_modelview_matrices[];
 

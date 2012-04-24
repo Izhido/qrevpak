@@ -4,24 +4,7 @@
 #include <string.h>
 #include "gxutils.h"
 
-typedef struct
-{
-	f32 x;
-	f32 y;
-	f32 z;
-	u8 r;
-	u8 g;
-	u8 b;
-	u8 a;
-} gl_vertex_t;
-
-GLenum gl_primitive_mode = -1;
-gl_vertex_t* gl_vertices = 0;
-int gl_vertices_size = 0;
-int gl_vertex_count = 0;
 GLenum gl_matrix_mode = GL_MODELVIEW;
-Mtx44 gl_projection_matrices[2];
-int gl_projection_matrix = 0;
 
 void glTexParameterf(GLenum target, GLenum pname, GLfloat param)
 {
@@ -49,23 +32,23 @@ void glLoadIdentity(void)
 		};
 		case GL_PROJECTION:
 		{
-			gl_projection_matrices[gl_projection_matrix][0][0] = 1;
-			gl_projection_matrices[gl_projection_matrix][0][1] = 0;
-			gl_projection_matrices[gl_projection_matrix][0][2] = 0;
-			gl_projection_matrices[gl_projection_matrix][0][3] = 0;
-			gl_projection_matrices[gl_projection_matrix][1][0] = 0;
-			gl_projection_matrices[gl_projection_matrix][1][1] = 1;
-			gl_projection_matrices[gl_projection_matrix][1][2] = 0;
-			gl_projection_matrices[gl_projection_matrix][1][3] = 0;
-			gl_projection_matrices[gl_projection_matrix][2][0] = 0;
-			gl_projection_matrices[gl_projection_matrix][2][1] = 0;
-			gl_projection_matrices[gl_projection_matrix][2][2] = 1;
-			gl_projection_matrices[gl_projection_matrix][2][3] = 0;
-			gl_projection_matrices[gl_projection_matrix][3][0] = 0;
-			gl_projection_matrices[gl_projection_matrix][3][1] = 0;
-			gl_projection_matrices[gl_projection_matrix][3][2] = 0;
-			gl_projection_matrices[gl_projection_matrix][3][3] = 1;
-			GX_LoadProjectionMtx(gl_projection_matrices[gl_projection_matrix], GX_PERSPECTIVE);
+			gxu_projection_matrices[gxu_cur_projection_matrix][0][0] = 1;
+			gxu_projection_matrices[gxu_cur_projection_matrix][0][1] = 0;
+			gxu_projection_matrices[gxu_cur_projection_matrix][0][2] = 0;
+			gxu_projection_matrices[gxu_cur_projection_matrix][0][3] = 0;
+			gxu_projection_matrices[gxu_cur_projection_matrix][1][0] = 0;
+			gxu_projection_matrices[gxu_cur_projection_matrix][1][1] = 1;
+			gxu_projection_matrices[gxu_cur_projection_matrix][1][2] = 0;
+			gxu_projection_matrices[gxu_cur_projection_matrix][1][3] = 0;
+			gxu_projection_matrices[gxu_cur_projection_matrix][2][0] = 0;
+			gxu_projection_matrices[gxu_cur_projection_matrix][2][1] = 0;
+			gxu_projection_matrices[gxu_cur_projection_matrix][2][2] = 1;
+			gxu_projection_matrices[gxu_cur_projection_matrix][2][3] = 0;
+			gxu_projection_matrices[gxu_cur_projection_matrix][3][0] = 0;
+			gxu_projection_matrices[gxu_cur_projection_matrix][3][1] = 0;
+			gxu_projection_matrices[gxu_cur_projection_matrix][3][2] = 0;
+			gxu_projection_matrices[gxu_cur_projection_matrix][3][3] = 1;
+			GX_LoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], GX_PERSPECTIVE);
 			break;
 		};
 	};
@@ -77,8 +60,8 @@ void glOrtho(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdou
 	{
 		case GL_PROJECTION:
 		{
-			guOrtho(gl_projection_matrices[gl_projection_matrix], top, bottom, left, right, nearVal, farVal);
-			GX_LoadProjectionMtx(gl_projection_matrices[gl_projection_matrix], GX_PERSPECTIVE);
+			guOrtho(gxu_projection_matrices[gxu_cur_projection_matrix], top, bottom, left, right, nearVal, farVal);
+			GX_LoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], GX_ORTHOGRAPHIC);
 			break;
 		};
 	};
@@ -138,8 +121,8 @@ void glFrustum(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLd
 	{
 		case GL_PROJECTION:
 		{
-			guFrustum(gl_projection_matrices[gl_projection_matrix], top, bottom, left, right, nearVal, farVal);
-			GX_LoadProjectionMtx(gl_projection_matrices[gl_projection_matrix], GX_PERSPECTIVE);
+			guFrustum(gxu_projection_matrices[gxu_cur_projection_matrix], top, bottom, left, right, nearVal, farVal);
+			GX_LoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], GX_PERSPECTIVE);
 			break;
 		};
 	};
@@ -188,23 +171,23 @@ void glPushMatrix(void)
 		};
 		case GL_PROJECTION:
 		{
-			gl_projection_matrices[gl_projection_matrix + 1][0][0] = gl_projection_matrices[gl_projection_matrix][0][0];
-			gl_projection_matrices[gl_projection_matrix + 1][0][1] = gl_projection_matrices[gl_projection_matrix][0][1];
-			gl_projection_matrices[gl_projection_matrix + 1][0][2] = gl_projection_matrices[gl_projection_matrix][0][2];
-			gl_projection_matrices[gl_projection_matrix + 1][0][3] = gl_projection_matrices[gl_projection_matrix][0][3];
-			gl_projection_matrices[gl_projection_matrix + 1][1][0] = gl_projection_matrices[gl_projection_matrix][1][0];
-			gl_projection_matrices[gl_projection_matrix + 1][1][1] = gl_projection_matrices[gl_projection_matrix][1][1];
-			gl_projection_matrices[gl_projection_matrix + 1][1][2] = gl_projection_matrices[gl_projection_matrix][1][2];
-			gl_projection_matrices[gl_projection_matrix + 1][1][3] = gl_projection_matrices[gl_projection_matrix][1][3];
-			gl_projection_matrices[gl_projection_matrix + 1][2][0] = gl_projection_matrices[gl_projection_matrix][2][0];
-			gl_projection_matrices[gl_projection_matrix + 1][2][1] = gl_projection_matrices[gl_projection_matrix][2][1];
-			gl_projection_matrices[gl_projection_matrix + 1][2][2] = gl_projection_matrices[gl_projection_matrix][2][2];
-			gl_projection_matrices[gl_projection_matrix + 1][2][3] = gl_projection_matrices[gl_projection_matrix][2][3];
-			gl_projection_matrices[gl_projection_matrix + 1][3][0] = gl_projection_matrices[gl_projection_matrix][3][0];
-			gl_projection_matrices[gl_projection_matrix + 1][3][1] = gl_projection_matrices[gl_projection_matrix][3][1];
-			gl_projection_matrices[gl_projection_matrix + 1][3][2] = gl_projection_matrices[gl_projection_matrix][3][2];
-			gl_projection_matrices[gl_projection_matrix + 1][3][3] = gl_projection_matrices[gl_projection_matrix][3][3];
-			gl_projection_matrix++;
+			gxu_projection_matrices[gxu_cur_projection_matrix + 1][0][0] = gxu_projection_matrices[gxu_cur_projection_matrix][0][0];
+			gxu_projection_matrices[gxu_cur_projection_matrix + 1][0][1] = gxu_projection_matrices[gxu_cur_projection_matrix][0][1];
+			gxu_projection_matrices[gxu_cur_projection_matrix + 1][0][2] = gxu_projection_matrices[gxu_cur_projection_matrix][0][2];
+			gxu_projection_matrices[gxu_cur_projection_matrix + 1][0][3] = gxu_projection_matrices[gxu_cur_projection_matrix][0][3];
+			gxu_projection_matrices[gxu_cur_projection_matrix + 1][1][0] = gxu_projection_matrices[gxu_cur_projection_matrix][1][0];
+			gxu_projection_matrices[gxu_cur_projection_matrix + 1][1][1] = gxu_projection_matrices[gxu_cur_projection_matrix][1][1];
+			gxu_projection_matrices[gxu_cur_projection_matrix + 1][1][2] = gxu_projection_matrices[gxu_cur_projection_matrix][1][2];
+			gxu_projection_matrices[gxu_cur_projection_matrix + 1][1][3] = gxu_projection_matrices[gxu_cur_projection_matrix][1][3];
+			gxu_projection_matrices[gxu_cur_projection_matrix + 1][2][0] = gxu_projection_matrices[gxu_cur_projection_matrix][2][0];
+			gxu_projection_matrices[gxu_cur_projection_matrix + 1][2][1] = gxu_projection_matrices[gxu_cur_projection_matrix][2][1];
+			gxu_projection_matrices[gxu_cur_projection_matrix + 1][2][2] = gxu_projection_matrices[gxu_cur_projection_matrix][2][2];
+			gxu_projection_matrices[gxu_cur_projection_matrix + 1][2][3] = gxu_projection_matrices[gxu_cur_projection_matrix][2][3];
+			gxu_projection_matrices[gxu_cur_projection_matrix + 1][3][0] = gxu_projection_matrices[gxu_cur_projection_matrix][3][0];
+			gxu_projection_matrices[gxu_cur_projection_matrix + 1][3][1] = gxu_projection_matrices[gxu_cur_projection_matrix][3][1];
+			gxu_projection_matrices[gxu_cur_projection_matrix + 1][3][2] = gxu_projection_matrices[gxu_cur_projection_matrix][3][2];
+			gxu_projection_matrices[gxu_cur_projection_matrix + 1][3][3] = gxu_projection_matrices[gxu_cur_projection_matrix][3][3];
+			gxu_cur_projection_matrix++;
 			break;
 		};
 	};
@@ -230,8 +213,8 @@ void glPopMatrix(void)
 		};
 		case GL_PROJECTION:
 		{
-			gl_projection_matrix--;
-			GX_LoadProjectionMtx(gl_projection_matrices[gl_projection_matrix], GX_PERSPECTIVE);
+			gxu_cur_projection_matrix--;
+			GX_LoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], GX_PERSPECTIVE);
 			break;
 		};
 	};

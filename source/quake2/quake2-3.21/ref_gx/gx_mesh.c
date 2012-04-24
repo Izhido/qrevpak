@@ -847,7 +847,8 @@ void R_DrawAliasModel (entity_t *e)
 	GL_TexEnv( GL_REPLACE );
 	qglShadeModel (GL_FLAT);
 
-	qglPopMatrix ();
+	gxu_cur_modelview_matrix--;
+	qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 
 #if 0
 	qglDisable( GL_CULL_FACE );
@@ -894,7 +895,8 @@ void R_DrawAliasModel (entity_t *e)
 		GL_DrawAliasShadow (paliashdr, currententity->frame );
 		qglEnable (GL_TEXTURE_2D);
 		qglDisable (GL_BLEND);
-		qglPopMatrix ();
+		gxu_cur_modelview_matrix--;
+		qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 	}
 #endif
 	gxu_cur_r = 255;

@@ -626,7 +626,8 @@ qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 		MakeSkyVec (skymaxs[0][i], skymins[1][i], i);
 		qgxEnd ();
 	}
-qglPopMatrix ();
+gxu_cur_modelview_matrix--;
+qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 #if 0
 glDisable (GL_BLEND);
 glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);

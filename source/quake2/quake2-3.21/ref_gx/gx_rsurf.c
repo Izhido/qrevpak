@@ -1054,7 +1054,8 @@ e->angles[2] = -e->angles[2];	// stupid quake bug
 	R_DrawInlineBModel ();
 	GL_EnableMultitexture( false );
 
-	qglPopMatrix ();
+	gxu_cur_modelview_matrix--;
+	qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 }
 
 /*

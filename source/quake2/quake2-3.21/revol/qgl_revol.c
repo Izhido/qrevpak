@@ -40,6 +40,7 @@ static FILE *log_fp = NULL;
 
 void ( APIENTRY * qguMtxConcat )(Mtx a, Mtx b, Mtx ab);
 void ( APIENTRY * qguMtxCopy )(Mtx src, Mtx dst);
+void ( APIENTRY * qguMtxIdentity )(Mtx mt);
 void ( APIENTRY * qguMtxRotAxisDeg )(Mtx mt, guVector* axis, f32 deg);
 void ( APIENTRY * qguMtxTrans )(Mtx mt, f32 xT, f32 yT, f32 zT);
 void ( APIENTRY * qglAccum )(GLenum op, GLfloat value);
@@ -478,6 +479,7 @@ static void ( APIENTRY * dllMaterialiv )(GLenum face, GLenum pname, const GLint 
 static void ( APIENTRY * dllMatrixMode )(GLenum mode);
 static void ( APIENTRY * dllMtxConcat )(Mtx a, Mtx b, Mtx ab);
 static void ( APIENTRY * dllMtxCopy )(Mtx src, Mtx dst);
+static void ( APIENTRY * dllMtxIdentity )(Mtx mt);
 static void ( APIENTRY * dllMtxRotAxisDeg )(Mtx mt, guVector* axis, f32 deg);
 static void ( APIENTRY * dllMtxTrans )(Mtx mt, f32 xT, f32 yT, f32 zT);
 static void ( APIENTRY * dllMultMatrixd )(const GLdouble *m);
@@ -1485,6 +1487,12 @@ static void APIENTRY logMtxCopy(Mtx src, Mtx dst)
 	dllMtxCopy( src, dst );
 }
 
+static void APIENTRY logMtxIdentity(Mtx mt)
+{
+	SIG( "guMtxIdentity" );
+	dllMtxIdentity( mt );
+}
+
 static void APIENTRY logMtxTrans(Mtx mt, f32 xT, f32 yT, f32 zT)
 {
 	SIG( "guMtxTrans" );
@@ -2231,6 +2239,7 @@ void QGL_Shutdown( void )
 {
 	qguMtxConcat                 = NULL;
 	qguMtxCopy                   = NULL;
+	qguMtxIdentity               = NULL;
 	qguMtxRotAxisDeg             = NULL;
 	qguMtxTrans                  = NULL;
 	qglAccum                     = NULL;
@@ -2531,6 +2540,7 @@ qboolean QGL_Init( const char *dllname )
 
 	qguMtxConcat                 = dllMtxConcat = guMtxConcat;
 	qguMtxCopy                   = dllMtxCopy = guMtxCopy;
+	qguMtxIdentity               = dllMtxIdentity = guMtxIdentity;
 	qguMtxRotAxisDeg             = dllMtxRotAxisDeg = GXU_CallguMtxRotAxisDeg;
 	qguMtxTrans                  = dllMtxTrans = guMtxTrans;
 	qglAccum                     = dllAccum = glAccum;
@@ -2849,6 +2859,7 @@ void GLimp_EnableLogging( qboolean enable )
 
 		qguMtxConcat                 = logMtxConcat;
 		qguMtxCopy                   = logMtxCopy;
+		qguMtxIdentity               = logMtxIdentity;
 		qguMtxRotAxisDeg             = logMtxRotAxisDeg;
 		qguMtxTrans                  = logMtxTrans;
 		qglAccum                     = logAccum;
@@ -3133,6 +3144,7 @@ void GLimp_EnableLogging( qboolean enable )
 	{
 		qguMtxConcat                 = dllMtxConcat;
 		qguMtxCopy                   = dllMtxCopy;
+		qguMtxIdentity               = dllMtxIdentity;
 		qguMtxRotAxisDeg             = dllMtxRotAxisDeg;
 		qguMtxTrans                  = dllMtxTrans;
 		qglAccum                     = dllAccum;

@@ -44,6 +44,7 @@ void     QGL_Shutdown( void );
 
 extern  void ( APIENTRY * qguMtxConcat )(Mtx a, Mtx b, Mtx ab);
 extern  void ( APIENTRY * qguMtxCopy )(Mtx src, Mtx dst);
+extern	void ( APIENTRY * qguMtxIdentity )(Mtx mt);
 extern	void ( APIENTRY * qguMtxRotAxisDeg )(Mtx mt, guVector* axis, f32 deg);
 extern  void ( APIENTRY * qguMtxTrans )(Mtx mt, f32 xT, f32 yT, f32 zT);
 extern  void ( APIENTRY * qglAccum )(GLenum op, GLfloat value);

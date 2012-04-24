@@ -16,7 +16,9 @@ u8 gxu_clear_buffers = GX_TRUE;
 
 u8 gxu_clear_color_buffer = GX_TRUE;
 
-Mtx44 gxu_projection_matrix;
+Mtx44 gxu_projection_matrices[2];
+
+int gxu_cur_projection_matrix = 0;
 
 Mtx gxu_modelview_matrices[32];
 
