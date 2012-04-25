@@ -1137,11 +1137,7 @@ void CL_MuzzleFlash (void)
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Support for GX hardware:
 //#ifdef GLQUAKE
-#ifdef GXQUAKE
-	// don't draw our own muzzle flash in GX if flashblending
-	if (i-1 == cl.playernum && gx_flashblend.value)
-		return;
-#elif GLQUAKE
+#if defined(GXQUAKE) || defined(GLQUAKE)
 // <<< FIX
 	// don't draw our own muzzle flash in gl if flashblending
 	if (i-1 == cl.playernum && gl_flashblend.value)

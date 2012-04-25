@@ -209,25 +209,25 @@ extern	cvar_t	r_wateralpha;
 extern	cvar_t	r_dynamic;
 extern	cvar_t	r_novis;
 
-extern	cvar_t	gx_clear;
-extern	cvar_t	gx_cull;
-extern	cvar_t	gx_poly;
-extern	cvar_t	gx_texsort;
-extern	cvar_t	gx_smoothmodels;
-extern	cvar_t	gx_affinemodels;
-extern	cvar_t	gx_polyblend;
-extern	cvar_t	gx_keeptjunctions;
-extern	cvar_t	gx_reporttjunctions;
-extern	cvar_t	gx_flashblend;
-extern	cvar_t	gx_nocolors;
-extern	cvar_t	gx_doubleeyes;
+extern	cvar_t	gl_clear;
+extern	cvar_t	gl_cull;
+extern	cvar_t	gl_poly;
+extern	cvar_t	gl_texsort;
+extern	cvar_t	gl_smoothmodels;
+extern	cvar_t	gl_affinemodels;
+extern	cvar_t	gl_polyblend;
+extern	cvar_t	gl_keeptjunctions;
+extern	cvar_t	gl_reporttjunctions;
+extern	cvar_t	gl_flashblend;
+extern	cvar_t	gl_nocolors;
+extern	cvar_t	gl_doubleeyes;
 
 extern	int		gx_lightmap_format;
 extern	int		gx_solid_format;
 extern	int		gx_alpha_format;
 
-extern	cvar_t	gx_max_size;
-extern	cvar_t	gx_playermip;
+extern	cvar_t	gl_max_size;
+extern	cvar_t	gl_playermip;
 
 extern	int			mirrortexturenum;	// quake texturenum, not gxtexturenum
 extern	qboolean	mirror;

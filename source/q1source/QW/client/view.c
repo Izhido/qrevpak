@@ -59,13 +59,12 @@ cvar_t	crosshaircolor = {"crosshaircolor", "79", true};
 cvar_t  cl_crossx = {"cl_crossx", "0", true};
 cvar_t  cl_crossy = {"cl_crossy", "0", true};
 
-#ifdef GLQUAKE
-cvar_t	gl_cshiftpercent = {"gl_cshiftpercent", "100", false};
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// New cvar for GX hardware:
-#elif GXQUAKE
-cvar_t	gx_cshiftpercent = {"gl_cshiftpercent", "100", false};
+// Including new cvar also for GX builds:
+//#ifdef GLQUAKE
+#if defined(GXQUAKE) || defined(GLQUAKE)
 // <<< FIX
+cvar_t	gl_cshiftpercent = {"gl_cshiftpercent", "100", false};
 #endif
 
 cvar_t  v_contentblend = {"v_contentblend", "1", false};
@@ -514,18 +513,10 @@ void V_CalcBlend (void)
 
 	for (j=0 ; j<NUM_CSHIFTS ; j++)	
 	{
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Variable name changed for GX hardware:
-//		if (!gl_cshiftpercent.value)
-		if (!gx_cshiftpercent.value)
-// <<< FIX
+		if (!gl_cshiftpercent.value)
 			continue;
 
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Variable name changed for GX hardware:
-//		a2 = ((cl.cshifts[j].percent * gl_cshiftpercent.value) / 100.0) / 255.0;
-		a2 = ((cl.cshifts[j].percent * gx_cshiftpercent.value) / 100.0) / 255.0;
-// <<< FIX
+		a2 = ((cl.cshifts[j].percent * gl_cshiftpercent.value) / 100.0) / 255.0;
 
 //		a2 = (cl.cshifts[j].percent/2)/255.0;
 		if (!a2)
@@ -1110,13 +1101,12 @@ void V_Init (void)
 	Cvar_RegisterVariable (&crosshair);
 	Cvar_RegisterVariable (&cl_crossx);
 	Cvar_RegisterVariable (&cl_crossy);
-#ifdef GLQUAKE
-	Cvar_RegisterVariable (&gl_cshiftpercent);
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Registering new cvar for GX hardware:
-#elif GXQUAKE
-	Cvar_RegisterVariable (&gx_cshiftpercent);
+// Including new cvar also for GX builds:
+//#ifdef GLQUAKE
+#if defined(GXQUAKE) || defined(GLQUAKE)
 // <<< FIX
+	Cvar_RegisterVariable (&gl_cshiftpercent);
 #endif
 
 	Cvar_RegisterVariable (&cl_rollspeed);

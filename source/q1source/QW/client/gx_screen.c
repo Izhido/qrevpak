@@ -93,7 +93,7 @@ cvar_t          scr_showturtle = {"showturtle","0"};
 cvar_t          scr_showpause = {"showpause","1"};
 cvar_t          scr_printspeed = {"scr_printspeed","8"};
 cvar_t			scr_allowsnap = {"scr_allowsnap", "1"};
-cvar_t			gx_triplebuffer = {"gl_triplebuffer", "1", true };
+cvar_t			gl_triplebuffer = {"gl_triplebuffer", "1", true };
 extern  		cvar_t  crosshair;
 
 qboolean        scr_initialized;                // ready to draw
@@ -386,7 +386,7 @@ void SCR_Init (void)
 	Cvar_RegisterVariable (&scr_centertime);
 	Cvar_RegisterVariable (&scr_printspeed);
 	Cvar_RegisterVariable (&scr_allowsnap);
-	Cvar_RegisterVariable (&gx_triplebuffer);
+	Cvar_RegisterVariable (&gl_triplebuffer);
 
 //
 // register our commands
@@ -1091,7 +1091,7 @@ void SCR_UpdateScreen (void)
 	if (block_drawing)
 		return;
 
-	vid.numpages = 2 + gx_triplebuffer.value;
+	vid.numpages = 2 + gl_triplebuffer.value;
 
 	scr_copytop = 0;
 	scr_copyeverything = 0;

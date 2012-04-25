@@ -60,7 +60,7 @@ int			allocated[MAX_LIGHTMAPS][BLOCK_WIDTH];
 // main memory so texsubimage can update properly
 byte*		lightmaps/*[4*MAX_LIGHTMAPS*BLOCK_WIDTH*BLOCK_HEIGHT]*/;
 
-// For gx_texsort 0
+// For gl_texsort 0
 msurface_t  *skychain = NULL;
 msurface_t  *waterchain = NULL;
 
@@ -736,7 +736,7 @@ void R_BlendLightmaps (void)
 	if (r_fullbright.value)
 		return;
 #endif
-	if (!gx_texsort.value)
+	if (!gl_texsort.value)
 		return;
 
 	gxu_z_write_enabled = GX_FALSE;
@@ -1048,7 +1048,7 @@ void R_DrawWaterSurfaces (void)
 	texture_t	*t;
 	float a;
 
-	if (r_wateralpha.value == 1.0 && gx_texsort.value)
+	if (r_wateralpha.value == 1.0 && gl_texsort.value)
 		return;
 
 	//
@@ -1072,7 +1072,7 @@ void R_DrawWaterSurfaces (void)
 		GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
 	}
 
-	if (!gx_texsort.value) {
+	if (!gl_texsort.value) {
 		if (!waterchain)
 			return;
 
@@ -1132,7 +1132,7 @@ void DrawTextureChains (void)
 	msurface_t	*s;
 	texture_t	*t;
 
-	if (!gx_texsort.value) {
+	if (!gl_texsort.value) {
 		GX_DisableMultitexture();
 
 		if (skychain) {
@@ -1233,7 +1233,7 @@ void R_DrawBrushModel (entity_t *e)
 
 // calculate dynamic lighting for bmodel if it's not an
 // instanced model
-	if (clmodel->firstmodelsurface != 0 && !gx_flashblend.value)
+	if (clmodel->firstmodelsurface != 0 && !gl_flashblend.value)
 	{
 		for (k=0 ; k<MAX_DLIGHTS ; k++)
 		{
@@ -1267,7 +1267,7 @@ e->angles[0] = -e->angles[0];	// stupid quake bug
 		if (((psurf->flags & SURF_PLANEBACK) && (dot < -BACKFACE_EPSILON)) ||
 			(!(psurf->flags & SURF_PLANEBACK) && (dot > BACKFACE_EPSILON)))
 		{
-			if (gx_texsort.value)
+			if (gl_texsort.value)
 				R_RenderBrushPoly (psurf);
 			else
 				R_DrawSequentialPoly (psurf);
@@ -1388,7 +1388,7 @@ void R_RecursiveWorldNode (mnode_t *node)
 					continue;		// wrong side
 
 				// if sorting by texture, just store it out
-				if (gx_texsort.value)
+				if (gl_texsort.value)
 				{
 					if (!mirror
 					|| surf->texinfo->texture != cl.worldmodel->textures[mirrortexturenum])
@@ -1634,7 +1634,7 @@ void BuildSurfaceDisplayList (msurface_t *fa)
 	//
 	// remove co-linear points - Ed
 	//
-	if (!gx_keeptjunctions.value && !(fa->flags & SURF_UNDERWATER) )
+	if (!gl_keeptjunctions.value && !(fa->flags & SURF_UNDERWATER) )
 	{
 		for (i = 0 ; i < lnumverts ; ++i)
 		{
@@ -1779,7 +1779,7 @@ void GX_BuildLightmaps (void)
 		}
 	}
 
- 	if (!gx_texsort.value)
+ 	if (!gl_texsort.value)
  		GX_SelectTexture(GX_TEXMAP1);
 
 	//
@@ -1799,7 +1799,7 @@ void GX_BuildLightmaps (void)
 		GX_SetMinMag (GX_LINEAR, GX_LINEAR);
 	}
 
- 	if (!gx_texsort.value)
+ 	if (!gl_texsort.value)
  		GX_SelectTexture(GX_TEXMAP0);
 
 }

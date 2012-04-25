@@ -38,7 +38,7 @@ int		texture_extension_number = 1;
 
 float		gxdepthmin, gxdepthmax;
 
-cvar_t	gx_ztrick = {"gx_ztrick","1"};
+cvar_t	gl_ztrick = {"gl_ztrick","1"};
 
 static float vid_gamma = 1.0;
 
@@ -266,7 +266,7 @@ void	VID_Init (unsigned char *palette)
 	int width = sys_rmode->fbWidth;
 	int height = sys_rmode->efbHeight;
 
-	Cvar_RegisterVariable (&gx_ztrick);
+	Cvar_RegisterVariable (&gl_ztrick);
 	
 	vid.maxwarpwidth = width;
 	vid.maxwarpheight = height;

@@ -94,21 +94,21 @@ cvar_t	r_dynamic = {"r_dynamic","1"};
 cvar_t	r_novis = {"r_novis","0"};
 cvar_t	r_netgraph = {"r_netgraph","0"};
 
-cvar_t	gx_clear = {"gx_clear","0"};
-cvar_t	gx_cull = {"gx_cull","1"};
-cvar_t	gx_texsort = {"gx_texsort","1"};
-cvar_t	gx_smoothmodels = {"gx_smoothmodels","1"};
-cvar_t	gx_affinemodels = {"gx_affinemodels","0"};
-cvar_t	gx_polyblend = {"gx_polyblend","1"};
-cvar_t	gx_flashblend = {"gx_flashblend","1"};
-cvar_t	gx_playermip = {"gx_playermip","0"};
-cvar_t	gx_nocolors = {"gx_nocolors","0"};
-cvar_t	gx_keeptjunctions = {"gx_keeptjunctions","1"};
-cvar_t	gx_reporttjunctions = {"gx_reporttjunctions","0"};
-cvar_t	gx_finish = {"gl_finish","0"};
+cvar_t	gl_clear = {"gl_clear","0"};
+cvar_t	gl_cull = {"gl_cull","1"};
+cvar_t	gl_texsort = {"gl_texsort","1"};
+cvar_t	gl_smoothmodels = {"gl_smoothmodels","1"};
+cvar_t	gl_affinemodels = {"gl_affinemodels","0"};
+cvar_t	gl_polyblend = {"gl_polyblend","1"};
+cvar_t	gl_flashblend = {"gl_flashblend","1"};
+cvar_t	gl_playermip = {"gl_playermip","0"};
+cvar_t	gl_nocolors = {"gl_nocolors","0"};
+cvar_t	gl_keeptjunctions = {"gl_keeptjunctions","1"};
+cvar_t	gl_reporttjunctions = {"gl_reporttjunctions","0"};
+cvar_t	gl_finish = {"gl_finish","0"};
 
 
-extern	cvar_t	gx_ztrick;
+extern	cvar_t	gl_ztrick;
 extern	cvar_t	scr_fov;
 /*
 =================
@@ -585,7 +585,7 @@ void R_DrawAliasModel (entity_t *e)
 
 	// we can't dynamically colormap textures, so they are cached
 	// seperately for the players.  Heads are just uncolored.
-	if (currententity->scoreboard && !gx_nocolors.value)
+	if (currententity->scoreboard && !gl_nocolors.value)
 	{
 		i = currententity->scoreboard - cl.players;
 		if (!currententity->scoreboard->skin) {
@@ -596,11 +596,11 @@ void R_DrawAliasModel (entity_t *e)
 		    GX_Bind(playertextures + i);
 	}
 
-	if (gx_smoothmodels.value)
+	if (gl_smoothmodels.value)
 		glShadeModel (GL_SMOOTH);
 	GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
 
-	if (gx_affinemodels.value)
+	if (gl_affinemodels.value)
 		glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
 
 	R_SetupAliasFrame (currententity->frame, paliashdr);
@@ -608,7 +608,7 @@ void R_DrawAliasModel (entity_t *e)
 	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
 
 	glShadeModel (GL_FLAT);
-	if (gx_affinemodels.value)
+	if (gl_affinemodels.value)
 		glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
 	gxu_cur_modelview_matrix--;
@@ -774,7 +774,7 @@ void R_PolyBlend (void)
 	Mtx m;
 	u8 r, g, b, a;
 
-	if (!gx_polyblend.value)
+	if (!gl_polyblend.value)
 		return;
 	if (!v_blend[3])
 		return;
@@ -1014,7 +1014,7 @@ void R_SetupGX (void)
 	//
 	// set drawing parms
 	//
-	if (gx_cull.value)
+	if (gl_cull.value)
 	{
 		gxu_cull_enabled = true;
 		GX_SetCullMode(gxu_cull_mode);
@@ -1075,11 +1075,11 @@ R_Clear
 */
 void R_Clear (void)
 {
-	Cvar_SetValue("gx_ztrick", 0.0); // ONCE WE FULLY UNDERSTAND HOW zNear AND zFar WORKS ON GX, REMOVE THIS ASAP
+	Cvar_SetValue("gl_ztrick", 0.0); // ONCE WE FULLY UNDERSTAND HOW zNear AND zFar WORKS ON GX, REMOVE THIS ASAP
 	Sbar_Changed();                  // THIS TOO, REMOVE IT ASAP
 	if (r_mirroralpha.value != 1.0)
 	{
-		if (gx_clear.value)
+		if (gl_clear.value)
 		{
 			gxu_clear_color_buffer = GX_TRUE;
 			Sbar_Changed();
@@ -1090,7 +1090,7 @@ void R_Clear (void)
 		gxdepthmax = 0.5;
 		GX_SetZMode(gxu_z_test_enabled, GX_LEQUAL, gxu_z_write_enabled);
 	}
-	else if (gx_ztrick.value)
+	else if (gl_ztrick.value)
 	{
 		static int trickframe;
 
@@ -1112,7 +1112,7 @@ void R_Clear (void)
 	}
 	else
 	{
-		if (gx_clear.value)
+		if (gl_clear.value)
 		{
 			gxu_clear_color_buffer = GX_TRUE;
 			Sbar_Changed();

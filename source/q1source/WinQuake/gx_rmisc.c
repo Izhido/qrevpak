@@ -192,24 +192,24 @@ void R_Init (void)
 	Cvar_RegisterVariable (&r_novis);
 	Cvar_RegisterVariable (&r_speeds);
 
-	Cvar_RegisterVariable (&gx_clear);
-	Cvar_RegisterVariable (&gx_texsort);
+	Cvar_RegisterVariable (&gl_clear);
+	Cvar_RegisterVariable (&gl_texsort);
 
  	if (gx_mtexable)
-		Cvar_SetValue ("gx_texsort", 0.0);
+		Cvar_SetValue ("gl_texsort", 0.0);
 
-	Cvar_RegisterVariable (&gx_cull);
-	Cvar_RegisterVariable (&gx_smoothmodels);
-	Cvar_RegisterVariable (&gx_affinemodels);
-	Cvar_RegisterVariable (&gx_polyblend);
-	Cvar_RegisterVariable (&gx_flashblend);
-	Cvar_RegisterVariable (&gx_playermip);
-	Cvar_RegisterVariable (&gx_nocolors);
+	Cvar_RegisterVariable (&gl_cull);
+	Cvar_RegisterVariable (&gl_smoothmodels);
+	Cvar_RegisterVariable (&gl_affinemodels);
+	Cvar_RegisterVariable (&gl_polyblend);
+	Cvar_RegisterVariable (&gl_flashblend);
+	Cvar_RegisterVariable (&gl_playermip);
+	Cvar_RegisterVariable (&gl_nocolors);
 
-	Cvar_RegisterVariable (&gx_keeptjunctions);
-	Cvar_RegisterVariable (&gx_reporttjunctions);
+	Cvar_RegisterVariable (&gl_keeptjunctions);
+	Cvar_RegisterVariable (&gl_reporttjunctions);
 
-	Cvar_RegisterVariable (&gx_doubleeyes);
+	Cvar_RegisterVariable (&gl_doubleeyes);
 
 	R_InitBubble();
 	
@@ -311,12 +311,12 @@ void R_TranslatePlayerSkin (int playernum)
 	// don't mipmap these, because it takes too long
 	GL_Upload8 (translated, paliashdr->skinwidth, paliashdr->skinheight, false, false, true);
 #else
-	scaled_width = gx_max_size.value < 512 ? gx_max_size.value : 512;
-	scaled_height = gx_max_size.value < 256 ? gx_max_size.value : 256;
+	scaled_width = gl_max_size.value < 512 ? gl_max_size.value : 512;
+	scaled_height = gl_max_size.value < 256 ? gl_max_size.value : 256;
 
 	// allow users to crunch sizes down even more if they want
-	scaled_width >>= (int)gx_playermip.value;
-	scaled_height >>= (int)gx_playermip.value;
+	scaled_width >>= (int)gl_playermip.value;
+	scaled_height >>= (int)gl_playermip.value;
 
 	pixels = Sys_BigStackAlloc(512*256 * sizeof(unsigned), "R_TranslatePlayerSkin");
 

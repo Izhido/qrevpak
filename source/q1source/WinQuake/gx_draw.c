@@ -30,9 +30,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "gxutils.h"
 
-cvar_t		gx_nobind = {"gx_nobind", "0"};
-cvar_t		gx_max_size = {"gx_max_size", "1024"};
-cvar_t		gx_picmip = {"gx_picmip", "0"};
+cvar_t		gl_nobind = {"gl_nobind", "0"};
+cvar_t		gl_max_size = {"gl_max_size", "1024"};
+cvar_t		gl_picmip = {"gl_picmip", "0"};
 
 byte		*draw_chars;				// 8*8 graphic characters
 qpic_t		*draw_disc;
@@ -88,7 +88,7 @@ static GLenum oldtarget = GX_TEXMAP0;
 
 void GX_Bind (int texnum)
 {
-	if (gx_nobind.value)
+	if (gl_nobind.value)
 		texnum = char_texture;
 	if (currenttexture == texnum)
 		return;
@@ -863,11 +863,11 @@ void Draw_Init (void)
 
 	memset(gxtexobjs, 0, sizeof(gxtexobjs));
 
-	Cvar_RegisterVariable (&gx_nobind);
-	Cvar_RegisterVariable (&gx_max_size);
-	Cvar_RegisterVariable (&gx_picmip);
+	Cvar_RegisterVariable (&gl_nobind);
+	Cvar_RegisterVariable (&gl_max_size);
+	Cvar_RegisterVariable (&gl_picmip);
 
-	Cmd_AddCommand ("gx_texturemode", &Draw_TextureMode_f);
+	Cmd_AddCommand ("gl_texturemode", &Draw_TextureMode_f);
 
 	// load the console background and the charset
 	// by hand, because we need to write the version
@@ -1509,13 +1509,13 @@ static	unsigned	scaled[1024*512];	// [512*256];
 	for (scaled_height = 1 ; scaled_height < height ; scaled_height<<=1)
 		;
 
-	scaled_width >>= (int)gx_picmip.value;
-	scaled_height >>= (int)gx_picmip.value;
+	scaled_width >>= (int)gl_picmip.value;
+	scaled_height >>= (int)gl_picmip.value;
 
-	if (scaled_width > gx_max_size.value)
-		scaled_width = gx_max_size.value;
-	if (scaled_height > gx_max_size.value)
-		scaled_height = gx_max_size.value;
+	if (scaled_width > gl_max_size.value)
+		scaled_width = gl_max_size.value;
+	if (scaled_height > gl_max_size.value)
+		scaled_height = gl_max_size.value;
 
 	// This is required in order to make small textures compatible with GX hardware:
 	if (scaled_width < 4)

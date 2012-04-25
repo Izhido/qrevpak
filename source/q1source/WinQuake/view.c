@@ -63,10 +63,6 @@ cvar_t	cl_crossx = {"cl_crossx", "0", false};
 cvar_t	cl_crossy = {"cl_crossy", "0", false};
 
 cvar_t	gl_cshiftpercent = {"gl_cshiftpercent", "100", false};
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// New cvar for the GX hardware:
-cvar_t	gx_cshiftpercent = {"gx_cshiftpercent", "100", false};
-// <<< FIX
 
 float	v_dmg_time, v_dmg_roll, v_dmg_pitch;
 
@@ -502,10 +498,10 @@ void V_CalcBlend (void)
 
 	for (j=0 ; j<NUM_CSHIFTS ; j++)	
 	{
-		if (!gx_cshiftpercent.value)
+		if (!gl_cshiftpercent.value)
 			continue;
 
-		a2 = ((cl.cshifts[j].percent * gx_cshiftpercent.value) / 100.0) / 255.0;
+		a2 = ((cl.cshifts[j].percent * gl_cshiftpercent.value) / 100.0) / 255.0;
 
 //		a2 = cl.cshifts[j].percent/255.0;
 		if (!a2)
@@ -1179,10 +1175,6 @@ void V_Init (void)
 	Cvar_RegisterVariable (&cl_crossx);
 	Cvar_RegisterVariable (&cl_crossy);
 	Cvar_RegisterVariable (&gl_cshiftpercent);
-// >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Registering new cvar for the GX hardware:
-	Cvar_RegisterVariable (&gx_cshiftpercent);
-// <<< FIX
 
 	Cvar_RegisterVariable (&scr_ofsx);
 	Cvar_RegisterVariable (&scr_ofsy);

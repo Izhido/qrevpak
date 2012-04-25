@@ -816,9 +816,7 @@ void CL_LinkPlayers (void)
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Support for GX hardware:
 //#ifdef GLQUAKE
-#ifdef GXQUAKE
-		if (!gx_flashblend.value || j != cl.playernum) {
-#elif GLQUAKE
+#if defined(GXQUAKE) || defined(GLQUAKE)
 // <<< FIX
 		if (!gl_flashblend.value || j != cl.playernum) {
 #endif
