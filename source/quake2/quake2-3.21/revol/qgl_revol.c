@@ -44,6 +44,7 @@ void ( APIENTRY * qguMtxIdentity )(Mtx mt);
 void ( APIENTRY * qguMtxRotAxisDeg )(Mtx mt, guVector* axis, f32 deg);
 void ( APIENTRY * qguMtxScale) (Mtx mt, f32 xS, f32 yS, f32 zS);
 void ( APIENTRY * qguMtxTrans )(Mtx mt, f32 xT, f32 yT, f32 zT);
+void ( APIENTRY * qguOrtho )(Mtx44 mt, f32 t, f32 b, f32 l, f32 r, f32 n, f32 f);
 void ( APIENTRY * qguPerspective )(Mtx44 mt, f32 fovy, f32 aspect, f32 n, f32 f);
 void ( APIENTRY * qglAccum )(GLenum op, GLfloat value);
 void ( APIENTRY * qglAlphaFunc )(GLenum func, GLclampf ref);
@@ -109,7 +110,6 @@ void ( APIENTRY * qglFogfv )(GLenum pname, const GLfloat *params);
 void ( APIENTRY * qglFogi )(GLenum pname, GLint param);
 void ( APIENTRY * qglFogiv )(GLenum pname, const GLint *params);
 void ( APIENTRY * qglFrontFace )(GLenum mode);
-void ( APIENTRY * qglFrustum )(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar);
 GLuint ( APIENTRY * qglGenLists )(GLsizei range);
 void ( APIENTRY * qglGenTextures )(GLsizei n, GLuint *textures);
 void ( APIENTRY * qglGetBooleanv )(GLenum pname, GLboolean *params);
@@ -172,7 +172,6 @@ void ( APIENTRY * qglLightiv )(GLenum light, GLenum pname, const GLint *params);
 void ( APIENTRY * qglLineStipple )(GLint factor, GLushort pattern);
 void ( APIENTRY * qglLineWidth )(GLfloat width);
 void ( APIENTRY * qglListBase )(GLuint base);
-void ( APIENTRY * qglLoadIdentity )(void);
 void ( APIENTRY * qglLoadName )(GLuint name);
 void ( APIENTRY * qgxLoadPosMtxImm )(Mtx mt, u32 pnidx);
 void ( APIENTRY * qgxLoadProjectionMtx )(Mtx44 mt, u8 type);
@@ -190,9 +189,6 @@ void ( APIENTRY * qglMaterialf )(GLenum face, GLenum pname, GLfloat param);
 void ( APIENTRY * qglMaterialfv )(GLenum face, GLenum pname, const GLfloat *params);
 void ( APIENTRY * qglMateriali )(GLenum face, GLenum pname, GLint param);
 void ( APIENTRY * qglMaterialiv )(GLenum face, GLenum pname, const GLint *params);
-void ( APIENTRY * qglMatrixMode )(GLenum mode);
-void ( APIENTRY * qglMultMatrixd )(const GLdouble *m);
-void ( APIENTRY * qglMultMatrixf )(const GLfloat *m);
 void ( APIENTRY * qglNewList )(GLuint list, GLenum mode);
 void ( APIENTRY * qglNormal3b )(GLbyte nx, GLbyte ny, GLbyte nz);
 void ( APIENTRY * qglNormal3bv )(const GLbyte *v);
@@ -205,7 +201,6 @@ void ( APIENTRY * qglNormal3iv )(const GLint *v);
 void ( APIENTRY * qglNormal3s )(GLshort nx, GLshort ny, GLshort nz);
 void ( APIENTRY * qglNormal3sv )(const GLshort *v);
 void ( APIENTRY * qglNormalPointer )(GLenum type, GLsizei stride, const GLvoid *pointer);
-void ( APIENTRY * qglOrtho )(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar);
 void ( APIENTRY * qglPassThrough )(GLfloat token);
 void ( APIENTRY * qglPixelMapfv )(GLenum map, GLsizei mapsize, const GLfloat *values);
 void ( APIENTRY * qglPixelMapuiv )(GLenum map, GLsizei mapsize, const GLuint *values);
@@ -279,6 +274,7 @@ void ( APIENTRY * qglTexCoord1sv )(const GLshort *v);
 void ( APIENTRY * qglTexCoord2d )(GLdouble s, GLdouble t);
 void ( APIENTRY * qglTexCoord2dv )(const GLdouble *v);
 void ( APIENTRY * qglTexCoord2f )(GLfloat s, GLfloat t);
+void ( APIENTRY * qgxTexCoord2f32 )(f32 s, f32 t);
 void ( APIENTRY * qglTexCoord2fv )(const GLfloat *v);
 void ( APIENTRY * qglTexCoord2i )(GLint s, GLint t);
 void ( APIENTRY * qglTexCoord2iv )(const GLint *v);
@@ -395,7 +391,6 @@ static void ( APIENTRY * dllFogfv )(GLenum pname, const GLfloat *params);
 static void ( APIENTRY * dllFogi )(GLenum pname, GLint param);
 static void ( APIENTRY * dllFogiv )(GLenum pname, const GLint *params);
 static void ( APIENTRY * dllFrontFace )(GLenum mode);
-static void ( APIENTRY * dllFrustum )(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar);
 GLuint ( APIENTRY * dllGenLists )(GLsizei range);
 static void ( APIENTRY * dllGenTextures )(GLsizei n, GLuint *textures);
 static void ( APIENTRY * dllGetBooleanv )(GLenum pname, GLboolean *params);
@@ -458,7 +453,6 @@ static void ( APIENTRY * dllLightiv )(GLenum light, GLenum pname, const GLint *p
 static void ( APIENTRY * dllLineStipple )(GLint factor, GLushort pattern);
 static void ( APIENTRY * dllLineWidth )(GLfloat width);
 static void ( APIENTRY * dllListBase )(GLuint base);
-static void ( APIENTRY * dllLoadIdentity )(void);
 static void ( APIENTRY * dllLoadName )(GLuint name);
 static void ( APIENTRY * dllLoadPosMtxImm )(Mtx mt, u32 pnidx);
 static void ( APIENTRY * dllLoadProjectionMtx )(Mtx44 mt, u8 type);
@@ -476,15 +470,12 @@ static void ( APIENTRY * dllMaterialf )(GLenum face, GLenum pname, GLfloat param
 static void ( APIENTRY * dllMaterialfv )(GLenum face, GLenum pname, const GLfloat *params);
 static void ( APIENTRY * dllMateriali )(GLenum face, GLenum pname, GLint param);
 static void ( APIENTRY * dllMaterialiv )(GLenum face, GLenum pname, const GLint *params);
-static void ( APIENTRY * dllMatrixMode )(GLenum mode);
 static void ( APIENTRY * dllMtxConcat )(Mtx a, Mtx b, Mtx ab);
 static void ( APIENTRY * dllMtxCopy )(Mtx src, Mtx dst);
 static void ( APIENTRY * dllMtxIdentity )(Mtx mt);
 static void ( APIENTRY * dllMtxRotAxisDeg )(Mtx mt, guVector* axis, f32 deg);
 static void ( APIENTRY * dllMtxScale) (Mtx mt, f32 xS, f32 yS, f32 zS);
 static void ( APIENTRY * dllMtxTrans )(Mtx mt, f32 xT, f32 yT, f32 zT);
-static void ( APIENTRY * dllMultMatrixd )(const GLdouble *m);
-static void ( APIENTRY * dllMultMatrixf )(const GLfloat *m);
 static void ( APIENTRY * dllNewList )(GLuint list, GLenum mode);
 static void ( APIENTRY * dllNormal3b )(GLbyte nx, GLbyte ny, GLbyte nz);
 static void ( APIENTRY * dllNormal3bv )(const GLbyte *v);
@@ -497,7 +488,7 @@ static void ( APIENTRY * dllNormal3iv )(const GLint *v);
 static void ( APIENTRY * dllNormal3s )(GLshort nx, GLshort ny, GLshort nz);
 static void ( APIENTRY * dllNormal3sv )(const GLshort *v);
 static void ( APIENTRY * dllNormalPointer )(GLenum type, GLsizei stride, const GLvoid *pointer);
-static void ( APIENTRY * dllOrtho )(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar);
+static void ( APIENTRY * dllOrtho )(Mtx44 mt, f32 t, f32 b, f32 l, f32 r, f32 n, f32 f);
 static void ( APIENTRY * dllPassThrough )(GLfloat token);
 static void ( APIENTRY * dllPerspective )(Mtx44 mt, f32 fovy, f32 aspect, f32 n, f32 f);
 static void ( APIENTRY * dllPixelMapfv )(GLenum map, GLsizei mapsize, const GLfloat *values);
@@ -572,6 +563,7 @@ static void ( APIENTRY * dllTexCoord1sv )(const GLshort *v);
 static void ( APIENTRY * dllTexCoord2d )(GLdouble s, GLdouble t);
 static void ( APIENTRY * dllTexCoord2dv )(const GLdouble *v);
 static void ( APIENTRY * dllTexCoord2f )(GLfloat s, GLfloat t);
+static void ( APIENTRY * dllTexCoord2f32 )(f32 s, f32 t);
 static void ( APIENTRY * dllTexCoord2fv )(const GLfloat *v);
 static void ( APIENTRY * dllTexCoord2i )(GLint s, GLint t);
 static void ( APIENTRY * dllTexCoord2iv )(const GLint *v);
@@ -992,12 +984,6 @@ static void APIENTRY logFrontFace(GLenum mode)
 	dllFrontFace( mode );
 }
 
-static void APIENTRY logFrustum(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar)
-{
-	SIG( "glFrustum" );
-	dllFrustum( left, right, bottom, top, zNear, zFar );
-}
-
 static GLuint APIENTRY logGenLists(GLsizei range)
 {
 	SIG( "glGenLists" );
@@ -1368,12 +1354,6 @@ static void APIENTRY logListBase(GLuint base)
 	dllListBase( base );
 }
 
-static void APIENTRY logLoadIdentity(void)
-{
-	SIG( "glLoadIdentity" );
-	dllLoadIdentity();
-}
-
 static void APIENTRY logLoadName(GLuint name)
 {
 	SIG( "glLoadName" );
@@ -1473,12 +1453,6 @@ static void APIENTRY logMaterialiv(GLenum face, GLenum pname, const GLint *param
 	dllMaterialiv( face, pname, params );
 }
 
-static void APIENTRY logMatrixMode(GLenum mode)
-{
-	SIG( "glMatrixMode" );
-	dllMatrixMode( mode );
-}
-
 static void APIENTRY logMtxConcat(Mtx a, Mtx b, Mtx ab)
 {
 	SIG( "guMtxConcat" );
@@ -1513,18 +1487,6 @@ static void APIENTRY logMtxRotAxisDeg(Mtx mt, guVector* axis, f32 deg)
 {
 	SIG( "guMtxRotAxisDeg" );
 	dllMtxRotAxisDeg( mt, axis, deg );
-}
-
-static void APIENTRY logMultMatrixd(const GLdouble *m)
-{
-	SIG( "glMultMatrixd" );
-	dllMultMatrixd( m );
-}
-
-static void APIENTRY logMultMatrixf(const GLfloat *m)
-{
-	SIG( "glMultMatrixf" );
-	dllMultMatrixf( m );
 }
 
 static void APIENTRY logNewList(GLuint list, GLenum mode)
@@ -1593,10 +1555,10 @@ static void APIENTRY logNormalPointer(GLenum type, GLsizei stride, const void *p
 	SIG( "glNormalPointer" );
 	dllNormalPointer( type, stride, pointer );
 }
-static void APIENTRY logOrtho(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar)
+static void APIENTRY logOrtho(Mtx44 mt, f32 t, f32 b, f32 l, f32 r, f32 n, f32 f)
 {
-	SIG( "glOrtho" );
-	dllOrtho( left, right, bottom, top, zNear, zFar );
+	SIG( "guOrtho" );
+	dllOrtho( mt, t, b, l, r, n, f );
 }
 
 static void APIENTRY logPassThrough(GLfloat token)
@@ -2002,6 +1964,11 @@ static void APIENTRY logTexCoord2f(GLfloat s, GLfloat t)
 	SIG( "glTexCoord2f" );
 	dllTexCoord2f( s, t );
 }
+static void APIENTRY logTexCoord2f32(f32 s, f32 t)
+{
+	SIG( "GX_TexCoord2f32" );
+	dllTexCoord2f32( s, t );
+}
 static void APIENTRY logTexCoord2fv(const GLfloat *v)
 {
 	SIG( "glTexCoord2fv" );
@@ -2235,6 +2202,7 @@ void QGL_Shutdown( void )
 	qguMtxRotAxisDeg             = NULL;
 	qguMtxScale                  = NULL;
 	qguMtxTrans                  = NULL;
+	qguOrtho                     = NULL;
 	qguPerspective               = NULL;
 	qglAccum                     = NULL;
 	qglAlphaFunc                 = NULL;
@@ -2300,7 +2268,6 @@ void QGL_Shutdown( void )
 	qglFogi                      = NULL;
 	qglFogiv                     = NULL;
 	qglFrontFace                 = NULL;
-	qglFrustum                   = NULL;
 	qglGenLists                  = NULL;
 	qglGenTextures               = NULL;
 	qglGetBooleanv               = NULL;
@@ -2363,7 +2330,6 @@ void QGL_Shutdown( void )
 	qglLineStipple               = NULL;
 	qglLineWidth                 = NULL;
 	qglListBase                  = NULL;
-	qglLoadIdentity              = NULL;
 	qglLoadName                  = NULL;
 	qgxLoadPosMtxImm             = NULL;
 	qgxLoadProjectionMtx         = NULL;
@@ -2381,9 +2347,6 @@ void QGL_Shutdown( void )
 	qglMaterialfv                = NULL;
 	qglMateriali                 = NULL;
 	qglMaterialiv                = NULL;
-	qglMatrixMode                = NULL;
-	qglMultMatrixd               = NULL;
-	qglMultMatrixf               = NULL;
 	qglNewList                   = NULL;
 	qglNormal3b                  = NULL;
 	qglNormal3bv                 = NULL;
@@ -2396,7 +2359,6 @@ void QGL_Shutdown( void )
 	qglNormal3s                  = NULL;
 	qglNormal3sv                 = NULL;
 	qglNormalPointer             = NULL;
-	qglOrtho                     = NULL;
 	qglPassThrough               = NULL;
 	qglPixelMapfv                = NULL;
 	qglPixelMapuiv               = NULL;
@@ -2470,6 +2432,7 @@ void QGL_Shutdown( void )
 	qglTexCoord2d                = NULL;
 	qglTexCoord2dv               = NULL;
 	qglTexCoord2f                = NULL;
+	qgxTexCoord2f32              = NULL;
 	qglTexCoord2fv               = NULL;
 	qglTexCoord2i                = NULL;
 	qglTexCoord2iv               = NULL;
@@ -2534,6 +2497,7 @@ qboolean QGL_Init( const char *dllname )
 	qguMtxIdentity               = dllMtxIdentity = guMtxIdentity;
 	qguMtxRotAxisDeg             = dllMtxRotAxisDeg = GXU_CallguMtxRotAxisDeg;
 	qguMtxScale                  = dllMtxScale = guMtxScale;
+	qguOrtho                     = dllOrtho = guOrtho;
 	qguPerspective               = dllPerspective = guPerspective;
 	qguMtxTrans                  = dllMtxTrans = guMtxTrans;
 	qglAccum                     = dllAccum = glAccum;
@@ -2600,7 +2564,6 @@ qboolean QGL_Init( const char *dllname )
 	qglFogi                      = 	dllFogi                      = glFogi;
 	qglFogiv                     = 	dllFogiv                     = glFogiv;
 	qglFrontFace                 = 	dllFrontFace                 = glFrontFace;
-	qglFrustum                   = 	dllFrustum                   = glFrustum;
 	qglGenLists                  = 	dllGenLists                  = glGenLists;
 	qglGenTextures               = 	dllGenTextures               = glGenTextures;
 	qglGetBooleanv               = 	dllGetBooleanv               = glGetBooleanv;
@@ -2663,7 +2626,6 @@ qboolean QGL_Init( const char *dllname )
 	qglLineStipple               = 	dllLineStipple               = glLineStipple;
 	qglLineWidth                 = 	dllLineWidth                 = glLineWidth;
 	qglListBase                  = 	dllListBase                  = glListBase;
-	qglLoadIdentity              = 	dllLoadIdentity              = glLoadIdentity;
 	qglLoadName                  = 	dllLoadName                  = glLoadName;
 	qgxLoadPosMtxImm             =  dllLoadPosMtxImm             = GX_LoadPosMtxImm;
 	qgxLoadProjectionMtx         =  dllLoadProjectionMtx         = GX_LoadProjectionMtx;
@@ -2681,9 +2643,6 @@ qboolean QGL_Init( const char *dllname )
 	qglMaterialfv                = 	dllMaterialfv                = glMaterialfv;
 	qglMateriali                 = 	dllMateriali                 = glMateriali;
 	qglMaterialiv                = 	dllMaterialiv                = glMaterialiv;
-	qglMatrixMode                = 	dllMatrixMode                = glMatrixMode;
-	qglMultMatrixd               = 	dllMultMatrixd               = glMultMatrixd;
-	qglMultMatrixf               = 	dllMultMatrixf               = glMultMatrixf;
 	qglNewList                   = 	dllNewList                   = glNewList;
 	qglNormal3b                  = 	dllNormal3b                  = glNormal3b;
 	qglNormal3bv                 = 	dllNormal3bv                 = glNormal3bv;
@@ -2696,7 +2655,6 @@ qboolean QGL_Init( const char *dllname )
 	qglNormal3s                  = 	dllNormal3s                  = glNormal3s;
 	qglNormal3sv                 = 	dllNormal3sv                 = glNormal3sv;
 	qglNormalPointer             = 	dllNormalPointer             = glNormalPointer;
-	qglOrtho                     = 	dllOrtho                     = glOrtho;
 	qglPassThrough               = 	dllPassThrough               = glPassThrough;
 	qglPixelMapfv                = 	dllPixelMapfv                = glPixelMapfv;
 	qglPixelMapuiv               = 	dllPixelMapuiv               = glPixelMapuiv;
@@ -2770,6 +2728,7 @@ qboolean QGL_Init( const char *dllname )
 	qglTexCoord2d                = 	dllTexCoord2d                = glTexCoord2d;
 	qglTexCoord2dv               = 	dllTexCoord2dv               = glTexCoord2dv;
 	qglTexCoord2f                = 	dllTexCoord2f                = glTexCoord2f;
+	qgxTexCoord2f32              = 	dllTexCoord2f32              = GXU_CallGXTexCoord2f32;
 	qglTexCoord2fv               = 	dllTexCoord2fv               = glTexCoord2fv;
 	qglTexCoord2i                = 	dllTexCoord2i                = glTexCoord2i;
 	qglTexCoord2iv               = 	dllTexCoord2iv               = glTexCoord2iv;
@@ -2853,6 +2812,7 @@ void GLimp_EnableLogging( qboolean enable )
 		qguMtxRotAxisDeg             = logMtxRotAxisDeg;
 		qguMtxScale                  = logMtxScale;
 		qguMtxTrans                  = logMtxTrans;
+		qguOrtho                     = logOrtho;
 		qguPerspective               = logPerspective;
 		qglAccum                     = logAccum;
 		qglAlphaFunc                 = logAlphaFunc;
@@ -2918,7 +2878,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglFogi                      = 	logFogi                      ;
 		qglFogiv                     = 	logFogiv                     ;
 		qglFrontFace                 = 	logFrontFace                 ;
-		qglFrustum                   = 	logFrustum                   ;
 		qglGenLists                  = 	logGenLists                  ;
 		qglGenTextures               = 	logGenTextures               ;
 		qglGetBooleanv               = 	logGetBooleanv               ;
@@ -2981,7 +2940,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglLineStipple               = 	logLineStipple               ;
 		qglLineWidth                 = 	logLineWidth                 ;
 		qglListBase                  = 	logListBase                  ;
-		qglLoadIdentity              = 	logLoadIdentity              ;
 		qglLoadName                  = 	logLoadName                  ;
 		qgxLoadPosMtxImm             =  logLoadPosMtxImm             ;
 		qgxLoadProjectionMtx         =  logLoadProjectionMtx         ;
@@ -2999,9 +2957,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglMaterialfv                = 	logMaterialfv                ;
 		qglMateriali                 = 	logMateriali                 ;
 		qglMaterialiv                = 	logMaterialiv                ;
-		qglMatrixMode                = 	logMatrixMode                ;
-		qglMultMatrixd               = 	logMultMatrixd               ;
-		qglMultMatrixf               = 	logMultMatrixf               ;
 		qglNewList                   = 	logNewList                   ;
 		qglNormal3b                  = 	logNormal3b                  ;
 		qglNormal3bv                 = 	logNormal3bv                 ;
@@ -3014,7 +2969,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglNormal3s                  = 	logNormal3s                  ;
 		qglNormal3sv                 = 	logNormal3sv                 ;
 		qglNormalPointer             = 	logNormalPointer             ;
-		qglOrtho                     = 	logOrtho                     ;
 		qglPassThrough               = 	logPassThrough               ;
 		qglPixelMapfv                = 	logPixelMapfv                ;
 		qglPixelMapuiv               = 	logPixelMapuiv               ;
@@ -3088,6 +3042,7 @@ void GLimp_EnableLogging( qboolean enable )
 		qglTexCoord2d                = 	logTexCoord2d                ;
 		qglTexCoord2dv               = 	logTexCoord2dv               ;
 		qglTexCoord2f                = 	logTexCoord2f                ;
+		qgxTexCoord2f32              = 	logTexCoord2f32              ;
 		qglTexCoord2fv               = 	logTexCoord2fv               ;
 		qglTexCoord2i                = 	logTexCoord2i                ;
 		qglTexCoord2iv               = 	logTexCoord2iv               ;
@@ -3137,6 +3092,7 @@ void GLimp_EnableLogging( qboolean enable )
 		qguMtxRotAxisDeg             = dllMtxRotAxisDeg;
 		qguMtxScale                  = dllMtxScale;
 		qguMtxTrans                  = dllMtxTrans;
+		qguOrtho                     = dllOrtho;
 		qguPerspective               = dllPerspective;
 		qglAccum                     = dllAccum;
 		qglAlphaFunc                 = dllAlphaFunc;
@@ -3202,7 +3158,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglFogi                      = 	dllFogi                      ;
 		qglFogiv                     = 	dllFogiv                     ;
 		qglFrontFace                 = 	dllFrontFace                 ;
-		qglFrustum                   = 	dllFrustum                   ;
 		qglGenLists                  = 	dllGenLists                  ;
 		qglGenTextures               = 	dllGenTextures               ;
 		qglGetBooleanv               = 	dllGetBooleanv               ;
@@ -3265,7 +3220,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglLineStipple               = 	dllLineStipple               ;
 		qglLineWidth                 = 	dllLineWidth                 ;
 		qglListBase                  = 	dllListBase                  ;
-		qglLoadIdentity              = 	dllLoadIdentity              ;
 		qglLoadName                  = 	dllLoadName                  ;
 		qgxLoadPosMtxImm             =  dllLoadPosMtxImm             ;
 		qgxLoadProjectionMtx         =  dllLoadProjectionMtx         ;
@@ -3283,9 +3237,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglMaterialfv                = 	dllMaterialfv                ;
 		qglMateriali                 = 	dllMateriali                 ;
 		qglMaterialiv                = 	dllMaterialiv                ;
-		qglMatrixMode                = 	dllMatrixMode                ;
-		qglMultMatrixd               = 	dllMultMatrixd               ;
-		qglMultMatrixf               = 	dllMultMatrixf               ;
 		qglNewList                   = 	dllNewList                   ;
 		qglNormal3b                  = 	dllNormal3b                  ;
 		qglNormal3bv                 = 	dllNormal3bv                 ;
@@ -3298,7 +3249,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglNormal3s                  = 	dllNormal3s                  ;
 		qglNormal3sv                 = 	dllNormal3sv                 ;
 		qglNormalPointer             = 	dllNormalPointer             ;
-		qglOrtho                     = 	dllOrtho                     ;
 		qglPassThrough               = 	dllPassThrough               ;
 		qglPixelMapfv                = 	dllPixelMapfv                ;
 		qglPixelMapuiv               = 	dllPixelMapuiv               ;
@@ -3372,6 +3322,7 @@ void GLimp_EnableLogging( qboolean enable )
 		qglTexCoord2d                = 	dllTexCoord2d                ;
 		qglTexCoord2dv               = 	dllTexCoord2dv               ;
 		qglTexCoord2f                = 	dllTexCoord2f                ;
+		qgxTexCoord2f32              = 	dllTexCoord2f32              ;
 		qglTexCoord2fv               = 	dllTexCoord2fv               ;
 		qglTexCoord2i                = 	dllTexCoord2i                ;
 		qglTexCoord2iv               = 	dllTexCoord2iv               ;

@@ -61,9 +61,11 @@ void GXU_EndFrame(void* framebuffer);
 
 void GXU_CallguMtxRotAxisDeg(Mtx mt, guVector* axis, f32 deg);
 
+void GXU_CallGXPosition3f32(f32 x, f32 y, f32 z);
+
 void GXU_CallGXColor4u8(u8 r,u8 g,u8 b,u8 a);
 
-void GXU_CallGXPosition3f32(f32 x, f32 y, f32 z);
+void GXU_CallGXTexCoord2f32(f32 s, f32 t);
 
 void GXU_CallGXEnd(void);
 

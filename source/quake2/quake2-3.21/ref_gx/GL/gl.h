@@ -101,8 +101,6 @@ typedef unsigned short GLushort;
 
 #define GL_NICEST 35
 
-#define GL_MODELVIEW_MATRIX 36
-
 #define GL_COLOR_BUFFER_BIT 1024
 
 #define GL_DEPTH_BUFFER_BIT 2048
@@ -199,12 +197,6 @@ void glTexParameterf(GLenum target, GLenum pname, GLfloat param);
 
 void glViewport(GLint x, GLint y, GLsizei width, GLsizei height);
 
-void glMatrixMode(GLenum mode);
-
-void glLoadIdentity(void);
-
-void glOrtho(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble nearVal, GLdouble farVal);
-
 void glEnable(GLenum cap);
 
 void glDisable(GLenum cap);
@@ -220,8 +212,6 @@ void glClear(GLbitfield mask);
 void glDepthFunc(GLenum func);
 
 void glDepthRange(GLclampd nearVal, GLclampd farVal);
-
-void glFrustum(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble nearVal, GLdouble farVal);
 
 void glCullFace(GLenum mode);
 
@@ -377,8 +367,6 @@ void glFogiv(GLenum pname, const GLint *params);
 
 void glFrontFace(GLenum mode);
 
-void glFrustum(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar);
-
 GLuint glGenLists(GLsizei range);
 
 void glGenTextures(GLsizei n, GLuint *textures);
@@ -497,8 +485,6 @@ void glLineWidth(GLfloat width);
 
 void glListBase(GLuint base);
 
-void glLoadIdentity(void);
-
 void glLoadName(GLuint name);
 
 void glLogicOp(GLenum opcode);
@@ -527,12 +513,6 @@ void glMateriali(GLenum face, GLenum pname, GLint param);
 
 void glMaterialiv(GLenum face, GLenum pname, const GLint *params);
 
-void glMatrixMode(GLenum mode);
-
-void glMultMatrixd(const GLdouble *m);
-
-void glMultMatrixf(const GLfloat *m);
-
 void glNewList(GLuint list, GLenum mode);
 
 void glNormal3b(GLbyte nx, GLbyte ny, GLbyte nz);
@@ -556,8 +536,6 @@ void glNormal3s(GLshort nx, GLshort ny, GLshort nz);
 void glNormal3sv(const GLshort *v);
 
 void glNormalPointer(GLenum type, GLsizei stride, const GLvoid *pointer);
-
-void glOrtho(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar);
 
 void glPassThrough(GLfloat token);
 

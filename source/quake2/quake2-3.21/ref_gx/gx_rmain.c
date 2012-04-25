@@ -544,7 +544,8 @@ R_PolyBlend
 void R_PolyBlend (void)
 {
 	Mtx m;
-	guVector a;
+	guVector v;
+	u8 r, g, b, a;
 
 	if (!gl_polyblend->value)
 		return;
@@ -556,29 +557,32 @@ void R_PolyBlend (void)
 	qglDisable (GL_DEPTH_TEST);
 	qglDisable (GL_TEXTURE_2D);
 
-    qglLoadIdentity ();
-
 	// FIXME: get rid of these
-	a.x = 1;
-	a.y = 0;
-	a.z = 0;
-	qguMtxRotAxisDeg(gxu_modelview_matrices[gxu_cur_modelview_matrix], &a, -90); // put Z going up
-	a.x = 0;
-	a.z = 1;
-	qguMtxRotAxisDeg(m, &a, 90); // put Z going up
+	v.x = 1;
+	v.y = 0;
+	v.z = 0;
+	qguMtxRotAxisDeg(gxu_modelview_matrices[gxu_cur_modelview_matrix], &v, -90); // put Z going up
+	v.x = 0;
+	v.z = 1;
+	qguMtxRotAxisDeg(m, &v, 90); // put Z going up
 	qguMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
 	qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
+
+	r = v_blend[0] * 255.0;
+	g = v_blend[1] * 255.0;
+	b = v_blend[2] * 255.0;
+	a = v_blend[3] * 255.0;
 
 	qgxBegin (GX_QUADS, GX_VTXFMT0, 4);
 
 	qgxPosition3f32 (10, 100, 100);
-	qgxColor4u8(v_blend[0]*255, v_blend[1]*255, v_blend[2]*255, v_blend[3]*255);
+	qgxColor4u8(r, g, b, a);
 	qgxPosition3f32 (10, -100, 100);
-	qgxColor4u8(v_blend[0]*255, v_blend[1]*255, v_blend[2]*255, v_blend[3]*255);
+	qgxColor4u8(r, g, b, a);
 	qgxPosition3f32 (10, -100, -100);
-	qgxColor4u8(v_blend[0]*255, v_blend[1]*255, v_blend[2]*255, v_blend[3]*255);
+	qgxColor4u8(r, g, b, a);
 	qgxPosition3f32 (10, 100, -100);
-	qgxColor4u8(v_blend[0]*255, v_blend[1]*255, v_blend[2]*255, v_blend[3]*255);
+	qgxColor4u8(r, g, b, a);
 	qgxEnd ();
 
 	qglDisable (GL_BLEND);
@@ -751,9 +755,6 @@ void R_SetupGL (void)
 
 	qglCullFace(GL_FRONT);
 
-	qglMatrixMode(GL_MODELVIEW);
-    qglLoadIdentity ();
-
 	a.x = 1;
 	a.y = 0;
 	a.z = 0;
@@ -908,11 +909,10 @@ void	R_SetGL2D (void)
 {
 	// set 2D virtual screen size
 	qglViewport (0,0, vid.width, vid.height);
-	qglMatrixMode(GL_PROJECTION);
-    qglLoadIdentity ();
-	qglOrtho  (0, vid.width, vid.height, 0, 0, 300); //-99999, 99999);
-	qglMatrixMode(GL_MODELVIEW);
-    qglLoadIdentity ();
+	qguOrtho(gxu_projection_matrices[gxu_cur_projection_matrix], 0, vid.height, 0, vid.width, 0, 300); //-99999, 99999);
+	qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], GX_ORTHOGRAPHIC);
+	qguMtxIdentity(gxu_modelview_matrices[gxu_cur_modelview_matrix]);
+	qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 	qglDisable (GL_DEPTH_TEST);
 	qglDisable (GL_CULL_FACE);
 	qglDisable (GL_BLEND);
@@ -1538,11 +1538,10 @@ void R_BeginFrame( float camera_separation )
 	** go into 2D mode
 	*/
 	qglViewport (0,0, vid.width, vid.height);
-	qglMatrixMode(GL_PROJECTION);
-    qglLoadIdentity ();
-	qglOrtho  (0, vid.width, vid.height, 0, -99999, 99999);
-	qglMatrixMode(GL_MODELVIEW);
-    qglLoadIdentity ();
+	qguOrtho(gxu_projection_matrices[gxu_cur_projection_matrix], 0, vid.height, 0, vid.width, 0, 300); //-99999, 99999);
+	qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], GX_ORTHOGRAPHIC);
+	qguMtxIdentity(gxu_modelview_matrices[gxu_cur_modelview_matrix]);
+	qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 	qglDisable (GL_DEPTH_TEST);
 	qglDisable (GL_CULL_FACE);
 	qglDisable (GL_BLEND);

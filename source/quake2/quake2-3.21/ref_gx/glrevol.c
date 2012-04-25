@@ -2,9 +2,6 @@
 #include <gccore.h>
 #include <malloc.h>
 #include <string.h>
-#include "gxutils.h"
-
-GLenum gl_matrix_mode = GL_MODELVIEW;
 
 void glTexParameterf(GLenum target, GLenum pname, GLfloat param)
 {
@@ -13,58 +10,6 @@ void glTexParameterf(GLenum target, GLenum pname, GLfloat param)
 void glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
 {
 	GX_SetViewport(x, y, width, height, 0, 1);
-}
-
-void glMatrixMode(GLenum mode)
-{
-	gl_matrix_mode = mode;
-}
-
-void glLoadIdentity(void)
-{
-	switch(gl_matrix_mode)
-	{
-		case GL_MODELVIEW:
-		{
-			guMtxIdentity(gxu_modelview_matrices[gxu_cur_modelview_matrix]);
-			GX_LoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
-			break;
-		};
-		case GL_PROJECTION:
-		{
-			gxu_projection_matrices[gxu_cur_projection_matrix][0][0] = 1;
-			gxu_projection_matrices[gxu_cur_projection_matrix][0][1] = 0;
-			gxu_projection_matrices[gxu_cur_projection_matrix][0][2] = 0;
-			gxu_projection_matrices[gxu_cur_projection_matrix][0][3] = 0;
-			gxu_projection_matrices[gxu_cur_projection_matrix][1][0] = 0;
-			gxu_projection_matrices[gxu_cur_projection_matrix][1][1] = 1;
-			gxu_projection_matrices[gxu_cur_projection_matrix][1][2] = 0;
-			gxu_projection_matrices[gxu_cur_projection_matrix][1][3] = 0;
-			gxu_projection_matrices[gxu_cur_projection_matrix][2][0] = 0;
-			gxu_projection_matrices[gxu_cur_projection_matrix][2][1] = 0;
-			gxu_projection_matrices[gxu_cur_projection_matrix][2][2] = 1;
-			gxu_projection_matrices[gxu_cur_projection_matrix][2][3] = 0;
-			gxu_projection_matrices[gxu_cur_projection_matrix][3][0] = 0;
-			gxu_projection_matrices[gxu_cur_projection_matrix][3][1] = 0;
-			gxu_projection_matrices[gxu_cur_projection_matrix][3][2] = 0;
-			gxu_projection_matrices[gxu_cur_projection_matrix][3][3] = 1;
-			GX_LoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], GX_PERSPECTIVE);
-			break;
-		};
-	};
-}
-
-void glOrtho(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble nearVal, GLdouble farVal)
-{
-	switch(gl_matrix_mode)
-	{
-		case GL_PROJECTION:
-		{
-			guOrtho(gxu_projection_matrices[gxu_cur_projection_matrix], top, bottom, left, right, nearVal, farVal);
-			GX_LoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], GX_ORTHOGRAPHIC);
-			break;
-		};
-	};
 }
 
 void glEnable(GLenum cap)
@@ -93,19 +38,6 @@ void glDepthFunc(GLenum func)
 
 void glDepthRange(GLclampd nearVal, GLclampd farVal)
 {
-}
-
-void glFrustum(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble nearVal, GLdouble farVal)
-{
-	switch(gl_matrix_mode)
-	{
-		case GL_PROJECTION:
-		{
-			guFrustum(gxu_projection_matrices[gxu_cur_projection_matrix], top, bottom, left, right, nearVal, farVal);
-			GX_LoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], GX_PERSPECTIVE);
-			break;
-		};
-	};
 }
 
 void glCullFace(GLenum mode)
@@ -666,14 +598,6 @@ void glMateriali(GLenum face, GLenum pname, GLint param)
 }
 
 void glMaterialiv(GLenum face, GLenum pname, const GLint *params)
-{
-}
-
-void glMultMatrixd(const GLdouble *m)
-{
-}
-
-void glMultMatrixf(const GLfloat *m)
 {
 }
 
