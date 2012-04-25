@@ -305,7 +305,8 @@ void R_DrawNullModel (void)
 	else
 		R_LightPoint (currententity->origin, shadelight);
 
-    qglPushMatrix ();
+	guMtxCopy(gxu_modelview_matrices[gxu_cur_modelview_matrix], gxu_modelview_matrices[gxu_cur_modelview_matrix + 1]);
+	gxu_cur_modelview_matrix++;
 	R_RotateForEntity (currententity);
 
 	qglDisable (GL_TEXTURE_2D);
@@ -714,24 +715,6 @@ void R_SetupFrame (void)
 }
 
 
-void MYgluPerspective( GLdouble fovy, GLdouble aspect,
-		     GLdouble zNear, GLdouble zFar )
-{
-   GLdouble xmin, xmax, ymin, ymax;
-
-   ymax = zNear * tan( fovy * M_PI / 360.0 );
-   ymin = -ymax;
-
-   xmin = ymin * aspect;
-   xmax = ymax * aspect;
-
-   xmin += -( 2 * gl_state.camera_separation ) / zNear;
-   xmax += -( 2 * gl_state.camera_separation ) / zNear;
-
-   qglFrustum( xmin, xmax, ymin, ymax, zNear, zFar );
-}
-
-
 /*
 =============
 R_SetupGL
@@ -763,9 +746,8 @@ void R_SetupGL (void)
 	//
     screenaspect = (float)r_newrefdef.width/r_newrefdef.height;
 //	yfov = 2*atan((float)r_newrefdef.height/r_newrefdef.width)*180/M_PI;
-	qglMatrixMode(GL_PROJECTION);
-    qglLoadIdentity ();
-    MYgluPerspective (r_newrefdef.fov_y,  screenaspect,  4,  4096);
+	qguPerspective(gxu_projection_matrices[gxu_cur_projection_matrix], r_newrefdef.fov_y,  screenaspect,  4,  4096);
+	qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], GX_PERSPECTIVE);
 
 	qglCullFace(GL_FRONT);
 

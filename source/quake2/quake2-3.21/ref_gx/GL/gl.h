@@ -223,17 +223,11 @@ void glDepthRange(GLclampd nearVal, GLclampd farVal);
 
 void glFrustum(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble nearVal, GLdouble farVal);
 
-void glScalef(GLfloat x, GLfloat y, GLfloat z);
-
 void glCullFace(GLenum mode);
-
-void glPushMatrix(void);
 
 void glTexEnvf(GLenum target, GLenum pname, GLfloat param);
 
 void glShadeModel(GLenum mode);
-
-void glPopMatrix(void);
 
 void glHint(GLenum target, GLenum mode);
 
@@ -595,8 +589,6 @@ void glPopAttrib(void);
 
 void glPopClientAttrib(void);
 
-void glPopMatrix(void);
-
 void glPopName(void);
 
 void glPrioritizeTextures(GLsizei n, const GLuint *textures, const GLclampf *priorities);
@@ -604,8 +596,6 @@ void glPrioritizeTextures(GLsizei n, const GLuint *textures, const GLclampf *pri
 void glPushAttrib(GLbitfield mask);
 
 void glPushClientAttrib(GLbitfield mask);
-
-void glPushMatrix(void);
 
 void glPushName(GLuint name);
 
@@ -678,10 +668,6 @@ void glRects(GLshort x1, GLshort y1, GLshort x2, GLshort y2);
 void glRectsv(const GLshort *v1, const GLshort *v2);
 
 GLint glRenderMode(GLenum mode);
-
-void glScaled(GLdouble x, GLdouble y, GLdouble z);
-
-void glScalef(GLfloat x, GLfloat y, GLfloat z);
 
 void glScissor(GLint x, GLint y, GLsizei width, GLsizei height);
 

@@ -593,7 +593,8 @@ qglDisable (GL_DEPTH_TEST);
 			return;		// nothing visible
 	}
 
-qglPushMatrix ();
+guMtxCopy(gxu_modelview_matrices[gxu_cur_modelview_matrix], gxu_modelview_matrices[gxu_cur_modelview_matrix + 1]);
+gxu_cur_modelview_matrix++;
 qguMtxTrans(m, r_origin[0], r_origin[1], r_origin[2]);
 qguMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
 a.x = skyaxis[0];

@@ -776,19 +776,21 @@ void R_DrawAliasModel (entity_t *e)
 
 	if ( ( currententity->flags & RF_WEAPONMODEL ) && ( r_lefthand->value == 1.0F ) )
 	{
-		extern void MYgluPerspective( GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar );
+		Mtx44 m;
 
-		qglMatrixMode( GL_PROJECTION );
-		qglPushMatrix();
-		qglLoadIdentity();
-		qglScalef( -1, 1, 1 );
-	    MYgluPerspective( r_newrefdef.fov_y, ( float ) r_newrefdef.width / r_newrefdef.height,  4,  4096);
-		qglMatrixMode( GL_MODELVIEW );
+		gxu_cur_projection_matrix++;
+		qguMtxIdentity(gxu_projection_matrices[gxu_cur_projection_matrix]);
+		qguMtxScale(m, -1, 1, 1);
+		qguMtxConcat(gxu_projection_matrices[gxu_cur_projection_matrix], m, gxu_projection_matrices[gxu_cur_projection_matrix]);
+		qguPerspective(m, r_newrefdef.fov_y, ( float ) r_newrefdef.width / r_newrefdef.height,  4,  4096);
+		qguMtxConcat(gxu_projection_matrices[gxu_cur_projection_matrix], m, gxu_projection_matrices[gxu_cur_projection_matrix]);
+		qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], GX_PERSPECTIVE);
 
 		qglCullFace( GL_BACK );
 	}
 
-    qglPushMatrix ();
+	guMtxCopy(gxu_modelview_matrices[gxu_cur_modelview_matrix], gxu_modelview_matrices[gxu_cur_modelview_matrix + 1]);
+	gxu_cur_modelview_matrix++;
 	e->angles[PITCH] = -e->angles[PITCH];	// sigh.
 	R_RotateForEntity (e);
 	e->angles[PITCH] = -e->angles[PITCH];	// sigh.
@@ -867,9 +869,8 @@ void R_DrawAliasModel (entity_t *e)
 
 	if ( ( currententity->flags & RF_WEAPONMODEL ) && ( r_lefthand->value == 1.0F ) )
 	{
-		qglMatrixMode( GL_PROJECTION );
-		qglPopMatrix();
-		qglMatrixMode( GL_MODELVIEW );
+		gxu_cur_projection_matrix--;
+		qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], GX_PERSPECTIVE);
 		qglCullFace( GL_FRONT );
 	}
 
@@ -884,7 +885,8 @@ void R_DrawAliasModel (entity_t *e)
 #if 1
 	if (gl_shadows->value && !(currententity->flags & (RF_TRANSLUCENT | RF_WEAPONMODEL)))
 	{
-		qglPushMatrix ();
+		guMtxCopy(gxu_modelview_matrices[gxu_cur_modelview_matrix], gxu_modelview_matrices[gxu_cur_modelview_matrix + 1]);
+		gxu_cur_modelview_matrix++;
 		R_RotateForEntity (e);
 		qglDisable (GL_TEXTURE_2D);
 		qglEnable (GL_BLEND);
