@@ -78,9 +78,7 @@ void QGX_Init (void)
 		GX_SetCullMode(gxu_cull_mode);
 	};
 	gxu_cur_vertex_format = GX_VTXFMT1;
- 	GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
- 	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
-	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
+	GXU_EnableTexture();
 
 	gxu_alpha_test_lower = 170;
 	gxu_alpha_test_higher = 255;

@@ -83,6 +83,7 @@ extern  void ( APIENTRY * qglDepthMask )(GLboolean flag);
 extern  void ( APIENTRY * qglDepthRange )(GLclampd zNear, GLclampd zFar);
 extern  void ( APIENTRY * qglDisable )(GLenum cap);
 extern  void ( APIENTRY * qglDisableClientState )(GLenum array);
+extern  void ( APIENTRY * qgxDisableTexture )(void);
 extern  void ( APIENTRY * qglDrawArrays )(GLenum mode, GLint first, GLsizei count);
 extern  void ( APIENTRY * qglDrawBuffer )(GLenum mode);
 extern  void ( APIENTRY * qglDrawElements )(GLenum mode, GLsizei count, GLenum type, const GLvoid *indices);
@@ -92,6 +93,7 @@ extern  void ( APIENTRY * qglEdgeFlagPointer )(GLsizei stride, const GLvoid *poi
 extern  void ( APIENTRY * qglEdgeFlagv )(const GLboolean *flag);
 extern  void ( APIENTRY * qglEnable )(GLenum cap);
 extern  void ( APIENTRY * qglEnableClientState )(GLenum array);
+extern  void ( APIENTRY * qgxEnableTexture )(void);
 extern  void ( APIENTRY * qgxEnd )(void);
 extern  void ( APIENTRY * qglEndList )(void);
 extern  void ( APIENTRY * qglEvalCoord1d )(GLdouble u);

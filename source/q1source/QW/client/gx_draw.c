@@ -1374,9 +1374,7 @@ void Draw_Fill (int x, int y, int w, int h, int c)
 	r = host_basepal[c*3];
 	g = host_basepal[c*3+1];
 	b = host_basepal[c*3+2];
- 	GX_SetVtxDesc(GX_VA_TEX0, GX_NONE);
-	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
-	GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
+	GXU_DisableTexture();
 	GX_Begin(GX_QUADS, GX_VTXFMT0, 4);
 	GX_Position3f32(x, y, 0);
 	GX_Color4u8(r, g, b, 255);
@@ -1387,9 +1385,7 @@ void Draw_Fill (int x, int y, int w, int h, int c)
 	GX_Position3f32(x, y+h, 0);
 	GX_Color4u8(r, g, b, 255);
 	GX_End();
- 	GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
- 	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
-	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
+	GXU_EnableTexture();
 }
 //=============================================================================
 
@@ -1402,9 +1398,7 @@ Draw_FadeScreen
 void Draw_FadeScreen (void)
 {
 	GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
- 	GX_SetVtxDesc(GX_VA_TEX0, GX_NONE);
-	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
-	GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
+	GXU_DisableTexture();
 	GX_Begin(GX_QUADS, GX_VTXFMT0, 4);
 	GX_Position3f32(0, 0, 0);
 	GX_Color4u8(0, 0, 0, 204);
@@ -1415,9 +1409,7 @@ void Draw_FadeScreen (void)
 	GX_Position3f32(0, vid.height, 0);
 	GX_Color4u8(0, 0, 0, 204);
 	GX_End();
- 	GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
- 	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
-	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
+	GXU_EnableTexture();
 	GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 
 	Sbar_Changed();

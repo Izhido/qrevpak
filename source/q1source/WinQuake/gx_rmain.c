@@ -389,9 +389,7 @@ void GX_DrawAliasShadow (aliashdr_t *paliashdr, int posenum)
 
 	if(gxu_cur_vertex_format == GX_VTXFMT1)
 	{
- 		GX_SetVtxDesc(GX_VA_TEX0, GX_NONE);
-		GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
-		GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
+		GXU_DisableTexture();
 	};
 
 	lheight = currententity->origin[2] - lightspot[2];
@@ -443,9 +441,7 @@ void GX_DrawAliasShadow (aliashdr_t *paliashdr, int posenum)
 
 	if(gxu_cur_vertex_format == GX_VTXFMT1)
 	{
- 		GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
- 		GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
-		GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
+		GXU_EnableTexture();
 	};
 }
 
@@ -640,9 +636,7 @@ void R_DrawAliasModel (entity_t *e)
 		R_RotateForEntity (e);
 		GX_LoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 		gxu_cur_vertex_format = GX_VTXFMT0;
- 		GX_SetVtxDesc(GX_VA_TEX0, GX_NONE);
-		GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
-		GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
+		GXU_DisableTexture();
 		GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 		gxu_cur_r = 0;
 		gxu_cur_g = 0;
@@ -650,9 +644,7 @@ void R_DrawAliasModel (entity_t *e)
 		gxu_cur_a = 127;
 		GX_DrawAliasShadow (paliashdr, lastposenum);
 		gxu_cur_vertex_format = GX_VTXFMT1;
- 		GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
- 		GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
-		GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
+		GXU_EnableTexture();
 		GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 		gxu_cur_r = 255;
 		gxu_cur_g = 255;
@@ -804,9 +796,7 @@ void R_PolyBlend (void)
 	GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 	gxu_z_test_enabled = GX_FALSE;
 	GX_SetZMode(gxu_z_test_enabled, GX_LEQUAL, gxu_z_write_enabled);
- 	GX_SetVtxDesc(GX_VA_TEX0, GX_NONE);
-	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
-	GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
+	GXU_DisableTexture();
 
 	v.x = 1;
 	v.y = 0;
@@ -836,9 +826,7 @@ void R_PolyBlend (void)
 	GX_End ();
 
 	GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
- 	GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
- 	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
-	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
+	GXU_EnableTexture();
 	GX_SetAlphaCompare(GX_GEQUAL, gxu_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gxu_alpha_test_higher);
 }
 
@@ -1095,7 +1083,7 @@ R_Clear
 */
 void R_Clear (void)
 {
-	Cvar_SetValue("gx_ztrick", 0.0); // ONCE WE FULLY UNDERSTAND HOW zNear AND zFar WORKS ON GX, REMOVE THIS ASAP
+	Cvar_SetValue("gl_ztrick", 0.0); // ONCE WE FULLY UNDERSTAND HOW zNear AND zFar WORKS ON GX, REMOVE THIS ASAP
 	Sbar_Changed();                  // THIS TOO, REMOVE IT ASAP
 	if (r_mirroralpha.value != 1.0)
 	{

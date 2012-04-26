@@ -155,9 +155,7 @@ void R_RenderDlights (void)
 	gxu_z_write_enabled = GX_FALSE;
 	GX_SetZMode(gxu_z_test_enabled, GX_LEQUAL, gxu_z_write_enabled);
 	gxu_cur_vertex_format = GX_VTXFMT0;
- 	GX_SetVtxDesc(GX_VA_TEX0, GX_NONE);
-	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
-	GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
+	GXU_DisableTexture();
 	glShadeModel (GL_SMOOTH);
 	gxu_blend_src_value = GX_BL_ONE;
 	gxu_blend_dst_value = GX_BL_ONE;
@@ -174,9 +172,7 @@ void R_RenderDlights (void)
 	gxu_cur_b = 255;
 	gxu_cur_a = 255;
 	gxu_cur_vertex_format = GX_VTXFMT1;
- 	GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
- 	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
-	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
+	GXU_EnableTexture();
 	gxu_blend_src_value = GX_BL_SRCALPHA;
 	gxu_blend_dst_value = GX_BL_INVSRCALPHA;
 	GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 

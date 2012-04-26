@@ -79,6 +79,7 @@ void ( APIENTRY * qglDepthMask )(GLboolean flag);
 void ( APIENTRY * qglDepthRange )(GLclampd zNear, GLclampd zFar);
 void ( APIENTRY * qglDisable )(GLenum cap);
 void ( APIENTRY * qglDisableClientState )(GLenum array);
+void ( APIENTRY * qgxDisableTexture )(void);
 void ( APIENTRY * qglDrawArrays )(GLenum mode, GLint first, GLsizei count);
 void ( APIENTRY * qglDrawBuffer )(GLenum mode);
 void ( APIENTRY * qglDrawElements )(GLenum mode, GLsizei count, GLenum type, const GLvoid *indices);
@@ -88,6 +89,7 @@ void ( APIENTRY * qglEdgeFlagPointer )(GLsizei stride, const GLvoid *pointer);
 void ( APIENTRY * qglEdgeFlagv )(const GLboolean *flag);
 void ( APIENTRY * qglEnable )(GLenum cap);
 void ( APIENTRY * qglEnableClientState )(GLenum array);
+void ( APIENTRY * qgxEnableTexture )(void);
 void ( APIENTRY * qgxEnd )(void);
 void ( APIENTRY * qglEndList )(void);
 void ( APIENTRY * qglEvalCoord1d )(GLdouble u);
@@ -360,6 +362,7 @@ static void ( APIENTRY * dllDepthMask )(GLboolean flag);
 static void ( APIENTRY * dllDepthRange )(GLclampd zNear, GLclampd zFar);
 static void ( APIENTRY * dllDisable )(GLenum cap);
 static void ( APIENTRY * dllDisableClientState )(GLenum array);
+static void ( APIENTRY * dllDisableTexture )(void);
 static void ( APIENTRY * dllDrawArrays )(GLenum mode, GLint first, GLsizei count);
 static void ( APIENTRY * dllDrawBuffer )(GLenum mode);
 static void ( APIENTRY * dllDrawElements )(GLenum mode, GLsizei count, GLenum type, const GLvoid *indices);
@@ -369,6 +372,7 @@ static void ( APIENTRY * dllEdgeFlagPointer )(GLsizei stride, const GLvoid *poin
 static void ( APIENTRY * dllEdgeFlagv )(const GLboolean *flag);
 static void ( APIENTRY * dllEnable )(GLenum cap);
 static void ( APIENTRY * dllEnableClientState )(GLenum array);
+static void ( APIENTRY * dllEnableTexture )(void);
 static void ( APIENTRY * dllEnd )(void);
 static void ( APIENTRY * dllEndList )(void);
 static void ( APIENTRY * dllEvalCoord1d )(GLdouble u);
@@ -805,6 +809,12 @@ static void APIENTRY logDisableClientState(GLenum array)
 	dllDisableClientState( array );
 }
 
+static void APIENTRY logDisableTexture(void)
+{
+	SIG( "GXU_DisableTexture" );
+	dllDisableTexture();
+}
+
 static void APIENTRY logDrawArrays(GLenum mode, GLint first, GLsizei count)
 {
 	SIG( "glDrawArrays" );
@@ -857,6 +867,12 @@ static void APIENTRY logEnableClientState(GLenum array)
 {
 	SIG( "glEnableClientState" );
 	dllEnableClientState( array );
+}
+
+static void APIENTRY logEnableTexture(void)
+{
+	SIG( "GXU_EnableTexture" );
+	dllEnableTexture();
 }
 
 static void APIENTRY logEnd(void)
@@ -2237,6 +2253,7 @@ void QGL_Shutdown( void )
 	qglDepthRange                = NULL;
 	qglDisable                   = NULL;
 	qglDisableClientState        = NULL;
+	qgxDisableTexture            = NULL;
 	qglDrawArrays                = NULL;
 	qglDrawBuffer                = NULL;
 	qglDrawElements              = NULL;
@@ -2246,6 +2263,7 @@ void QGL_Shutdown( void )
 	qglEdgeFlagv                 = NULL;
 	qglEnable                    = NULL;
 	qglEnableClientState         = NULL;
+	qgxEnableTexture             = NULL;
 	qgxEnd                       = NULL;
 	qglEndList                   = NULL;
 	qglEvalCoord1d               = NULL;
@@ -2533,6 +2551,7 @@ qboolean QGL_Init( const char *dllname )
 	qglDepthRange                = dllDepthRange = glDepthRange;
 	qglDisable                   = dllDisable = glDisable;
 	qglDisableClientState        = dllDisableClientState = glDisableClientState;
+	qgxDisableTexture            = dllDisableTexture = GXU_DisableTexture;
 	qglDrawArrays                = dllDrawArrays = glDrawArrays;
 	qglDrawBuffer                = dllDrawBuffer = glDrawBuffer;
 	qglDrawElements              = dllDrawElements = glDrawElements;
@@ -2542,6 +2561,7 @@ qboolean QGL_Init( const char *dllname )
 	qglEdgeFlagv                 = dllEdgeFlagv = glEdgeFlagv;
 	qglEnable                    = 	dllEnable                    = glEnable;
 	qglEnableClientState         = 	dllEnableClientState         = glEnableClientState;
+	qgxEnableTexture             = 	dllEnableTexture             = GXU_EnableTexture;
 	qgxEnd                       = 	dllEnd                       = GXU_CallGXEnd;
 	qglEndList                   = 	dllEndList                   = glEndList;
 	qglEvalCoord1d				 = 	dllEvalCoord1d				 = glEvalCoord1d;
@@ -2847,6 +2867,7 @@ void GLimp_EnableLogging( qboolean enable )
 		qglDepthRange                = logDepthRange ;
 		qglDisable                   = logDisable ;
 		qglDisableClientState        = logDisableClientState ;
+		qgxDisableTexture            = logDisableTexture ;
 		qglDrawArrays                = logDrawArrays ;
 		qglDrawBuffer                = logDrawBuffer ;
 		qglDrawElements              = logDrawElements ;
@@ -2856,6 +2877,7 @@ void GLimp_EnableLogging( qboolean enable )
 		qglEdgeFlagv                 = logEdgeFlagv ;
 		qglEnable                    = 	logEnable                    ;
 		qglEnableClientState         = 	logEnableClientState         ;
+		qgxEnableTexture             = 	logEnableTexture             ;
 		qgxEnd                       = 	logEnd                       ;
 		qglEndList                   = 	logEndList                   ;
 		qglEvalCoord1d				 = 	logEvalCoord1d				 ;
@@ -3127,6 +3149,7 @@ void GLimp_EnableLogging( qboolean enable )
 		qglDepthRange                = dllDepthRange ;
 		qglDisable                   = dllDisable ;
 		qglDisableClientState        = dllDisableClientState ;
+		qgxDisableTexture            = dllDisableTexture ;
 		qglDrawArrays                = dllDrawArrays ;
 		qglDrawBuffer                = dllDrawBuffer ;
 		qglDrawElements              = dllDrawElements ;
@@ -3136,6 +3159,7 @@ void GLimp_EnableLogging( qboolean enable )
 		qglEdgeFlagv                 = dllEdgeFlagv ;
 		qglEnable                    = 	dllEnable                    ;
 		qglEnableClientState         = 	dllEnableClientState         ;
+		qgxEnableTexture             = 	dllEnableTexture             ;
 		qgxEnd                       = 	dllEnd                       ;
 		qglEndList                   = 	dllEndList                   ;
 		qglEvalCoord1d				 = 	dllEvalCoord1d				 ;

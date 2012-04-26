@@ -59,6 +59,10 @@ void GXU_Init(GXRModeObj* rmode, void* framebuffer);
 
 void GXU_EndFrame(void* framebuffer);
 
+void GXU_EnableTexture(void);
+
+void GXU_DisableTexture(void);
+
 void GXU_CallguMtxRotAxisDeg(Mtx mt, guVector* axis, f32 deg);
 
 void GXU_CallGXPosition3f32(f32 x, f32 y, f32 z);

@@ -121,6 +121,20 @@ void GXU_EndFrame(void* framebuffer)
 	VIDEO_SetNextFramebuffer(framebuffer);
 }
 
+void GXU_EnableTexture(void)
+{
+ 	GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
+ 	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
+}
+
+void GXU_DisableTexture(void)
+{
+ 	GX_SetVtxDesc(GX_VA_TEX0, GX_NONE);
+	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
+}
+
 void GXU_CallguMtxRotAxisDeg(Mtx mt, guVector* axis, f32 deg)
 {
 	guMtxRotAxisDeg(mt, axis, deg);
