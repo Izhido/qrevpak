@@ -91,7 +91,7 @@ void R_RenderDlights (void)
 	r_dlightframecount = r_framecount + 1;	// because the count hasn't
 											//  advanced yet for this frame
 	qglDepthMask (0);
-	qglDisable (GL_TEXTURE_2D);
+	qgxDisableTexture();
 	qglShadeModel (GL_SMOOTH);
 	qglEnable (GL_BLEND);
 	qglBlendFunc (GL_ONE, GL_ONE);
@@ -105,7 +105,8 @@ void R_RenderDlights (void)
 	gxu_cur_b = 255;
 	gxu_cur_a = 255;
 	qglDisable (GL_BLEND);
-	qglEnable (GL_TEXTURE_2D);
+	gxu_cur_vertex_format = GX_VTXFMT1;
+	qgxEnableTexture();
 	qglBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	qglDepthMask (1);
 }

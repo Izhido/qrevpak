@@ -179,7 +179,8 @@ void GL_SetDefaultState( void )
 {
 	qglClearColor (1,0, 0.5 , 0.5);
 	qglCullFace(GL_FRONT);
-	qglEnable(GL_TEXTURE_2D);
+	gxu_cur_vertex_format = GX_VTXFMT1;
+	qgxEnableTexture();
 
 	qglEnable(GL_ALPHA_TEST);
 	qglAlphaFunc(GL_GREATER, 0.666);

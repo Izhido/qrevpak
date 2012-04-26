@@ -255,29 +255,29 @@ void R_DrawSpriteModel (entity_t *e)
 
 	qgxBegin (GX_QUADS, gxu_cur_vertex_format, 4);
 
-	qglTexCoord2f (0, 1);
 	VectorMA (e->origin, -frame->origin_y, up, point);
 	VectorMA (point, -frame->origin_x, right, point);
 	qgxPosition3f32 (point[0], point[1], point[2]);
 	qgxColor4u8(255, 255, 255, alpha * 255);
+	qgxTexCoord2f32 (0, 1);
 
-	qglTexCoord2f (0, 0);
 	VectorMA (e->origin, frame->height - frame->origin_y, up, point);
 	VectorMA (point, -frame->origin_x, right, point);
 	qgxPosition3f32 (point[0], point[1], point[2]);
 	qgxColor4u8(255, 255, 255, alpha * 255);
+	qgxTexCoord2f32 (0, 0);
 
-	qglTexCoord2f (1, 0);
 	VectorMA (e->origin, frame->height - frame->origin_y, up, point);
 	VectorMA (point, frame->width - frame->origin_x, right, point);
 	qgxPosition3f32 (point[0], point[1], point[2]);
 	qgxColor4u8(255, 255, 255, alpha * 255);
+	qgxTexCoord2f32 (1, 0);
 
-	qglTexCoord2f (1, 1);
 	VectorMA (e->origin, -frame->origin_y, up, point);
 	VectorMA (point, frame->width - frame->origin_x, right, point);
 	qgxPosition3f32 (point[0], point[1], point[2]);
 	qgxColor4u8(255, 255, 255, alpha * 255);
+	qgxTexCoord2f32 (1, 1);
 	
 	qgxEnd ();
 
@@ -309,7 +309,7 @@ void R_DrawNullModel (void)
 	gxu_cur_modelview_matrix++;
 	R_RotateForEntity (currententity);
 
-	qglDisable (GL_TEXTURE_2D);
+	qgxDisableTexture();
 
 	qgxBegin (GX_TRIANGLEFAN, GX_VTXFMT0, 6);
 	qgxPosition3f32 (0, 0, -16);
@@ -333,7 +333,7 @@ void R_DrawNullModel (void)
 
 	gxu_cur_modelview_matrix--;
 	qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
-	qglEnable (GL_TEXTURE_2D);
+	qgxEnableTexture();
 }
 
 /*
@@ -464,21 +464,21 @@ void GL_DrawParticles( int num_particles, const particle_t particles[], const un
 		*(int *)color = colortable[p->color];
 		color[3] = p->alpha*255;
 
-		qglTexCoord2f( 0.0625, 0.0625 );
 		qgxPosition3f32( p->origin[0], p->origin[1], p->origin[2] );
 		qgxColor4u8(color[0], color[1], color[2], color[3]);
+		qgxTexCoord2f32( 0.0625, 0.0625 );
 		
-		qglTexCoord2f( 1.0625, 0.0625 );
 		qgxPosition3f32( p->origin[0] + up[0]*scale, 
 			             p->origin[1] + up[1]*scale, 
 					     p->origin[2] + up[2]*scale);
 		qgxColor4u8(color[0], color[1], color[2], color[3]);
+		qgxTexCoord2f32( 1.0625, 0.0625 );
 
-		qglTexCoord2f( 0.0625, 1.0625 );
 		qgxPosition3f32( p->origin[0] + right[0]*scale, 
 			             p->origin[1] + right[1]*scale, 
 					     p->origin[2] + right[2]*scale);
 		qgxColor4u8(color[0], color[1], color[2], color[3]);
+		qgxTexCoord2f32( 0.0625, 1.0625 );
 	}
 
 	qgxEnd ();
@@ -506,7 +506,7 @@ void R_DrawParticles (void)
 
 		qglDepthMask( GL_FALSE );
 		qglEnable( GL_BLEND );
-		qglDisable( GL_TEXTURE_2D );
+		qgxDisableTexture();
 
 		qglPointSize( gl_particle_size->value );
 
@@ -527,7 +527,7 @@ void R_DrawParticles (void)
 		gxu_cur_b = 255;
 		gxu_cur_a = 255;
 		qglDepthMask( GL_TRUE );
-		qglEnable( GL_TEXTURE_2D );
+		qgxEnableTexture();
 
 	}
 	else
@@ -555,7 +555,7 @@ void R_PolyBlend (void)
 	qglDisable (GL_ALPHA_TEST);
 	qglEnable (GL_BLEND);
 	qglDisable (GL_DEPTH_TEST);
-	qglDisable (GL_TEXTURE_2D);
+	qgxDisableTexture();
 
 	// FIXME: get rid of these
 	v.x = 1;
@@ -586,7 +586,7 @@ void R_PolyBlend (void)
 	qgxEnd ();
 
 	qglDisable (GL_BLEND);
-	qglEnable (GL_TEXTURE_2D);
+	qgxEnableTexture();
 	qglEnable (GL_ALPHA_TEST);
 }
 
@@ -1679,7 +1679,7 @@ void R_DrawBeam( entity_t *e )
 		VectorAdd( start_points[i], direction, end_points[i] );
 	}
 
-	qglDisable( GL_TEXTURE_2D );
+	qgxDisableTexture();
 	qglEnable( GL_BLEND );
 	qglDepthMask( GL_FALSE );
 
@@ -1710,7 +1710,7 @@ void R_DrawBeam( entity_t *e )
 	}
 	qgxEnd();
 
-	qglEnable( GL_TEXTURE_2D );
+	qgxEnableTexture();
 	qglDisable( GL_BLEND );
 	qglDepthMask( GL_TRUE );
 }

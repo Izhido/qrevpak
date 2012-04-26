@@ -256,9 +256,9 @@ void EmitWaterPolys (msurface_t *fa)
 #endif
 			t *= (1.0/64);
 
-			qglTexCoord2f (s, t);
 			qgxPosition3f32 (v[0], v[1], v[2]);
 			qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
+			qgxTexCoord2f32 (s, t);
 		}
 		qgxEnd ();
 	}
@@ -560,9 +560,9 @@ void MakeSkyVec (float s, float t, int axis)
 		t = sky_max;
 
 	t = 1.0 - t;
-	qglTexCoord2f (s, t);
 	qgxPosition3f32 (v[0], v[1], v[2]);
 	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
+	qgxTexCoord2f32 (s, t);
 }
 
 /*

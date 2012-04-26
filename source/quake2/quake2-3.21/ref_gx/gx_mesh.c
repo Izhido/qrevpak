@@ -124,7 +124,7 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 
 	// PMM - added double shell
 	if ( currententity->flags & ( RF_SHELL_RED | RF_SHELL_GREEN | RF_SHELL_BLUE | RF_SHELL_DOUBLE | RF_SHELL_HALF_DAM) )
-		qglDisable( GL_TEXTURE_2D );
+		qgxDisableTexture();
 
 	frontlerp = 1.0 - backlerp;
 
@@ -232,11 +232,7 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 				};
 				do
 				{
-					// texture coordinates come from the draw list
-					qglTexCoord2f (((float *)order)[0], ((float *)order)[1]);
 					index_xyz = order[2];
-
-					order += 3;
 
 					// normals and vertexes come from the frame list
 //					l = shadedots[verts[index_xyz].lightnormalindex];
@@ -245,6 +241,11 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 					//qglArrayElement( index_xyz );
 					qgxPosition3f32 (s_lerped[index_xyz][0], s_lerped[index_xyz][1], s_lerped[index_xyz][2]);
 					qgxColor4u8 (colorArray[3*index_xyz]*255, colorArray[3*index_xyz + 1]*255, colorArray[3*index_xyz + 2]*255, 255);
+
+					// texture coordinates come from the draw list
+					qgxTexCoord2f32 (((float *)order)[0], ((float *)order)[1]);
+
+					order += 3;
 
 				} while (--count);
 			}
@@ -304,10 +305,7 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 				};
 				do
 				{
-					// texture coordinates come from the draw list
-					qglTexCoord2f (((float *)order)[0], ((float *)order)[1]);
 					index_xyz = order[2];
-					order += 3;
 
 					// normals and vertexes come from the frame list
 					l = shadedots[verts[index_xyz].lightnormalindex];
@@ -319,6 +317,11 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 
 					qgxPosition3f32 (s_lerped[index_xyz][0], s_lerped[index_xyz][1], s_lerped[index_xyz][2]);
 					qgxColor4u8 ( gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a );
+
+					// texture coordinates come from the draw list
+					qgxTexCoord2f32 (((float *)order)[0], ((float *)order)[1]);
+					order += 3;
+
 				} while (--count);
 			}
 
@@ -329,7 +332,7 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 //	if ( currententity->flags & ( RF_SHELL_RED | RF_SHELL_GREEN | RF_SHELL_BLUE ) )
 	// PMM - added double damage shell
 	if ( currententity->flags & ( RF_SHELL_RED | RF_SHELL_GREEN | RF_SHELL_BLUE | RF_SHELL_DOUBLE | RF_SHELL_HALF_DAM) )
-		qglEnable( GL_TEXTURE_2D );
+		qgxEnableTexture();
 }
 
 
@@ -888,14 +891,15 @@ void R_DrawAliasModel (entity_t *e)
 		guMtxCopy(gxu_modelview_matrices[gxu_cur_modelview_matrix], gxu_modelview_matrices[gxu_cur_modelview_matrix + 1]);
 		gxu_cur_modelview_matrix++;
 		R_RotateForEntity (e);
-		qglDisable (GL_TEXTURE_2D);
+		qgxDisableTexture();
 		qglEnable (GL_BLEND);
 		gxu_cur_r = 0;
 		gxu_cur_g = 0;
 		gxu_cur_b = 0;
 		gxu_cur_a = 127;
 		GL_DrawAliasShadow (paliashdr, currententity->frame );
-		qglEnable (GL_TEXTURE_2D);
+		gxu_cur_vertex_format = GX_VTXFMT1;
+		qgxEnableTexture();
 		qglDisable (GL_BLEND);
 		gxu_cur_modelview_matrix--;
 		qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);

@@ -190,9 +190,9 @@ void DrawGLPoly (glpoly_t *p)
 	v = p->verts[0];
 	for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 	{
-		qglTexCoord2f (v[3], v[4]);
 		qgxPosition3f32 (v[0], v[1], v[2]);
 		qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
+		qgxTexCoord2f32 (v[3], v[4]);
 	}
 	qgxEnd ();
 }
@@ -221,9 +221,9 @@ void DrawGLFlowingPoly (msurface_t *fa)
 	v = p->verts[0];
 	for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
 	{
-		qglTexCoord2f ((v[3] + scroll), v[4]);
 		qgxPosition3f32 (v[0], v[1], v[2]);
 		qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
+		qgxTexCoord2f32 ((v[3] + scroll), v[4]);
 	}
 	qgxEnd ();
 }
@@ -241,7 +241,7 @@ void R_DrawTriangleOutlines (void)
 	if (!gl_showtris->value)
 		return;
 
-	qglDisable (GL_TEXTURE_2D);
+	qgxDisableTexture();
 	qglDisable (GL_DEPTH_TEST);
 	gxu_cur_r = 255;
 	gxu_cur_g = 255;
@@ -275,7 +275,7 @@ void R_DrawTriangleOutlines (void)
 	}
 
 	qglEnable (GL_DEPTH_TEST);
-	qglEnable (GL_TEXTURE_2D);
+	qgxEnableTexture();
 }
 
 /*
@@ -294,9 +294,9 @@ void DrawGLPolyChain( glpoly_t *p, float soffset, float toffset )
 			v = p->verts[0];
 			for (j=0 ; j<p->numverts ; j++, v+= VERTEXSIZE)
 			{
-				qglTexCoord2f (v[5], v[6] );
 				qgxPosition3f32 (v[0], v[1], v[2]);
 				qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
+				qgxTexCoord2f32 (v[5], v[6] );
 			}
 			qgxEnd ();
 		}
@@ -312,9 +312,9 @@ void DrawGLPolyChain( glpoly_t *p, float soffset, float toffset )
 			v = p->verts[0];
 			for (j=0 ; j<p->numverts ; j++, v+= VERTEXSIZE)
 			{
-				qglTexCoord2f (v[5] - soffset, v[6] - toffset );
 				qgxPosition3f32 (v[0], v[1], v[2]);
 				qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
+				qgxTexCoord2f32 (v[5] - soffset, v[6] - toffset );
 			}
 			qgxEnd ();
 		}

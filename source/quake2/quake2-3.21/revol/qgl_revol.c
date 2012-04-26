@@ -261,43 +261,12 @@ void ( APIENTRY * qglRectsv )(const GLshort *v1, const GLshort *v2);
 GLint ( APIENTRY * qglRenderMode )(GLenum mode);
 void ( APIENTRY * qglScissor )(GLint x, GLint y, GLsizei width, GLsizei height);
 void ( APIENTRY * qglSelectBuffer )(GLsizei size, GLuint *buffer);
+void ( APIENTRY * qgxSetBlendMode )(u8 type, u8 src_fact, u8 dst_fact, u8 op);
 void ( APIENTRY * qglShadeModel )(GLenum mode);
 void ( APIENTRY * qglStencilFunc )(GLenum func, GLint ref, GLuint mask);
 void ( APIENTRY * qglStencilMask )(GLuint mask);
 void ( APIENTRY * qglStencilOp )(GLenum fail, GLenum zfail, GLenum zpass);
-void ( APIENTRY * qglTexCoord1d )(GLdouble s);
-void ( APIENTRY * qglTexCoord1dv )(const GLdouble *v);
-void ( APIENTRY * qglTexCoord1f )(GLfloat s);
-void ( APIENTRY * qglTexCoord1fv )(const GLfloat *v);
-void ( APIENTRY * qglTexCoord1i )(GLint s);
-void ( APIENTRY * qglTexCoord1iv )(const GLint *v);
-void ( APIENTRY * qglTexCoord1s )(GLshort s);
-void ( APIENTRY * qglTexCoord1sv )(const GLshort *v);
-void ( APIENTRY * qglTexCoord2d )(GLdouble s, GLdouble t);
-void ( APIENTRY * qglTexCoord2dv )(const GLdouble *v);
-void ( APIENTRY * qglTexCoord2f )(GLfloat s, GLfloat t);
 void ( APIENTRY * qgxTexCoord2f32 )(f32 s, f32 t);
-void ( APIENTRY * qglTexCoord2fv )(const GLfloat *v);
-void ( APIENTRY * qglTexCoord2i )(GLint s, GLint t);
-void ( APIENTRY * qglTexCoord2iv )(const GLint *v);
-void ( APIENTRY * qglTexCoord2s )(GLshort s, GLshort t);
-void ( APIENTRY * qglTexCoord2sv )(const GLshort *v);
-void ( APIENTRY * qglTexCoord3d )(GLdouble s, GLdouble t, GLdouble r);
-void ( APIENTRY * qglTexCoord3dv )(const GLdouble *v);
-void ( APIENTRY * qglTexCoord3f )(GLfloat s, GLfloat t, GLfloat r);
-void ( APIENTRY * qglTexCoord3fv )(const GLfloat *v);
-void ( APIENTRY * qglTexCoord3i )(GLint s, GLint t, GLint r);
-void ( APIENTRY * qglTexCoord3iv )(const GLint *v);
-void ( APIENTRY * qglTexCoord3s )(GLshort s, GLshort t, GLshort r);
-void ( APIENTRY * qglTexCoord3sv )(const GLshort *v);
-void ( APIENTRY * qglTexCoord4d )(GLdouble s, GLdouble t, GLdouble r, GLdouble q);
-void ( APIENTRY * qglTexCoord4dv )(const GLdouble *v);
-void ( APIENTRY * qglTexCoord4f )(GLfloat s, GLfloat t, GLfloat r, GLfloat q);
-void ( APIENTRY * qglTexCoord4fv )(const GLfloat *v);
-void ( APIENTRY * qglTexCoord4i )(GLint s, GLint t, GLint r, GLint q);
-void ( APIENTRY * qglTexCoord4iv )(const GLint *v);
-void ( APIENTRY * qglTexCoord4s )(GLshort s, GLshort t, GLshort r, GLshort q);
-void ( APIENTRY * qglTexCoord4sv )(const GLshort *v);
 void ( APIENTRY * qglTexCoordPointer )(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer);
 void ( APIENTRY * qglTexEnvf )(GLenum target, GLenum pname, GLfloat param);
 void ( APIENTRY * qglTexEnvfv )(GLenum target, GLenum pname, const GLfloat *params);
@@ -552,43 +521,12 @@ static void ( APIENTRY * dllRectsv )(const GLshort *v1, const GLshort *v2);
 GLint ( APIENTRY * dllRenderMode )(GLenum mode);
 static void ( APIENTRY * dllScissor )(GLint x, GLint y, GLsizei width, GLsizei height);
 static void ( APIENTRY * dllSelectBuffer )(GLsizei size, GLuint *buffer);
+static void ( APIENTRY * dllSetBlendMode )(u8 type, u8 src_fact, u8 dst_fact, u8 op);
 static void ( APIENTRY * dllShadeModel )(GLenum mode);
 static void ( APIENTRY * dllStencilFunc )(GLenum func, GLint ref, GLuint mask);
 static void ( APIENTRY * dllStencilMask )(GLuint mask);
 static void ( APIENTRY * dllStencilOp )(GLenum fail, GLenum zfail, GLenum zpass);
-static void ( APIENTRY * dllTexCoord1d )(GLdouble s);
-static void ( APIENTRY * dllTexCoord1dv )(const GLdouble *v);
-static void ( APIENTRY * dllTexCoord1f )(GLfloat s);
-static void ( APIENTRY * dllTexCoord1fv )(const GLfloat *v);
-static void ( APIENTRY * dllTexCoord1i )(GLint s);
-static void ( APIENTRY * dllTexCoord1iv )(const GLint *v);
-static void ( APIENTRY * dllTexCoord1s )(GLshort s);
-static void ( APIENTRY * dllTexCoord1sv )(const GLshort *v);
-static void ( APIENTRY * dllTexCoord2d )(GLdouble s, GLdouble t);
-static void ( APIENTRY * dllTexCoord2dv )(const GLdouble *v);
-static void ( APIENTRY * dllTexCoord2f )(GLfloat s, GLfloat t);
 static void ( APIENTRY * dllTexCoord2f32 )(f32 s, f32 t);
-static void ( APIENTRY * dllTexCoord2fv )(const GLfloat *v);
-static void ( APIENTRY * dllTexCoord2i )(GLint s, GLint t);
-static void ( APIENTRY * dllTexCoord2iv )(const GLint *v);
-static void ( APIENTRY * dllTexCoord2s )(GLshort s, GLshort t);
-static void ( APIENTRY * dllTexCoord2sv )(const GLshort *v);
-static void ( APIENTRY * dllTexCoord3d )(GLdouble s, GLdouble t, GLdouble r);
-static void ( APIENTRY * dllTexCoord3dv )(const GLdouble *v);
-static void ( APIENTRY * dllTexCoord3f )(GLfloat s, GLfloat t, GLfloat r);
-static void ( APIENTRY * dllTexCoord3fv )(const GLfloat *v);
-static void ( APIENTRY * dllTexCoord3i )(GLint s, GLint t, GLint r);
-static void ( APIENTRY * dllTexCoord3iv )(const GLint *v);
-static void ( APIENTRY * dllTexCoord3s )(GLshort s, GLshort t, GLshort r);
-static void ( APIENTRY * dllTexCoord3sv )(const GLshort *v);
-static void ( APIENTRY * dllTexCoord4d )(GLdouble s, GLdouble t, GLdouble r, GLdouble q);
-static void ( APIENTRY * dllTexCoord4dv )(const GLdouble *v);
-static void ( APIENTRY * dllTexCoord4f )(GLfloat s, GLfloat t, GLfloat r, GLfloat q);
-static void ( APIENTRY * dllTexCoord4fv )(const GLfloat *v);
-static void ( APIENTRY * dllTexCoord4i )(GLint s, GLint t, GLint r, GLint q);
-static void ( APIENTRY * dllTexCoord4iv )(const GLint *v);
-static void ( APIENTRY * dllTexCoord4s )(GLshort s, GLshort t, GLshort r, GLshort q);
-static void ( APIENTRY * dllTexCoord4sv )(const GLshort *v);
 static void ( APIENTRY * dllTexCoordPointer )(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer);
 static void ( APIENTRY * dllTexEnvf )(GLenum target, GLenum pname, GLfloat param);
 static void ( APIENTRY * dllTexEnvfv )(GLenum target, GLenum pname, const GLfloat *params);
@@ -1897,6 +1835,11 @@ static void APIENTRY logSelectBuffer(GLsizei size, GLuint *buffer)
 	SIG( "glSelectBuffer" );
 	dllSelectBuffer( size, buffer );
 }
+static void APIENTRY logSetBlendMode(u8 type, u8 src_fact, u8 dst_fact, u8 op)
+{
+	SIG( "GX_SetBlendMode" );
+	dllSetBlendMode( type, src_fact, dst_fact, op );
+}
 
 static void APIENTRY logShadeModel(GLenum mode)
 {
@@ -1922,173 +1865,10 @@ static void APIENTRY logStencilOp(GLenum fail, GLenum zfail, GLenum zpass)
 	dllStencilOp( fail, zfail, zpass );
 }
 
-static void APIENTRY logTexCoord1d(GLdouble s)
-{
-	SIG( "glTexCoord1d" );
-	dllTexCoord1d( s );
-}
-
-static void APIENTRY logTexCoord1dv(const GLdouble *v)
-{
-	SIG( "glTexCoord1dv" );
-	dllTexCoord1dv( v );
-}
-
-static void APIENTRY logTexCoord1f(GLfloat s)
-{
-	SIG( "glTexCoord1f" );
-	dllTexCoord1f( s );
-}
-static void APIENTRY logTexCoord1fv(const GLfloat *v)
-{
-	SIG( "glTexCoord1fv" );
-	dllTexCoord1fv( v );
-}
-static void APIENTRY logTexCoord1i(GLint s)
-{
-	SIG( "glTexCoord1i" );
-	dllTexCoord1i( s );
-}
-static void APIENTRY logTexCoord1iv(const GLint *v)
-{
-	SIG( "glTexCoord1iv" );
-	dllTexCoord1iv( v );
-}
-static void APIENTRY logTexCoord1s(GLshort s)
-{
-	SIG( "glTexCoord1s" );
-	dllTexCoord1s( s );
-}
-static void APIENTRY logTexCoord1sv(const GLshort *v)
-{
-	SIG( "glTexCoord1sv" );
-	dllTexCoord1sv( v );
-}
-static void APIENTRY logTexCoord2d(GLdouble s, GLdouble t)
-{
-	SIG( "glTexCoord2d" );
-	dllTexCoord2d( s, t );
-}
-
-static void APIENTRY logTexCoord2dv(const GLdouble *v)
-{
-	SIG( "glTexCoord2dv" );
-	dllTexCoord2dv( v );
-}
-static void APIENTRY logTexCoord2f(GLfloat s, GLfloat t)
-{
-	SIG( "glTexCoord2f" );
-	dllTexCoord2f( s, t );
-}
 static void APIENTRY logTexCoord2f32(f32 s, f32 t)
 {
 	SIG( "GX_TexCoord2f32" );
 	dllTexCoord2f32( s, t );
-}
-static void APIENTRY logTexCoord2fv(const GLfloat *v)
-{
-	SIG( "glTexCoord2fv" );
-	dllTexCoord2fv( v );
-}
-static void APIENTRY logTexCoord2i(GLint s, GLint t)
-{
-	SIG( "glTexCoord2i" );
-	dllTexCoord2i( s, t );
-}
-static void APIENTRY logTexCoord2iv(const GLint *v)
-{
-	SIG( "glTexCoord2iv" );
-	dllTexCoord2iv( v );
-}
-static void APIENTRY logTexCoord2s(GLshort s, GLshort t)
-{
-	SIG( "glTexCoord2s" );
-	dllTexCoord2s( s, t );
-}
-static void APIENTRY logTexCoord2sv(const GLshort *v)
-{
-	SIG( "glTexCoord2sv" );
-	dllTexCoord2sv( v );
-}
-static void APIENTRY logTexCoord3d(GLdouble s, GLdouble t, GLdouble r)
-{
-	SIG( "glTexCoord3d" );
-	dllTexCoord3d( s, t, r );
-}
-static void APIENTRY logTexCoord3dv(const GLdouble *v)
-{
-	SIG( "glTexCoord3dv" );
-	dllTexCoord3dv( v );
-}
-static void APIENTRY logTexCoord3f(GLfloat s, GLfloat t, GLfloat r)
-{
-	SIG( "glTexCoord3f" );
-	dllTexCoord3f( s, t, r );
-}
-static void APIENTRY logTexCoord3fv(const GLfloat *v)
-{
-	SIG( "glTexCoord3fv" );
-	dllTexCoord3fv( v );
-}
-static void APIENTRY logTexCoord3i(GLint s, GLint t, GLint r)
-{
-	SIG( "glTexCoord3i" );
-	dllTexCoord3i( s, t, r );
-}
-static void APIENTRY logTexCoord3iv(const GLint *v)
-{
-	SIG( "glTexCoord3iv" );
-	dllTexCoord3iv( v );
-}
-static void APIENTRY logTexCoord3s(GLshort s, GLshort t, GLshort r)
-{
-	SIG( "glTexCoord3s" );
-	dllTexCoord3s( s, t, r );
-}
-static void APIENTRY logTexCoord3sv(const GLshort *v)
-{
-	SIG( "glTexCoord3sv" );
-	dllTexCoord3sv( v );
-}
-static void APIENTRY logTexCoord4d(GLdouble s, GLdouble t, GLdouble r, GLdouble q)
-{
-	SIG( "glTexCoord4d" );
-	dllTexCoord4d( s, t, r, q );
-}
-static void APIENTRY logTexCoord4dv(const GLdouble *v)
-{
-	SIG( "glTexCoord4dv" );
-	dllTexCoord4dv( v );
-}
-static void APIENTRY logTexCoord4f(GLfloat s, GLfloat t, GLfloat r, GLfloat q)
-{
-	SIG( "glTexCoord4f" );
-	dllTexCoord4f( s, t, r, q );
-}
-static void APIENTRY logTexCoord4fv(const GLfloat *v)
-{
-	SIG( "glTexCoord4fv" );
-	dllTexCoord4fv( v );
-}
-static void APIENTRY logTexCoord4i(GLint s, GLint t, GLint r, GLint q)
-{
-	SIG( "glTexCoord4i" );
-	dllTexCoord4i( s, t, r, q );
-}
-static void APIENTRY logTexCoord4iv(const GLint *v)
-{
-	SIG( "glTexCoord4iv" );
-	dllTexCoord4iv( v );
-}
-static void APIENTRY logTexCoord4s(GLshort s, GLshort t, GLshort r, GLshort q)
-{
-	SIG( "glTexCoord4s" );
-	dllTexCoord4s( s, t, r, q );
-}
-static void APIENTRY logTexCoord4sv(const GLshort *v)
-{
-	SIG( "glTexCoord4sv" );
-	dllTexCoord4sv( v );
 }
 static void APIENTRY logTexCoordPointer(GLint size, GLenum type, GLsizei stride, const void *pointer)
 {
@@ -2435,43 +2215,12 @@ void QGL_Shutdown( void )
 	qglRenderMode                = NULL;
 	qglScissor                   = NULL;
 	qglSelectBuffer              = NULL;
+	qgxSetBlendMode              = NULL;
 	qglShadeModel                = NULL;
 	qglStencilFunc               = NULL;
 	qglStencilMask               = NULL;
 	qglStencilOp                 = NULL;
-	qglTexCoord1d                = NULL;
-	qglTexCoord1dv               = NULL;
-	qglTexCoord1f                = NULL;
-	qglTexCoord1fv               = NULL;
-	qglTexCoord1i                = NULL;
-	qglTexCoord1iv               = NULL;
-	qglTexCoord1s                = NULL;
-	qglTexCoord1sv               = NULL;
-	qglTexCoord2d                = NULL;
-	qglTexCoord2dv               = NULL;
-	qglTexCoord2f                = NULL;
 	qgxTexCoord2f32              = NULL;
-	qglTexCoord2fv               = NULL;
-	qglTexCoord2i                = NULL;
-	qglTexCoord2iv               = NULL;
-	qglTexCoord2s                = NULL;
-	qglTexCoord2sv               = NULL;
-	qglTexCoord3d                = NULL;
-	qglTexCoord3dv               = NULL;
-	qglTexCoord3f                = NULL;
-	qglTexCoord3fv               = NULL;
-	qglTexCoord3i                = NULL;
-	qglTexCoord3iv               = NULL;
-	qglTexCoord3s                = NULL;
-	qglTexCoord3sv               = NULL;
-	qglTexCoord4d                = NULL;
-	qglTexCoord4dv               = NULL;
-	qglTexCoord4f                = NULL;
-	qglTexCoord4fv               = NULL;
-	qglTexCoord4i                = NULL;
-	qglTexCoord4iv               = NULL;
-	qglTexCoord4s                = NULL;
-	qglTexCoord4sv               = NULL;
 	qglTexCoordPointer           = NULL;
 	qglTexEnvf                   = NULL;
 	qglTexEnvfv                  = NULL;
@@ -2733,43 +2482,12 @@ qboolean QGL_Init( const char *dllname )
 	qglRenderMode                = 	dllRenderMode                = glRenderMode;
 	qglScissor                   = 	dllScissor                   = glScissor;
 	qglSelectBuffer              = 	dllSelectBuffer              = glSelectBuffer;
+	qgxSetBlendMode              = 	dllSetBlendMode              = GX_SetBlendMode;
 	qglShadeModel                = 	dllShadeModel                = glShadeModel;
 	qglStencilFunc               = 	dllStencilFunc               = glStencilFunc;
 	qglStencilMask               = 	dllStencilMask               = glStencilMask;
 	qglStencilOp                 = 	dllStencilOp                 = glStencilOp;
-	qglTexCoord1d                = 	dllTexCoord1d                = glTexCoord1d;
-	qglTexCoord1dv               = 	dllTexCoord1dv               = glTexCoord1dv;
-	qglTexCoord1f                = 	dllTexCoord1f                = glTexCoord1f;
-	qglTexCoord1fv               = 	dllTexCoord1fv               = glTexCoord1fv;
-	qglTexCoord1i                = 	dllTexCoord1i                = glTexCoord1i;
-	qglTexCoord1iv               = 	dllTexCoord1iv               = glTexCoord1iv;
-	qglTexCoord1s                = 	dllTexCoord1s                = glTexCoord1s;
-	qglTexCoord1sv               = 	dllTexCoord1sv               = glTexCoord1sv;
-	qglTexCoord2d                = 	dllTexCoord2d                = glTexCoord2d;
-	qglTexCoord2dv               = 	dllTexCoord2dv               = glTexCoord2dv;
-	qglTexCoord2f                = 	dllTexCoord2f                = glTexCoord2f;
 	qgxTexCoord2f32              = 	dllTexCoord2f32              = GXU_CallGXTexCoord2f32;
-	qglTexCoord2fv               = 	dllTexCoord2fv               = glTexCoord2fv;
-	qglTexCoord2i                = 	dllTexCoord2i                = glTexCoord2i;
-	qglTexCoord2iv               = 	dllTexCoord2iv               = glTexCoord2iv;
-	qglTexCoord2s                = 	dllTexCoord2s                = glTexCoord2s;
-	qglTexCoord2sv               = 	dllTexCoord2sv               = glTexCoord2sv;
-	qglTexCoord3d                = 	dllTexCoord3d                = glTexCoord3d;
-	qglTexCoord3dv               = 	dllTexCoord3dv               = glTexCoord3dv;
-	qglTexCoord3f                = 	dllTexCoord3f                = glTexCoord3f;
-	qglTexCoord3fv               = 	dllTexCoord3fv               = glTexCoord3fv;
-	qglTexCoord3i                = 	dllTexCoord3i                = glTexCoord3i;
-	qglTexCoord3iv               = 	dllTexCoord3iv               = glTexCoord3iv;
-	qglTexCoord3s                = 	dllTexCoord3s                = glTexCoord3s;
-	qglTexCoord3sv               = 	dllTexCoord3sv               = glTexCoord3sv;
-	qglTexCoord4d                = 	dllTexCoord4d                = glTexCoord4d;
-	qglTexCoord4dv               = 	dllTexCoord4dv               = glTexCoord4dv;
-	qglTexCoord4f                = 	dllTexCoord4f                = glTexCoord4f;
-	qglTexCoord4fv               = 	dllTexCoord4fv               = glTexCoord4fv;
-	qglTexCoord4i                = 	dllTexCoord4i                = glTexCoord4i;
-	qglTexCoord4iv               = 	dllTexCoord4iv               = glTexCoord4iv;
-	qglTexCoord4s                = 	dllTexCoord4s                = glTexCoord4s;
-	qglTexCoord4sv               = 	dllTexCoord4sv               = glTexCoord4sv;
 	qglTexCoordPointer           = 	dllTexCoordPointer           = glTexCoordPointer;
 	qglTexEnvf                   = 	dllTexEnvf                   = glTexEnvf;
 	qglTexEnvfv                  = 	dllTexEnvfv                  = glTexEnvfv;
@@ -3049,43 +2767,12 @@ void GLimp_EnableLogging( qboolean enable )
 		qglRenderMode                = 	logRenderMode                ;
 		qglScissor                   = 	logScissor                   ;
 		qglSelectBuffer              = 	logSelectBuffer              ;
+		qgxSetBlendMode              = 	logSetBlendMode              ;
 		qglShadeModel                = 	logShadeModel                ;
 		qglStencilFunc               = 	logStencilFunc               ;
 		qglStencilMask               = 	logStencilMask               ;
 		qglStencilOp                 = 	logStencilOp                 ;
-		qglTexCoord1d                = 	logTexCoord1d                ;
-		qglTexCoord1dv               = 	logTexCoord1dv               ;
-		qglTexCoord1f                = 	logTexCoord1f                ;
-		qglTexCoord1fv               = 	logTexCoord1fv               ;
-		qglTexCoord1i                = 	logTexCoord1i                ;
-		qglTexCoord1iv               = 	logTexCoord1iv               ;
-		qglTexCoord1s                = 	logTexCoord1s                ;
-		qglTexCoord1sv               = 	logTexCoord1sv               ;
-		qglTexCoord2d                = 	logTexCoord2d                ;
-		qglTexCoord2dv               = 	logTexCoord2dv               ;
-		qglTexCoord2f                = 	logTexCoord2f                ;
 		qgxTexCoord2f32              = 	logTexCoord2f32              ;
-		qglTexCoord2fv               = 	logTexCoord2fv               ;
-		qglTexCoord2i                = 	logTexCoord2i                ;
-		qglTexCoord2iv               = 	logTexCoord2iv               ;
-		qglTexCoord2s                = 	logTexCoord2s                ;
-		qglTexCoord2sv               = 	logTexCoord2sv               ;
-		qglTexCoord3d                = 	logTexCoord3d                ;
-		qglTexCoord3dv               = 	logTexCoord3dv               ;
-		qglTexCoord3f                = 	logTexCoord3f                ;
-		qglTexCoord3fv               = 	logTexCoord3fv               ;
-		qglTexCoord3i                = 	logTexCoord3i                ;
-		qglTexCoord3iv               = 	logTexCoord3iv               ;
-		qglTexCoord3s                = 	logTexCoord3s                ;
-		qglTexCoord3sv               = 	logTexCoord3sv               ;
-		qglTexCoord4d                = 	logTexCoord4d                ;
-		qglTexCoord4dv               = 	logTexCoord4dv               ;
-		qglTexCoord4f                = 	logTexCoord4f                ;
-		qglTexCoord4fv               = 	logTexCoord4fv               ;
-		qglTexCoord4i                = 	logTexCoord4i                ;
-		qglTexCoord4iv               = 	logTexCoord4iv               ;
-		qglTexCoord4s                = 	logTexCoord4s                ;
-		qglTexCoord4sv               = 	logTexCoord4sv               ;
 		qglTexCoordPointer           = 	logTexCoordPointer           ;
 		qglTexEnvf                   = 	logTexEnvf                   ;
 		qglTexEnvfv                  = 	logTexEnvfv                  ;
@@ -3331,43 +3018,12 @@ void GLimp_EnableLogging( qboolean enable )
 		qglRenderMode                = 	dllRenderMode                ;
 		qglScissor                   = 	dllScissor                   ;
 		qglSelectBuffer              = 	dllSelectBuffer              ;
+		qgxSetBlendMode              = 	dllSetBlendMode              ;
 		qglShadeModel                = 	dllShadeModel                ;
 		qglStencilFunc               = 	dllStencilFunc               ;
 		qglStencilMask               = 	dllStencilMask               ;
 		qglStencilOp                 = 	dllStencilOp                 ;
-		qglTexCoord1d                = 	dllTexCoord1d                ;
-		qglTexCoord1dv               = 	dllTexCoord1dv               ;
-		qglTexCoord1f                = 	dllTexCoord1f                ;
-		qglTexCoord1fv               = 	dllTexCoord1fv               ;
-		qglTexCoord1i                = 	dllTexCoord1i                ;
-		qglTexCoord1iv               = 	dllTexCoord1iv               ;
-		qglTexCoord1s                = 	dllTexCoord1s                ;
-		qglTexCoord1sv               = 	dllTexCoord1sv               ;
-		qglTexCoord2d                = 	dllTexCoord2d                ;
-		qglTexCoord2dv               = 	dllTexCoord2dv               ;
-		qglTexCoord2f                = 	dllTexCoord2f                ;
 		qgxTexCoord2f32              = 	dllTexCoord2f32              ;
-		qglTexCoord2fv               = 	dllTexCoord2fv               ;
-		qglTexCoord2i                = 	dllTexCoord2i                ;
-		qglTexCoord2iv               = 	dllTexCoord2iv               ;
-		qglTexCoord2s                = 	dllTexCoord2s                ;
-		qglTexCoord2sv               = 	dllTexCoord2sv               ;
-		qglTexCoord3d                = 	dllTexCoord3d                ;
-		qglTexCoord3dv               = 	dllTexCoord3dv               ;
-		qglTexCoord3f                = 	dllTexCoord3f                ;
-		qglTexCoord3fv               = 	dllTexCoord3fv               ;
-		qglTexCoord3i                = 	dllTexCoord3i                ;
-		qglTexCoord3iv               = 	dllTexCoord3iv               ;
-		qglTexCoord3s                = 	dllTexCoord3s                ;
-		qglTexCoord3sv               = 	dllTexCoord3sv               ;
-		qglTexCoord4d                = 	dllTexCoord4d                ;
-		qglTexCoord4dv               = 	dllTexCoord4dv               ;
-		qglTexCoord4f                = 	dllTexCoord4f                ;
-		qglTexCoord4fv               = 	dllTexCoord4fv               ;
-		qglTexCoord4i                = 	dllTexCoord4i                ;
-		qglTexCoord4iv               = 	dllTexCoord4iv               ;
-		qglTexCoord4s                = 	dllTexCoord4s                ;
-		qglTexCoord4sv               = 	dllTexCoord4sv               ;
 		qglTexCoordPointer           = 	dllTexCoordPointer           ;
 		qglTexEnvf                   = 	dllTexEnvf                   ;
 		qglTexEnvfv                  = 	dllTexEnvfv                  ;

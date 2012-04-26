@@ -80,13 +80,13 @@ void GL_EnableMultitexture( qboolean enable )
 	if ( enable )
 	{
 		GL_SelectTexture( GL_TEXTURE1 );
-		qglEnable( GL_TEXTURE_2D );
+		qgxEnableTexture();
 		GL_TexEnv( GL_REPLACE );
 	}
 	else
 	{
 		GL_SelectTexture( GL_TEXTURE1 );
-		qglDisable( GL_TEXTURE_2D );
+		qgxDisableTexture();
 		GL_TexEnv( GL_REPLACE );
 	}
 	GL_SelectTexture( GL_TEXTURE0 );
