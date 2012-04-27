@@ -76,8 +76,6 @@ extern  void ( APIENTRY * qglCopyTexSubImage2D )(GLenum target, GLint level, GLi
 extern  void ( APIENTRY * qglCullFace )(GLenum mode);
 extern  void ( APIENTRY * qglDeleteLists )(GLuint list, GLsizei range);
 extern  void ( APIENTRY * qglDeleteTextures )(GLsizei n, const GLuint *textures);
-extern  void ( APIENTRY * qglDepthMask )(GLboolean flag);
-extern  void ( APIENTRY * qglDepthRange )(GLclampd zNear, GLclampd zFar);
 extern  void ( APIENTRY * qglDisable )(GLenum cap);
 extern  void ( APIENTRY * qglDisableClientState )(GLenum array);
 extern  void ( APIENTRY * qgxDisableTexture )(void);
@@ -265,6 +263,7 @@ extern  void ( APIENTRY * qglSelectBuffer )(GLsizei size, GLuint *buffer);
 extern  void ( APIENTRY * qgxSetAlphaCompare )(u8 comp0, u8 ref0, u8 aop, u8 comp1, u8 ref1);
 extern  void ( APIENTRY * qgxSetBlendMode )(u8 type, u8 src_fact, u8 dst_fact, u8 op);
 extern  void ( APIENTRY * qgxSetTevOp )(u8 tevstage, u8 mode);
+extern  void ( APIENTRY * qgxSetViewport )(f32 xOrig, f32 yOrig, f32 wd, f32 ht, f32 nearZ, f32 farZ);
 extern  void ( APIENTRY * qgxSetZMode )(u8 enable, u8 func, u8 update_enable);
 extern  void ( APIENTRY * qglShadeModel )(GLenum mode);
 extern  void ( APIENTRY * qglStencilFunc )(GLenum func, GLint ref, GLuint mask);
@@ -285,7 +284,6 @@ extern  void ( APIENTRY * qglTexParameteriv )(GLenum target, GLenum pname, const
 extern  void ( APIENTRY * qglTexSubImage1D )(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const GLvoid *pixels);
 extern  void ( APIENTRY * qglTexSubImage2D )(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels);
 extern  void ( APIENTRY * qglVertexPointer )(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer);
-extern  void ( APIENTRY * qglViewport )(GLint x, GLint y, GLsizei width, GLsizei height);
 
 extern	void ( APIENTRY * qglPointParameterfEXT)( GLenum param, GLfloat value );
 extern	void ( APIENTRY * qglPointParameterfvEXT)( GLenum param, const GLfloat *value );

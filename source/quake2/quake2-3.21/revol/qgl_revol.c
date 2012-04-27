@@ -72,8 +72,6 @@ void ( APIENTRY * qglCopyTexSubImage2D )(GLenum target, GLint level, GLint xoffs
 void ( APIENTRY * qglCullFace )(GLenum mode);
 void ( APIENTRY * qglDeleteLists )(GLuint list, GLsizei range);
 void ( APIENTRY * qglDeleteTextures )(GLsizei n, const GLuint *textures);
-void ( APIENTRY * qglDepthMask )(GLboolean flag);
-void ( APIENTRY * qglDepthRange )(GLclampd zNear, GLclampd zFar);
 void ( APIENTRY * qglDisable )(GLenum cap);
 void ( APIENTRY * qglDisableClientState )(GLenum array);
 void ( APIENTRY * qgxDisableTexture )(void);
@@ -261,6 +259,7 @@ void ( APIENTRY * qglSelectBuffer )(GLsizei size, GLuint *buffer);
 void ( APIENTRY * qgxSetAlphaCompare )(u8 comp0, u8 ref0, u8 aop, u8 comp1, u8 ref1);
 void ( APIENTRY * qgxSetBlendMode )(u8 type, u8 src_fact, u8 dst_fact, u8 op);
 void ( APIENTRY * qgxSetTevOp )(u8 tevstage, u8 mode);
+void ( APIENTRY * qgxSetViewport )(f32 xOrig, f32 yOrig, f32 wd, f32 ht, f32 nearZ, f32 farZ);
 void ( APIENTRY * qgxSetZMode )(u8 enable, u8 func, u8 update_enable);
 void ( APIENTRY * qglShadeModel )(GLenum mode);
 void ( APIENTRY * qglStencilFunc )(GLenum func, GLint ref, GLuint mask);
@@ -281,7 +280,6 @@ void ( APIENTRY * qglTexParameteriv )(GLenum target, GLenum pname, const GLint *
 void ( APIENTRY * qglTexSubImage1D )(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const GLvoid *pixels);
 void ( APIENTRY * qglTexSubImage2D )(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels);
 void ( APIENTRY * qglVertexPointer )(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer);
-void ( APIENTRY * qglViewport )(GLint x, GLint y, GLsizei width, GLsizei height);
 
 void ( APIENTRY * qglLockArraysEXT)( int, int);
 void ( APIENTRY * qglUnlockArraysEXT) ( void );
@@ -320,8 +318,6 @@ static void ( APIENTRY * dllCopyTexSubImage2D )(GLenum target, GLint level, GLin
 static void ( APIENTRY * dllCullFace )(GLenum mode);
 static void ( APIENTRY * dllDeleteLists )(GLuint list, GLsizei range);
 static void ( APIENTRY * dllDeleteTextures )(GLsizei n, const GLuint *textures);
-static void ( APIENTRY * dllDepthMask )(GLboolean flag);
-static void ( APIENTRY * dllDepthRange )(GLclampd zNear, GLclampd zFar);
 static void ( APIENTRY * dllDisable )(GLenum cap);
 static void ( APIENTRY * dllDisableClientState )(GLenum array);
 static void ( APIENTRY * dllDisableTexture )(void);
@@ -517,6 +513,7 @@ static void ( APIENTRY * dllSelectBuffer )(GLsizei size, GLuint *buffer);
 static void ( APIENTRY * dllSetAlphaCompare )(u8 comp0, u8 ref0, u8 aop, u8 comp1, u8 ref1);
 static void ( APIENTRY * dllSetBlendMode )(u8 type, u8 src_fact, u8 dst_fact, u8 op);
 static void ( APIENTRY * dllSetTevOp )(u8 tevstage, u8 mode);
+static void ( APIENTRY * dllSetViewport )(f32 xOrig, f32 yOrig, f32 wd, f32 ht, f32 nearZ, f32 farZ);
 static void ( APIENTRY * dllSetZMode )(u8 enable, u8 func, u8 update_enable);
 static void ( APIENTRY * dllShadeModel )(GLenum mode);
 static void ( APIENTRY * dllStencilFunc )(GLenum func, GLint ref, GLuint mask);
@@ -539,7 +536,6 @@ static void ( APIENTRY * dllTexParameteriv )(GLenum target, GLenum pname, const 
 static void ( APIENTRY * dllTexSubImage1D )(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const GLvoid *pixels);
 static void ( APIENTRY * dllTexSubImage2D )(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels);
 static void ( APIENTRY * dllVertexPointer )(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer);
-static void ( APIENTRY * dllViewport )(GLint x, GLint y, GLsizei width, GLsizei height);
 
 static void APIENTRY logAccum(GLenum op, GLfloat value)
 {
@@ -695,18 +691,6 @@ static void APIENTRY logDeleteTextures(GLsizei n, const GLuint *textures)
 {
 	SIG( "glDeleteTextures" );
 	dllDeleteTextures( n, textures );
-}
-
-static void APIENTRY logDepthMask(GLboolean flag)
-{
-	SIG( "glDepthMask" );
-	dllDepthMask( flag );
-}
-
-static void APIENTRY logDepthRange(GLclampd zNear, GLclampd zFar)
-{
-	SIG( "glDepthRange" );
-	dllDepthRange( zNear, zFar );
 }
 
 static void APIENTRY logDisable(GLenum cap)
@@ -1824,6 +1808,11 @@ static void APIENTRY logSetTevOp(u8 tevstage, u8 mode)
 	fprintf( log_fp, "GX_SetTevOp( 0x%x, 0x%x )\n", tevstage, mode );
 	dllSetTevOp( tevstage, mode );
 }
+static void APIENTRY logSetViewport(f32 xOrig, f32 yOrig, f32 wd, f32 ht, f32 nearZ, f32 farZ)
+{
+	SIG( "GX_SetViewport" );
+	dllSetViewport( xOrig, yOrig, wd, ht, nearZ, farZ );
+}
 static void APIENTRY logSetZMode(u8 enable, u8 func, u8 update_enable)
 {
 	SIG( "GX_SetZMode" );
@@ -1946,11 +1935,6 @@ static void APIENTRY logVertexPointer(GLint size, GLenum type, GLsizei stride, c
 	SIG( "glVertexPointer" );
 	dllVertexPointer( size, type, stride, pointer );
 }
-static void APIENTRY logViewport(GLint x, GLint y, GLsizei width, GLsizei height)
-{
-	SIG( "glViewport" );
-	dllViewport( x, y, width, height );
-}
 
 /*
 ** QGL_Shutdown
@@ -1993,8 +1977,6 @@ void QGL_Shutdown( void )
 	qglCullFace                  = NULL;
 	qglDeleteLists               = NULL;
 	qglDeleteTextures            = NULL;
-	qglDepthMask                 = NULL;
-	qglDepthRange                = NULL;
 	qglDisable                   = NULL;
 	qglDisableClientState        = NULL;
 	qgxDisableTexture            = NULL;
@@ -2182,6 +2164,7 @@ void QGL_Shutdown( void )
 	qgxSetAlphaCompare           = NULL;
 	qgxSetBlendMode              = NULL;
 	qgxSetTevOp                  = NULL;
+	qgxSetViewport               = NULL;
 	qgxSetZMode                  = NULL;
 	qglShadeModel                = NULL;
 	qglStencilFunc               = NULL;
@@ -2202,7 +2185,6 @@ void QGL_Shutdown( void )
 	qglTexSubImage1D             = NULL;
 	qglTexSubImage2D             = NULL;
 	qglVertexPointer             = NULL;
-	qglViewport                  = NULL;
 
 	qglColorTableEXT             = NULL;
 
@@ -2256,8 +2238,6 @@ qboolean QGL_Init( const char *dllname )
 	qglCullFace                  = dllCullFace = glCullFace;
 	qglDeleteLists               = dllDeleteLists = glDeleteLists;
 	qglDeleteTextures            = dllDeleteTextures = glDeleteTextures;
-	qglDepthMask                 = dllDepthMask = glDepthMask;
-	qglDepthRange                = dllDepthRange = glDepthRange;
 	qglDisable                   = dllDisable = glDisable;
 	qglDisableClientState        = dllDisableClientState = glDisableClientState;
 	qgxDisableTexture            = dllDisableTexture = GXU_DisableTexture;
@@ -2445,6 +2425,7 @@ qboolean QGL_Init( const char *dllname )
 	qgxSetAlphaCompare           =  dllSetAlphaCompare           = GX_SetAlphaCompare;
 	qgxSetBlendMode              = 	dllSetBlendMode              = GX_SetBlendMode;
 	qgxSetTevOp                  = 	dllSetTevOp                  = GX_SetTevOp;
+	qgxSetViewport               = 	dllSetViewport               = GX_SetViewport;
 	qgxSetZMode                  = 	dllSetZMode                  = GX_SetZMode;
 	qglShadeModel                = 	dllShadeModel                = glShadeModel;
 	qglStencilFunc               = 	dllStencilFunc               = glStencilFunc;
@@ -2465,7 +2446,6 @@ qboolean QGL_Init( const char *dllname )
 	qglTexSubImage1D             = 	dllTexSubImage1D             = glTexSubImage1D;
 	qglTexSubImage2D             = 	dllTexSubImage2D             = glTexSubImage2D;
 	qglVertexPointer             = 	dllVertexPointer             = glVertexPointer;
-	qglViewport                  = 	dllViewport                  = glViewport;
 
 	qglLockArraysEXT = 0;
 	qglUnlockArraysEXT = 0;
@@ -2537,8 +2517,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglCullFace                  = logCullFace;
 		qglDeleteLists               = logDeleteLists ;
 		qglDeleteTextures            = logDeleteTextures ;
-		qglDepthMask                 = logDepthMask ;
-		qglDepthRange                = logDepthRange ;
 		qglDisable                   = logDisable ;
 		qglDisableClientState        = logDisableClientState ;
 		qgxDisableTexture            = logDisableTexture ;
@@ -2726,6 +2704,7 @@ void GLimp_EnableLogging( qboolean enable )
 		qgxSetAlphaCompare           =  logSetAlphaCompare           ;
 		qgxSetBlendMode              = 	logSetBlendMode              ;
 		qgxSetTevOp                  = 	logSetTevOp                  ;
+		qgxSetViewport               = 	logSetViewport               ;
 		qgxSetZMode                  = 	logSetZMode                  ;
 		qglShadeModel                = 	logShadeModel                ;
 		qglStencilFunc               = 	logStencilFunc               ;
@@ -2746,7 +2725,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglTexSubImage1D             = 	logTexSubImage1D             ;
 		qglTexSubImage2D             = 	logTexSubImage2D             ;
 		qglVertexPointer             = 	logVertexPointer             ;
-		qglViewport                  = 	logViewport                  ;
 	}
 	else
 	{
@@ -2784,8 +2762,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglCullFace                  = dllCullFace;
 		qglDeleteLists               = dllDeleteLists ;
 		qglDeleteTextures            = dllDeleteTextures ;
-		qglDepthMask                 = dllDepthMask ;
-		qglDepthRange                = dllDepthRange ;
 		qglDisable                   = dllDisable ;
 		qglDisableClientState        = dllDisableClientState ;
 		qgxDisableTexture            = dllDisableTexture ;
@@ -2973,6 +2949,7 @@ void GLimp_EnableLogging( qboolean enable )
 		qgxSetAlphaCompare           =  dllSetAlphaCompare           ;
 		qgxSetBlendMode              = 	dllSetBlendMode              ;
 		qgxSetTevOp                  = 	dllSetTevOp                  ;
+		qgxSetViewport               = 	dllSetViewport               ;
 		qgxSetZMode                  = 	dllSetZMode                  ;
 		qglShadeModel                = 	dllShadeModel                ;
 		qglStencilFunc               = 	dllStencilFunc               ;
@@ -2993,7 +2970,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglTexSubImage1D             = 	dllTexSubImage1D             ;
 		qglTexSubImage2D             = 	dllTexSubImage2D             ;
 		qglVertexPointer             = 	dllVertexPointer             ;
-		qglViewport                  = 	dllViewport                  ;
 	}
 }
 

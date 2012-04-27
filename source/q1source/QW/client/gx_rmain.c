@@ -782,7 +782,7 @@ void R_PolyBlend (void)
 	GX_SetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
 	GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 	gxu_z_test_enabled = GX_FALSE;
-	GX_SetZMode(gxu_z_test_enabled, GX_LEQUAL, gxu_z_write_enabled);
+	GX_SetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 	GXU_DisableTexture();
 
 	v.x = 1;
@@ -1020,7 +1020,7 @@ void R_SetupGX (void)
 	gxu_alpha_test_enabled = false;
 	GX_SetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
 	gxu_z_test_enabled = GX_TRUE;
-	GX_SetZMode(gxu_z_test_enabled, GX_LEQUAL, gxu_z_write_enabled);
+	GX_SetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 }
 
 /*
@@ -1079,7 +1079,8 @@ void R_Clear (void)
 		gxu_clear_buffers = GX_TRUE;
 		gxdepthmin = 0;
 		gxdepthmax = 0.5;
-		GX_SetZMode(gxu_z_test_enabled, GX_LEQUAL, gxu_z_write_enabled);
+		gxu_cur_z_func = GX_LEQUAL;
+		GX_SetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 	}
 	else if (gl_ztrick.value)
 	{
@@ -1092,13 +1093,15 @@ void R_Clear (void)
 		{
 			gxdepthmin = 0;
 			gxdepthmax = 0.49999;
-			GX_SetZMode(gxu_z_test_enabled, GX_LEQUAL, gxu_z_write_enabled);
+			gxu_cur_z_func = GX_LEQUAL;
+			GX_SetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 		}
 		else
 		{
 			gxdepthmin = 1;
 			gxdepthmax = 0.5;
-			GX_SetZMode(gxu_z_test_enabled, GX_GEQUAL, gxu_z_write_enabled);
+			gxu_cur_z_func = GX_GEQUAL;
+			GX_SetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 		}
 	}
 	else
@@ -1112,7 +1115,8 @@ void R_Clear (void)
 		gxu_clear_buffers = GX_TRUE;
 		gxdepthmin = 0;
 		gxdepthmax = 1;
-		GX_SetZMode(gxu_z_test_enabled, GX_LEQUAL, gxu_z_write_enabled);
+		gxu_cur_z_func = GX_LEQUAL;
+		GX_SetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 	}
 
 	GX_SetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxdepthmin, gxdepthmax);

@@ -7,11 +7,6 @@ void glTexParameterf(GLenum target, GLenum pname, GLfloat param)
 {
 }
 
-void glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
-{
-	GX_SetViewport(x, y, width, height, 0, 1);
-}
-
 void glEnable(GLenum cap)
 {
 }
@@ -29,10 +24,6 @@ void glDrawBuffer(GLenum mode)
 }
 
 void glClear(GLbitfield mask)
-{
-}
-
-void glDepthRange(GLclampd nearVal, GLclampd farVal)
 {
 }
 
@@ -57,10 +48,6 @@ void glReadBuffer(GLenum mode)
 }
 
 void glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLvoid* data)
-{
-}
-
-void glDepthMask(GLboolean flag)
 {
 }
 

@@ -90,7 +90,8 @@ void R_RenderDlights (void)
 
 	r_dlightframecount = r_framecount + 1;	// because the count hasn't
 											//  advanced yet for this frame
-	qglDepthMask (0);
+	gxu_z_write_enabled = GX_FALSE;
+	qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 	qgxDisableTexture();
 	qglShadeModel (GL_SMOOTH);
 	gxu_blend_src_value = GX_BL_ONE;
@@ -110,7 +111,8 @@ void R_RenderDlights (void)
 	qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 	gxu_cur_vertex_format = GX_VTXFMT1;
 	qgxEnableTexture();
-	qglDepthMask (1);
+	gxu_z_write_enabled = GX_TRUE;
+	qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 }
 
 

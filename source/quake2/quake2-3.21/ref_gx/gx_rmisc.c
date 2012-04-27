@@ -187,7 +187,8 @@ void GL_SetDefaultState( void )
 	gxu_alpha_test_enabled = true;
 	qgxSetAlphaCompare(GX_GEQUAL, gxu_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gxu_alpha_test_higher);
 
-	qglDisable (GL_DEPTH_TEST);
+	gxu_z_test_enabled = GX_FALSE;
+	qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 	qglDisable (GL_CULL_FACE);
 	gxu_blend_src_value = GX_BL_SRCALPHA;
 	gxu_blend_dst_value = GX_BL_INVSRCALPHA;

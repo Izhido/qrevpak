@@ -59,8 +59,6 @@ typedef unsigned short GLushort;
 
 #define GL_BACK 16
 
-#define GL_DEPTH_TEST 19
-
 #define GL_CULL_FACE 20
 
 #define GL_COLOR_INDEX 21
@@ -187,8 +185,6 @@ typedef unsigned short GLushort;
 
 void glTexParameterf(GLenum target, GLenum pname, GLfloat param);
 
-void glViewport(GLint x, GLint y, GLsizei width, GLsizei height);
-
 void glEnable(GLenum cap);
 
 void glDisable(GLenum cap);
@@ -201,8 +197,6 @@ void glDrawBuffer(GLenum mode);
 
 void glClear(GLbitfield mask);
 
-void glDepthRange(GLclampd nearVal, GLclampd farVal);
-
 void glCullFace(GLenum mode);
 
 void glShadeModel(GLenum mode);
@@ -214,8 +208,6 @@ void glFinish(void);
 void glReadBuffer(GLenum mode);
 
 void glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLvoid* data);
-
-void glDepthMask(GLboolean flag);
 
 void glTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid* data);
 
@@ -276,10 +268,6 @@ void glCullFace(GLenum mode);
 void glDeleteLists(GLuint list, GLsizei range);
 
 void glDeleteTextures(GLsizei n, const GLuint *textures);
-
-void glDepthMask(GLboolean flag);
-
-void glDepthRange(GLclampd zNear, GLclampd zFar);
 
 void glDisable(GLenum cap);
 
@@ -728,7 +716,5 @@ void glTexSubImage1D(GLenum target, GLint level, GLint xoffset, GLsizei width, G
 void glTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels);
 
 void glVertexPointer(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer);
-
-void glViewport(GLint x, GLint y, GLsizei width, GLsizei height);
 
 #endif

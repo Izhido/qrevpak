@@ -34,7 +34,7 @@ int GL_TEXTURE0, GL_TEXTURE1;
 
 model_t		*r_worldmodel;
 
-float		gldepthmin, gldepthmax;
+float		gxdepthmin, gxdepthmax;
 
 glconfig_t gl_config;
 glstate_t  gl_state;
@@ -387,7 +387,8 @@ void R_DrawEntitiesOnList (void)
 
 	// draw transparent entities
 	// we could sort these if it ever becomes a problem...
-	qglDepthMask (0);		// no z writes
+	gxu_z_write_enabled = GX_FALSE;		// no z writes
+	qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 	for (i=0 ; i<r_newrefdef.num_entities ; i++)
 	{
 		currententity = &r_newrefdef.entities[i];
@@ -424,7 +425,8 @@ void R_DrawEntitiesOnList (void)
 			}
 		}
 	}
-	qglDepthMask (1);		// back to writing
+	gxu_z_write_enabled = GX_TRUE;		// back to writing
+	qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 
 }
 
@@ -441,7 +443,8 @@ void GL_DrawParticles( int num_particles, const particle_t particles[], const un
 	byte			color[4];
 
     GX_Bind(r_particletexture->texnum);
-	qglDepthMask( GL_FALSE );		// no z buffering
+	gxu_z_write_enabled = GX_FALSE;		// no z buffering
+	qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 	qgxSetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 	GL_TexEnv( GX_MODULATE );
 	qgxBegin (GX_TRIANGLES, gxu_cur_vertex_format, num_particles * 3);
@@ -487,7 +490,8 @@ void GL_DrawParticles( int num_particles, const particle_t particles[], const un
 	gxu_cur_g = 255;
 	gxu_cur_b = 255;
 	gxu_cur_a = 255;
-	qglDepthMask( 1 );		// back to normal Z buffering
+	gxu_z_write_enabled = GX_TRUE;		// back to normal Z buffering
+	qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 	GL_TexEnv( GX_REPLACE );
 }
 
@@ -504,7 +508,8 @@ void R_DrawParticles (void)
 		unsigned char color[4];
 		const particle_t *p;
 
-		qglDepthMask( GL_FALSE );
+		gxu_z_write_enabled = GX_FALSE;
+		qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 		qgxSetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 		qgxDisableTexture();
 
@@ -526,7 +531,8 @@ void R_DrawParticles (void)
 		gxu_cur_g = 255;
 		gxu_cur_b = 255;
 		gxu_cur_a = 255;
-		qglDepthMask( GL_TRUE );
+		gxu_z_write_enabled = GX_TRUE;
+		qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 		qgxEnableTexture();
 
 	}
@@ -554,7 +560,8 @@ void R_PolyBlend (void)
 
 	qgxSetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
 	qgxSetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
-	qglDisable (GL_DEPTH_TEST);
+	gxu_z_test_enabled = GX_FALSE;
+	qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 	qgxDisableTexture();
 
 	// FIXME: get rid of these
@@ -743,7 +750,11 @@ void R_SetupGL (void)
 	w = x2 - x;
 	h = y - y2;
 
-	qglViewport (x, y2, w, h);
+	gxu_viewport_x = x;
+	gxu_viewport_y = y2;
+	gxu_viewport_width = w;
+	gxu_viewport_height = h;
+	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxdepthmin, gxdepthmax);
 
 	//
 	// set up projection matrix
@@ -794,7 +805,8 @@ void R_SetupGL (void)
 
 	qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 	qgxSetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
-	qglEnable(GL_DEPTH_TEST);
+	gxu_z_test_enabled = GX_TRUE;
+	qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 }
 
 /*
@@ -808,35 +820,38 @@ void R_Clear (void)
 	{
 		static int trickframe;
 
-		if (gl_clear->value)
-			qglClear (GL_COLOR_BUFFER_BIT);
+		gxu_clear_buffers = GX_FALSE;
 
 		trickframe++;
 		if (trickframe & 1)
 		{
-			gldepthmin = 0;
-			gldepthmax = 0.49999;
-			qgxSetZMode(gxu_z_test_enabled, GX_LEQUAL, gxu_z_write_enabled);
+			gxdepthmin = 0;
+			gxdepthmax = 0.49999;
+			gxu_cur_z_func = GX_LEQUAL;
+			qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 		}
 		else
 		{
-			gldepthmin = 1;
-			gldepthmax = 0.5;
-			qgxSetZMode(gxu_z_test_enabled, GX_GEQUAL, gxu_z_write_enabled);
+			gxdepthmin = 1;
+			gxdepthmax = 0.5;
+			gxu_cur_z_func = GX_GEQUAL;
+			qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 		}
 	}
 	else
 	{
 		if (gl_clear->value)
-			qglClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			gxu_clear_color_buffer = GX_TRUE;
 		else
-			qglClear (GL_DEPTH_BUFFER_BIT);
-		gldepthmin = 0;
-		gldepthmax = 1;
-		qgxSetZMode(gxu_z_test_enabled, GX_LEQUAL, gxu_z_write_enabled);
+			gxu_clear_color_buffer = GX_FALSE;
+		gxu_clear_buffers = GX_TRUE;
+		gxdepthmin = 0;
+		gxdepthmax = 1;
+		gxu_cur_z_func = GX_LEQUAL;
+		qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 	}
 
-	qglDepthRange (gldepthmin, gldepthmax);
+	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxdepthmin, gxdepthmax);
 
 }
 
@@ -908,12 +923,17 @@ void R_RenderView (refdef_t *fd)
 void	R_SetGL2D (void)
 {
 	// set 2D virtual screen size
-	qglViewport (0,0, vid.width, vid.height);
+	gxu_viewport_x = 0;
+	gxu_viewport_y = 0;
+	gxu_viewport_width = vid.width;
+	gxu_viewport_height = vid.height;
+	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxdepthmin, gxdepthmax);
 	qguOrtho(gxu_projection_matrices[gxu_cur_projection_matrix], 0, vid.height, 0, vid.width, 0, 300); //-99999, 99999);
 	qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], GX_ORTHOGRAPHIC);
 	qguMtxIdentity(gxu_modelview_matrices[gxu_cur_modelview_matrix]);
 	qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
-	qglDisable (GL_DEPTH_TEST);
+	gxu_z_test_enabled = GX_FALSE;
+	qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 	qglDisable (GL_CULL_FACE);
 	qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 	qgxSetAlphaCompare(GX_GEQUAL, gxu_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gxu_alpha_test_higher);
@@ -1537,12 +1557,17 @@ void R_BeginFrame( float camera_separation )
 	/*
 	** go into 2D mode
 	*/
-	qglViewport (0,0, vid.width, vid.height);
+	gxu_viewport_x = 0;
+	gxu_viewport_y = 0;
+	gxu_viewport_width = vid.width;
+	gxu_viewport_height = vid.height;
+	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxdepthmin, gxdepthmax);
 	qguOrtho(gxu_projection_matrices[gxu_cur_projection_matrix], 0, vid.height, 0, vid.width, 0, 300); //-99999, 99999);
 	qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], GX_ORTHOGRAPHIC);
 	qguMtxIdentity(gxu_modelview_matrices[gxu_cur_modelview_matrix]);
 	qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
-	qglDisable (GL_DEPTH_TEST);
+	gxu_z_test_enabled = GX_FALSE;
+	qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 	qglDisable (GL_CULL_FACE);
 	qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 	qgxSetAlphaCompare(GX_GEQUAL, gxu_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gxu_alpha_test_higher);
@@ -1681,7 +1706,8 @@ void R_DrawBeam( entity_t *e )
 
 	qgxDisableTexture();
 	qgxSetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
-	qglDepthMask( GL_FALSE );
+	gxu_z_write_enabled = GX_FALSE;
+	qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 
 	r = ( d_8to24table[e->skinnum & 0xFF] ) & 0xFF;
 	g = ( d_8to24table[e->skinnum & 0xFF] >> 8 ) & 0xFF;
@@ -1712,7 +1738,8 @@ void R_DrawBeam( entity_t *e )
 
 	qgxEnableTexture();
 	qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
-	qglDepthMask( GL_TRUE );
+	gxu_z_write_enabled = GX_TRUE;
+	qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 }
 
 //===================================================================

@@ -136,7 +136,7 @@ void GL_EndRendering (void);
 void GL_SetDefaultState( void );
 void GL_UpdateSwapInterval( void );
 
-extern	float	gldepthmin, gldepthmax;
+extern	float	gxdepthmin, gxdepthmax;
 
 typedef struct
 {

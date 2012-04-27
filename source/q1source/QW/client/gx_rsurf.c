@@ -740,7 +740,7 @@ void R_BlendLightmaps (void)
 		return;
 
 	gxu_z_write_enabled = GX_FALSE;
-	GX_SetZMode(gxu_z_test_enabled, GX_LEQUAL, gxu_z_write_enabled);		// don't bother writing Z
+	GX_SetZMode(gxu_z_test_enabled, gx_cur_z_test, gxu_z_write_enabled);		// don't bother writing Z
 
 	if (gx_lightmap_format == GX_TF_IA4)
 	{
@@ -828,7 +828,7 @@ void R_BlendLightmaps (void)
 	}
 
 	gxu_z_write_enabled = GX_TRUE;
-	GX_SetZMode(gxu_z_test_enabled, GX_LEQUAL, gxu_z_write_enabled);		// back to normal Z buffering
+	GX_SetZMode(gxu_z_test_enabled, gx_cur_z_test, gxu_z_write_enabled);		// back to normal Z buffering
 }
 
 /*

@@ -242,7 +242,8 @@ void R_DrawTriangleOutlines (void)
 		return;
 
 	qgxDisableTexture();
-	qglDisable (GL_DEPTH_TEST);
+	gxu_z_test_enabled = GX_FALSE;
+	qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 	gxu_cur_r = 255;
 	gxu_cur_g = 255;
 	gxu_cur_b = 255;
@@ -274,7 +275,8 @@ void R_DrawTriangleOutlines (void)
 		}
 	}
 
-	qglEnable (GL_DEPTH_TEST);
+	gxu_z_test_enabled = GX_TRUE;
+	qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 	qgxEnableTexture();
 }
 
@@ -339,7 +341,8 @@ void R_BlendLightmaps (void)
 		return;
 
 	// don't bother writing Z
-	qglDepthMask( 0 );
+	gxu_z_write_enabled = GX_FALSE;
+	qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 
 	/*
 	** set the appropriate blending mode unless we're only looking at the
@@ -490,7 +493,8 @@ void R_BlendLightmaps (void)
 	gxu_blend_src_value = GX_BL_SRCALPHA;
 	gxu_blend_dst_value = GX_BL_INVSRCALPHA;
 	qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
-	qglDepthMask( 1 );
+	gxu_z_write_enabled = GX_TRUE;
+	qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 }
 
 /*
