@@ -592,16 +592,16 @@ qglDisable (GL_DEPTH_TEST);
 		if (i == 6)
 			return;		// nothing visible
 	}
-
-guMtxCopy(gxu_modelview_matrices[gxu_cur_modelview_matrix], gxu_modelview_matrices[gxu_cur_modelview_matrix + 1]);
+	
+qguMtxCopy(gxu_modelview_matrices[gxu_cur_modelview_matrix], gxu_modelview_matrices[gxu_cur_modelview_matrix + 1]);
 gxu_cur_modelview_matrix++;
-qguMtxTrans(m, r_origin[0], r_origin[1], r_origin[2]);
+/*qguMtxTrans(m, r_origin[0], r_origin[1], r_origin[2]);
 qguMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
 a.x = skyaxis[0];
 a.y = skyaxis[1];
 a.z = skyaxis[2];
-qguMtxRotAxisDeg(m, &a, r_newrefdef.time * skyrotate); // put Z going up
-qguMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
+qguMtxRotAxisDeg(m, &a, r_newrefdef.time * skyrotate);
+qguMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);*/
 qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 
 	for (i=0 ; i<6 ; i++)
@@ -620,7 +620,7 @@ qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 
 		GX_Bind (sky_images[skytexorder[i]]->texnum);
 
-		qgxBegin (GX_TRIANGLEFAN, gxu_cur_vertex_format, 4);
+		qgxBegin (GX_QUADS, gxu_cur_vertex_format, 4);
 		MakeSkyVec (skymins[0][i], skymins[1][i], i);
 		MakeSkyVec (skymins[0][i], skymaxs[1][i], i);
 		MakeSkyVec (skymaxs[0][i], skymaxs[1][i], i);

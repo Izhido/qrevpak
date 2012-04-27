@@ -43,8 +43,8 @@ int		gl_alpha_format = 4;
 int		gl_tex_solid_format = 3;
 int		gl_tex_alpha_format = 4;
 
-int		gl_filter_min = GL_LINEAR_MIPMAP_NEAREST;
-int		gl_filter_max = GL_LINEAR;
+int		gx_filter_min = GX_LIN_MIP_NEAR;
+int		gx_filter_max = GX_LINEAR;
 
 int		gx_tex_allocated; // To track amount of memory used for textures
 
@@ -109,12 +109,12 @@ void GL_SelectTexture( GLenum texture )
 		tmu = 1;
 	}
 
-	if ( tmu == gl_state.currenttmu )
+	if ( tmu == gx_state.currenttmu )
 	{
 		return;
 	}
 
-	gl_state.currenttmu = tmu;
+	gx_state.currenttmu = tmu;
 
 	if ( qglSelectTextureSGIS )
 	{
@@ -131,10 +131,10 @@ void GL_TexEnv( GLenum mode )
 {
 	static int lastmodes[2] = { -1, -1 };
 
-	if ( mode != lastmodes[gl_state.currenttmu] )
+	if ( mode != lastmodes[gx_state.currenttmu] )
 	{
-		qgxSetTevOp( gl_state.currenttmu - GX_TEVSTAGE0, mode );
-		lastmodes[gl_state.currenttmu] = mode;
+		qgxSetTevOp( GX_TEVSTAGE0 + gx_state.currenttmu, mode );
+		lastmodes[gx_state.currenttmu] = mode;
 	}
 }
 
@@ -144,11 +144,11 @@ void GX_Bind (int texnum)
 
 	if (gl_nobind->value && draw_chars)		// performance evaluation option
 		texnum = draw_chars->texnum;
-	if ( gl_state.currenttextures[gl_state.currenttmu] == texnum)
+	if ( gx_state.currenttextures[gx_state.currenttmu] == texnum)
 		return;
-	gl_state.currenttextures[gl_state.currenttmu] = texnum;
+	gx_state.currenttextures[gx_state.currenttmu] = texnum;
 	if(gxtexobjs[texnum].data != NULL)
-		qgxLoadTexObj(&gxtexobjs[texnum].texobj, gl_state.currenttmu - GX_TEXMAP0);
+		qgxLoadTexObj(&gxtexobjs[texnum].texobj, GX_TEXMAP0 + gx_state.currenttmu );
 }
 
 void GL_MBind( GLenum target, int texnum )
@@ -156,12 +156,12 @@ void GL_MBind( GLenum target, int texnum )
 	GL_SelectTexture( target );
 	if ( target == GL_TEXTURE0 )
 	{
-		if ( gl_state.currenttextures[0] == texnum )
+		if ( gx_state.currenttextures[0] == texnum )
 			return;
 	}
 	else
 	{
-		if ( gl_state.currenttextures[1] == texnum )
+		if ( gx_state.currenttextures[1] == texnum )
 			return;
 	}
 	GX_Bind( texnum );
@@ -170,25 +170,25 @@ void GL_MBind( GLenum target, int texnum )
 qboolean GX_ReallocTex(int length, int width, int height)
 {
 	qboolean changed = false;
-	if(gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].length < length)
+	if(gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].length < length)
 	{
-		if(gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data != NULL)
+		if(gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].data != NULL)
 		{
-			free(gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data);
-			gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data = NULL;
-			gx_tex_allocated -= gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].length;
+			free(gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].data);
+			gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].data = NULL;
+			gx_tex_allocated -= gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].length;
 		};
-		gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data = memalign(32, length);
-		if(gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data == NULL)
+		gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].data = memalign(32, length);
+		if(gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].data == NULL)
 		{
 			Sys_Error("GX_ReallocTex: allocation failed on %i bytes", length);
 		};
-		gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].length = length;
+		gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].length = length;
 		gx_tex_allocated += length;
 		changed = true;
 	};
-	gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].width = width;
-	gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].height = height;
+	gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].width = width;
+	gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].height = height;
 	return changed;
 }
 
@@ -351,9 +351,9 @@ byte* GX_CopyTexIA4(byte* src, int width, int height, byte* dst)
 
 void GX_BindCurrentTex(qboolean changed, int format, int mipmap)
 {
-	DCFlushRange(gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data, gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].length);
-	qgxInitTexObj(&gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].texobj, gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data, gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].width, gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].height, format, GX_REPEAT, GX_REPEAT, mipmap);
-	qgxLoadTexObj(&gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].texobj, gl_state.currenttmu - GX_TEXMAP0);
+	DCFlushRange(gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].data, gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].length);
+	qgxInitTexObj(&gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].texobj, gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].data, gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].width, gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].height, format, GX_REPEAT, GX_REPEAT, mipmap);
+	qgxLoadTexObj(&gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].texobj, GX_TEXMAP0 + gx_state.currenttmu);
 	if(changed)
 		qgxInvalidateTexAll();
 }
@@ -364,17 +364,17 @@ void GX_LoadAndBind (void* data, int length, int width, int height, int format)
 	switch(format)
 	{
 	case GX_TF_RGBA8:
-		GX_CopyTexRGBA8((byte*)data, width, height, (byte*)(gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data));
+		GX_CopyTexRGBA8((byte*)data, width, height, (byte*)(gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].data));
 		break;
 	case GX_TF_RGB5A3:
-		GX_CopyTexRGB5A3((byte*)data, width, height, (byte*)(gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data));
+		GX_CopyTexRGB5A3((byte*)data, width, height, (byte*)(gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].data));
 		break;
 	case GX_TF_I8:
 	case GX_TF_A8:
-		GX_CopyTexV8((byte*)data, width, height, (byte*)(gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data));
+		GX_CopyTexV8((byte*)data, width, height, (byte*)(gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].data));
 		break;
 	case GX_TF_IA4:
-		GX_CopyTexIA4((byte*)data, width, height, (byte*)(gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data));
+		GX_CopyTexIA4((byte*)data, width, height, (byte*)(gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].data));
 		break;
 	};
 	GX_BindCurrentTex(changed, format, GX_FALSE);
@@ -400,11 +400,11 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 
 	if(format == GX_TF_RGBA8)
 	{
-		dst = (byte*)(gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data);
+		dst = (byte*)(gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].data);
 		if(dst != NULL)
 		{
-			tex_width = gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].width;
-			tex_height = gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].height;
+			tex_width = gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].width;
+			tex_height = gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].height;
 			ybegin = (yoffset >> 2) << 2;
 			if(ybegin < 0) 
 				ybegin = 0;
@@ -469,11 +469,11 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 		GX_BindCurrentTex(true, format, GX_FALSE);
 	} else if(format == GX_TF_RGB5A3)
 	{
-		dst = (byte*)(gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data);
+		dst = (byte*)(gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].data);
 		if(dst != NULL)
 		{
-			tex_width = gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].width;
-			tex_height = gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].height;
+			tex_width = gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].width;
+			tex_height = gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].height;
 			ybegin = (yoffset >> 2) << 2;
 			if(ybegin < 0) 
 				ybegin = 0;
@@ -519,11 +519,11 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 		GX_BindCurrentTex(true, format, GX_FALSE);
 	} else if((format == GX_TF_A8)||(format == GX_TF_I8))
 	{
-		dst = (byte*)(gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data);
+		dst = (byte*)(gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].data);
 		if(dst != NULL)
 		{
-			tex_width = gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].width;
-			tex_height = gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].height;
+			tex_width = gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].width;
+			tex_height = gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].height;
 			ybegin = (yoffset >> 2) << 2;
 			if(ybegin < 0) 
 				ybegin = 0;
@@ -566,11 +566,11 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 		GX_BindCurrentTex(true, format, GX_FALSE);
 	} else if(format == GX_TF_IA4)
 	{
-		dst = (byte*)(gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data);
+		dst = (byte*)(gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].data);
 		if(dst != NULL)
 		{
-			tex_width = gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].width;
-			tex_height = gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].height;
+			tex_width = gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].width;
+			tex_height = gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].height;
 			ybegin = (yoffset >> 2) << 2;
 			if(ybegin < 0) 
 				ybegin = 0;
@@ -617,9 +617,9 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 
 void GX_SetMinMag (int minfilt, int magfilt)
 {
-	if(gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].data != NULL)
+	if(gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].data != NULL)
 	{
-		qgxInitTexObjFilterMode(&gxtexobjs[gl_state.currenttextures[gl_state.currenttmu]].texobj, minfilt, magfilt);
+		qgxInitTexObjFilterMode(&gxtexobjs[gx_state.currenttextures[gx_state.currenttmu]].texobj, minfilt, magfilt);
 	};
 }
 
@@ -630,12 +630,12 @@ typedef struct
 } glmode_t;
 
 glmode_t modes[] = {
-	{"GL_NEAREST", GL_NEAREST, GL_NEAREST},
-	{"GL_LINEAR", GL_LINEAR, GL_LINEAR},
-	{"GL_NEAREST_MIPMAP_NEAREST", GL_NEAREST_MIPMAP_NEAREST, GL_NEAREST},
-	{"GL_LINEAR_MIPMAP_NEAREST", GL_LINEAR_MIPMAP_NEAREST, GL_LINEAR},
-	{"GL_NEAREST_MIPMAP_LINEAR", GL_NEAREST_MIPMAP_LINEAR, GL_NEAREST},
-	{"GL_LINEAR_MIPMAP_LINEAR", GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR}
+	{"GX_NEAR", GX_NEAR, GX_NEAR},
+	{"GX_LINEAR", GX_LINEAR, GX_LINEAR},
+	{"GX_NEAR_MIP_NEAR", GX_NEAR_MIP_NEAR, GX_NEAR},
+	{"GX_LIN_MIP_NEAR", GX_LIN_MIP_NEAR, GX_LINEAR},
+	{"GX_NEAR_MIP_LIN", GX_NEAR_MIP_LIN, GX_NEAR},
+	{"GX_LIN_MIP_LIN", GX_LIN_MIP_LIN, GX_LINEAR}
 };
 
 #define NUM_GL_MODES (sizeof(modes) / sizeof (glmode_t))
@@ -693,8 +693,8 @@ void GL_TextureMode( char *string )
 		return;
 	}
 
-	gl_filter_min = modes[i].minimize;
-	gl_filter_max = modes[i].maximize;
+	gx_filter_min = modes[i].minimize;
+	gx_filter_max = modes[i].maximize;
 
 	// change all the existing mipmap texture objects
 	for (i=0, glt=gxtextures ; i<numgxtextures ; i++, glt++)
@@ -702,8 +702,7 @@ void GL_TextureMode( char *string )
 		if (glt->type != it_pic && glt->type != it_sky )
 		{
 			GX_Bind (glt->texnum);
-			qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
-			qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
+			GX_SetMinMag(gx_filter_min, gx_filter_max);
 		}
 	}
 }
@@ -1423,7 +1422,7 @@ void GL_BuildPalettedTexture( unsigned char *paletted_texture, unsigned char *sc
 
 		c = r | ( g << 5 ) | ( b << 11 );
 
-		paletted_texture[i] = gl_state.d_16to8table[c];
+		paletted_texture[i] = gx_state.d_16to8table[c];
 
 		scaled += 4;
 	}
@@ -1591,13 +1590,11 @@ done: ;
 
 	if (mipmap)
 	{
-		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
-		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
+		GX_SetMinMag(gx_filter_min, gx_filter_max);
 	}
 	else
 	{
-		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_max);
-		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
+		GX_SetMinMag(gx_filter_max, gx_filter_max);
 	}
 
 	return (samples == gl_alpha_format);
@@ -1645,8 +1642,7 @@ qboolean GL_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboole
 	{
 		GX_LoadAndBind(data, width * height, width, height, GX_TF_CI8);
 
-		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_max);
-		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
+		GX_SetMinMag(gx_filter_max, gx_filter_max);
 	}
 	else
 	{
@@ -1967,18 +1963,18 @@ void	GL_InitImages (void)
 	if ( intensity->value <= 1 )
 		ri.Cvar_Set( "intensity", "1" );
 
-	gl_state.inverse_intensity = 1 / intensity->value;
+	gx_state.inverse_intensity = 1 / intensity->value;
 
 	Draw_GetPalette ();
 
 	if ( qglColorTableEXT )
 	{
-		ri.FS_LoadFile( "pics/16to8.dat", &gl_state.d_16to8table, true);
-		if ( !gl_state.d_16to8table )
+		ri.FS_LoadFile( "pics/16to8.dat", &gx_state.d_16to8table, true);
+		if ( !gx_state.d_16to8table )
 			ri.Sys_Error( ERR_FATAL, "Couldn't load pics/16to8.pcx");
 	}
 
-	if ( gl_config.renderer & ( GL_RENDERER_VOODOO | GL_RENDERER_VOODOO2 ) )
+	if ( gx_config.renderer & ( GL_RENDERER_VOODOO | GL_RENDERER_VOODOO2 ) )
 	{
 		g = 1.0F;
 	}

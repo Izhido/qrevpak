@@ -40,8 +40,7 @@ void Draw_InitLocal (void)
 	// load console characters (don't bilerp characters)
 	draw_chars = GL_FindImage ("pics/conchars.pcx", it_pic);
 	GX_Bind( draw_chars->texnum );
-	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	GX_SetMinMag(GX_NEAR, GX_NEAR);
 }
 
 
@@ -152,7 +151,7 @@ void Draw_StretchPic (int x, int y, int w, int h, char *pic)
 	if (scrap_dirty)
 		Scrap_Upload ();
 
-	if ( ( ( gl_config.renderer == GL_RENDERER_MCD ) || ( gl_config.renderer & GL_RENDERER_RENDITION ) ) && !gl->has_alpha)
+	if ( ( ( gx_config.renderer == GL_RENDERER_MCD ) || ( gx_config.renderer & GL_RENDERER_RENDITION ) ) && !gl->has_alpha)
 		qgxSetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
 
 	GX_Bind (gl->texnum);
@@ -171,7 +170,7 @@ void Draw_StretchPic (int x, int y, int w, int h, char *pic)
 	qgxTexCoord2f32 (gl->sl, gl->th);
 	qgxEnd ();
 
-	if ( ( ( gl_config.renderer == GL_RENDERER_MCD ) || ( gl_config.renderer & GL_RENDERER_RENDITION ) ) && !gl->has_alpha)
+	if ( ( ( gx_config.renderer == GL_RENDERER_MCD ) || ( gx_config.renderer & GL_RENDERER_RENDITION ) ) && !gl->has_alpha)
 		qgxSetAlphaCompare(GX_GEQUAL, gxu_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gxu_alpha_test_higher);
 }
 
@@ -194,7 +193,7 @@ void Draw_Pic (int x, int y, char *pic)
 	if (scrap_dirty)
 		Scrap_Upload ();
 
-	if ( ( ( gl_config.renderer == GL_RENDERER_MCD ) || ( gl_config.renderer & GL_RENDERER_RENDITION ) ) && !gl->has_alpha)
+	if ( ( ( gx_config.renderer == GL_RENDERER_MCD ) || ( gx_config.renderer & GL_RENDERER_RENDITION ) ) && !gl->has_alpha)
 		qgxSetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
 
 	GX_Bind (gl->texnum);
@@ -213,7 +212,7 @@ void Draw_Pic (int x, int y, char *pic)
 	qgxTexCoord2f32 (gl->sl, gl->th);
 	qgxEnd ();
 
-	if ( ( ( gl_config.renderer == GL_RENDERER_MCD ) || ( gl_config.renderer & GL_RENDERER_RENDITION ) )  && !gl->has_alpha)
+	if ( ( ( gx_config.renderer == GL_RENDERER_MCD ) || ( gx_config.renderer & GL_RENDERER_RENDITION ) )  && !gl->has_alpha)
 		qgxSetAlphaCompare(GX_GEQUAL, gxu_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gxu_alpha_test_higher);
 }
 
@@ -236,7 +235,7 @@ void Draw_TileClear (int x, int y, int w, int h, char *pic)
 		return;
 	}
 
-	if ( ( ( gl_config.renderer == GL_RENDERER_MCD ) || ( gl_config.renderer & GL_RENDERER_RENDITION ) )  && !image->has_alpha)
+	if ( ( ( gx_config.renderer == GL_RENDERER_MCD ) || ( gx_config.renderer & GL_RENDERER_RENDITION ) )  && !image->has_alpha)
 		qgxSetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
 
 	GX_Bind (image->texnum);
@@ -255,7 +254,7 @@ void Draw_TileClear (int x, int y, int w, int h, char *pic)
 	qgxTexCoord2f32 ( x/64.0, (y+h)/64.0 );
 	qgxEnd ();
 
-	if ( ( ( gl_config.renderer == GL_RENDERER_MCD ) || ( gl_config.renderer & GL_RENDERER_RENDITION ) )  && !image->has_alpha)
+	if ( ( ( gx_config.renderer == GL_RENDERER_MCD ) || ( gx_config.renderer & GL_RENDERER_RENDITION ) )  && !image->has_alpha)
 		qgxSetAlphaCompare(GX_GEQUAL, gxu_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gxu_alpha_test_higher);
 }
 
@@ -413,10 +412,9 @@ void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data
 
 		Sys_BigStackFree(256*256, "Draw_StretchRaw");
 	}
-	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	GX_SetMinMag(GX_LINEAR, GX_LINEAR);
 
-	if ( ( gl_config.renderer == GL_RENDERER_MCD ) || ( gl_config.renderer & GL_RENDERER_RENDITION ) ) 
+	if ( ( gx_config.renderer == GL_RENDERER_MCD ) || ( gx_config.renderer & GL_RENDERER_RENDITION ) ) 
 		qgxSetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
 
 	qgxBegin (GX_QUADS, gxu_cur_vertex_format, 4);
@@ -434,7 +432,7 @@ void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data
 	qgxTexCoord2f32 (0, t);
 	qgxEnd ();
 
-	if ( ( gl_config.renderer == GL_RENDERER_MCD ) || ( gl_config.renderer & GL_RENDERER_RENDITION ) ) 
+	if ( ( gx_config.renderer == GL_RENDERER_MCD ) || ( gx_config.renderer & GL_RENDERER_RENDITION ) ) 
 		qgxSetAlphaCompare(GX_GEQUAL, gxu_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gxu_alpha_test_higher);
 }
 

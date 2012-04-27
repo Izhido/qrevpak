@@ -273,12 +273,6 @@ void ( APIENTRY * qglTexGenf )(GLenum coord, GLenum pname, GLfloat param);
 void ( APIENTRY * qglTexGenfv )(GLenum coord, GLenum pname, const GLfloat *params);
 void ( APIENTRY * qglTexGeni )(GLenum coord, GLenum pname, GLint param);
 void ( APIENTRY * qglTexGeniv )(GLenum coord, GLenum pname, const GLint *params);
-void ( APIENTRY * qglTexParameterf )(GLenum target, GLenum pname, GLfloat param);
-void ( APIENTRY * qglTexParameterfv )(GLenum target, GLenum pname, const GLfloat *params);
-void ( APIENTRY * qglTexParameteri )(GLenum target, GLenum pname, GLint param);
-void ( APIENTRY * qglTexParameteriv )(GLenum target, GLenum pname, const GLint *params);
-void ( APIENTRY * qglTexSubImage1D )(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const GLvoid *pixels);
-void ( APIENTRY * qglTexSubImage2D )(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels);
 void ( APIENTRY * qglVertexPointer )(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer);
 
 void ( APIENTRY * qglLockArraysEXT)( int, int);
@@ -527,14 +521,6 @@ static void ( APIENTRY * dllTexGenf )(GLenum coord, GLenum pname, GLfloat param)
 static void ( APIENTRY * dllTexGenfv )(GLenum coord, GLenum pname, const GLfloat *params);
 static void ( APIENTRY * dllTexGeni )(GLenum coord, GLenum pname, GLint param);
 static void ( APIENTRY * dllTexGeniv )(GLenum coord, GLenum pname, const GLint *params);
-static void ( APIENTRY * dllTexImage1D )(GLenum target, GLint level, GLint internalformat, GLsizei width, GLint border, GLenum format, GLenum type, const GLvoid *pixels);
-static void ( APIENTRY * dllTexImage2D )(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid *pixels);
-static void ( APIENTRY * dllTexParameterf )(GLenum target, GLenum pname, GLfloat param);
-static void ( APIENTRY * dllTexParameterfv )(GLenum target, GLenum pname, const GLfloat *params);
-static void ( APIENTRY * dllTexParameteri )(GLenum target, GLenum pname, GLint param);
-static void ( APIENTRY * dllTexParameteriv )(GLenum target, GLenum pname, const GLint *params);
-static void ( APIENTRY * dllTexSubImage1D )(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const GLvoid *pixels);
-static void ( APIENTRY * dllTexSubImage2D )(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels);
 static void ( APIENTRY * dllVertexPointer )(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer);
 
 static void APIENTRY logAccum(GLenum op, GLfloat value)
@@ -651,18 +637,6 @@ static void APIENTRY logCopyPixels(GLint x, GLint y, GLsizei width, GLsizei heig
 	dllCopyPixels( x, y, width, height, type );
 }
 
-static void APIENTRY logCopyTexImage1D(GLenum target, GLint level, GLenum internalFormat, GLint x, GLint y, GLsizei width, GLint border)
-{
-	SIG( "glCopyTexImage1D" );
-	dllCopyTexImage1D( target, level, internalFormat, x, y, width, border );
-}
-
-static void APIENTRY logCopyTexImage2D(GLenum target, GLint level, GLenum internalFormat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border)
-{
-	SIG( "glCopyTexImage2D" );
-	dllCopyTexImage2D( target, level, internalFormat, x, y, width, height, border );
-}
-
 static void APIENTRY logCopyTexSubImage1D(GLenum target, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width)
 {
 	SIG( "glCopyTexSubImage1D" );
@@ -673,6 +647,18 @@ static void APIENTRY logCopyTexSubImage2D(GLenum target, GLint level, GLint xoff
 {
 	SIG( "glCopyTexSubImage2D" );
 	dllCopyTexSubImage2D( target, level, xoffset, yoffset, x, y, width, height );
+}
+
+static void APIENTRY logCopyTexImage1D(GLenum target, GLint level, GLenum internalFormat, GLint x, GLint y, GLsizei width, GLint border)
+{
+	SIG( "glCopyTexImage1D" );
+	dllCopyTexImage1D( target, level, internalFormat, x, y, width, border );
+}
+
+static void APIENTRY logCopyTexImage2D(GLenum target, GLint level, GLenum internalFormat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border)
+{
+	SIG( "glCopyTexImage2D" );
+	dllCopyTexImage2D( target, level, internalFormat, x, y, width, height, border );
 }
 
 static void APIENTRY logCullFace(GLenum mode)
@@ -1887,48 +1873,6 @@ static void APIENTRY logTexGeniv(GLenum coord, GLenum pname, const GLint *params
 	SIG( "glTexGeniv" );
 	dllTexGeniv( coord, pname, params );
 }
-static void APIENTRY logTexImage1D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLint border, GLenum format, GLenum type, const void *pixels)
-{
-	SIG( "glTexImage1D" );
-	dllTexImage1D( target, level, internalformat, width, border, format, type, pixels );
-}
-static void APIENTRY logTexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void *pixels)
-{
-	SIG( "glTexImage2D" );
-	dllTexImage2D( target, level, internalformat, width, height, border, format, type, pixels );
-}
-
-static void APIENTRY logTexParameterf(GLenum target, GLenum pname, GLfloat param)
-{
-	fprintf( log_fp, "glTexParameterf( 0x%x, 0x%x, %f )\n", target, pname, param );
-	dllTexParameterf( target, pname, param );
-}
-
-static void APIENTRY logTexParameterfv(GLenum target, GLenum pname, const GLfloat *params)
-{
-	SIG( "glTexParameterfv" );
-	dllTexParameterfv( target, pname, params );
-}
-static void APIENTRY logTexParameteri(GLenum target, GLenum pname, GLint param)
-{
-	fprintf( log_fp, "glTexParameteri( 0x%x, 0x%x, 0x%x )\n", target, pname, param );
-	dllTexParameteri( target, pname, param );
-}
-static void APIENTRY logTexParameteriv(GLenum target, GLenum pname, const GLint *params)
-{
-	SIG( "glTexParameteriv" );
-	dllTexParameteriv( target, pname, params );
-}
-static void APIENTRY logTexSubImage1D(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const void *pixels)
-{
-	SIG( "glTexSubImage1D" );
-	dllTexSubImage1D( target, level, xoffset, width, format, type, pixels );
-}
-static void APIENTRY logTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels)
-{
-	SIG( "glTexSubImage2D" );
-	dllTexSubImage2D( target, level, xoffset, yoffset, width, height, format, type, pixels );
-}
 
 static void APIENTRY logVertexPointer(GLint size, GLenum type, GLsizei stride, const void *pointer)
 {
@@ -2178,12 +2122,6 @@ void QGL_Shutdown( void )
 	qglTexGenfv                  = NULL;
 	qglTexGeni                   = NULL;
 	qglTexGeniv                  = NULL;
-	qglTexParameterf             = NULL;
-	qglTexParameterfv            = NULL;
-	qglTexParameteri             = NULL;
-	qglTexParameteriv            = NULL;
-	qglTexSubImage1D             = NULL;
-	qglTexSubImage2D             = NULL;
 	qglVertexPointer             = NULL;
 
 	qglColorTableEXT             = NULL;
@@ -2202,7 +2140,7 @@ void QGL_Shutdown( void )
 */
 qboolean QGL_Init( const char *dllname )
 {
-	gl_config.allow_cds = true;
+	gx_config.allow_cds = true;
 
 	qguMtxConcat                 = dllMtxConcat = guMtxConcat;
 	qguMtxCopy                   = dllMtxCopy = guMtxCopy;
@@ -2439,12 +2377,6 @@ qboolean QGL_Init( const char *dllname )
 	qglTexGenfv                  = 	dllTexGenfv                  = glTexGenfv;
 	qglTexGeni                   = 	dllTexGeni                   = glTexGeni;
 	qglTexGeniv                  = 	dllTexGeniv                  = glTexGeniv;
-	qglTexParameterf             = 	dllTexParameterf             = glTexParameterf;
-	qglTexParameterfv            = 	dllTexParameterfv            = glTexParameterfv;
-	qglTexParameteri             = 	dllTexParameteri             = glTexParameteri;
-	qglTexParameteriv            = 	dllTexParameteriv            = glTexParameteriv;
-	qglTexSubImage1D             = 	dllTexSubImage1D             = glTexSubImage1D;
-	qglTexSubImage2D             = 	dllTexSubImage2D             = glTexSubImage2D;
 	qglVertexPointer             = 	dllVertexPointer             = glVertexPointer;
 
 	qglLockArraysEXT = 0;
@@ -2718,12 +2650,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglTexGenfv                  = 	logTexGenfv                  ;
 		qglTexGeni                   = 	logTexGeni                   ;
 		qglTexGeniv                  = 	logTexGeniv                  ;
-		qglTexParameterf             = 	logTexParameterf             ;
-		qglTexParameterfv            = 	logTexParameterfv            ;
-		qglTexParameteri             = 	logTexParameteri             ;
-		qglTexParameteriv            = 	logTexParameteriv            ;
-		qglTexSubImage1D             = 	logTexSubImage1D             ;
-		qglTexSubImage2D             = 	logTexSubImage2D             ;
 		qglVertexPointer             = 	logVertexPointer             ;
 	}
 	else
@@ -2963,12 +2889,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglTexGenfv                  = 	dllTexGenfv                  ;
 		qglTexGeni                   = 	dllTexGeni                   ;
 		qglTexGeniv                  = 	dllTexGeniv                  ;
-		qglTexParameterf             = 	dllTexParameterf             ;
-		qglTexParameterfv            = 	dllTexParameterfv            ;
-		qglTexParameteri             = 	dllTexParameteri             ;
-		qglTexParameteriv            = 	dllTexParameteriv            ;
-		qglTexSubImage1D             = 	dllTexSubImage1D             ;
-		qglTexSubImage2D             = 	dllTexSubImage2D             ;
 		qglVertexPointer             = 	dllVertexPointer             ;
 	}
 }

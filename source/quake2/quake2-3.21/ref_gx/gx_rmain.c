@@ -36,8 +36,8 @@ model_t		*r_worldmodel;
 
 float		gxdepthmin, gxdepthmax;
 
-glconfig_t gl_config;
-glstate_t  gl_state;
+gxconfig_t gx_config;
+gxstate_t  gx_state;
 
 image_t		*r_notexture;		// use for bad textures
 image_t		*r_particletexture;	// little dot for particles
@@ -305,7 +305,7 @@ void R_DrawNullModel (void)
 	else
 		R_LightPoint (currententity->origin, shadelight);
 
-	guMtxCopy(gxu_modelview_matrices[gxu_cur_modelview_matrix], gxu_modelview_matrices[gxu_cur_modelview_matrix + 1]);
+	qguMtxCopy(gxu_modelview_matrices[gxu_cur_modelview_matrix], gxu_modelview_matrices[gxu_cur_modelview_matrix + 1]);
 	gxu_cur_modelview_matrix++;
 	R_RotateForEntity (currententity);
 
@@ -963,10 +963,10 @@ static void GL_DrawStereoPattern( void )
 {
 	int i;
 
-	if ( !( gl_config.renderer & GL_RENDERER_INTERGRAPH ) )
+	if ( !( gx_config.renderer & GL_RENDERER_INTERGRAPH ) )
 		return;
 
-	if ( !gl_state.stereo_enabled )
+	if ( !gx_state.stereo_enabled )
 		return;
 
 	R_SetGL2D();
@@ -1086,7 +1086,7 @@ void R_Register( void )
 	gl_playermip = ri.Cvar_Get ("gl_playermip", "0", 0);
 	gl_monolightmap = ri.Cvar_Get( "gl_monolightmap", "0", 0 );
 	gl_driver = ri.Cvar_Get( "gl_driver", "opengl32", CVAR_ARCHIVE );
-	gl_texturemode = ri.Cvar_Get( "gl_texturemode", "GL_LINEAR_MIPMAP_NEAREST", CVAR_ARCHIVE );
+	gl_texturemode = ri.Cvar_Get( "gl_texturemode", "GX_LIN_MIP_NEAR", CVAR_ARCHIVE );
 	gl_texturealphamode = ri.Cvar_Get( "gl_texturealphamode", "default", CVAR_ARCHIVE );
 	gl_texturesolidmode = ri.Cvar_Get( "gl_texturesolidmode", "default", CVAR_ARCHIVE );
 	gl_lockpvs = ri.Cvar_Get( "gl_lockpvs", "0", 0 );
@@ -1126,7 +1126,7 @@ qboolean R_SetMode (void)
 	rserr_t err;
 	qboolean fullscreen;
 
-	if ( vid_fullscreen->modified && !gl_config.allow_cds )
+	if ( vid_fullscreen->modified && !gx_config.allow_cds )
 	{
 		ri.Con_Printf( PRINT_ALL, "R_SetMode() - CDS not allowed with this driver\n" );
 		ri.Cvar_SetValue( "vid_fullscreen", !vid_fullscreen->value );
@@ -1140,7 +1140,7 @@ qboolean R_SetMode (void)
 
 	if ( ( err = GLimp_SetMode( &vid.width, &vid.height, gl_mode->value, fullscreen ) ) == rserr_ok )
 	{
-		gl_state.prev_mode = gl_mode->value;
+		gx_state.prev_mode = gl_mode->value;
 	}
 	else
 	{
@@ -1154,13 +1154,13 @@ qboolean R_SetMode (void)
 		}
 		else if ( err == rserr_invalid_mode )
 		{
-			ri.Cvar_SetValue( "gl_mode", gl_state.prev_mode );
+			ri.Cvar_SetValue( "gl_mode", gx_state.prev_mode );
 			gl_mode->modified = false;
 			ri.Con_Printf( PRINT_ALL, "ref_gx::R_SetMode() - invalid mode\n" );
 		}
 
 		// try setting it back to something safe
-		if ( ( err = GLimp_SetMode( &vid.width, &vid.height, gl_state.prev_mode, false ) ) != rserr_ok )
+		if ( ( err = GLimp_SetMode( &vid.width, &vid.height, gx_state.prev_mode, false ) ) != rserr_ok )
 		{
 			ri.Con_Printf( PRINT_ALL, "ref_gx::R_SetMode() - could not revert to safe mode\n" );
 			return false;
@@ -1211,7 +1211,7 @@ qboolean R_Init( void *hinstance, void *hWnd )
 	}
 
 	// set our "safe" modes
-	gl_state.prev_mode = 3;
+	gx_state.prev_mode = 3;
 
 	// create the window and set up the context
 	if ( !R_SetMode () )
@@ -1226,53 +1226,53 @@ qboolean R_Init( void *hinstance, void *hWnd )
 	/*
 	** get our various GL strings
 	*/
-	gl_config.vendor_string = qglGetString (GL_VENDOR);
-	ri.Con_Printf (PRINT_ALL, "GL_VENDOR: %s\n", gl_config.vendor_string );
-	gl_config.renderer_string = qglGetString (GL_RENDERER);
-	ri.Con_Printf (PRINT_ALL, "GL_RENDERER: %s\n", gl_config.renderer_string );
-	gl_config.version_string = qglGetString (GL_VERSION);
-	ri.Con_Printf (PRINT_ALL, "GL_VERSION: %s\n", gl_config.version_string );
-	gl_config.extensions_string = qglGetString (GL_EXTENSIONS);
-	ri.Con_Printf (PRINT_ALL, "GL_EXTENSIONS: %s\n", gl_config.extensions_string );
+	gx_config.vendor_string = qglGetString (GL_VENDOR);
+	ri.Con_Printf (PRINT_ALL, "GL_VENDOR: %s\n", gx_config.vendor_string );
+	gx_config.renderer_string = qglGetString (GL_RENDERER);
+	ri.Con_Printf (PRINT_ALL, "GL_RENDERER: %s\n", gx_config.renderer_string );
+	gx_config.version_string = qglGetString (GL_VERSION);
+	ri.Con_Printf (PRINT_ALL, "GL_VERSION: %s\n", gx_config.version_string );
+	gx_config.extensions_string = qglGetString (GL_EXTENSIONS);
+	ri.Con_Printf (PRINT_ALL, "GL_EXTENSIONS: %s\n", gx_config.extensions_string );
 
-	strcpy( renderer_buffer, gl_config.renderer_string );
+	strcpy( renderer_buffer, gx_config.renderer_string );
 	strlwr( renderer_buffer );
 
-	strcpy( vendor_buffer, gl_config.vendor_string );
+	strcpy( vendor_buffer, gx_config.vendor_string );
 	strlwr( vendor_buffer );
 
 	if ( strstr( renderer_buffer, "voodoo" ) )
 	{
 		if ( !strstr( renderer_buffer, "rush" ) )
-			gl_config.renderer = GL_RENDERER_VOODOO;
+			gx_config.renderer = GL_RENDERER_VOODOO;
 		else
-			gl_config.renderer = GL_RENDERER_VOODOO_RUSH;
+			gx_config.renderer = GL_RENDERER_VOODOO_RUSH;
 	}
 	else if ( strstr( vendor_buffer, "sgi" ) )
-		gl_config.renderer = GL_RENDERER_SGI;
+		gx_config.renderer = GL_RENDERER_SGI;
 	else if ( strstr( renderer_buffer, "permedia" ) )
-		gl_config.renderer = GL_RENDERER_PERMEDIA2;
+		gx_config.renderer = GL_RENDERER_PERMEDIA2;
 	else if ( strstr( renderer_buffer, "glint" ) )
-		gl_config.renderer = GL_RENDERER_GLINT_MX;
+		gx_config.renderer = GL_RENDERER_GLINT_MX;
 	else if ( strstr( renderer_buffer, "glzicd" ) )
-		gl_config.renderer = GL_RENDERER_REALIZM;
+		gx_config.renderer = GL_RENDERER_REALIZM;
 	else if ( strstr( renderer_buffer, "gdi" ) )
-		gl_config.renderer = GL_RENDERER_MCD;
+		gx_config.renderer = GL_RENDERER_MCD;
 	else if ( strstr( renderer_buffer, "pcx2" ) )
-		gl_config.renderer = GL_RENDERER_PCX2;
+		gx_config.renderer = GL_RENDERER_PCX2;
 	else if ( strstr( renderer_buffer, "verite" ) )
-		gl_config.renderer = GL_RENDERER_RENDITION;
+		gx_config.renderer = GL_RENDERER_RENDITION;
 	else
-		gl_config.renderer = GL_RENDERER_OTHER;
+		gx_config.renderer = GL_RENDERER_OTHER;
 
 	if ( toupper( gl_monolightmap->string[1] ) != 'F' )
 	{
-		if ( gl_config.renderer == GL_RENDERER_PERMEDIA2 )
+		if ( gx_config.renderer == GL_RENDERER_PERMEDIA2 )
 		{
 			ri.Cvar_Set( "gl_monolightmap", "A" );
 			ri.Con_Printf( PRINT_ALL, "...using gl_monolightmap 'a'\n" );
 		}
-		else if ( gl_config.renderer & GL_RENDERER_POWERVR ) 
+		else if ( gx_config.renderer & GL_RENDERER_POWERVR ) 
 		{
 			ri.Cvar_Set( "gl_monolightmap", "0" );
 		}
@@ -1284,7 +1284,7 @@ qboolean R_Init( void *hinstance, void *hWnd )
 
 	// power vr can't have anything stay in the framebuffer, so
 	// the screen needs to redraw the tiled background every frame
-	if ( gl_config.renderer & GL_RENDERER_POWERVR ) 
+	if ( gx_config.renderer & GL_RENDERER_POWERVR ) 
 	{
 		ri.Cvar_Set( "scr_drawall", "1" );
 	}
@@ -1298,24 +1298,24 @@ qboolean R_Init( void *hinstance, void *hWnd )
 #endif
 
 	// MCD has buffering issues
-	if ( gl_config.renderer == GL_RENDERER_MCD )
+	if ( gx_config.renderer == GL_RENDERER_MCD )
 	{
 		ri.Cvar_SetValue( "gl_finish", 1 );
 	}
 
-	if ( gl_config.renderer & GL_RENDERER_3DLABS )
+	if ( gx_config.renderer & GL_RENDERER_3DLABS )
 	{
 		if ( gl_3dlabs_broken->value )
-			gl_config.allow_cds = false;
+			gx_config.allow_cds = false;
 		else
-			gl_config.allow_cds = true;
+			gx_config.allow_cds = true;
 	}
 	else
 	{
-		gl_config.allow_cds = true;
+		gx_config.allow_cds = true;
 	}
 
-	if ( gl_config.allow_cds )
+	if ( gx_config.allow_cds )
 		ri.Con_Printf( PRINT_ALL, "...allowing CDS\n" );
 	else
 		ri.Con_Printf( PRINT_ALL, "...disabling CDS\n" );
@@ -1323,8 +1323,8 @@ qboolean R_Init( void *hinstance, void *hWnd )
 	/*
 	** grab extensions
 	*/
-	if ( strstr( gl_config.extensions_string, "GL_EXT_compiled_vertex_array" ) || 
-		 strstr( gl_config.extensions_string, "GL_SGI_compiled_vertex_array" ) )
+	if ( strstr( gx_config.extensions_string, "GL_EXT_compiled_vertex_array" ) || 
+		 strstr( gx_config.extensions_string, "GL_SGI_compiled_vertex_array" ) )
 	{
 		ri.Con_Printf( PRINT_ALL, "...enabling GL_EXT_compiled_vertex_array\n" );
 		qglLockArraysEXT = ( void * ) qwglGetProcAddress( "glLockArraysEXT" );
@@ -1336,7 +1336,7 @@ qboolean R_Init( void *hinstance, void *hWnd )
 	}
 
 #ifdef _WIN32
-	if ( strstr( gl_config.extensions_string, "WGL_EXT_swap_control" ) )
+	if ( strstr( gx_config.extensions_string, "WGL_EXT_swap_control" ) )
 	{
 		qwglSwapIntervalEXT = ( BOOL (WINAPI *)(int)) qwglGetProcAddress( "wglSwapIntervalEXT" );
 		ri.Con_Printf( PRINT_ALL, "...enabling WGL_EXT_swap_control\n" );
@@ -1347,7 +1347,7 @@ qboolean R_Init( void *hinstance, void *hWnd )
 	}
 #endif
 
-	if ( strstr( gl_config.extensions_string, "GL_EXT_point_parameters" ) )
+	if ( strstr( gx_config.extensions_string, "GL_EXT_point_parameters" ) )
 	{
 		if ( gl_ext_pointparameters->value )
 		{
@@ -1386,8 +1386,8 @@ qboolean R_Init( void *hinstance, void *hWnd )
 #endif
 
 	if ( !qglColorTableEXT &&
-		strstr( gl_config.extensions_string, "GL_EXT_paletted_texture" ) && 
-		strstr( gl_config.extensions_string, "GL_EXT_shared_texture_palette" ) )
+		strstr( gx_config.extensions_string, "GL_EXT_paletted_texture" ) && 
+		strstr( gx_config.extensions_string, "GL_EXT_shared_texture_palette" ) )
 	{
 		if ( gl_ext_palettedtexture->value )
 		{
@@ -1404,7 +1404,7 @@ qboolean R_Init( void *hinstance, void *hWnd )
 		ri.Con_Printf( PRINT_ALL, "...GL_EXT_shared_texture_palette not found\n" );
 	}
 
-	if ( strstr( gl_config.extensions_string, "GL_ARB_multitexture" ) )
+	if ( strstr( gx_config.extensions_string, "GL_ARB_multitexture" ) )
 	{
 		if ( gl_ext_multitexture->value )
 		{
@@ -1425,7 +1425,7 @@ qboolean R_Init( void *hinstance, void *hWnd )
 		ri.Con_Printf( PRINT_ALL, "...GL_ARB_multitexture not found\n" );
 	}
 
-	if ( strstr( gl_config.extensions_string, "GL_SGIS_multitexture" ) )
+	if ( strstr( gx_config.extensions_string, "GL_SGIS_multitexture" ) )
 	{
 		if ( qglActiveTextureARB )
 		{
@@ -1506,7 +1506,7 @@ R_BeginFrame
 void R_BeginFrame( float camera_separation )
 {
 
-	gl_state.camera_separation = camera_separation;
+	gx_state.camera_separation = camera_separation;
 
 	/*
 	** change modes if necessary
@@ -1538,7 +1538,7 @@ void R_BeginFrame( float camera_separation )
 	{
 		vid_gamma->modified = false;
 
-		if ( gl_config.renderer & ( GL_RENDERER_VOODOO ) )
+		if ( gx_config.renderer & ( GL_RENDERER_VOODOO ) )
 		{
 			char* envbuffer = Sys_BigStackAlloc(1024, "R_BeginFrame");
 			float g;
@@ -1583,7 +1583,7 @@ void R_BeginFrame( float camera_separation )
 	{
 		gl_drawbuffer->modified = false;
 
-		if ( gl_state.camera_separation == 0 || !gl_state.stereo_enabled )
+		if ( gx_state.camera_separation == 0 || !gx_state.stereo_enabled )
 		{
 			if ( Q_stricmp( gl_drawbuffer->string, "GL_FRONT" ) == 0 )
 				qglDrawBuffer( GL_FRONT );

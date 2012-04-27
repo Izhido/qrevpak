@@ -792,7 +792,7 @@ void R_DrawAliasModel (entity_t *e)
 		qglCullFace( GL_BACK );
 	}
 
-	guMtxCopy(gxu_modelview_matrices[gxu_cur_modelview_matrix], gxu_modelview_matrices[gxu_cur_modelview_matrix + 1]);
+	qguMtxCopy(gxu_modelview_matrices[gxu_cur_modelview_matrix], gxu_modelview_matrices[gxu_cur_modelview_matrix + 1]);
 	gxu_cur_modelview_matrix++;
 	e->angles[PITCH] = -e->angles[PITCH];	// sigh.
 	R_RotateForEntity (e);
@@ -888,7 +888,7 @@ void R_DrawAliasModel (entity_t *e)
 #if 1
 	if (gl_shadows->value && !(currententity->flags & (RF_TRANSLUCENT | RF_WEAPONMODEL)))
 	{
-		guMtxCopy(gxu_modelview_matrices[gxu_cur_modelview_matrix], gxu_modelview_matrices[gxu_cur_modelview_matrix + 1]);
+		qguMtxCopy(gxu_modelview_matrices[gxu_cur_modelview_matrix], gxu_modelview_matrices[gxu_cur_modelview_matrix + 1]);
 		gxu_cur_modelview_matrix++;
 		R_RotateForEntity (e);
 		qgxDisableTexture();

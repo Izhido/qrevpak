@@ -168,7 +168,7 @@ extern	cplane_t	frustum[4];
 extern	int			c_brush_polys, c_alias_polys;
 
 
-extern	int			gl_filter_min, gl_filter_max;
+extern	int			gx_filter_min, gx_filter_max;
 
 //
 // view origin
@@ -416,7 +416,7 @@ typedef struct
 	const char *extensions_string;
 
 	qboolean	allow_cds;
-} glconfig_t;
+} gxconfig_t;
 
 typedef struct
 {
@@ -438,10 +438,10 @@ typedef struct
 	unsigned char originalRedGammaTable[256];
 	unsigned char originalGreenGammaTable[256];
 	unsigned char originalBlueGammaTable[256];
-} glstate_t;
+} gxstate_t;
 
-extern glconfig_t  gl_config;
-extern glstate_t   gl_state;
+extern gxconfig_t  gx_config;
+extern gxstate_t   gx_state;
 
 /*
 ====================================================================

@@ -166,10 +166,10 @@ void GL_ScreenShot_f (void)
 */
 void GL_Strings_f( void )
 {
-	ri.Con_Printf (PRINT_ALL, "GL_VENDOR: %s\n", gl_config.vendor_string );
-	ri.Con_Printf (PRINT_ALL, "GL_RENDERER: %s\n", gl_config.renderer_string );
-	ri.Con_Printf (PRINT_ALL, "GL_VERSION: %s\n", gl_config.version_string );
-	ri.Con_Printf (PRINT_ALL, "GL_EXTENSIONS: %s\n", gl_config.extensions_string );
+	ri.Con_Printf (PRINT_ALL, "GL_VENDOR: %s\n", gx_config.vendor_string );
+	ri.Con_Printf (PRINT_ALL, "GL_RENDERER: %s\n", gx_config.renderer_string );
+	ri.Con_Printf (PRINT_ALL, "GL_VERSION: %s\n", gx_config.version_string );
+	ri.Con_Printf (PRINT_ALL, "GL_EXTENSIONS: %s\n", gx_config.extensions_string );
 }
 
 /*
@@ -206,11 +206,7 @@ void GL_SetDefaultState( void )
 	GL_TextureAlphaMode( gl_texturealphamode->string );
 	GL_TextureSolidMode( gl_texturesolidmode->string );
 
-	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
-	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
-
-	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	GX_SetMinMag(gx_filter_min, gx_filter_max);
 
 	GL_TexEnv( GX_REPLACE );
 
@@ -244,7 +240,7 @@ void GL_UpdateSwapInterval( void )
 	{
 		gl_swapinterval->modified = false;
 
-		if ( !gl_state.stereo_enabled ) 
+		if ( !gx_state.stereo_enabled ) 
 		{
 #ifdef _WIN32
 			if ( qwglSwapIntervalEXT )

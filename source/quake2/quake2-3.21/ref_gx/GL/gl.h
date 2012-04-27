@@ -131,8 +131,6 @@ typedef unsigned short GLushort;
 
 #define GL_TEXTURE_WRAP_S 54
 
-#define GL_REPEAT 55
-
 #define GL_TEXTURE_WRAP_T 56
 
 #define GL_COLOR_INDEX8_EXT 57
@@ -183,13 +181,9 @@ typedef unsigned short GLushort;
 
 #define GL_LUMINANCE8 77
 
-void glTexParameterf(GLenum target, GLenum pname, GLfloat param);
-
 void glEnable(GLenum cap);
 
 void glDisable(GLenum cap);
-
-void glTexCoord2f(GLfloat s, GLfloat t);
 
 void glDrawBuffer(GLenum mode);
 
@@ -208,8 +202,6 @@ void glFinish(void);
 void glReadBuffer(GLenum mode);
 
 void glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLvoid* data);
-
-void glTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid* data);
 
 void glFlush(void);
 
@@ -625,70 +617,6 @@ void glStencilMask(GLuint mask);
 
 void glStencilOp(GLenum fail, GLenum zfail, GLenum zpass);
 
-void glTexCoord1d(GLdouble s);
-
-void glTexCoord1dv(const GLdouble *v);
-
-void glTexCoord1f(GLfloat s);
-
-void glTexCoord1fv(const GLfloat *v);
-
-void glTexCoord1i(GLint s);
-
-void glTexCoord1iv(const GLint *v);
-
-void glTexCoord1s(GLshort s);
-
-void glTexCoord1sv(const GLshort *v);
-
-void glTexCoord2d(GLdouble s, GLdouble t);
-
-void glTexCoord2dv(const GLdouble *v);
-
-void glTexCoord2f(GLfloat s, GLfloat t);
-
-void glTexCoord2fv(const GLfloat *v);
-
-void glTexCoord2i(GLint s, GLint t);
-
-void glTexCoord2iv(const GLint *v);
-
-void glTexCoord2s(GLshort s, GLshort t);
-
-void glTexCoord2sv(const GLshort *v);
-
-void glTexCoord3d(GLdouble s, GLdouble t, GLdouble r);
-
-void glTexCoord3dv(const GLdouble *v);
-
-void glTexCoord3f(GLfloat s, GLfloat t, GLfloat r);
-
-void glTexCoord3fv(const GLfloat *v);
-
-void glTexCoord3i(GLint s, GLint t, GLint r);
-
-void glTexCoord3iv(const GLint *v);
-
-void glTexCoord3s(GLshort s, GLshort t, GLshort r);
-
-void glTexCoord3sv(const GLshort *v);
-
-void glTexCoord4d(GLdouble s, GLdouble t, GLdouble r, GLdouble q);
-
-void glTexCoord4dv(const GLdouble *v);
-
-void glTexCoord4f(GLfloat s, GLfloat t, GLfloat r, GLfloat q);
-
-void glTexCoord4fv(const GLfloat *v);
-
-void glTexCoord4i(GLint s, GLint t, GLint r, GLint q);
-
-void glTexCoord4iv(const GLint *v);
-
-void glTexCoord4s(GLshort s, GLshort t, GLshort r, GLshort q);
-
-void glTexCoord4sv(const GLshort *v);
-
 void glTexCoordPointer(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer);
 
 void glTexGend(GLenum coord, GLenum pname, GLdouble param);
@@ -702,18 +630,6 @@ void glTexGenfv(GLenum coord, GLenum pname, const GLfloat *params);
 void glTexGeni(GLenum coord, GLenum pname, GLint param);
 
 void glTexGeniv(GLenum coord, GLenum pname, const GLint *params);
-
-void glTexParameterf(GLenum target, GLenum pname, GLfloat param);
-
-void glTexParameterfv(GLenum target, GLenum pname, const GLfloat *params);
-
-void glTexParameteri(GLenum target, GLenum pname, GLint param);
-
-void glTexParameteriv(GLenum target, GLenum pname, const GLint *params);
-
-void glTexSubImage1D(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const GLvoid *pixels);
-
-void glTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels);
 
 void glVertexPointer(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer);
 
