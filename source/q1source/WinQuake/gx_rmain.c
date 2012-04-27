@@ -795,7 +795,7 @@ void R_PolyBlend (void)
 	GX_SetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
 	GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 	gxu_z_test_enabled = GX_FALSE;
-	GX_SetZMode(gxu_z_test_enabled, GX_LEQUAL, gxu_z_write_enabled);
+	GX_SetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 	GXU_DisableTexture();
 
 	v.x = 1;
@@ -1032,12 +1032,11 @@ void R_SetupGX (void)
 		GX_SetCullMode(GX_CULL_NONE);
 	};
 
-	gxu_blend_enabled = false;
 	GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 	gxu_alpha_test_enabled = false;
 	GX_SetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
 	gxu_z_test_enabled = GX_TRUE;
-	GX_SetZMode(gxu_z_test_enabled, GX_LEQUAL, gxu_z_write_enabled);
+	GX_SetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 }
 
 /*

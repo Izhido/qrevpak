@@ -760,13 +760,8 @@ void R_BlendLightmaps (void)
 
 	if (!r_lightmap.value)
 	{
-		gxu_blend_enabled = true;
-	}
-
-	if(gxu_blend_enabled)
-	{
 		GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
-	};
+	}
 
 	for (i=0 ; i<MAX_LIGHTMAPS ; i++)
 	{
@@ -813,14 +808,15 @@ void R_BlendLightmaps (void)
 		}
 	}
 
-	gxu_blend_enabled = false;
-	GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
+	if (!r_lightmap.value)
+	{
+		GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
+	}
+
 	if (gx_lightmap_format == GX_TF_IA4)
 	{
 		gxu_blend_src_value = GX_BL_SRCALPHA;
 		gxu_blend_dst_value = GX_BL_INVSRCALPHA;
-		if(gxu_blend_enabled)
-			GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 	}
 	else if (gx_lightmap_format == GX_TF_I8)
 	{

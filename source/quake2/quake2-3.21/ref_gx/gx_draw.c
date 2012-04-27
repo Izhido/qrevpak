@@ -153,7 +153,7 @@ void Draw_StretchPic (int x, int y, int w, int h, char *pic)
 		Scrap_Upload ();
 
 	if ( ( ( gl_config.renderer == GL_RENDERER_MCD ) || ( gl_config.renderer & GL_RENDERER_RENDITION ) ) && !gl->has_alpha)
-		qglDisable (GL_ALPHA_TEST);
+		qgxSetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
 
 	GX_Bind (gl->texnum);
 	qgxBegin (GX_QUADS, gxu_cur_vertex_format, 4);
@@ -172,7 +172,7 @@ void Draw_StretchPic (int x, int y, int w, int h, char *pic)
 	qgxEnd ();
 
 	if ( ( ( gl_config.renderer == GL_RENDERER_MCD ) || ( gl_config.renderer & GL_RENDERER_RENDITION ) ) && !gl->has_alpha)
-		qglEnable (GL_ALPHA_TEST);
+		qgxSetAlphaCompare(GX_GEQUAL, gxu_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gxu_alpha_test_higher);
 }
 
 
@@ -195,7 +195,7 @@ void Draw_Pic (int x, int y, char *pic)
 		Scrap_Upload ();
 
 	if ( ( ( gl_config.renderer == GL_RENDERER_MCD ) || ( gl_config.renderer & GL_RENDERER_RENDITION ) ) && !gl->has_alpha)
-		qglDisable (GL_ALPHA_TEST);
+		qgxSetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
 
 	GX_Bind (gl->texnum);
 	qgxBegin (GX_QUADS, gxu_cur_vertex_format, 4);
@@ -214,7 +214,7 @@ void Draw_Pic (int x, int y, char *pic)
 	qgxEnd ();
 
 	if ( ( ( gl_config.renderer == GL_RENDERER_MCD ) || ( gl_config.renderer & GL_RENDERER_RENDITION ) )  && !gl->has_alpha)
-		qglEnable (GL_ALPHA_TEST);
+		qgxSetAlphaCompare(GX_GEQUAL, gxu_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gxu_alpha_test_higher);
 }
 
 /*
@@ -237,7 +237,7 @@ void Draw_TileClear (int x, int y, int w, int h, char *pic)
 	}
 
 	if ( ( ( gl_config.renderer == GL_RENDERER_MCD ) || ( gl_config.renderer & GL_RENDERER_RENDITION ) )  && !image->has_alpha)
-		qglDisable (GL_ALPHA_TEST);
+		qgxSetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
 
 	GX_Bind (image->texnum);
 	qgxBegin (GX_QUADS, gxu_cur_vertex_format, 4);
@@ -256,7 +256,7 @@ void Draw_TileClear (int x, int y, int w, int h, char *pic)
 	qgxEnd ();
 
 	if ( ( ( gl_config.renderer == GL_RENDERER_MCD ) || ( gl_config.renderer & GL_RENDERER_RENDITION ) )  && !image->has_alpha)
-		qglEnable (GL_ALPHA_TEST);
+		qgxSetAlphaCompare(GX_GEQUAL, gxu_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gxu_alpha_test_higher);
 }
 
 
@@ -307,7 +307,7 @@ Draw_FadeScreen
 */
 void Draw_FadeScreen (void)
 {
-	qglEnable (GL_BLEND);
+	qgxSetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 	qgxDisableTexture();
 	qgxBegin (GX_QUADS, GX_VTXFMT0, 4);
 
@@ -322,7 +322,7 @@ void Draw_FadeScreen (void)
 
 	qgxEnd ();
 	qgxEnableTexture();
-	qglDisable (GL_BLEND);
+	qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 }
 
 
@@ -417,7 +417,7 @@ void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data
 	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	if ( ( gl_config.renderer == GL_RENDERER_MCD ) || ( gl_config.renderer & GL_RENDERER_RENDITION ) ) 
-		qglDisable (GL_ALPHA_TEST);
+		qgxSetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
 
 	qgxBegin (GX_QUADS, gxu_cur_vertex_format, 4);
 	qgxPosition3f32 (x, y, 0);
@@ -435,6 +435,6 @@ void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data
 	qgxEnd ();
 
 	if ( ( gl_config.renderer == GL_RENDERER_MCD ) || ( gl_config.renderer & GL_RENDERER_RENDITION ) ) 
-		qglEnable (GL_ALPHA_TEST);
+		qgxSetAlphaCompare(GX_GEQUAL, gxu_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gxu_alpha_test_higher);
 }
 

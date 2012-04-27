@@ -1360,10 +1360,9 @@ void GX_Set2D (void)
 	GX_LoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 
 	gxu_z_test_enabled = GX_FALSE;
-	GX_SetZMode(gxu_z_test_enabled, GX_LEQUAL, gxu_z_write_enabled);
+	GX_SetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 	gxu_cull_enabled = false;
 	GX_SetCullMode(GX_CULL_NONE);
-	gxu_blend_enabled = false;
 	GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 	gxu_alpha_test_enabled = true;
 	GX_SetAlphaCompare(GX_GEQUAL, gxu_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gxu_alpha_test_higher);

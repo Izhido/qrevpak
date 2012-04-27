@@ -30,9 +30,9 @@ u8 gxu_cull_mode = GX_CULL_FRONT;
 
 u8 gxu_z_test_enabled = GX_FALSE;
 
-u8 gxu_z_write_enabled = GX_TRUE;
+u8 gxu_cur_z_func = GX_LEQUAL;
 
-bool gxu_blend_enabled = false;
+u8 gxu_z_write_enabled = GX_TRUE;
 
 u8 gxu_blend_src_value = GX_BL_ONE;
 

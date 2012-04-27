@@ -347,11 +347,11 @@ void R_BlendLightmaps (void)
 	*/
 	if (!gl_lightmap->value)
 	{
-		qglEnable (GL_BLEND);
-
 		if ( gl_saturatelighting->value )
 		{
-			qglBlendFunc( GL_ONE, GL_ONE );
+			gxu_blend_src_value = GX_BL_ONE;
+			gxu_blend_dst_value = GX_BL_ONE;
+			qgxSetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 		}
 		else
 		{
@@ -360,20 +360,28 @@ void R_BlendLightmaps (void)
 				switch ( toupper( gl_monolightmap->string[0] ) )
 				{
 				case 'I':
-					qglBlendFunc (GL_ZERO, GL_SRC_COLOR );
+					gxu_blend_src_value = GX_BL_ZERO;
+					gxu_blend_dst_value = GX_BL_SRCCLR;
+					qgxSetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 					break;
 				case 'L':
-					qglBlendFunc (GL_ZERO, GL_SRC_COLOR );
+					gxu_blend_src_value = GX_BL_ZERO;
+					gxu_blend_dst_value = GX_BL_SRCCLR;
+					qgxSetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 					break;
 				case 'A':
 				default:
-					qglBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+					gxu_blend_src_value = GX_BL_SRCALPHA;
+					gxu_blend_dst_value = GX_BL_INVSRCALPHA;
+					qgxSetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 					break;
 				}
 			}
 			else
 			{
-				qglBlendFunc (GL_ZERO, GL_SRC_COLOR );
+				gxu_blend_src_value = GX_BL_ZERO;
+				gxu_blend_dst_value = GX_BL_SRCCLR;
+				qgxSetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 			}
 		}
 	}
@@ -479,8 +487,9 @@ void R_BlendLightmaps (void)
 	/*
 	** restore state
 	*/
-	qglDisable (GL_BLEND);
-	qglBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	gxu_blend_src_value = GX_BL_SRCALPHA;
+	gxu_blend_dst_value = GX_BL_INVSRCALPHA;
+	qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 	qglDepthMask( 1 );
 }
 
@@ -504,13 +513,13 @@ void R_RenderBrushPoly (msurface_t *fa)
 		GX_Bind( image->texnum );
 
 		// warp texture, no lightmaps
-		GL_TexEnv( GL_MODULATE );
+		GL_TexEnv( GX_MODULATE );
 		gxu_cur_r = gl_state.inverse_intensity*255;
 		gxu_cur_g = gl_state.inverse_intensity*255;
 		gxu_cur_b = gl_state.inverse_intensity*255;
 		gxu_cur_a = 255;
 		EmitWaterPolys (fa);
-		GL_TexEnv( GL_REPLACE );
+		GL_TexEnv( GX_REPLACE );
 
 		return;
 	}
@@ -518,7 +527,7 @@ void R_RenderBrushPoly (msurface_t *fa)
 	{
 		GX_Bind( image->texnum );
 
-		GL_TexEnv( GL_REPLACE );
+		GL_TexEnv( GX_REPLACE );
 	}
 
 //======
@@ -567,11 +576,12 @@ dynamic:
 
 			GX_Bind( gl_state.lightmap_textures + fa->lightmaptexturenum );
 
-			qglTexSubImage2D( GL_TEXTURE_2D, 0,
+			GX_LoadSubAndBind(temp, fa->light_s, fa->light_t, smax, tmax, GX_LIGHTMAP_FORMAT);
+			/*qglTexSubImage2D( GL_TEXTURE_2D, 0,
 							  fa->light_s, fa->light_t, 
 							  smax, tmax, 
 							  GX_LIGHTMAP_FORMAT, 
-							  GL_UNSIGNED_BYTE, temp );
+							  GL_UNSIGNED_BYTE, temp );*/
 
 			fa->lightmapchain = gl_lms.lightmap_surfaces[fa->lightmaptexturenum];
 			gl_lms.lightmap_surfaces[fa->lightmaptexturenum] = fa;
@@ -612,8 +622,8 @@ void R_DrawAlphaSurfaces (void)
 	qguMtxCopy(r_world_matrix, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
 	qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 
-	qglEnable (GL_BLEND);
-	GL_TexEnv( GL_MODULATE );
+	qgxSetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
+	GL_TexEnv( GX_MODULATE );
 
 	// the textures are prescaled up for a better lighting range,
 	// so scale it back down
@@ -640,12 +650,12 @@ void R_DrawAlphaSurfaces (void)
 			DrawGLPoly (s->polys);
 	}
 
-	GL_TexEnv( GL_REPLACE );
+	GL_TexEnv( GX_REPLACE );
 	gxu_cur_r = 255;
 	gxu_cur_g = 255;
 	gxu_cur_b = 255;
 	gxu_cur_a = 255;
-	qglDisable (GL_BLEND);
+	qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 
 	r_alpha_surfaces = NULL;
 }
@@ -719,7 +729,7 @@ void DrawTextureChains (void)
 //		GL_EnableMultitexture( true );
 	}
 
-	GL_TexEnv( GL_REPLACE );
+	GL_TexEnv( GX_REPLACE );
 }
 
 
@@ -769,11 +779,12 @@ dynamic:
 
 			lmtex = surf->lightmaptexturenum;
 
-			qglTexSubImage2D( GL_TEXTURE_2D, 0,
+			GX_LoadSubAndBind(temp, surf->light_s, surf->light_t, smax, tmax, GX_LIGHTMAP_FORMAT);
+			/*qglTexSubImage2D( GL_TEXTURE_2D, 0,
 							  surf->light_s, surf->light_t, 
 							  smax, tmax, 
 							  GX_LIGHTMAP_FORMAT, 
-							  GL_UNSIGNED_BYTE, temp );
+							  GL_UNSIGNED_BYTE, temp );*/
 
 			Sys_BigStackFree(128*128 * sizeof(unsigned), "GL_RenderLightmappedPoly");
 		}
@@ -788,11 +799,12 @@ dynamic:
 
 			lmtex = 0;
 
-			qglTexSubImage2D( GL_TEXTURE_2D, 0,
+			GX_LoadSubAndBind(temp, surf->light_s, surf->light_t, smax, tmax, GX_LIGHTMAP_FORMAT);
+			/*qglTexSubImage2D( GL_TEXTURE_2D, 0,
 							  surf->light_s, surf->light_t, 
 							  smax, tmax, 
 							  GX_LIGHTMAP_FORMAT, 
-							  GL_UNSIGNED_BYTE, temp );
+							  GL_UNSIGNED_BYTE, temp );*/
 
 		}
 
@@ -927,12 +939,12 @@ void R_DrawInlineBModel (void)
 
 	if ( currententity->flags & RF_TRANSLUCENT )
 	{
-		qglEnable (GL_BLEND);
+		qgxSetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 		gxu_cur_r = 255;
 		gxu_cur_g = 255;
 		gxu_cur_b = 255;
 		gxu_cur_a = 63;
-		GL_TexEnv( GL_MODULATE );
+		GL_TexEnv( GX_MODULATE );
 	}
 
 	//
@@ -974,12 +986,12 @@ void R_DrawInlineBModel (void)
 	}
 	else
 	{
-		qglDisable (GL_BLEND);
+		qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 		gxu_cur_r = 255;
 		gxu_cur_g = 255;
 		gxu_cur_b = 255;
 		gxu_cur_a = 255;
-		GL_TexEnv( GL_REPLACE );
+		GL_TexEnv( GX_REPLACE );
 	}
 }
 
@@ -1047,9 +1059,9 @@ e->angles[2] = -e->angles[2];	// stupid quake bug
 
 	GL_EnableMultitexture( true );
 	GL_SelectTexture( GL_TEXTURE0);
-	GL_TexEnv( GL_REPLACE );
+	GL_TexEnv( GX_REPLACE );
 	GL_SelectTexture( GL_TEXTURE1);
-	GL_TexEnv( GL_MODULATE );
+	GL_TexEnv( GX_MODULATE );
 
 	R_DrawInlineBModel ();
 	GL_EnableMultitexture( false );
@@ -1265,13 +1277,13 @@ void R_DrawWorld (void)
 		GL_EnableMultitexture( true );
 
 		GL_SelectTexture( GL_TEXTURE0);
-		GL_TexEnv( GL_REPLACE );
+		GL_TexEnv( GX_REPLACE );
 		GL_SelectTexture( GL_TEXTURE1);
 
 		if ( gl_lightmap->value )
-			GL_TexEnv( GL_REPLACE );
+			GL_TexEnv( GX_REPLACE );
 		else 
-			GL_TexEnv( GL_MODULATE );
+			GL_TexEnv( GX_MODULATE );
 
 		R_RecursiveWorldNode (r_worldmodel->nodes);
 
@@ -1428,13 +1440,14 @@ static void LM_UploadBlock( qboolean dynamic )
 				height = gl_lms.allocated[i];
 		}
 
-		qglTexSubImage2D( GL_TEXTURE_2D, 
+		GX_LoadSubAndBind(gl_lms.lightmap_buffer, 0, 0, BLOCK_WIDTH, height, GX_LIGHTMAP_FORMAT);
+		/*qglTexSubImage2D( GL_TEXTURE_2D, 
 						  0,
 						  0, 0,
 						  BLOCK_WIDTH, height,
 						  GX_LIGHTMAP_FORMAT,
 						  GL_UNSIGNED_BYTE,
-						  gl_lms.lightmap_buffer );
+						  gl_lms.lightmap_buffer );*/
 	}
 	else
 	{

@@ -1016,7 +1016,6 @@ void R_SetupGX (void)
 		GX_SetCullMode(GX_CULL_NONE);
 	};
 
-	gxu_blend_enabled = false;
 	GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 	gxu_alpha_test_enabled = false;
 	GX_SetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);

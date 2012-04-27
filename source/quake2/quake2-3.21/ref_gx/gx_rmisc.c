@@ -182,12 +182,16 @@ void GL_SetDefaultState( void )
 	gxu_cur_vertex_format = GX_VTXFMT1;
 	qgxEnableTexture();
 
-	qglEnable(GL_ALPHA_TEST);
-	qglAlphaFunc(GL_GREATER, 0.666);
+	gxu_alpha_test_lower = 170;
+	gxu_alpha_test_higher = 255;
+	gxu_alpha_test_enabled = true;
+	qgxSetAlphaCompare(GX_GEQUAL, gxu_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gxu_alpha_test_higher);
 
 	qglDisable (GL_DEPTH_TEST);
 	qglDisable (GL_CULL_FACE);
-	qglDisable (GL_BLEND);
+	gxu_blend_src_value = GX_BL_SRCALPHA;
+	gxu_blend_dst_value = GX_BL_INVSRCALPHA;
+	qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 
 	gxu_cur_r = 255;
 	gxu_cur_g = 255;
@@ -207,9 +211,7 @@ void GL_SetDefaultState( void )
 	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-	qglBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	GL_TexEnv( GL_REPLACE );
+	GL_TexEnv( GX_REPLACE );
 
 	if ( qglPointParameterfEXT )
 	{

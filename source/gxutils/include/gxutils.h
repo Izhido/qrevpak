@@ -23,9 +23,9 @@ extern u8 gxu_cull_mode;
 
 extern u8 gxu_z_test_enabled;
 
-extern u8 gxu_z_write_enabled;
+extern u8 gxu_cur_z_func;
 
-extern bool gxu_blend_enabled;
+extern u8 gxu_z_write_enabled;
 
 extern u8 gxu_blend_src_value;
 

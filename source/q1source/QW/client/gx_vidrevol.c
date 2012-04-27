@@ -91,11 +91,9 @@ void QGX_Init (void)
 
 	GX_SetMinMag (GX_NEAR, GX_NEAR);
 
-	gxu_blend_enabled = false;
 	gxu_blend_src_value = GX_BL_SRCALPHA;
 	gxu_blend_dst_value = GX_BL_INVSRCALPHA;
-	if(gxu_blend_enabled)
-		GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
+	GX_SetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 
 	GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
 }

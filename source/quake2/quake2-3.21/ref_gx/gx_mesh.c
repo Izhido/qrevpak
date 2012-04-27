@@ -820,10 +820,10 @@ void R_DrawAliasModel (entity_t *e)
 
 	qglShadeModel (GL_SMOOTH);
 
-	GL_TexEnv( GL_MODULATE );
+	GL_TexEnv( GX_MODULATE );
 	if ( currententity->flags & RF_TRANSLUCENT )
 	{
-		qglEnable (GL_BLEND);
+		qgxSetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 	}
 
 
@@ -849,7 +849,7 @@ void R_DrawAliasModel (entity_t *e)
 		currententity->backlerp = 0;
 	GL_DrawAliasFrameLerp (paliashdr, currententity->backlerp);
 
-	GL_TexEnv( GL_REPLACE );
+	GL_TexEnv( GX_REPLACE );
 	qglShadeModel (GL_FLAT);
 
 	gxu_cur_modelview_matrix--;
@@ -879,7 +879,7 @@ void R_DrawAliasModel (entity_t *e)
 
 	if ( currententity->flags & RF_TRANSLUCENT )
 	{
-		qglDisable (GL_BLEND);
+		qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 	}
 
 	if (currententity->flags & RF_DEPTHHACK)
@@ -892,7 +892,7 @@ void R_DrawAliasModel (entity_t *e)
 		gxu_cur_modelview_matrix++;
 		R_RotateForEntity (e);
 		qgxDisableTexture();
-		qglEnable (GL_BLEND);
+		qgxSetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 		gxu_cur_r = 0;
 		gxu_cur_g = 0;
 		gxu_cur_b = 0;
@@ -900,7 +900,7 @@ void R_DrawAliasModel (entity_t *e)
 		GL_DrawAliasShadow (paliashdr, currententity->frame );
 		gxu_cur_vertex_format = GX_VTXFMT1;
 		qgxEnableTexture();
-		qglDisable (GL_BLEND);
+		qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 		gxu_cur_modelview_matrix--;
 		qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 	}

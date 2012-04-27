@@ -32,19 +32,11 @@ void glClear(GLbitfield mask)
 {
 }
 
-void glDepthFunc(GLenum func)
-{
-}
-
 void glDepthRange(GLclampd nearVal, GLclampd farVal)
 {
 }
 
 void glCullFace(GLenum mode)
-{
-}
-
-void glTexEnvf(GLenum target, GLenum pname, GLfloat param)
 {
 }
 
@@ -73,10 +65,6 @@ void glDepthMask(GLboolean flag)
 }
 
 void glTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid* data)
-{
-}
-
-void glBlendFunc(GLenum sfactor, GLenum dfactor)
 {
 }
 
@@ -112,10 +100,6 @@ const GLubyte* glGetString(GLenum name)
 }
 
 void glClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
-{
-}
-
-void glAlphaFunc(GLenum func, GLclampf ref)
 {
 }
 
@@ -1002,18 +986,6 @@ void glTexCoord4sv(const GLshort *v)
 }
 
 void glTexCoordPointer(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer)
-{
-}
-
-void glTexEnvfv(GLenum target, GLenum pname, const GLfloat *params)
-{
-}
-
-void glTexEnvi(GLenum target, GLenum pname, GLint param)
-{
-}
-
-void glTexEnviv(GLenum target, GLenum pname, const GLint *params)
 {
 }
 

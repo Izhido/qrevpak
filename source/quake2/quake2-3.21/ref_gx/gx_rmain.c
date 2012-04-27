@@ -242,16 +242,16 @@ void R_DrawSpriteModel (entity_t *e)
 		alpha = e->alpha;
 
 	if ( alpha != 1.0F )
-		qglEnable( GL_BLEND );
+		qgxSetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 
     GX_Bind(currentmodel->skins[e->frame]->texnum);
 
-	GL_TexEnv( GL_MODULATE );
+	GL_TexEnv( GX_MODULATE );
 
 	if ( alpha == 1.0 )
-		qglEnable (GL_ALPHA_TEST);
+		qgxSetAlphaCompare(GX_GEQUAL, gxu_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gxu_alpha_test_higher);
 	else
-		qglDisable( GL_ALPHA_TEST );
+		qgxSetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
 
 	qgxBegin (GX_QUADS, gxu_cur_vertex_format, 4);
 
@@ -281,11 +281,11 @@ void R_DrawSpriteModel (entity_t *e)
 	
 	qgxEnd ();
 
-	qglDisable (GL_ALPHA_TEST);
-	GL_TexEnv( GL_REPLACE );
+	qgxSetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
+	GL_TexEnv( GX_REPLACE );
 
 	if ( alpha != 1.0F )
-		qglDisable( GL_BLEND );
+		qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 }
 
 //==================================================================================
@@ -442,8 +442,8 @@ void GL_DrawParticles( int num_particles, const particle_t particles[], const un
 
     GX_Bind(r_particletexture->texnum);
 	qglDepthMask( GL_FALSE );		// no z buffering
-	qglEnable( GL_BLEND );
-	GL_TexEnv( GL_MODULATE );
+	qgxSetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
+	GL_TexEnv( GX_MODULATE );
 	qgxBegin (GX_TRIANGLES, gxu_cur_vertex_format, num_particles * 3);
 
 	VectorScale (vup, 1.5, up);
@@ -482,13 +482,13 @@ void GL_DrawParticles( int num_particles, const particle_t particles[], const un
 	}
 
 	qgxEnd ();
-	qglDisable( GL_BLEND );
+	qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 	gxu_cur_r = 255;
 	gxu_cur_g = 255;
 	gxu_cur_b = 255;
 	gxu_cur_a = 255;
 	qglDepthMask( 1 );		// back to normal Z buffering
-	GL_TexEnv( GL_REPLACE );
+	GL_TexEnv( GX_REPLACE );
 }
 
 /*
@@ -505,7 +505,7 @@ void R_DrawParticles (void)
 		const particle_t *p;
 
 		qglDepthMask( GL_FALSE );
-		qglEnable( GL_BLEND );
+		qgxSetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 		qgxDisableTexture();
 
 		qglPointSize( gl_particle_size->value );
@@ -521,7 +521,7 @@ void R_DrawParticles (void)
 		}
 		qgxEnd();
 
-		qglDisable( GL_BLEND );
+		qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 		gxu_cur_r = 255;
 		gxu_cur_g = 255;
 		gxu_cur_b = 255;
@@ -552,8 +552,8 @@ void R_PolyBlend (void)
 	if (!v_blend[3])
 		return;
 
-	qglDisable (GL_ALPHA_TEST);
-	qglEnable (GL_BLEND);
+	qgxSetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
+	qgxSetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 	qglDisable (GL_DEPTH_TEST);
 	qgxDisableTexture();
 
@@ -585,9 +585,9 @@ void R_PolyBlend (void)
 	qgxColor4u8(r, g, b, a);
 	qgxEnd ();
 
-	qglDisable (GL_BLEND);
+	qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 	qgxEnableTexture();
-	qglEnable (GL_ALPHA_TEST);
+	qgxSetAlphaCompare(GX_GEQUAL, gxu_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gxu_alpha_test_higher);
 }
 
 //=======================================================================
@@ -792,8 +792,8 @@ void R_SetupGL (void)
 	else
 		qglDisable(GL_CULL_FACE);
 
-	qglDisable(GL_BLEND);
-	qglDisable(GL_ALPHA_TEST);
+	qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
+	qgxSetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
 	qglEnable(GL_DEPTH_TEST);
 }
 
@@ -816,13 +816,13 @@ void R_Clear (void)
 		{
 			gldepthmin = 0;
 			gldepthmax = 0.49999;
-			qglDepthFunc (GL_LEQUAL);
+			qgxSetZMode(gxu_z_test_enabled, GX_LEQUAL, gxu_z_write_enabled);
 		}
 		else
 		{
 			gldepthmin = 1;
 			gldepthmax = 0.5;
-			qglDepthFunc (GL_GEQUAL);
+			qgxSetZMode(gxu_z_test_enabled, GX_GEQUAL, gxu_z_write_enabled);
 		}
 	}
 	else
@@ -833,7 +833,7 @@ void R_Clear (void)
 			qglClear (GL_DEPTH_BUFFER_BIT);
 		gldepthmin = 0;
 		gldepthmax = 1;
-		qglDepthFunc (GL_LEQUAL);
+		qgxSetZMode(gxu_z_test_enabled, GX_LEQUAL, gxu_z_write_enabled);
 	}
 
 	qglDepthRange (gldepthmin, gldepthmax);
@@ -915,8 +915,8 @@ void	R_SetGL2D (void)
 	qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 	qglDisable (GL_DEPTH_TEST);
 	qglDisable (GL_CULL_FACE);
-	qglDisable (GL_BLEND);
-	qglEnable (GL_ALPHA_TEST);
+	qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
+	qgxSetAlphaCompare(GX_GEQUAL, gxu_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gxu_alpha_test_higher);
 	gxu_cur_r = 255;
 	gxu_cur_g = 255;
 	gxu_cur_b = 255;
@@ -1544,8 +1544,8 @@ void R_BeginFrame( float camera_separation )
 	qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 	qglDisable (GL_DEPTH_TEST);
 	qglDisable (GL_CULL_FACE);
-	qglDisable (GL_BLEND);
-	qglEnable (GL_ALPHA_TEST);
+	qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
+	qgxSetAlphaCompare(GX_GEQUAL, gxu_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gxu_alpha_test_higher);
 	gxu_cur_r = 255;
 	gxu_cur_g = 255;
 	gxu_cur_b = 255;
@@ -1680,7 +1680,7 @@ void R_DrawBeam( entity_t *e )
 	}
 
 	qgxDisableTexture();
-	qglEnable( GL_BLEND );
+	qgxSetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 	qglDepthMask( GL_FALSE );
 
 	r = ( d_8to24table[e->skinnum & 0xFF] ) & 0xFF;
@@ -1711,7 +1711,7 @@ void R_DrawBeam( entity_t *e )
 	qgxEnd();
 
 	qgxEnableTexture();
-	qglDisable( GL_BLEND );
+	qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 	qglDepthMask( GL_TRUE );
 }
 

@@ -93,8 +93,9 @@ void R_RenderDlights (void)
 	qglDepthMask (0);
 	qgxDisableTexture();
 	qglShadeModel (GL_SMOOTH);
-	qglEnable (GL_BLEND);
-	qglBlendFunc (GL_ONE, GL_ONE);
+	gxu_blend_src_value = GX_BL_ONE;
+	gxu_blend_dst_value = GX_BL_ONE;
+	qgxSetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 
 	l = r_newrefdef.dlights;
 	for (i=0 ; i<r_newrefdef.num_dlights ; i++, l++)
@@ -104,10 +105,11 @@ void R_RenderDlights (void)
 	gxu_cur_g = 255;
 	gxu_cur_b = 255;
 	gxu_cur_a = 255;
-	qglDisable (GL_BLEND);
+	gxu_blend_src_value = GX_BL_SRCALPHA;
+	gxu_blend_dst_value = GX_BL_INVSRCALPHA;
+	qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 	gxu_cur_vertex_format = GX_VTXFMT1;
 	qgxEnableTexture();
-	qglBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	qglDepthMask (1);
 }
 

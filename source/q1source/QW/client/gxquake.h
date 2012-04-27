@@ -253,7 +253,7 @@ void GX_EnableMultitexture(void);
 //
 // gl_warp.c
 //
-void GL_SubdivideSurface (msurface_t *fa);
+void GX_SubdivideSurface (msurface_t *fa);
 void EmitBothSkyLayers (msurface_t *fa);
 void EmitWaterPolys (msurface_t *fa);
 void EmitSkyPolys (msurface_t *fa);
@@ -262,8 +262,8 @@ void R_DrawSkyChain (msurface_t *s);
 //
 // gl_draw.c
 //
-int GL_LoadPicTexture (qpic_t *pic);
-void GL_Set2D (void);
+int GX_LoadPicTexture (qpic_t *pic);
+void GX_Set2D (void);
 
 //
 // gl_rmain.c
@@ -294,7 +294,7 @@ void GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr);
 //
 void R_DrawBrushModel (entity_t *e);
 void R_DrawWorld (void);
-void GL_BuildLightmaps (void);
+void GX_BuildLightmaps (void);
 
 //
 // gl_ngraph.c

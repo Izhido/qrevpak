@@ -51,10 +51,6 @@ typedef unsigned short GLushort;
 
 #define GL_QUADS 10
 
-#define GL_ALPHA_TEST 11
-
-#define GL_BLEND 12
-
 #define GL_RGBA 13
 
 #define GL_UNSIGNED_BYTE 14
@@ -62,10 +58,6 @@ typedef unsigned short GLushort;
 #define GL_FRONT 15
 
 #define GL_BACK 16
-
-#define GL_PROJECTION 17
-
-#define GL_MODELVIEW 18
 
 #define GL_DEPTH_TEST 19
 
@@ -209,13 +201,9 @@ void glDrawBuffer(GLenum mode);
 
 void glClear(GLbitfield mask);
 
-void glDepthFunc(GLenum func);
-
 void glDepthRange(GLclampd nearVal, GLclampd farVal);
 
 void glCullFace(GLenum mode);
-
-void glTexEnvf(GLenum target, GLenum pname, GLfloat param);
 
 void glShadeModel(GLenum mode);
 
@@ -231,15 +219,11 @@ void glDepthMask(GLboolean flag);
 
 void glTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid* data);
 
-void glBlendFunc(GLenum sfactor, GLenum dfactor);
-
 void glFlush(void);
 
 const GLubyte* glGetString(GLenum name);
 
 void glClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
-
-void glAlphaFunc(GLenum func, GLclampf ref);
 
 void glPolygonMode(GLenum face, GLenum mode);
 
@@ -247,15 +231,11 @@ GLboolean glIsEnabled(GLenum cap);
 
 void glAccum(GLenum op, GLfloat value);
 
-void glAlphaFunc(GLenum func, GLclampf ref);
-
 GLboolean glAreTexturesResident(GLsizei n, const GLuint *textures, GLboolean *residences);
 
 void glArrayElement(GLint i);
 
 void glBitmap(GLsizei width, GLsizei height, GLfloat xorig, GLfloat yorig, GLfloat xmove, GLfloat ymove, const GLubyte *bitmap);
-
-void glBlendFunc(GLenum sfactor, GLenum dfactor);
 
 void glCallList(GLuint list);
 
@@ -296,8 +276,6 @@ void glCullFace(GLenum mode);
 void glDeleteLists(GLuint list, GLsizei range);
 
 void glDeleteTextures(GLsizei n, const GLuint *textures);
-
-void glDepthFunc(GLenum func);
 
 void glDepthMask(GLboolean flag);
 
@@ -724,14 +702,6 @@ void glTexCoord4s(GLshort s, GLshort t, GLshort r, GLshort q);
 void glTexCoord4sv(const GLshort *v);
 
 void glTexCoordPointer(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer);
-
-void glTexEnvf(GLenum target, GLenum pname, GLfloat param);
-
-void glTexEnvfv(GLenum target, GLenum pname, const GLfloat *params);
-
-void glTexEnvi(GLenum target, GLenum pname, GLint param);
-
-void glTexEnviv(GLenum target, GLenum pname, const GLint *params);
 
 void glTexGend(GLenum coord, GLenum pname, GLdouble param);
 
