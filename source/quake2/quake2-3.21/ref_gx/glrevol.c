@@ -19,10 +19,6 @@ void glClear(GLbitfield mask)
 {
 }
 
-void glCullFace(GLenum mode)
-{
-}
-
 void glShadeModel(GLenum mode)
 {
 }

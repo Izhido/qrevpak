@@ -59,8 +59,6 @@ typedef unsigned short GLushort;
 
 #define GL_BACK 16
 
-#define GL_CULL_FACE 20
-
 #define GL_COLOR_INDEX 21
 
 #define GL_TRIANGLE_FAN 22
@@ -191,8 +189,6 @@ void glDrawBuffer(GLenum mode);
 
 void glClear(GLbitfield mask);
 
-void glCullFace(GLenum mode);
-
 void glShadeModel(GLenum mode);
 
 void glHint(GLenum target, GLenum mode);
@@ -254,8 +250,6 @@ void glCopyTexImage2D(GLenum target, GLint level, GLenum internalFormat, GLint x
 void glCopyTexSubImage1D(GLenum target, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width);
 
 void glCopyTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height);
-
-void glCullFace(GLenum mode);
 
 void glDeleteLists(GLuint list, GLsizei range);
 

@@ -178,7 +178,9 @@ void GL_Strings_f( void )
 void GL_SetDefaultState( void )
 {
 	qglClearColor (1,0, 0.5 , 0.5);
-	qglCullFace(GL_FRONT);
+	gxu_cull_mode = GX_CULL_BACK;
+	if(gxu_cull_enabled)
+		qgxSetCullMode(gxu_cull_mode);
 	gxu_cur_vertex_format = GX_VTXFMT1;
 	qgxEnableTexture();
 
@@ -189,7 +191,8 @@ void GL_SetDefaultState( void )
 
 	gxu_z_test_enabled = GX_FALSE;
 	qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
-	qglDisable (GL_CULL_FACE);
+	gxu_cull_enabled = false;
+	qgxSetCullMode(gxu_cull_mode);
 	gxu_blend_src_value = GX_BL_SRCALPHA;
 	gxu_blend_dst_value = GX_BL_INVSRCALPHA;
 	qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);

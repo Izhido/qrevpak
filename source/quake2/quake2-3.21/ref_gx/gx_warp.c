@@ -595,13 +595,16 @@ qglDisable (GL_DEPTH_TEST);
 	
 qguMtxCopy(gxu_modelview_matrices[gxu_cur_modelview_matrix], gxu_modelview_matrices[gxu_cur_modelview_matrix + 1]);
 gxu_cur_modelview_matrix++;
-/*qguMtxTrans(m, r_origin[0], r_origin[1], r_origin[2]);
+qguMtxTrans(m, r_origin[0], r_origin[1], r_origin[2]);
 qguMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
 a.x = skyaxis[0];
 a.y = skyaxis[1];
 a.z = skyaxis[2];
-qguMtxRotAxisDeg(m, &a, r_newrefdef.time * skyrotate);
-qguMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);*/
+if(((a.x != 0)||(a.y != 0)||(a.z != 0))&&(skyrotate != 0))
+{
+	qguMtxRotAxisDeg(m, &a, r_newrefdef.time * skyrotate);
+	qguMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
+}
 qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 
 	for (i=0 ; i<6 ; i++)

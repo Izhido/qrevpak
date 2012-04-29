@@ -182,6 +182,10 @@ char *Sys_ConsoleInput (void)
 
 void	Sys_ConsoleOutput (char *string)
 {
+#ifdef GXIMP
+	if(sys_frame_count > 1)
+		return;
+#endif
 	printf(string);
 }
 

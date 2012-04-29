@@ -764,7 +764,9 @@ void R_SetupGL (void)
 	qguPerspective(gxu_projection_matrices[gxu_cur_projection_matrix], r_newrefdef.fov_y,  screenaspect,  4,  4096);
 	qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], GX_PERSPECTIVE);
 
-	qglCullFace(GL_FRONT);
+	gxu_cull_mode = GX_CULL_BACK;
+	if(gxu_cull_enabled)
+		qgxSetCullMode(gxu_cull_mode);
 
 	a.x = 1;
 	a.y = 0;
@@ -799,9 +801,15 @@ void R_SetupGL (void)
 	// set drawing parms
 	//
 	if (gl_cull->value)
-		qglEnable(GL_CULL_FACE);
+	{
+		gxu_cull_enabled = true;
+		qgxSetCullMode(gxu_cull_mode);
+	}
 	else
-		qglDisable(GL_CULL_FACE);
+	{
+		gxu_cull_enabled = false;
+		qgxSetCullMode(GX_CULL_NONE);
+	};
 
 	qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 	qgxSetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
@@ -934,7 +942,8 @@ void	R_SetGL2D (void)
 	qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 	gxu_z_test_enabled = GX_FALSE;
 	qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
-	qglDisable (GL_CULL_FACE);
+	gxu_cull_enabled = false;
+	qgxSetCullMode(GX_CULL_NONE);
 	qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 	qgxSetAlphaCompare(GX_GEQUAL, gxu_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gxu_alpha_test_higher);
 	gxu_cur_r = 255;
@@ -1568,7 +1577,8 @@ void R_BeginFrame( float camera_separation )
 	qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 	gxu_z_test_enabled = GX_FALSE;
 	qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
-	qglDisable (GL_CULL_FACE);
+	gxu_cull_enabled = false;
+	qgxSetCullMode(GX_CULL_NONE);
 	qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 	qgxSetAlphaCompare(GX_GEQUAL, gxu_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gxu_alpha_test_higher);
 	gxu_cur_r = 255;

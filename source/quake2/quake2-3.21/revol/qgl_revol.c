@@ -69,7 +69,6 @@ void ( APIENTRY * qglCopyTexImage1D )(GLenum target, GLint level, GLenum interna
 void ( APIENTRY * qglCopyTexImage2D )(GLenum target, GLint level, GLenum internalFormat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border);
 void ( APIENTRY * qglCopyTexSubImage1D )(GLenum target, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width);
 void ( APIENTRY * qglCopyTexSubImage2D )(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height);
-void ( APIENTRY * qglCullFace )(GLenum mode);
 void ( APIENTRY * qglDeleteLists )(GLuint list, GLsizei range);
 void ( APIENTRY * qglDeleteTextures )(GLsizei n, const GLuint *textures);
 void ( APIENTRY * qglDisable )(GLenum cap);
@@ -258,6 +257,7 @@ void ( APIENTRY * qglScissor )(GLint x, GLint y, GLsizei width, GLsizei height);
 void ( APIENTRY * qglSelectBuffer )(GLsizei size, GLuint *buffer);
 void ( APIENTRY * qgxSetAlphaCompare )(u8 comp0, u8 ref0, u8 aop, u8 comp1, u8 ref1);
 void ( APIENTRY * qgxSetBlendMode )(u8 type, u8 src_fact, u8 dst_fact, u8 op);
+void ( APIENTRY * qgxSetCullMode )(u8 mode);
 void ( APIENTRY * qgxSetTevOp )(u8 tevstage, u8 mode);
 void ( APIENTRY * qgxSetViewport )(f32 xOrig, f32 yOrig, f32 wd, f32 ht, f32 nearZ, f32 farZ);
 void ( APIENTRY * qgxSetZMode )(u8 enable, u8 func, u8 update_enable);
@@ -309,7 +309,6 @@ static void ( APIENTRY * dllCopyTexImage1D )(GLenum target, GLint level, GLenum 
 static void ( APIENTRY * dllCopyTexImage2D )(GLenum target, GLint level, GLenum internalFormat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border);
 static void ( APIENTRY * dllCopyTexSubImage1D )(GLenum target, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width);
 static void ( APIENTRY * dllCopyTexSubImage2D )(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height);
-static void ( APIENTRY * dllCullFace )(GLenum mode);
 static void ( APIENTRY * dllDeleteLists )(GLuint list, GLsizei range);
 static void ( APIENTRY * dllDeleteTextures )(GLsizei n, const GLuint *textures);
 static void ( APIENTRY * dllDisable )(GLenum cap);
@@ -506,6 +505,7 @@ static void ( APIENTRY * dllScissor )(GLint x, GLint y, GLsizei width, GLsizei h
 static void ( APIENTRY * dllSelectBuffer )(GLsizei size, GLuint *buffer);
 static void ( APIENTRY * dllSetAlphaCompare )(u8 comp0, u8 ref0, u8 aop, u8 comp1, u8 ref1);
 static void ( APIENTRY * dllSetBlendMode )(u8 type, u8 src_fact, u8 dst_fact, u8 op);
+static void ( APIENTRY * dllSetCullMode )(u8 mode);
 static void ( APIENTRY * dllSetTevOp )(u8 tevstage, u8 mode);
 static void ( APIENTRY * dllSetViewport )(f32 xOrig, f32 yOrig, f32 wd, f32 ht, f32 nearZ, f32 farZ);
 static void ( APIENTRY * dllSetZMode )(u8 enable, u8 func, u8 update_enable);
@@ -659,12 +659,6 @@ static void APIENTRY logCopyTexImage2D(GLenum target, GLint level, GLenum intern
 {
 	SIG( "glCopyTexImage2D" );
 	dllCopyTexImage2D( target, level, internalFormat, x, y, width, height, border );
-}
-
-static void APIENTRY logCullFace(GLenum mode)
-{
-	SIG( "glCullFace" );
-	dllCullFace( mode );
 }
 
 static void APIENTRY logDeleteLists(GLuint list, GLsizei range)
@@ -1789,6 +1783,11 @@ static void APIENTRY logSetBlendMode(u8 type, u8 src_fact, u8 dst_fact, u8 op)
 	SIG( "GX_SetBlendMode" );
 	dllSetBlendMode( type, src_fact, dst_fact, op );
 }
+static void APIENTRY logSetCullMode(u8 mode)
+{
+	SIG( "GX_SetCullMode" );
+	dllSetCullMode( mode );
+}
 static void APIENTRY logSetTevOp(u8 tevstage, u8 mode)
 {
 	fprintf( log_fp, "GX_SetTevOp( 0x%x, 0x%x )\n", tevstage, mode );
@@ -1918,7 +1917,6 @@ void QGL_Shutdown( void )
 	qglCopyTexImage2D            = NULL;
 	qglCopyTexSubImage1D         = NULL;
 	qglCopyTexSubImage2D         = NULL;
-	qglCullFace                  = NULL;
 	qglDeleteLists               = NULL;
 	qglDeleteTextures            = NULL;
 	qglDisable                   = NULL;
@@ -2107,6 +2105,7 @@ void QGL_Shutdown( void )
 	qglSelectBuffer              = NULL;
 	qgxSetAlphaCompare           = NULL;
 	qgxSetBlendMode              = NULL;
+	qgxSetCullMode               = NULL;
 	qgxSetTevOp                  = NULL;
 	qgxSetViewport               = NULL;
 	qgxSetZMode                  = NULL;
@@ -2173,7 +2172,6 @@ qboolean QGL_Init( const char *dllname )
 	qglCopyTexImage2D            = dllCopyTexImage2D = glCopyTexImage2D;
 	qglCopyTexSubImage1D         = dllCopyTexSubImage1D = glCopyTexSubImage1D;
 	qglCopyTexSubImage2D         = dllCopyTexSubImage2D = glCopyTexSubImage2D;
-	qglCullFace                  = dllCullFace = glCullFace;
 	qglDeleteLists               = dllDeleteLists = glDeleteLists;
 	qglDeleteTextures            = dllDeleteTextures = glDeleteTextures;
 	qglDisable                   = dllDisable = glDisable;
@@ -2362,6 +2360,7 @@ qboolean QGL_Init( const char *dllname )
 	qglSelectBuffer              = 	dllSelectBuffer              = glSelectBuffer;
 	qgxSetAlphaCompare           =  dllSetAlphaCompare           = GX_SetAlphaCompare;
 	qgxSetBlendMode              = 	dllSetBlendMode              = GX_SetBlendMode;
+	qgxSetCullMode               =  dllSetCullMode               = GX_SetCullMode;
 	qgxSetTevOp                  = 	dllSetTevOp                  = GX_SetTevOp;
 	qgxSetViewport               = 	dllSetViewport               = GX_SetViewport;
 	qgxSetZMode                  = 	dllSetZMode                  = GX_SetZMode;
@@ -2446,7 +2445,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglCopyTexImage2D            = logCopyTexImage2D;
 		qglCopyTexSubImage1D         = logCopyTexSubImage1D;
 		qglCopyTexSubImage2D         = logCopyTexSubImage2D;
-		qglCullFace                  = logCullFace;
 		qglDeleteLists               = logDeleteLists ;
 		qglDeleteTextures            = logDeleteTextures ;
 		qglDisable                   = logDisable ;
@@ -2635,6 +2633,7 @@ void GLimp_EnableLogging( qboolean enable )
 		qglSelectBuffer              = 	logSelectBuffer              ;
 		qgxSetAlphaCompare           =  logSetAlphaCompare           ;
 		qgxSetBlendMode              = 	logSetBlendMode              ;
+		qgxSetCullMode               = 	logSetCullMode               ;
 		qgxSetTevOp                  = 	logSetTevOp                  ;
 		qgxSetViewport               = 	logSetViewport               ;
 		qgxSetZMode                  = 	logSetZMode                  ;
@@ -2685,7 +2684,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglCopyTexImage2D            = dllCopyTexImage2D;
 		qglCopyTexSubImage1D         = dllCopyTexSubImage1D;
 		qglCopyTexSubImage2D         = dllCopyTexSubImage2D;
-		qglCullFace                  = dllCullFace;
 		qglDeleteLists               = dllDeleteLists ;
 		qglDeleteTextures            = dllDeleteTextures ;
 		qglDisable                   = dllDisable ;
@@ -2874,6 +2872,7 @@ void GLimp_EnableLogging( qboolean enable )
 		qglSelectBuffer              = 	dllSelectBuffer              ;
 		qgxSetAlphaCompare           =  dllSetAlphaCompare           ;
 		qgxSetBlendMode              = 	dllSetBlendMode              ;
+		qgxSetCullMode               =  dllSetCullMode               ;
 		qgxSetTevOp                  = 	dllSetTevOp                  ;
 		qgxSetViewport               = 	dllSetViewport               ;
 		qgxSetZMode                  = 	dllSetZMode                  ;

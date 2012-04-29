@@ -789,7 +789,9 @@ void R_DrawAliasModel (entity_t *e)
 		qguMtxConcat(gxu_projection_matrices[gxu_cur_projection_matrix], m, gxu_projection_matrices[gxu_cur_projection_matrix]);
 		qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], GX_PERSPECTIVE);
 
-		qglCullFace( GL_BACK );
+		gxu_cull_mode = GX_CULL_FRONT;
+		if(gxu_cull_enabled)
+			qgxSetCullMode(gxu_cull_mode);
 	}
 
 	qguMtxCopy(gxu_modelview_matrices[gxu_cur_modelview_matrix], gxu_modelview_matrices[gxu_cur_modelview_matrix + 1]);
@@ -874,7 +876,9 @@ void R_DrawAliasModel (entity_t *e)
 	{
 		gxu_cur_projection_matrix--;
 		qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], GX_PERSPECTIVE);
-		qglCullFace( GL_FRONT );
+		gxu_cull_mode = GX_CULL_BACK;
+		if(gxu_cull_enabled)
+			qgxSetCullMode(gxu_cull_mode);
 	}
 
 	if ( currententity->flags & RF_TRANSLUCENT )
