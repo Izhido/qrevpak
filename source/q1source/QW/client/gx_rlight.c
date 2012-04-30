@@ -156,7 +156,8 @@ void R_RenderDlights (void)
 	GX_SetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 	gxu_cur_vertex_format = GX_VTXFMT0;
 	GXU_DisableTexture();
-	glShadeModel (GL_SMOOTH);
+	/******************* Investigate how to implement this function ASAP: ***************************************/
+	//glShadeModel (GL_SMOOTH);
 	gxu_blend_src_value = GX_BL_ONE;
 	gxu_blend_dst_value = GX_BL_ONE;
 	GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
