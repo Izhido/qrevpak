@@ -103,6 +103,7 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 	int		i;
 	int		index_xyz;
 	float	*lerp;
+	float	ccomp;
 
 	frame = (daliasframe_t *)((byte *)paliashdr + paliashdr->ofs_frames 
 		+ currententity->frame * paliashdr->framesize);
@@ -164,10 +165,34 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 		// PMM - added double damage shell
 		if ( currententity->flags & ( RF_SHELL_RED | RF_SHELL_GREEN | RF_SHELL_BLUE | RF_SHELL_DOUBLE | RF_SHELL_HALF_DAM) )
 		{
-			gxu_cur_r = shadelight[0] * 255;
-			gxu_cur_g = shadelight[1] * 255;
-			gxu_cur_b = shadelight[2] * 255;
-			gxu_cur_a = alpha * 255;
+			ccomp = shadelight[0] * 255;
+			if(ccomp < 0.0)
+				gxu_cur_r = 0;
+			else if(ccomp > 255.0)
+				gxu_cur_r = 255;
+			else
+				gxu_cur_r = ccomp;
+			ccomp = shadelight[1] * 255;
+			if(ccomp < 0.0)
+				gxu_cur_g = 0;
+			else if(ccomp > 255.0)
+				gxu_cur_g = 255;
+			else
+				gxu_cur_g = ccomp;
+			ccomp = shadelight[2] * 255;
+			if(ccomp < 0.0)
+				gxu_cur_b = 0;
+			else if(ccomp > 255.0)
+				gxu_cur_b = 255;
+			else
+				gxu_cur_b = ccomp;
+			ccomp = alpha * 255;
+			if(ccomp < 0.0)
+				gxu_cur_a = 0;
+			else if(ccomp > 255.0)
+				gxu_cur_a = 255;
+			else
+				gxu_cur_a = ccomp;
 		}
 		else
 		{
@@ -181,9 +206,27 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 			{
 				float l = shadedots[verts[i].lightnormalindex];
 
-				colorArray[i*3+0] = l * shadelight[0];
-				colorArray[i*3+1] = l * shadelight[1];
-				colorArray[i*3+2] = l * shadelight[2];
+				ccomp = l * shadelight[0];
+				if(ccomp < 0.0)
+					colorArray[i*3+0] = 0.0;
+				else if(ccomp > 1.0)
+					colorArray[i*3+0] = 1.0;
+				else
+					colorArray[i*3+0] = ccomp;
+				ccomp = l * shadelight[1];
+				if(ccomp < 0.0)
+					colorArray[i*3+1] = 0.0;
+				else if(ccomp > 1.0)
+					colorArray[i*3+1] = 1.0;
+				else
+					colorArray[i*3+1] = ccomp;
+				ccomp = l * shadelight[2];
+				if(ccomp < 0.0)
+					colorArray[i*3+2] = 0.0;
+				else if(ccomp > 1.0)
+					colorArray[i*3+2] = 1.0;
+				else
+					colorArray[i*3+2] = ccomp;
 			}
 		}
 
@@ -282,10 +325,34 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 					index_xyz = order[2];
 					order += 3;
 
-					gxu_cur_r = shadelight[0] * 255;
-					gxu_cur_g = shadelight[1] * 255;
-					gxu_cur_b = shadelight[2] * 255;
-					gxu_cur_a = alpha * 255;
+					ccomp = shadelight[0] * 255;
+					if(ccomp < 0.0)
+						gxu_cur_r = 0;
+					else if(ccomp > 255.0)
+						gxu_cur_r = 255;
+					else
+						gxu_cur_r = ccomp;
+					ccomp = shadelight[1] * 255;
+					if(ccomp < 0.0)
+						gxu_cur_g = 0;
+					else if(ccomp > 255.0)
+						gxu_cur_g = 255;
+					else
+						gxu_cur_g = ccomp;
+					ccomp = shadelight[2] * 255;
+					if(ccomp < 0.0)
+						gxu_cur_b = 0;
+					else if(ccomp > 255.0)
+						gxu_cur_b = 255;
+					else
+						gxu_cur_b = ccomp;
+					ccomp = alpha * 255;
+					if(ccomp < 0.0)
+						gxu_cur_a = 0;
+					else if(ccomp > 255.0)
+						gxu_cur_a = 255;
+					else
+						gxu_cur_a = ccomp;
 
 					qgxPosition3f32 (s_lerped[index_xyz][0], s_lerped[index_xyz][1], s_lerped[index_xyz][2]);
 					qgxColor4u8 ( gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a );
@@ -310,10 +377,34 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 					// normals and vertexes come from the frame list
 					l = shadedots[verts[index_xyz].lightnormalindex];
 					
-					gxu_cur_r = l * shadelight[0] * 255;
-					gxu_cur_g = l * shadelight[1] * 255;
-					gxu_cur_b = l * shadelight[2] * 255;
-					gxu_cur_a = alpha * 255;
+					ccomp = l * shadelight[0] * 255;
+					if(ccomp < 0.0)
+						gxu_cur_r = 0;
+					else if(ccomp > 255.0)
+						gxu_cur_r = 255;
+					else
+						gxu_cur_r = ccomp;
+					ccomp = l * shadelight[1] * 255;
+					if(ccomp < 0.0)
+						gxu_cur_g = 0;
+					else if(ccomp > 255.0)
+						gxu_cur_g = 255;
+					else
+						gxu_cur_g = ccomp;
+					ccomp = l * shadelight[2] * 255;
+					if(ccomp < 0.0)
+						gxu_cur_b = 0;
+					else if(ccomp > 255.0)
+						gxu_cur_b = 255;
+					else
+						gxu_cur_b = ccomp;
+					ccomp = alpha * 255;
+					if(ccomp < 0.0)
+						gxu_cur_a = 0;
+					else if(ccomp > 255.0)
+						gxu_cur_a = 255;
+					else
+						gxu_cur_a = ccomp;
 
 					qgxPosition3f32 (s_lerped[index_xyz][0], s_lerped[index_xyz][1], s_lerped[index_xyz][2]);
 					qgxColor4u8 ( gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a );

@@ -581,11 +581,6 @@ dynamic:
 			GX_Bind( gx_state.lightmap_textures + fa->lightmaptexturenum );
 
 			GX_LoadSubAndBind(temp, fa->light_s, fa->light_t, smax, tmax, GX_LIGHTMAP_FORMAT);
-			/*qglTexSubImage2D( GL_TEXTURE_2D, 0,
-							  fa->light_s, fa->light_t, 
-							  smax, tmax, 
-							  GX_LIGHTMAP_FORMAT, 
-							  GL_UNSIGNED_BYTE, temp );*/
 
 			fa->lightmapchain = gl_lms.lightmap_surfaces[fa->lightmaptexturenum];
 			gl_lms.lightmap_surfaces[fa->lightmaptexturenum] = fa;
@@ -784,11 +779,6 @@ dynamic:
 			lmtex = surf->lightmaptexturenum;
 
 			GX_LoadSubAndBind(temp, surf->light_s, surf->light_t, smax, tmax, GX_LIGHTMAP_FORMAT);
-			/*qglTexSubImage2D( GL_TEXTURE_2D, 0,
-							  surf->light_s, surf->light_t, 
-							  smax, tmax, 
-							  GX_LIGHTMAP_FORMAT, 
-							  GL_UNSIGNED_BYTE, temp );*/
 
 			Sys_BigStackFree(128*128 * sizeof(unsigned), "GL_RenderLightmappedPoly");
 		}
@@ -804,11 +794,6 @@ dynamic:
 			lmtex = 0;
 
 			GX_LoadSubAndBind(temp, surf->light_s, surf->light_t, smax, tmax, GX_LIGHTMAP_FORMAT);
-			/*qglTexSubImage2D( GL_TEXTURE_2D, 0,
-							  surf->light_s, surf->light_t, 
-							  smax, tmax, 
-							  GX_LIGHTMAP_FORMAT, 
-							  GL_UNSIGNED_BYTE, temp );*/
 
 		}
 
@@ -1444,13 +1429,6 @@ static void LM_UploadBlock( qboolean dynamic )
 		}
 
 		GX_LoadSubAndBind(gl_lms.lightmap_buffer, 0, 0, BLOCK_WIDTH, height, GX_LIGHTMAP_FORMAT);
-		/*qglTexSubImage2D( GL_TEXTURE_2D, 
-						  0,
-						  0, 0,
-						  BLOCK_WIDTH, height,
-						  GX_LIGHTMAP_FORMAT,
-						  GL_UNSIGNED_BYTE,
-						  gl_lms.lightmap_buffer );*/
 	}
 	else
 	{

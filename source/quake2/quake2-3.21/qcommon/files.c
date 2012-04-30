@@ -916,7 +916,7 @@ void FS_InitFilesystem (void)
 	// basedir <path>
 	// allows the game to run from outside the data tree
 	//
-	fs_basedir = Cvar_Get ("basedir", "sd:/", CVAR_NOSET);
+	fs_basedir = Cvar_Get ("basedir", ".", CVAR_NOSET);
 
 	//
 	// cddir <path>
