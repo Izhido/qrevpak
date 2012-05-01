@@ -21,8 +21,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "gx_local.h"
 
-#include "gxutils.h"
-
 /*
 =============================================================
 
@@ -913,7 +911,7 @@ void R_DrawAliasModel (entity_t *e)
 
 	qglShadeModel (GL_SMOOTH);
 
-	GL_TexEnv( GX_MODULATE );
+	GX_TexEnv( GX_MODULATE );
 	if ( currententity->flags & RF_TRANSLUCENT )
 	{
 		qgxSetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
@@ -942,7 +940,7 @@ void R_DrawAliasModel (entity_t *e)
 		currententity->backlerp = 0;
 	GL_DrawAliasFrameLerp (paliashdr, currententity->backlerp);
 
-	GL_TexEnv( GX_REPLACE );
+	GX_TexEnv( GX_REPLACE );
 	qglShadeModel (GL_FLAT);
 
 	gxu_cur_modelview_matrix--;

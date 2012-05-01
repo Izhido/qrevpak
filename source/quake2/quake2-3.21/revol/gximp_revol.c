@@ -24,29 +24,29 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // <<< FIX
 #include "../ref_gx/gx_local.h"
 
-void		GLimp_BeginFrame( float camera_separation )
+void		GXimp_BeginFrame( float camera_separation )
 {
 }
 
-void		GLimp_EndFrame( void )
+void		GXimp_EndFrame( void )
 {
 }
 
-int 		GLimp_Init( void *hinstance, void *hWnd )
+int 		GXimp_Init( void *hinstance, void *hWnd )
 {
 	return true;
 }
 
-void		GLimp_Shutdown( void )
+void		GXimp_Shutdown( void )
 {
 }
 
-int     	GLimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen )
+int     	GXimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen )
 {
 	int width, height;
 	GLint attribs[32];
 
-	fprintf(stderr, "GLimp_SetMode\n");
+	fprintf(stderr, "GXimp_SetMode\n");
 
 	ri.Con_Printf( PRINT_ALL, "Initializing OpenGL display\n");
 
@@ -61,7 +61,7 @@ int     	GLimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen
 	ri.Con_Printf( PRINT_ALL, " %d %d\n", width, height );
 
 	// destroy the existing window
-	GLimp_Shutdown ();
+	GXimp_Shutdown ();
 
 	*pwidth = width;
 	*pheight = height;
@@ -72,7 +72,7 @@ int     	GLimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen
 	return rserr_ok;
 }
 
-void		GLimp_AppActivate( qboolean active )
+void		GXimp_AppActivate( qboolean active )
 {
 }
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc

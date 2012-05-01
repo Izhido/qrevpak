@@ -22,8 +22,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "gx_local.h"
 
-#include "gxutils.h"
-
 image_t		*draw_chars;
 
 extern	qboolean	scrap_dirty;

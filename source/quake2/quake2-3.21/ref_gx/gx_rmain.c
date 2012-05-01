@@ -20,8 +20,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // r_main.c
 #include "gx_local.h"
 
-#include "gxutils.h"
-
 extern int gx_tex_allocated;
 
 void R_Clear (void);
@@ -246,7 +244,7 @@ void R_DrawSpriteModel (entity_t *e)
 
     GX_Bind(currentmodel->skins[e->frame]->texnum);
 
-	GL_TexEnv( GX_MODULATE );
+	GX_TexEnv( GX_MODULATE );
 
 	if ( alpha == 1.0 )
 		qgxSetAlphaCompare(GX_GEQUAL, gxu_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gxu_alpha_test_higher);
@@ -282,7 +280,7 @@ void R_DrawSpriteModel (entity_t *e)
 	qgxEnd ();
 
 	qgxSetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
-	GL_TexEnv( GX_REPLACE );
+	GX_TexEnv( GX_REPLACE );
 
 	if ( alpha != 1.0F )
 		qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
@@ -431,10 +429,10 @@ void R_DrawEntitiesOnList (void)
 }
 
 /*
-** GL_DrawParticles
+** GX_DrawParticles
 **
 */
-void GL_DrawParticles( int num_particles, const particle_t particles[], const unsigned colortable[768] )
+void GX_DrawParticles( int num_particles, const particle_t particles[], const unsigned colortable[768] )
 {
 	const particle_t *p;
 	int				i;
@@ -446,7 +444,7 @@ void GL_DrawParticles( int num_particles, const particle_t particles[], const un
 	gxu_z_write_enabled = GX_FALSE;		// no z buffering
 	qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 	qgxSetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
-	GL_TexEnv( GX_MODULATE );
+	GX_TexEnv( GX_MODULATE );
 	qgxBegin (GX_TRIANGLES, gxu_cur_vertex_format, num_particles * 3);
 
 	VectorScale (vup, 1.5, up);
@@ -492,7 +490,7 @@ void GL_DrawParticles( int num_particles, const particle_t particles[], const un
 	gxu_cur_a = 255;
 	gxu_z_write_enabled = GX_TRUE;		// back to normal Z buffering
 	qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
-	GL_TexEnv( GX_REPLACE );
+	GX_TexEnv( GX_REPLACE );
 }
 
 /*
@@ -538,7 +536,7 @@ void R_DrawParticles (void)
 	}
 	else
 	{
-		GL_DrawParticles( r_newrefdef.num_particles, r_newrefdef.particles, d_8to24table );
+		GX_DrawParticles( r_newrefdef.num_particles, r_newrefdef.particles, d_8to24table );
 	}
 }
 
@@ -995,7 +993,7 @@ static void GL_DrawStereoPattern( void )
 			GL_DrawColoredStereoLinePair( 0, 1, 0, 14);
 		qgxEnd();
 		
-		GLimp_EndFrame();
+		GXimp_EndFrame();
 	}
 }
 
@@ -1147,7 +1145,7 @@ qboolean R_SetMode (void)
 	vid_fullscreen->modified = false;
 	gl_mode->modified = false;
 
-	if ( ( err = GLimp_SetMode( &vid.width, &vid.height, gl_mode->value, fullscreen ) ) == rserr_ok )
+	if ( ( err = GXimp_SetMode( &vid.width, &vid.height, gl_mode->value, fullscreen ) ) == rserr_ok )
 	{
 		gx_state.prev_mode = gl_mode->value;
 	}
@@ -1158,7 +1156,7 @@ qboolean R_SetMode (void)
 			ri.Cvar_SetValue( "vid_fullscreen", 0);
 			vid_fullscreen->modified = false;
 			ri.Con_Printf( PRINT_ALL, "ref_gx::R_SetMode() - fullscreen unavailable in this mode\n" );
-			if ( ( err = GLimp_SetMode( &vid.width, &vid.height, gl_mode->value, false ) ) == rserr_ok )
+			if ( ( err = GXimp_SetMode( &vid.width, &vid.height, gl_mode->value, false ) ) == rserr_ok )
 				return true;
 		}
 		else if ( err == rserr_invalid_mode )
@@ -1169,7 +1167,7 @@ qboolean R_SetMode (void)
 		}
 
 		// try setting it back to something safe
-		if ( ( err = GLimp_SetMode( &vid.width, &vid.height, gx_state.prev_mode, false ) ) != rserr_ok )
+		if ( ( err = GXimp_SetMode( &vid.width, &vid.height, gx_state.prev_mode, false ) ) != rserr_ok )
 		{
 			ri.Con_Printf( PRINT_ALL, "ref_gx::R_SetMode() - could not revert to safe mode\n" );
 			return false;
@@ -1213,7 +1211,7 @@ qboolean R_Init( void *hinstance, void *hWnd )
 	}
 
 	// initialize OS-specific parts of OpenGL
-	if ( !GLimp_Init( hinstance, hWnd ) )
+	if ( !GXimp_Init( hinstance, hWnd ) )
 	{
 		QGL_Shutdown();
 		return -1;
@@ -1497,7 +1495,7 @@ void R_Shutdown (void)
 	/*
 	** shut down OS specific OpenGL stuff like contexts, etc.
 	*/
-	GLimp_Shutdown();
+	GXimp_Shutdown();
 
 	/*
 	** shutdown our QGL subsystem
@@ -1530,13 +1528,13 @@ void R_BeginFrame( float camera_separation )
 
 	if ( gl_log->modified )
 	{
-		GLimp_EnableLogging( gl_log->value );
+		GXimp_EnableLogging( gl_log->value );
 		gl_log->modified = false;
 	}
 
 	if ( gl_log->value )
 	{
-		GLimp_LogNewFrame();
+		GXimp_LogNewFrame();
 	}
 
 	/*
@@ -1561,7 +1559,7 @@ void R_BeginFrame( float camera_separation )
 		}
 	}
 
-	GLimp_BeginFrame( camera_separation );
+	GXimp_BeginFrame( camera_separation );
 
 	/*
 	** go into 2D mode
@@ -1809,9 +1807,9 @@ refexport_t GetRefAPI (refimport_t rimp )
 
 	re.CinematicSetPalette = R_SetPalette;
 	re.BeginFrame = R_BeginFrame;
-	re.EndFrame = GLimp_EndFrame;
+	re.EndFrame = GXimp_EndFrame;
 
-	re.AppActivate = GLimp_AppActivate;
+	re.AppActivate = GXimp_AppActivate;
 
 	Swap_Init ();
 

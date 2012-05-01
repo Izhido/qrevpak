@@ -94,7 +94,7 @@ u32 sys_frame_count;
 
 int sys_current_weapon;
 
-void* membase;
+byte* membase;
 
 int maxhunksize;
 
@@ -683,62 +683,12 @@ char *Sys_GetClipboardData( void )
 void *Hunk_Begin (int maxsize)
 {
 	// reserve a huge chunk of memory, but don't commit any yet
-	hunkblock_t* h;
-	hunkblock_t* hprev;
-
 	maxhunksize = maxsize;
 	curhunksize = 0;
-	hprev = NULL;
-	h = hunk_blocks;
-	while(h != NULL)
-	{
-		if((h->size - h->topUsed) > maxsize)
-		{
-			break;
-		} else
-		{
-			hprev = h;
-			h = h->next;
-		};
-	};
-	if(h == NULL)
-	{
-		if(maxhunksize > 65536)
-		{
-			membase = malloc(maxhunksize);
-			if (membase == NULL)
-				Sys_Error("unable to allocate %d bytes", maxsize);
-			memset (membase, 0, maxsize);
-			h = malloc(sizeof(hunkblock_t));
-			if (h == NULL)
-				Sys_Error("unable to allocate %d bytes", sizeof(hunkblock_t));
-			h->block = membase;
-			h->size = maxhunksize;
-			h->topUsed = maxhunksize;
-			h->topAllocated = 0;
-			h->refCount = 0;
-			h->next = NULL;
-			if(hprev == NULL)
-			{
-				hunk_blocks = h;
-			} else
-			{
-				hprev->next = h;
-			};
-		} else
-		{
-			membase = malloc(maxhunksize);
-			if (membase == NULL)
-				Sys_Error("unable to allocate %d bytes", maxsize);
-			memset (membase, 0, maxsize);
-		};
-	} else
-	{
-		membase = h->block + h->topUsed;
-		h->topUsed += maxhunksize;
-		memset (membase, 0, maxsize);
-	};
-	cur_block = h;
+	membase = malloc(maxhunksize);
+	if (membase == NULL)
+		Sys_Error(ERR_FATAL, "unable to allocate %d bytes", maxsize);
+
 	return membase;
 }
 
@@ -749,11 +699,9 @@ void *Hunk_Alloc (int size)
 	// round to cacheline
 	size = (size+31)&~31;
 	if (curhunksize + size > maxhunksize)
-		Sys_Error("Hunk_Alloc overflow");
+		Sys_Error(ERR_FATAL, "Hunk_Alloc overflow");
 	buf = membase + curhunksize;
 	curhunksize += size;
-	if(cur_block != NULL)
-		cur_block->topAllocated += size;
 	return buf;
 }
 
@@ -761,63 +709,17 @@ int Hunk_End (void)
 {
 	byte *n;
 
-	if(cur_block != NULL)
-	{
-		cur_block->topUsed = cur_block->topAllocated;
-		cur_block->refCount++;
-		cur_block = NULL;
-	} else
-	{
-		n = realloc(membase, curhunksize);
-		if (n != membase)
-			Sys_Error("Hunk_End:  Could not remap virtual block (%d)", errno);
-	};
+	n = realloc(membase, curhunksize);
+	if (n != membase)
+		Sys_Error(ERR_FATAL, "Hunk_End:  Could not remap virtual block (%d)", errno);
+	
 	return curhunksize;
 }
 
 void Hunk_Free (void *base)
 {
-	hunkblock_t* hprev;
-	hunkblock_t* h;
-	int bpos;
-	qboolean hFound;
-	int hpos;
-
-	hprev = NULL;
-	h = hunk_blocks;
-	bpos = (int)base;
-	hFound = false;
-	while(h != NULL)
-	{
-		hpos = (int)(h->block);
-		if((bpos >= hpos) && (bpos < (hpos + h->size)))
-		{
-			h->refCount--;
-			if(h->refCount == 0)
-			{
-				free(h->block);
-				if(hprev == NULL)
-				{
-					hunk_blocks = h->next;
-				} else
-				{
-					hprev->next = h->next;
-				};
-				free(h);
-			};
-			hFound = true;
-			break;
-		} else
-		{
-			hprev = h;
-			h = h->next;
-		};
-	};
-	if(!hFound)
-	{
-		if (base)
-			free(base);
-	};
+	if (base) 
+		free(base);
 }
 
 int Sys_Milliseconds (void)
