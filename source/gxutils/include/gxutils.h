@@ -89,4 +89,6 @@ void GXU_CopyTexSubV8(unsigned char* src, int width, int height, unsigned char* 
 
 void GXU_CopyTexSubIA4(unsigned char* src, int width, int height, unsigned char* dst, int xoffset, int yoffset, int tex_width, int tex_height);
 
+void GXU_Ortho(Mtx44 mtx, f32 top, f32 bottom, f32 left, f32 right, f32 nearP, f32 farP);
+
 #endif

@@ -557,3 +557,21 @@ void GXU_CopyTexSubIA4(unsigned char* src, int width, int height, unsigned char*
 		};
 	};
 }
+
+void GXU_Ortho(Mtx44 mtx, f32 top, f32 bottom, f32 left, f32 right, f32 nearP, f32 farP)
+{
+	f32 t;
+
+	memset(mtx, 0, 4 * 4 * sizeof(f32));
+	t = 1.0f / (right - left);
+	mtx[0][0] = 2 * t;
+	mtx[0][3] = (-right - left) * t;
+	t = 1.0f / (top - bottom);
+	mtx[1][1] = 2 * t;
+	mtx[1][3] = (-top - bottom)*t;
+	t = 1.0f / (farP - nearP);
+	mtx[2][2] = -2 * t;
+	mtx[2][3] = (-farP - nearP) * t;
+	mtx[3][3] = 1;
+}
+
