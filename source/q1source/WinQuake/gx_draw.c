@@ -83,7 +83,7 @@ gxtexture_t	gxtextures[MAX_GXTEXTURES];
 gxtexobj_t	gxtexobjs[MAX_GXTEXTURES];
 int			numgxtextures;
 
-static u8 oldtarget = GX_TEXMAP0;
+static GLenum oldtarget = GX_TEXMAP0;
 
 
 void GX_Bind (int texnum)
@@ -122,6 +122,163 @@ qboolean GX_ReallocTex(int length, int width, int height)
 	return changed;
 }
 
+byte* GX_CopyTexRGBA8(byte* src, int width, int height, byte* dst)
+{
+	int x;
+	int y;
+	int xi;
+	int yi;
+	int i;
+	int j;
+	int k;
+	int l;
+
+	i = 0;
+	j = 4 * width - 16;
+	l = 12 * width;
+	for(y = 0; y < height; y += 4)
+	{
+		for(x = 0; x < width; x += 4)
+		{
+			k = i;
+			for(yi = 0; yi < 4; yi++)
+			{
+				for(xi = 0; xi < 4; xi++)
+				{
+					*(dst++) = src[k + 3];
+					*(dst++) = src[k];
+					k += 4;
+				};
+				k += j;
+			};
+			k = i;
+			for(yi = 0; yi < 4; yi++)
+			{
+				for(xi = 0; xi < 4; xi++)
+				{
+					*(dst++) = src[k + 1];
+					*(dst++) = src[k + 2];
+					k += 4;
+				};
+				k += j;
+			};
+			i += 16;
+		};
+		i += l;
+	};
+	return dst;
+}
+
+byte* GX_CopyTexRGB5A3(byte* src, int width, int height, byte* dst)
+{
+	int x;
+	int y;
+	int xi;
+	int yi;
+	int i;
+	int j;
+	int k;
+	int l;
+	byte s1;
+	byte s2;
+
+	i = 0;
+	j = 2 * width - 8;
+	l = 6 * width;
+	for(y = 0; y < height; y += 4)
+	{
+		for(x = 0; x < width; x += 4)
+		{
+			k = i;
+			for(yi = 0; yi < 4; yi++)
+			{
+				for(xi = 0; xi < 4; xi++)
+				{
+					s1 = src[k];
+					s2 = src[k + 1];
+					*(dst++) = (((s2 & 15) >> 1) << 4) | (s1 >> 4);
+					*(dst++) = ((s1 & 15) << 4) | (s2 >> 4);
+					k += 2;
+				};
+				k += j;
+			};
+			i += 8;
+		};
+		i += l;
+	};
+	return dst;
+}
+
+byte* GX_CopyTexV8(byte* src, int width, int height, byte* dst)
+{
+	int x;
+	int y;
+	int xi;
+	int yi;
+	int i;
+	int j;
+	int k;
+	int l;
+
+	i = 0;
+	j = width - 8;
+	l = 3 * width;
+	for(y = 0; y < height; y += 4)
+	{
+		for(x = 0; x < width; x += 8)
+		{
+			k = i;
+			for(yi = 0; yi < 4; yi++)
+			{
+				for(xi = 0; xi < 8; xi++)
+				{
+					*(dst++) = src[k];
+					k++;
+				};
+				k += j;
+			};
+			i += 8;
+		};
+		i += l;
+	};
+	return dst;
+}
+
+byte* GX_CopyTexIA4(byte* src, int width, int height, byte* dst)
+{
+	int x;
+	int y;
+	int xi;
+	int yi;
+	int i;
+	int j;
+	int k;
+	int l;
+
+	i = 0;
+	j = width - 8;
+	l = 3 * width;
+	for(y = 0; y < height; y += 4)
+	{
+		for(x = 0; x < width; x += 8)
+		{
+			k = i;
+			for(yi = 0; yi < 4; yi++)
+			{
+				for(xi = 0; xi < 8; xi++)
+				{
+					*(dst++) = ((src[k] & 15) << 4) | (src[k] >> 4);
+					k++;
+				};
+				k += j;
+			};
+			i += 8;
+		};
+		i += l;
+	};
+	return dst;
+}
+
 void GX_BindCurrentTex(qboolean changed, int format, int mipmap)
 {
 	DCFlushRange(gxtexobjs[currenttexture].data, gxtexobjs[currenttexture].length);
@@ -137,17 +294,17 @@ void GX_LoadAndBind (void* data, int length, int width, int height, int format)
 	switch(format)
 	{
 	case GX_TF_RGBA8:
-		GXU_CopyTexRGBA8((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
+		GX_CopyTexRGBA8((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
 		break;
 	case GX_TF_RGB5A3:
-		GXU_CopyTexRGB5A3((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
+		GX_CopyTexRGB5A3((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
 		break;
 	case GX_TF_I8:
 	case GX_TF_A8:
-		GXU_CopyTexV8((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
+		GX_CopyTexV8((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
 		break;
 	case GX_TF_IA4:
-		GXU_CopyTexIA4((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
+		GX_CopyTexIA4((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
 		break;
 	};
 	GX_BindCurrentTex(changed, format, GX_FALSE);
@@ -156,13 +313,88 @@ void GX_LoadAndBind (void* data, int length, int width, int height, int format)
 void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int height, int format)
 {
 	byte* dst;
+	int tex_width;
+	int tex_height;
+	int ybegin;
+	int yend;
+	int x;
+	int y;
+	int xi;
+	int yi;
+	int xs;
+	int ys;
+	int k;
+	qboolean in;
+	byte s1;
+	byte s2;
 
 	if(format == GX_TF_RGBA8)
 	{
 		dst = (byte*)(gxtexobjs[currenttexture].data);
 		if(dst != NULL)
 		{
-			GXU_CopyTexSubRGBA8(data, width, height, dst, xoffset, yoffset, gxtexobjs[currenttexture].width, gxtexobjs[currenttexture].height);
+			tex_width = gxtexobjs[currenttexture].width;
+			tex_height = gxtexobjs[currenttexture].height;
+			ybegin = (yoffset >> 2) << 2;
+			if(ybegin < 0) 
+				ybegin = 0;
+			if(ybegin > tex_height) 
+				ybegin = tex_height;
+			yend = (((yoffset + height) >> 2) << 2) + 4;
+			if(yend < 0) 
+				yend = 0;
+			if(yend > tex_height) 
+				yend = tex_height;
+			if(ybegin > 0) 
+				dst += (4 * ybegin * tex_height);
+			for(y = ybegin; y < yend; y += 4)
+			{
+				for(x = 0; x < tex_width; x += 4)
+				{
+					for(yi = 0; yi < 4; yi++)
+					{
+						for(xi = 0; xi < 4; xi++)
+						{
+							in = false;
+							xs = x + xi - xoffset;
+							if((xs >= 0)&&(xs < width))
+							{
+								ys = y + yi - yoffset;
+								if((ys >= 0)&&(ys < height))
+								{
+									k = 4 * (ys * width + xs);
+									in = true;
+									*(dst++) = ((byte*)data)[k + 3];
+									*(dst++) = ((byte*)data)[k];
+								};
+							};
+							if(!in)
+								dst += 2;
+						};
+					};
+					for(yi = 0; yi < 4; yi++)
+					{
+						for(xi = 0; xi < 4; xi++)
+						{
+							in = false;
+							xs = x + xi - xoffset;
+							if((xs >= 0)&&(xs < width))
+							{
+								ys = y + yi - yoffset;
+								if((ys >= 0)&&(ys < height))
+								{
+									k = 4 * (ys * width + xs);
+									in = true;
+									*(dst++) = ((byte*)data)[k + 1];
+									*(dst++) = ((byte*)data)[k + 2];
+								};
+							};
+							if(!in)
+								dst += 2;
+						};
+					};
+				};
+			};
 		};
 		GX_BindCurrentTex(true, format, GX_FALSE);
 	} else if(format == GX_TF_RGB5A3)
@@ -170,7 +402,49 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 		dst = (byte*)(gxtexobjs[currenttexture].data);
 		if(dst != NULL)
 		{
-			GXU_CopyTexSubRGB5A3(data, width, height, dst, xoffset, yoffset, gxtexobjs[currenttexture].width, gxtexobjs[currenttexture].height);
+			tex_width = gxtexobjs[currenttexture].width;
+			tex_height = gxtexobjs[currenttexture].height;
+			ybegin = (yoffset >> 2) << 2;
+			if(ybegin < 0) 
+				ybegin = 0;
+			if(ybegin > tex_height) 
+				ybegin = tex_height;
+			yend = (((yoffset + height) >> 2) << 2) + 4;
+			if(yend < 0) 
+				yend = 0;
+			if(yend > tex_height) 
+				yend = tex_height;
+			if(ybegin > 0) 
+				dst += (2 * ybegin * tex_height);
+			for(y = ybegin; y < yend; y += 4)
+			{
+				for(x = 0; x < tex_width; x += 4)
+				{
+					for(yi = 0; yi < 4; yi++)
+					{
+						for(xi = 0; xi < 4; xi++)
+						{
+							in = false;
+							xs = x + xi - xoffset;
+							if((xs >= 0)&&(xs < width))
+							{
+								ys = y + yi - yoffset;
+								if((ys >= 0)&&(ys < height))
+								{
+									k = 2 * (ys * width + xs);
+									in = true;
+									s1 = ((byte*)data)[k];
+									s2 = ((byte*)data)[k + 1];
+									*(dst++) = (((s2 & 15) >> 1) << 4) | (s1 >> 4);
+									*(dst++) = ((s1 & 15) << 4) | (s2 >> 4);
+								};
+							};
+							if(!in)
+								dst += 2;
+						};
+					};
+				};
+			};
 		};
 		GX_BindCurrentTex(true, format, GX_FALSE);
 	} else if((format == GX_TF_A8)||(format == GX_TF_I8))
@@ -178,7 +452,46 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 		dst = (byte*)(gxtexobjs[currenttexture].data);
 		if(dst != NULL)
 		{
-			GXU_CopyTexSubV8(data, width, height, dst, xoffset, yoffset, gxtexobjs[currenttexture].width, gxtexobjs[currenttexture].height);
+			tex_width = gxtexobjs[currenttexture].width;
+			tex_height = gxtexobjs[currenttexture].height;
+			ybegin = (yoffset >> 2) << 2;
+			if(ybegin < 0) 
+				ybegin = 0;
+			if(ybegin > tex_height) 
+				ybegin = tex_height;
+			yend = (((yoffset + height) >> 2) << 2) + 4;
+			if(yend < 0) 
+				yend = 0;
+			if(yend > tex_height) 
+				yend = tex_height;
+			if(ybegin > 0) 
+				dst += (ybegin * tex_height);
+			for(y = ybegin; y < yend; y += 4)
+			{
+				for(x = 0; x < tex_width; x += 8)
+				{
+					for(yi = 0; yi < 4; yi++)
+					{
+						for(xi = 0; xi < 8; xi++)
+						{
+							in = false;
+							xs = x + xi - xoffset;
+							if((xs >= 0)&&(xs < width))
+							{
+								ys = y + yi - yoffset;
+								if((ys >= 0)&&(ys < height))
+								{
+									k = ys * width + xs;
+									in = true;
+									*(dst++) = ((byte*)data)[k];
+								};
+							};
+							if(!in)
+								dst++;
+						};
+					};
+				};
+			};
 		};
 		GX_BindCurrentTex(true, format, GX_FALSE);
 	} else if(format == GX_TF_IA4)
@@ -186,7 +499,47 @@ void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int hei
 		dst = (byte*)(gxtexobjs[currenttexture].data);
 		if(dst != NULL)
 		{
-			GXU_CopyTexSubIA4(data, width, height, dst, xoffset, yoffset, gxtexobjs[currenttexture].width, gxtexobjs[currenttexture].height);
+			tex_width = gxtexobjs[currenttexture].width;
+			tex_height = gxtexobjs[currenttexture].height;
+			ybegin = (yoffset >> 2) << 2;
+			if(ybegin < 0) 
+				ybegin = 0;
+			if(ybegin > tex_height) 
+				ybegin = tex_height;
+			yend = (((yoffset + height) >> 2) << 2) + 4;
+			if(yend < 0) 
+				yend = 0;
+			if(yend > tex_height) 
+				yend = tex_height;
+			if(ybegin > 0) 
+				dst += (ybegin * tex_height);
+			for(y = ybegin; y < yend; y += 4)
+			{
+				for(x = 0; x < tex_width; x += 8)
+				{
+					for(yi = 0; yi < 4; yi++)
+					{
+						for(xi = 0; xi < 8; xi++)
+						{
+							in = false;
+							xs = x + xi - xoffset;
+							if((xs >= 0)&&(xs < width))
+							{
+								ys = y + yi - yoffset;
+								if((ys >= 0)&&(ys < height))
+								{
+									k = ys * width + xs;
+									in = true;
+									s1 = ((byte*)data)[k];
+									*(dst++) = ((s1 & 15) << 4) | (s1 >> 4);
+								};
+							};
+							if(!in)
+								dst++;
+						};
+					};
+				};
+			};
 		};
 		GX_BindCurrentTex(true, format, GX_FALSE);
 	};
@@ -198,6 +551,23 @@ void GX_SetMinMag (int minfilt, int magfilt)
 	{
 		GX_InitTexObjFilterMode(&gxtexobjs[currenttexture].texobj, minfilt, magfilt);
 	};
+}
+
+void GX_Ortho(Mtx44 mtx, f32 top, f32 bottom, f32 left, f32 right, f32 nearP, f32 farP)
+{
+	f32 t;
+
+	memset(mtx, 0, 4 * 4 * sizeof(f32));
+	t = 1.0f / (right - left);
+	mtx[0][0] = 2 * t;
+	mtx[0][3] = (-right - left) * t;
+	t = 1.0f / (top - bottom);
+	mtx[1][1] = 2 * t;
+	mtx[1][3] = (-top - bottom)*t;
+	t = 1.0f / (farP - nearP);
+	mtx[2][2] = -2 * t;
+	mtx[2][3] = (-farP - nearP) * t;
+	mtx[3][3] = 1;
 }
 
 /*
@@ -983,7 +1353,7 @@ void GX_Set2D (void)
 	gxu_viewport_height = gxheight;
 	GX_SetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxdepthmin, gxdepthmax);
 
-	GXU_Ortho(gxu_projection_matrices[gxu_cur_projection_matrix], 0, vid.height, 0, vid.width, 0, 300); //-99999, 99999);
+	GX_Ortho(gxu_projection_matrices[gxu_cur_projection_matrix], 0, vid.height, 0, vid.width, 0, 300); //-99999, 99999);
 	GX_LoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], GX_ORTHOGRAPHIC);
 
 	guMtxIdentity(gxu_modelview_matrices[gxu_cur_modelview_matrix]);
@@ -1193,13 +1563,13 @@ texels += scaled_width * scaled_height;
 		};
 		scaledlen = GX_GetTexBufferSize(scaled_width, scaled_height, GX_TF_RGBA8, GX_TRUE, miplevel);
 		changed = GX_ReallocTex(scaledlen, scaled_width, scaled_height);
-		dst = GXU_CopyTexRGBA8((byte*)scaled, scaled_width, scaled_height, (byte*)(gxtexobjs[currenttexture].data));
+		dst = GX_CopyTexRGBA8((byte*)scaled, scaled_width, scaled_height, (byte*)(gxtexobjs[currenttexture].data));
 		while (scaled_width > 4 && scaled_height > 4)
 		{
 			GX_MipMap ((byte *)scaled, scaled_width, scaled_height);
 			scaled_width >>= 1;
 			scaled_height >>= 1;
-			dst = GXU_CopyTexRGBA8((byte*)scaled, scaled_width, scaled_height, dst);
+			dst = GX_CopyTexRGBA8((byte*)scaled, scaled_width, scaled_height, dst);
 		};
 		GX_BindCurrentTex(changed, GX_TF_RGBA8, GX_TRUE);
 	} else
@@ -1318,7 +1688,7 @@ int GX_LoadPicTexture (qpic_t *pic)
 
 /****************************************/
 
-void GX_SelectTexture (u8 target) 
+void GX_SelectTexture (GLenum target) 
 {
 	if (!gx_mtexable)
 		return;

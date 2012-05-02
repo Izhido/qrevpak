@@ -85,8 +85,7 @@ void QGX_Init (void)
 	gxu_alpha_test_enabled = true;
 	GX_SetAlphaCompare(GX_GEQUAL, gxu_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gxu_alpha_test_higher);
 
-	/******************* Investigate how to implement this function ASAP: ***************************************/
-	//glShadeModel (GL_FLAT);
+	glShadeModel (GL_FLAT);
 
 	GX_SetMinMag (GX_NEAR, GX_NEAR);
 
@@ -326,5 +325,15 @@ void	VID_Update (vrect_t *rects)
 {
 }
 
+/******************* These are part of the GL wrapper and MUST BE DELETED ASAP: ***************************************/
+void glShadeModel(GLenum mode)
+{
+}
+
+void glHint(GLenum target, GLenum mode)
+{
+}
+
+/************************************************************************************************************************/
 #endif
 

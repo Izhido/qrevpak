@@ -73,22 +73,4 @@ void GXU_CallGXTexCoord2f32(f32 s, f32 t);
 
 void GXU_CallGXEnd(void);
 
-unsigned char* GXU_CopyTexRGBA8(unsigned char* src, int width, int height, unsigned char* dst);
-
-unsigned char* GXU_CopyTexRGB5A3(unsigned char* src, int width, int height, unsigned char* dst);
-
-unsigned char* GXU_CopyTexV8(unsigned char* src, int width, int height, unsigned char* dst);
-
-unsigned char* GXU_CopyTexIA4(unsigned char* src, int width, int height, unsigned char* dst);
-
-void GXU_CopyTexSubRGBA8(unsigned char* src, int width, int height, unsigned char* dst, int xoffset, int yoffset, int tex_width, int tex_height);
-
-void GXU_CopyTexSubRGB5A3(unsigned char* src, int width, int height, unsigned char* dst, int xoffset, int yoffset, int tex_width, int tex_height);
-
-void GXU_CopyTexSubV8(unsigned char* src, int width, int height, unsigned char* dst, int xoffset, int yoffset, int tex_width, int tex_height);
-
-void GXU_CopyTexSubIA4(unsigned char* src, int width, int height, unsigned char* dst, int xoffset, int yoffset, int tex_width, int tex_height);
-
-void GXU_Ortho(Mtx44 mtx, f32 top, f32 bottom, f32 left, f32 right, f32 nearP, f32 farP);
-
 #endif

@@ -34,6 +34,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define QGL
 #include "../ref_gx/gx_local.h"
 
+#include "gxutils.h"
+
 static FILE *log_fp = NULL;
 
 void ( APIENTRY * qguMtxConcat )(Mtx a, Mtx b, Mtx ab);
@@ -2391,7 +2393,7 @@ qboolean QGL_Init( const char *dllname )
 	return true;
 }
 
-void GXimp_EnableLogging( qboolean enable )
+void GLimp_EnableLogging( qboolean enable )
 {
 	if ( enable )
 	{
@@ -2891,7 +2893,7 @@ void GXimp_EnableLogging( qboolean enable )
 }
 
 
-void GXimp_LogNewFrame( void )
+void GLimp_LogNewFrame( void )
 {
 	fprintf( log_fp, "*** R_BeginFrame ***\n");
 }

@@ -69,6 +69,9 @@
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\cd_revol.c">
       <Filter>Source Files\revol</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\glimp_revol.c">
+      <Filter>Source Files\revol</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\in_revol.c">
       <Filter>Source Files\revol</Filter>
     </ClCompile>
@@ -395,9 +398,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\oggplayer\source\oggplayer.c">
       <Filter>Source Files\oggplayer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\gximp_revol.c">
-      <Filter>Source Files\revol</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

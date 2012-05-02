@@ -323,7 +323,7 @@ void DrawGXWaterPolyLightmap (gxpoly_t *p);
 
 qboolean mtexenabled = false;
 
-void GX_SelectTexture (u8 target);
+void GX_SelectTexture (GLenum target);
 
 void GX_DisableMultitexture(void) 
 {

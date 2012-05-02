@@ -37,7 +37,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "../client/ref.h"
 
 #include <gccore.h>
-#include "gxutils.h"
 
 #include "qgx.h"
 
@@ -268,7 +267,7 @@ void GL_MBind( GLenum target, int texnum );
 void GX_LoadAndBind (void* data, int length, int width, int height, int format);
 void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int height, int format);
 void GX_SetMinMag (int minfilt, int magfilt);
-void GX_TexEnv( GLenum value );
+void GL_TexEnv( GLenum value );
 void GL_EnableMultitexture( qboolean enable );
 void GL_SelectTexture( GLenum );
 
@@ -363,7 +362,7 @@ void GL_TextureSolidMode( char *string );
 /*
 ** GL extension emulation functions
 */
-void GX_DrawParticles( int n, const particle_t particles[], const unsigned colortable[768] );
+void GL_DrawParticles( int n, const particle_t particles[], const unsigned colortable[768] );
 
 /*
 ** GL config stuff
@@ -463,12 +462,12 @@ IMPLEMENTATION SPECIFIC FUNCTIONS
 ====================================================================
 */
 
-void		GXimp_BeginFrame( float camera_separation );
-void		GXimp_EndFrame( void );
-int 		GXimp_Init( void *hinstance, void *hWnd );
-void		GXimp_Shutdown( void );
-int     	GXimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen );
-void		GXimp_AppActivate( qboolean active );
-void		GXimp_EnableLogging( qboolean enable );
-void		GXimp_LogNewFrame( void );
+void		GLimp_BeginFrame( float camera_separation );
+void		GLimp_EndFrame( void );
+int 		GLimp_Init( void *hinstance, void *hWnd );
+void		GLimp_Shutdown( void );
+int     	GLimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen );
+void		GLimp_AppActivate( qboolean active );
+void		GLimp_EnableLogging( qboolean enable );
+void		GLimp_LogNewFrame( void );
 

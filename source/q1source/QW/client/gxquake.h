@@ -18,9 +18,49 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+/******************* These are supposed to be in <gl/gl.h> and <gl/glu.h> and MUST BE DELETED ASAP: *********************/
+typedef unsigned int GLenum;
+
+typedef float GLfloat;
+
+typedef float GLclampf;
+
+#define GL_SMOOTH 23
+
+#define GL_PERSPECTIVE_CORRECTION_HINT 31
+
+#define GL_FASTEST 32
+
+#define GL_FLAT 34
+
+#define GL_NICEST 35
+
+void glShadeModel(GLenum mode);
+
+void glHint(GLenum target, GLenum mode);
+
+/************************************************************************************************************************/
+
 void GX_BeginRendering (int *x, int *y, int *width, int *height);
 void GX_EndRendering (void);
 
+
+/******************* These might exist in GX hardware. Investigate:
+// Function prototypes for the Texture Object Extension routines
+typedef GLboolean (APIENTRY *ARETEXRESFUNCPTR)(GLsizei, const GLuint *,
+                    const GLboolean *);
+typedef void (APIENTRY *BINDTEXFUNCPTR)(GLenum, GLuint);
+typedef void (APIENTRY *DELTEXFUNCPTR)(GLsizei, const GLuint *);
+typedef void (APIENTRY *GENTEXFUNCPTR)(GLsizei, GLuint *);
+typedef GLboolean (APIENTRY *ISTEXFUNCPTR)(GLuint);
+typedef void (APIENTRY *PRIORTEXFUNCPTR)(GLsizei, const GLuint *,
+                    const GLclampf *);
+typedef void (APIENTRY *TEXSUBIMAGEPTR)(int, int, int, int, int, int, int, int, void *);
+
+extern	BINDTEXFUNCPTR bindTexFunc;
+extern	DELTEXFUNCPTR delTexFunc;
+extern	TEXSUBIMAGEPTR TexSubImage2DFunc;
+*******************/
 
 extern	int texture_extension_number;
 extern	int		texture_mode;
@@ -42,6 +82,13 @@ typedef struct
 extern gxvert_t gxv;
 
 extern	int gxx, gxy, gxwidth, gxheight;
+
+/******************* These might exist in GX hardware. Investigate:
+extern	PROC glArrayElementEXT;
+extern	PROC glColorPointerEXT;
+extern	PROC glTexturePointerEXT;
+extern	PROC glVertexPointerEXT;
+*******************/
 
 // r_local.h -- private refresh defs
 

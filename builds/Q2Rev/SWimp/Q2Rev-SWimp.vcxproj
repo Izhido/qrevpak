@@ -65,7 +65,7 @@ make</NMakeReBuildCommandLine>
     <ClCompile Include="..\..\..\source\oggplayer\source\oggplayer.c" />
     <ClCompile Include="..\..\..\source\oskrevol\source\osk_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\cd_revol.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\gximp_revol.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\glimp_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\in_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\net_udp.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\qgl_revol.c" />
