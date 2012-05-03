@@ -74,7 +74,6 @@ extern  void ( APIENTRY * qglCopyTexImage2D )(GLenum target, GLint level, GLenum
 extern  void ( APIENTRY * qglCopyTexSubImage1D )(GLenum target, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width);
 extern  void ( APIENTRY * qglCopyTexSubImage2D )(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height);
 extern  void ( APIENTRY * qglDeleteLists )(GLuint list, GLsizei range);
-extern  void ( APIENTRY * qglDeleteTextures )(GLsizei n, const GLuint *textures);
 extern  void ( APIENTRY * qglDisable )(GLenum cap);
 extern  void ( APIENTRY * qglDisableClientState )(GLenum array);
 extern  void ( APIENTRY * qgxDisableTexture )(void);

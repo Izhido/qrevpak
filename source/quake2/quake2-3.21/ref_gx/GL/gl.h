@@ -253,8 +253,6 @@ void glCopyTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffse
 
 void glDeleteLists(GLuint list, GLsizei range);
 
-void glDeleteTextures(GLsizei n, const GLuint *textures);
-
 void glDisable(GLenum cap);
 
 void glDisableClientState(GLenum array);

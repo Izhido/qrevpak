@@ -70,7 +70,6 @@ void ( APIENTRY * qglCopyTexImage2D )(GLenum target, GLint level, GLenum interna
 void ( APIENTRY * qglCopyTexSubImage1D )(GLenum target, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width);
 void ( APIENTRY * qglCopyTexSubImage2D )(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height);
 void ( APIENTRY * qglDeleteLists )(GLuint list, GLsizei range);
-void ( APIENTRY * qglDeleteTextures )(GLsizei n, const GLuint *textures);
 void ( APIENTRY * qglDisable )(GLenum cap);
 void ( APIENTRY * qglDisableClientState )(GLenum array);
 void ( APIENTRY * qgxDisableTexture )(void);
@@ -310,7 +309,6 @@ static void ( APIENTRY * dllCopyTexImage2D )(GLenum target, GLint level, GLenum 
 static void ( APIENTRY * dllCopyTexSubImage1D )(GLenum target, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width);
 static void ( APIENTRY * dllCopyTexSubImage2D )(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height);
 static void ( APIENTRY * dllDeleteLists )(GLuint list, GLsizei range);
-static void ( APIENTRY * dllDeleteTextures )(GLsizei n, const GLuint *textures);
 static void ( APIENTRY * dllDisable )(GLenum cap);
 static void ( APIENTRY * dllDisableClientState )(GLenum array);
 static void ( APIENTRY * dllDisableTexture )(void);
@@ -665,12 +663,6 @@ static void APIENTRY logDeleteLists(GLuint list, GLsizei range)
 {
 	SIG( "glDeleteLists" );
 	dllDeleteLists( list, range );
-}
-
-static void APIENTRY logDeleteTextures(GLsizei n, const GLuint *textures)
-{
-	SIG( "glDeleteTextures" );
-	dllDeleteTextures( n, textures );
 }
 
 static void APIENTRY logDisable(GLenum cap)
@@ -1918,7 +1910,6 @@ void QGL_Shutdown( void )
 	qglCopyTexSubImage1D         = NULL;
 	qglCopyTexSubImage2D         = NULL;
 	qglDeleteLists               = NULL;
-	qglDeleteTextures            = NULL;
 	qglDisable                   = NULL;
 	qglDisableClientState        = NULL;
 	qgxDisableTexture            = NULL;
@@ -2173,7 +2164,6 @@ qboolean QGL_Init( const char *dllname )
 	qglCopyTexSubImage1D         = dllCopyTexSubImage1D = glCopyTexSubImage1D;
 	qglCopyTexSubImage2D         = dllCopyTexSubImage2D = glCopyTexSubImage2D;
 	qglDeleteLists               = dllDeleteLists = glDeleteLists;
-	qglDeleteTextures            = dllDeleteTextures = glDeleteTextures;
 	qglDisable                   = dllDisable = glDisable;
 	qglDisableClientState        = dllDisableClientState = glDisableClientState;
 	qgxDisableTexture            = dllDisableTexture = GXU_DisableTexture;
@@ -2446,7 +2436,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglCopyTexSubImage1D         = logCopyTexSubImage1D;
 		qglCopyTexSubImage2D         = logCopyTexSubImage2D;
 		qglDeleteLists               = logDeleteLists ;
-		qglDeleteTextures            = logDeleteTextures ;
 		qglDisable                   = logDisable ;
 		qglDisableClientState        = logDisableClientState ;
 		qgxDisableTexture            = logDisableTexture ;
@@ -2685,7 +2674,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglCopyTexSubImage1D         = dllCopyTexSubImage1D;
 		qglCopyTexSubImage2D         = dllCopyTexSubImage2D;
 		qglDeleteLists               = dllDeleteLists ;
-		qglDeleteTextures            = dllDeleteTextures ;
 		qglDisable                   = dllDisable ;
 		qglDisableClientState        = dllDisableClientState ;
 		qgxDisableTexture            = dllDisableTexture ;

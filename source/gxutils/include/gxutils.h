@@ -73,4 +73,12 @@ void GXU_CallGXTexCoord2f32(f32 s, f32 t);
 
 void GXU_CallGXEnd(void);
 
+unsigned char* GX_CopyTexRGBA8(unsigned char* src, int width, int height, unsigned char* dst);
+
+unsigned char* GX_CopyTexRGB5A3(unsigned char* src, int width, int height, unsigned char* dst);
+
+unsigned char* GX_CopyTexV8(unsigned char* src, int width, int height, unsigned char* dst);
+
+unsigned char* GX_CopyTexIA4(unsigned char* src, int width, int height, unsigned char* dst);
+
 #endif

@@ -159,3 +159,160 @@ void GXU_CallGXEnd(void)
 {
 	GX_End();
 }
+
+unsigned char* GX_CopyTexRGBA8(unsigned char* src, int width, int height, unsigned char* dst)
+{
+	int x;
+	int y;
+	int xi;
+	int yi;
+	int i;
+	int j;
+	int k;
+	int l;
+
+	i = 0;
+	j = 4 * width - 16;
+	l = 12 * width;
+	for(y = 0; y < height; y += 4)
+	{
+		for(x = 0; x < width; x += 4)
+		{
+			k = i;
+			for(yi = 0; yi < 4; yi++)
+			{
+				for(xi = 0; xi < 4; xi++)
+				{
+					*(dst++) = src[k + 3];
+					*(dst++) = src[k];
+					k += 4;
+				};
+				k += j;
+			};
+			k = i;
+			for(yi = 0; yi < 4; yi++)
+			{
+				for(xi = 0; xi < 4; xi++)
+				{
+					*(dst++) = src[k + 1];
+					*(dst++) = src[k + 2];
+					k += 4;
+				};
+				k += j;
+			};
+			i += 16;
+		};
+		i += l;
+	};
+	return dst;
+}
+
+unsigned char* GX_CopyTexRGB5A3(unsigned char* src, int width, int height, unsigned char* dst)
+{
+	int x;
+	int y;
+	int xi;
+	int yi;
+	int i;
+	int j;
+	int k;
+	int l;
+	unsigned char s1;
+	unsigned char s2;
+
+	i = 0;
+	j = 2 * width - 8;
+	l = 6 * width;
+	for(y = 0; y < height; y += 4)
+	{
+		for(x = 0; x < width; x += 4)
+		{
+			k = i;
+			for(yi = 0; yi < 4; yi++)
+			{
+				for(xi = 0; xi < 4; xi++)
+				{
+					s1 = src[k];
+					s2 = src[k + 1];
+					*(dst++) = (((s2 & 15) >> 1) << 4) | (s1 >> 4);
+					*(dst++) = ((s1 & 15) << 4) | (s2 >> 4);
+					k += 2;
+				};
+				k += j;
+			};
+			i += 8;
+		};
+		i += l;
+	};
+	return dst;
+}
+
+unsigned char* GX_CopyTexV8(unsigned char* src, int width, int height, unsigned char* dst)
+{
+	int x;
+	int y;
+	int xi;
+	int yi;
+	int i;
+	int j;
+	int k;
+	int l;
+
+	i = 0;
+	j = width - 8;
+	l = 3 * width;
+	for(y = 0; y < height; y += 4)
+	{
+		for(x = 0; x < width; x += 8)
+		{
+			k = i;
+			for(yi = 0; yi < 4; yi++)
+			{
+				for(xi = 0; xi < 8; xi++)
+				{
+					*(dst++) = src[k];
+					k++;
+				};
+				k += j;
+			};
+			i += 8;
+		};
+		i += l;
+	};
+	return dst;
+}
+
+unsigned char* GX_CopyTexIA4(unsigned char* src, int width, int height, unsigned char* dst)
+{
+	int x;
+	int y;
+	int xi;
+	int yi;
+	int i;
+	int j;
+	int k;
+	int l;
+
+	i = 0;
+	j = width - 8;
+	l = 3 * width;
+	for(y = 0; y < height; y += 4)
+	{
+		for(x = 0; x < width; x += 8)
+		{
+			k = i;
+			for(yi = 0; yi < 4; yi++)
+			{
+				for(xi = 0; xi < 8; xi++)
+				{
+					*(dst++) = ((src[k] & 15) << 4) | (src[k] >> 4);
+					k++;
+				};
+				k += j;
+			};
+			i += 8;
+		};
+		i += l;
+	};
+	return dst;
+}

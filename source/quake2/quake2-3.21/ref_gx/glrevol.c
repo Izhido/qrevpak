@@ -163,10 +163,6 @@ void glDeleteLists(GLuint list, GLsizei range)
 {
 }
 
-void glDeleteTextures(GLsizei n, const GLuint *textures)
-{
-}
-
 void glDisableClientState(GLenum array)
 {
 }
