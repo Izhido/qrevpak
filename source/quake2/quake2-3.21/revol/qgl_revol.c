@@ -134,7 +134,6 @@ void ( APIENTRY * qglGetTexLevelParameterfv )(GLenum target, GLint level, GLenum
 void ( APIENTRY * qglGetTexLevelParameteriv )(GLenum target, GLint level, GLenum pname, GLint *params);
 void ( APIENTRY * qglGetTexParameterfv )(GLenum target, GLenum pname, GLfloat *params);
 void ( APIENTRY * qglGetTexParameteriv )(GLenum target, GLenum pname, GLint *params);
-void ( APIENTRY * qglHint )(GLenum target, GLenum mode);
 void ( APIENTRY * qglIndexMask )(GLuint mask);
 void ( APIENTRY * qglIndexPointer )(GLenum type, GLsizei stride, const GLvoid *pointer);
 void ( APIENTRY * qglIndexd )(GLdouble c);
@@ -150,6 +149,7 @@ void ( APIENTRY * qglIndexubv )(const GLubyte *c);
 void ( APIENTRY * qglInitNames )(void);
 void ( APIENTRY * qgxInitTexObj )(GXTexObj *obj, void *img_ptr, u16 wd, u16 ht, u8 fmt, u8 wrap_s, u8 wrap_t, u8 mipmap);
 void ( APIENTRY * qgxInitTexObjFilterMode )(GXTexObj *obj, u8 minfilt, u8 magfilt);
+void ( APIENTRY * qgxInitTlutObj )(GXTlutObj *obj, void *lut, u8 fmt, u16 entries);
 void ( APIENTRY * qglInterleavedArrays )(GLenum format, GLsizei stride, const GLvoid *pointer);
 void ( APIENTRY * qgxInvalidateTexAll )(void);
 GLboolean ( APIENTRY * qglIsEnabled )(GLenum cap);
@@ -170,6 +170,7 @@ void ( APIENTRY * qglLoadName )(GLuint name);
 void ( APIENTRY * qgxLoadPosMtxImm )(Mtx mt, u32 pnidx);
 void ( APIENTRY * qgxLoadProjectionMtx )(Mtx44 mt, u8 type);
 void ( APIENTRY * qgxLoadTexObj )(GXTexObj *obj, u8 mapid);
+void ( APIENTRY * qgxLoadTlut)(GXTlutObj *obj, u32 tlut_name);
 void ( APIENTRY * qglLogicOp )(GLenum opcode);
 void ( APIENTRY * qglMap1d )(GLenum target, GLdouble u1, GLdouble u2, GLint stride, GLint order, const GLdouble *points);
 void ( APIENTRY * qglMap1f )(GLenum target, GLfloat u1, GLfloat u2, GLint stride, GLint order, const GLfloat *points);
@@ -259,7 +260,6 @@ void ( APIENTRY * qgxSetCullMode )(u8 mode);
 void ( APIENTRY * qgxSetTevOp )(u8 tevstage, u8 mode);
 void ( APIENTRY * qgxSetViewport )(f32 xOrig, f32 yOrig, f32 wd, f32 ht, f32 nearZ, f32 farZ);
 void ( APIENTRY * qgxSetZMode )(u8 enable, u8 func, u8 update_enable);
-void ( APIENTRY * qglShadeModel )(GLenum mode);
 void ( APIENTRY * qglStencilFunc )(GLenum func, GLint ref, GLuint mask);
 void ( APIENTRY * qglStencilMask )(GLuint mask);
 void ( APIENTRY * qglStencilOp )(GLenum fail, GLenum zfail, GLenum zpass);
@@ -278,7 +278,6 @@ void ( APIENTRY * qglUnlockArraysEXT) ( void );
 
 void ( APIENTRY * qglPointParameterfEXT)( GLenum param, GLfloat value );
 void ( APIENTRY * qglPointParameterfvEXT)( GLenum param, const GLfloat *value );
-void ( APIENTRY * qglColorTableEXT)( int, int, int, int, int, const void * );
 void ( APIENTRY * qglSelectTextureSGIS)( GLenum );
 void ( APIENTRY * qglMTexCoord2fSGIS)( GLenum, GLfloat, GLfloat );
 void ( APIENTRY * qglActiveTextureARB) ( GLenum );
@@ -372,7 +371,6 @@ static void ( APIENTRY * dllGetTexLevelParameterfv )(GLenum target, GLint level,
 static void ( APIENTRY * dllGetTexLevelParameteriv )(GLenum target, GLint level, GLenum pname, GLint *params);
 static void ( APIENTRY * dllGetTexParameterfv )(GLenum target, GLenum pname, GLfloat *params);
 static void ( APIENTRY * dllGetTexParameteriv )(GLenum target, GLenum pname, GLint *params);
-static void ( APIENTRY * dllHint )(GLenum target, GLenum mode);
 static void ( APIENTRY * dllIndexMask )(GLuint mask);
 static void ( APIENTRY * dllIndexPointer )(GLenum type, GLsizei stride, const GLvoid *pointer);
 static void ( APIENTRY * dllIndexd )(GLdouble c);
@@ -505,7 +503,6 @@ static void ( APIENTRY * dllSetCullMode )(u8 mode);
 static void ( APIENTRY * dllSetTevOp )(u8 tevstage, u8 mode);
 static void ( APIENTRY * dllSetViewport )(f32 xOrig, f32 yOrig, f32 wd, f32 ht, f32 nearZ, f32 farZ);
 static void ( APIENTRY * dllSetZMode )(u8 enable, u8 func, u8 update_enable);
-static void ( APIENTRY * dllShadeModel )(GLenum mode);
 static void ( APIENTRY * dllStencilFunc )(GLenum func, GLint ref, GLuint mask);
 static void ( APIENTRY * dllStencilMask )(GLuint mask);
 static void ( APIENTRY * dllStencilOp )(GLenum fail, GLenum zfail, GLenum zpass);
@@ -1037,12 +1034,6 @@ static void APIENTRY logGetTexParameteriv(GLenum target, GLenum pname, GLint *pa
 {
 	SIG( "glGetTexParameteriv" );
 	dllGetTexParameteriv( target, pname, params );
-}
-
-static void APIENTRY logHint(GLenum target, GLenum mode)
-{
-	fprintf( log_fp, "glHint( 0x%x, 0x%x )\n", target, mode );
-	dllHint( target, mode );
 }
 
 static void APIENTRY logIndexMask(GLuint mask)
@@ -1789,12 +1780,6 @@ static void APIENTRY logSetZMode(u8 enable, u8 func, u8 update_enable)
 }
 
 
-static void APIENTRY logShadeModel(GLenum mode)
-{
-	SIG( "glShadeModel" );
-	dllShadeModel( mode );
-}
-
 static void APIENTRY logStencilFunc(GLenum func, GLint ref, GLuint mask)
 {
 	SIG( "glStencilFunc" );
@@ -1966,7 +1951,6 @@ void QGL_Shutdown( void )
 	qglGetTexLevelParameteriv    = NULL;
 	qglGetTexParameterfv         = NULL;
 	qglGetTexParameteriv         = NULL;
-	qglHint                      = NULL;
 	qglIndexMask                 = NULL;
 	qglIndexPointer              = NULL;
 	qglIndexd                    = NULL;
@@ -2091,7 +2075,6 @@ void QGL_Shutdown( void )
 	qgxSetTevOp                  = NULL;
 	qgxSetViewport               = NULL;
 	qgxSetZMode                  = NULL;
-	qglShadeModel                = NULL;
 	qglStencilFunc               = NULL;
 	qglStencilMask               = NULL;
 	qglStencilOp                 = NULL;
@@ -2105,7 +2088,8 @@ void QGL_Shutdown( void )
 	qglTexGeniv                  = NULL;
 	qglVertexPointer             = NULL;
 
-	qglColorTableEXT             = NULL;
+	qgxInitTlutObj               = NULL;
+	qgxLoadTlut                  = NULL;
 
 }
 
@@ -2217,7 +2201,6 @@ qboolean QGL_Init( const char *dllname )
 //	qglGetTexLevelParameteriv    = 	dllGetTexLevelParameteriv    = glGetLevelParameteriv;
 	qglGetTexParameterfv         = 	dllGetTexParameterfv         = glGetTexParameterfv;
 	qglGetTexParameteriv         = 	dllGetTexParameteriv         = glGetTexParameteriv;
-	qglHint                      = 	dllHint                      = glHint;
 	qglIndexMask                 = 	dllIndexMask                 = glIndexMask;
 	qglIndexPointer              = 	dllIndexPointer              = glIndexPointer;
 	qglIndexd                    = 	dllIndexd                    = glIndexd;
@@ -2342,7 +2325,6 @@ qboolean QGL_Init( const char *dllname )
 	qgxSetTevOp                  = 	dllSetTevOp                  = GX_SetTevOp;
 	qgxSetViewport               = 	dllSetViewport               = GX_SetViewport;
 	qgxSetZMode                  = 	dllSetZMode                  = GX_SetZMode;
-	qglShadeModel                = 	dllShadeModel                = glShadeModel;
 	qglStencilFunc               = 	dllStencilFunc               = glStencilFunc;
 	qglStencilMask               = 	dllStencilMask               = glStencilMask;
 	qglStencilOp                 = 	dllStencilOp                 = glStencilOp;
@@ -2361,8 +2343,8 @@ qboolean QGL_Init( const char *dllname )
 
 	qglPointParameterfEXT = 0;
 	qglPointParameterfvEXT = 0;
-	qglColorTableEXT = 0;
-	qglColorTableEXT = 0;
+	qgxInitTlutObj = 0;
+	qgxLoadTlut = 0;
 	qglSelectTextureSGIS = 0;
 	qglMTexCoord2fSGIS = 0;
 	qglActiveTextureARB = 0;
@@ -2488,7 +2470,6 @@ void GLimp_EnableLogging( qboolean enable )
 //		qglGetTexLevelParameteriv    = 	logGetTexLevelParameteriv    ;
 		qglGetTexParameterfv         = 	logGetTexParameterfv         ;
 		qglGetTexParameteriv         = 	logGetTexParameteriv         ;
-		qglHint                      = 	logHint                      ;
 		qglIndexMask                 = 	logIndexMask                 ;
 		qglIndexPointer              = 	logIndexPointer              ;
 		qglIndexd                    = 	logIndexd                    ;
@@ -2613,7 +2594,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qgxSetTevOp                  = 	logSetTevOp                  ;
 		qgxSetViewport               = 	logSetViewport               ;
 		qgxSetZMode                  = 	logSetZMode                  ;
-		qglShadeModel                = 	logShadeModel                ;
 		qglStencilFunc               = 	logStencilFunc               ;
 		qglStencilMask               = 	logStencilMask               ;
 		qglStencilOp                 = 	logStencilOp                 ;
@@ -2725,7 +2705,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglGetTexLevelParameteriv    = 	dllGetTexLevelParameteriv    ;
 		qglGetTexParameterfv         = 	dllGetTexParameterfv         ;
 		qglGetTexParameteriv         = 	dllGetTexParameteriv         ;
-		qglHint                      = 	dllHint                      ;
 		qglIndexMask                 = 	dllIndexMask                 ;
 		qglIndexPointer              = 	dllIndexPointer              ;
 		qglIndexd                    = 	dllIndexd                    ;
@@ -2850,7 +2829,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qgxSetTevOp                  = 	dllSetTevOp                  ;
 		qgxSetViewport               = 	dllSetViewport               ;
 		qgxSetZMode                  = 	dllSetZMode                  ;
-		qglShadeModel                = 	dllShadeModel                ;
 		qglStencilFunc               = 	dllStencilFunc               ;
 		qglStencilMask               = 	dllStencilMask               ;
 		qglStencilOp                 = 	dllStencilOp                 ;

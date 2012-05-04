@@ -342,7 +342,7 @@ void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data
 	}
 	t = rows*hscale / 256;
 
-	if ( !qglColorTableEXT )
+	if ( !qgxLoadTlut )
 	{
 		image32 = Sys_BigStackAlloc(256*256 * sizeof(unsigned), "Draw_StretchRaw");
 

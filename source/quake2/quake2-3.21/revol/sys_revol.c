@@ -47,7 +47,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 
 
-/*typedef struct hunkblock_s
+typedef struct hunkblock_s
 {
 	byte* block;
 	int size;
@@ -58,7 +58,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 } hunkblock_t;
 
 
-*/
+
 int	curtime;
 
 unsigned	sys_frame_time;
@@ -94,16 +94,16 @@ u32 sys_frame_count;
 
 int sys_current_weapon;
 
-/*void*/byte* membase;
+void* membase;
 
 int maxhunksize;
 
 int curhunksize;
 
-/*hunkblock_t* hunk_blocks = NULL;
+hunkblock_t* hunk_blocks = NULL;
 
 hunkblock_t* cur_block;
-*/
+
 #define BIGSTACK_SIZE 2 * 1024 * 1024
 
 byte sys_bigstack[BIGSTACK_SIZE];
@@ -682,74 +682,6 @@ char *Sys_GetClipboardData( void )
 
 void *Hunk_Begin (int maxsize)
 {
-	FILE* f;
-	time_t rawtime;
-	struct tm * timeinfo;
-	char stime[32];
-	f= fopen("QRevPAK.err", "ab");
-	if(f != NULL)
-	{
-		time(&rawtime);
-		timeinfo = localtime (&rawtime);
-		strftime(stime, 32, "%Y/%m/%d %H:%M:%S",timeinfo);
-		fprintf(f, "%s : Hunk_Begin: %i\n", stime, maxsize);
-		fclose(f);
-	};
-	// reserve a huge chunk of memory, but don't commit any yet
-	maxhunksize = maxsize;
-	curhunksize = 0;
-	membase = malloc(maxhunksize);
-	if (membase == NULL)
-		Sys_Error(ERR_FATAL, "unable to allocate %d bytes", maxsize);
-
-	return membase;
-}
-
-void *Hunk_Alloc (int size)
-{
-	byte *buf;
-
-	// round to cacheline
-	size = (size+31)&~31;
-	if (curhunksize + size > maxhunksize)
-		Sys_Error(ERR_FATAL, "Hunk_Alloc overflow");
-	buf = membase + curhunksize;
-	curhunksize += size;
-	return buf;
-}
-
-int Hunk_End (void)
-{
-	FILE* f;
-	time_t rawtime;
-	struct tm * timeinfo;
-	char stime[32];
-	f= fopen("QRevPAK.err", "ab");
-	if(f != NULL)
-	{
-		time(&rawtime);
-		timeinfo = localtime (&rawtime);
-		strftime(stime, 32, "%Y/%m/%d %H:%M:%S",timeinfo);
-		fprintf(f, "%s : Hunk_End: %i\n", stime, curhunksize);
-		fclose(f);
-	};
-	byte *n;
-
-	n = realloc(membase, curhunksize);
-	if (n != membase)
-		Sys_Error(ERR_FATAL, "Hunk_End:  Could not remap virtual block (%d)", errno);
-	
-	return curhunksize;
-}
-
-void Hunk_Free (void *base)
-{
-	if (base) 
-		free(base);
-}
-
-/*void *Hunk_Begin (int maxsize)
-{
 	// reserve a huge chunk of memory, but don't commit any yet
 	hunkblock_t* h;
 	hunkblock_t* hprev;
@@ -887,7 +819,7 @@ void Hunk_Free (void *base)
 			free(base);
 	};
 }
-*/
+
 int Sys_Milliseconds (void)
 {
 	static int		base;

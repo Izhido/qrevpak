@@ -245,7 +245,7 @@ void R_DrawSpriteModel (entity_t *e)
 
     GX_Bind(currentmodel->skins[e->frame]->texnum);
 
-	GL_TexEnv( GX_MODULATE );
+	GX_TexEnv( GX_MODULATE );
 
 	if ( alpha == 1.0 )
 		qgxSetAlphaCompare(GX_GEQUAL, gxu_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gxu_alpha_test_higher);
@@ -281,7 +281,7 @@ void R_DrawSpriteModel (entity_t *e)
 	qgxEnd ();
 
 	qgxSetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
-	GL_TexEnv( GX_REPLACE );
+	GX_TexEnv( GX_REPLACE );
 
 	if ( alpha != 1.0F )
 		qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
@@ -445,7 +445,7 @@ void GL_DrawParticles( int num_particles, const particle_t particles[], const un
 	gxu_z_write_enabled = GX_FALSE;		// no z buffering
 	qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 	qgxSetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
-	GL_TexEnv( GX_MODULATE );
+	GX_TexEnv( GX_MODULATE );
 	qgxBegin (GX_TRIANGLES, gxu_cur_vertex_format, num_particles * 3);
 
 	VectorScale (vup, 1.5, up);
@@ -491,7 +491,7 @@ void GL_DrawParticles( int num_particles, const particle_t particles[], const un
 	gxu_cur_a = 255;
 	gxu_z_write_enabled = GX_TRUE;		// back to normal Z buffering
 	qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
-	GL_TexEnv( GX_REPLACE );
+	GX_TexEnv( GX_REPLACE );
 }
 
 /*
@@ -1234,26 +1234,6 @@ qboolean R_Init( void *hinstance, void *hWnd )
 	{*/
 		ri.Con_Printf( PRINT_ALL, "...GL_EXT_point_parameters not found\n" );
 	/*}*/
-
-#ifdef __linux__
-	if ( strstr( gl_config.extensions_string, "3DFX_set_global_palette" ))
-	{
-		if ( gl_ext_palettedtexture->value )
-		{
-			ri.Con_Printf( PRINT_ALL, "...using 3DFX_set_global_palette\n" );
-			qgl3DfxSetPaletteEXT = ( void ( APIENTRY * ) (GLuint *) )qwglGetProcAddress( "gl3DfxSetPaletteEXT" );
-			qglColorTableEXT = Fake_glColorTableEXT;
-		}
-		else
-		{
-			ri.Con_Printf( PRINT_ALL, "...ignoring 3DFX_set_global_palette\n" );
-		}
-	}
-	else
-	{
-		ri.Con_Printf( PRINT_ALL, "...3DFX_set_global_palette not found\n" );
-	}
-#endif
 
 	/*if ( !qglColorTableEXT &&
 		strstr( gx_config.extensions_string, "GL_EXT_paletted_texture" ) && 

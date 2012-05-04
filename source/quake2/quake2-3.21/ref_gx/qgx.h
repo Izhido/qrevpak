@@ -138,7 +138,6 @@ extern  void ( APIENTRY * qglGetTexLevelParameterfv )(GLenum target, GLint level
 extern  void ( APIENTRY * qglGetTexLevelParameteriv )(GLenum target, GLint level, GLenum pname, GLint *params);
 extern  void ( APIENTRY * qglGetTexParameterfv )(GLenum target, GLenum pname, GLfloat *params);
 extern  void ( APIENTRY * qglGetTexParameteriv )(GLenum target, GLenum pname, GLint *params);
-extern  void ( APIENTRY * qglHint )(GLenum target, GLenum mode);
 extern  void ( APIENTRY * qglIndexMask )(GLuint mask);
 extern  void ( APIENTRY * qglIndexPointer )(GLenum type, GLsizei stride, const GLvoid *pointer);
 extern  void ( APIENTRY * qglIndexd )(GLdouble c);
@@ -154,6 +153,7 @@ extern  void ( APIENTRY * qglIndexubv )(const GLubyte *c);
 extern  void ( APIENTRY * qglInitNames )(void);
 extern  void ( APIENTRY * qgxInitTexObj )(GXTexObj *obj, void *img_ptr, u16 wd, u16 ht, u8 fmt, u8 wrap_s, u8 wrap_t, u8 mipmap);
 extern  void ( APIENTRY * qgxInitTexObjFilterMode )(GXTexObj *obj, u8 minfilt, u8 magfilt);
+extern  void ( APIENTRY * qgxInitTlutObj )(GXTlutObj *obj, void *lut, u8 fmt, u16 entries);
 extern  void ( APIENTRY * qglInterleavedArrays )(GLenum format, GLsizei stride, const GLvoid *pointer);
 extern  void ( APIENTRY * qgxInvalidateTexAll )(void);
 extern  GLboolean ( APIENTRY * qglIsEnabled )(GLenum cap);
@@ -174,6 +174,7 @@ extern  void ( APIENTRY * qglLoadName )(GLuint name);
 extern	void ( APIENTRY * qgxLoadPosMtxImm )(Mtx mt, u32 pnidx);
 extern	void ( APIENTRY * qgxLoadProjectionMtx )(Mtx44 mt, u8 type);
 extern  void ( APIENTRY * qgxLoadTexObj )(GXTexObj *obj, u8 mapid);
+extern	void ( APIENTRY * qgxLoadTlut)(GXTlutObj *obj, u32 tlut_name);
 extern  void ( APIENTRY * qglLogicOp )(GLenum opcode);
 extern  void ( APIENTRY * qglMap1d )(GLenum target, GLdouble u1, GLdouble u2, GLint stride, GLint order, const GLdouble *points);
 extern  void ( APIENTRY * qglMap1f )(GLenum target, GLfloat u1, GLfloat u2, GLint stride, GLint order, const GLfloat *points);
@@ -263,7 +264,6 @@ extern  void ( APIENTRY * qgxSetCullMode )(u8 mode);
 extern  void ( APIENTRY * qgxSetTevOp )(u8 tevstage, u8 mode);
 extern  void ( APIENTRY * qgxSetViewport )(f32 xOrig, f32 yOrig, f32 wd, f32 ht, f32 nearZ, f32 farZ);
 extern  void ( APIENTRY * qgxSetZMode )(u8 enable, u8 func, u8 update_enable);
-extern  void ( APIENTRY * qglShadeModel )(GLenum mode);
 extern  void ( APIENTRY * qglStencilFunc )(GLenum func, GLint ref, GLuint mask);
 extern  void ( APIENTRY * qglStencilMask )(GLuint mask);
 extern  void ( APIENTRY * qglStencilOp )(GLenum fail, GLenum zfail, GLenum zpass);
@@ -279,7 +279,6 @@ extern  void ( APIENTRY * qglVertexPointer )(GLint size, GLenum type, GLsizei st
 
 extern	void ( APIENTRY * qglPointParameterfEXT)( GLenum param, GLfloat value );
 extern	void ( APIENTRY * qglPointParameterfvEXT)( GLenum param, const GLfloat *value );
-extern	void ( APIENTRY * qglColorTableEXT)( int, int, int, int, int, const void * );
 
 extern	void ( APIENTRY * qglLockArraysEXT) (int , int);
 extern	void ( APIENTRY * qglUnlockArraysEXT) (void);
@@ -352,11 +351,6 @@ extern void (*qglXDestroyContext)( Display *dpy, GLXContext ctx );
 extern Bool (*qglXMakeCurrent)( Display *dpy, GLXDrawable drawable, GLXContext ctx);
 extern void (*qglXCopyContext)( Display *dpy, GLXContext src, GLXContext dst, GLuint mask );
 extern void (*qglXSwapBuffers)( Display *dpy, GLXDrawable drawable );
-
-// 3dfxSetPaletteEXT shunt
-void Fake_glColorTableEXT( GLenum target, GLenum internalformat,
-                             GLsizei width, GLenum format, GLenum type,
-                             const GLvoid *table );
 
 #endif // linux
 

@@ -18,29 +18,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
-/******************* These are supposed to be in <gl/gl.h> and <gl/glu.h> and MUST BE DELETED ASAP: *********************/
-typedef unsigned int GLenum;
-
-typedef float GLfloat;
-
-typedef float GLclampf;
-
-#define GL_SMOOTH 23
-
-#define GL_PERSPECTIVE_CORRECTION_HINT 31
-
-#define GL_FASTEST 32
-
-#define GL_FLAT 34
-
-#define GL_NICEST 35
-
-void glShadeModel(GLenum mode);
-
-void glHint(GLenum target, GLenum mode);
-
-/************************************************************************************************************************/
-
 void GX_BeginRendering (int *x, int *y, int *width, int *height);
 void GX_EndRendering (void);
 

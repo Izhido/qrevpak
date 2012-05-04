@@ -93,7 +93,8 @@ void R_RenderDlights (void)
 	gxu_z_write_enabled = GX_FALSE;
 	qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 	qgxDisableTexture();
-	qglShadeModel (GL_SMOOTH);
+	// Implement this ASAP:
+	//qglShadeModel (GL_SMOOTH);
 	gxu_blend_src_value = GX_BL_ONE;
 	gxu_blend_dst_value = GX_BL_ONE;
 	qgxSetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);

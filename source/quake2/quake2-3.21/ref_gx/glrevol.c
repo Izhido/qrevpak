@@ -19,14 +19,6 @@ void glClear(GLbitfield mask)
 {
 }
 
-void glShadeModel(GLenum mode)
-{
-}
-
-void glHint(GLenum target, GLenum mode)
-{
-}
-
 void glFinish(void)
 {
 }

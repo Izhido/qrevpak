@@ -98,7 +98,7 @@ gxtexture_t	gxtextures[MAX_GXTEXTURES];
 gxtexobj_t	gxtexobjs[MAX_GXTEXTURES];
 int			numgxtextures;
 
-static GLenum oldtarget = GX_TEXMAP0;
+static u8 oldtarget = GX_TEXMAP0;
 
 
 void GX_Bind (int texnum)
@@ -1637,7 +1637,7 @@ int GX_LoadPicTexture (qpic_t *pic)
 
 /****************************************/
 
-void GX_SelectTexture (GLenum target) 
+void GX_SelectTexture (u8 target) 
 {
 	if (!gx_mtexable)
 		return;

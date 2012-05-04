@@ -48,12 +48,14 @@ int		gx_filter_max = GX_LINEAR;
 
 int		gx_tex_allocated; // To track amount of memory used for textures
 
+GXTlutObj palobj;
+
 void GL_SetTexturePalette( unsigned palette[256] )
 {
 	int i;
 	unsigned char* temptable = Sys_BigStackAlloc(768, "GL_SetTexturePalette");
 
-	if ( qglColorTableEXT && gl_ext_palettedtexture->value )
+	if ( qgxLoadTlut && gl_ext_palettedtexture->value )
 	{
 		for ( i = 0; i < 256; i++ )
 		{
@@ -62,12 +64,8 @@ void GL_SetTexturePalette( unsigned palette[256] )
 			temptable[i*3+2] = ( palette[i] >> 16 ) & 0xff;
 		}
 
-		qglColorTableEXT( GL_SHARED_TEXTURE_PALETTE_EXT,
-						   GL_RGB,
-						   256,
-						   GL_RGB,
-						   GL_UNSIGNED_BYTE,
-						   temptable );
+		qgxInitTlutObj(&palobj, temptable, GX_TL_RGB565, 256);
+		qgxLoadTlut(&palobj, GX_TLUT0);
 	}
 	Sys_BigStackFree(768, "GL_SetTexturePalette");
 }
@@ -79,21 +77,21 @@ void GL_EnableMultitexture( qboolean enable )
 
 	if ( enable )
 	{
-		GL_SelectTexture( GL_TEXTURE1 );
+		GX_SelectTexture( GL_TEXTURE1 );
 		qgxEnableTexture();
-		GL_TexEnv( GX_REPLACE );
+		GX_TexEnv( GX_REPLACE );
 	}
 	else
 	{
-		GL_SelectTexture( GL_TEXTURE1 );
+		GX_SelectTexture( GL_TEXTURE1 );
 		qgxDisableTexture();
-		GL_TexEnv( GX_REPLACE );
+		GX_TexEnv( GX_REPLACE );
 	}
-	GL_SelectTexture( GL_TEXTURE0 );
-	GL_TexEnv( GX_REPLACE );
+	GX_SelectTexture( GL_TEXTURE0 );
+	GX_TexEnv( GX_REPLACE );
 }
 
-void GL_SelectTexture( GLenum texture )
+void GX_SelectTexture( GLenum texture )
 {
 	int tmu;
 
@@ -127,7 +125,7 @@ void GL_SelectTexture( GLenum texture )
 	}
 }
 
-void GL_TexEnv( GLenum mode )
+void GX_TexEnv( GLenum mode )
 {
 	static int lastmodes[2] = { -1, -1 };
 
@@ -153,7 +151,7 @@ void GX_Bind (int texnum)
 
 void GL_MBind( GLenum target, int texnum )
 {
-	GL_SelectTexture( target );
+	GX_SelectTexture( target );
 	if ( target == GL_TEXTURE0 )
 	{
 		if ( gx_state.currenttextures[0] == texnum )
@@ -1371,7 +1369,7 @@ qboolean GL_Upload32 (unsigned *data, int width, int height,  qboolean mipmap)
 	{
 		if (!mipmap)
 		{
-			if ( qglColorTableEXT && gl_ext_palettedtexture->value && samples == gl_solid_format )
+			if ( qgxLoadTlut && gl_ext_palettedtexture->value && samples == gl_solid_format )
 			{
 				uploaded_paletted = true;
 				GL_BuildPalettedTexture( paletted_texture, ( unsigned char * ) data, scaled_width, scaled_height );
@@ -1390,7 +1388,7 @@ qboolean GL_Upload32 (unsigned *data, int width, int height,  qboolean mipmap)
 
 	GL_LightScaleTexture (scaled, scaled_width, scaled_height, !mipmap );
 
-	if ( qglColorTableEXT && gl_ext_palettedtexture->value && ( samples == gl_solid_format ) )
+	if ( qgxLoadTlut && gl_ext_palettedtexture->value && ( samples == gl_solid_format ) )
 	{
 		uploaded_paletted = true;
 		GL_BuildPalettedTexture( paletted_texture, ( unsigned char * ) scaled, scaled_width, scaled_height );
@@ -1416,7 +1414,7 @@ qboolean GL_Upload32 (unsigned *data, int width, int height,  qboolean mipmap)
 			if (scaled_height < 1)
 				scaled_height = 1;
 			miplevel++;
-			if ( qglColorTableEXT && gl_ext_palettedtexture->value && samples == gl_solid_format )
+			if ( qgxLoadTlut && gl_ext_palettedtexture->value && samples == gl_solid_format )
 			{
 				uploaded_paletted = true;
 				GL_BuildPalettedTexture( paletted_texture, ( unsigned char * ) scaled, scaled_width, scaled_height );
@@ -1489,7 +1487,7 @@ qboolean GL_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboole
 	if (s > (512*256 * sizeof(unsigned))/4)
 		ri.Sys_Error (ERR_DROP, "GL_Upload8: too large");
 
-	if ( qglColorTableEXT && 
+	if ( qgxLoadTlut && 
 		 gl_ext_palettedtexture->value && 
 		 is_sky )
 	{
@@ -1820,7 +1818,7 @@ void	GL_InitImages (void)
 
 	Draw_GetPalette ();
 
-	if ( qglColorTableEXT )
+	if ( qgxLoadTlut )
 	{
 		ri.FS_LoadFile( "pics/16to8.dat", &gx_state.d_16to8table, true);
 		if ( !gx_state.d_16to8table )

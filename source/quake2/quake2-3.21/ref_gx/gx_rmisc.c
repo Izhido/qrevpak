@@ -200,7 +200,8 @@ void GL_SetDefaultState( void )
 	gxu_cur_a = 255;
 
 	qglPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
-	qglShadeModel (GL_FLAT);
+	// Implement this ASAP:
+	//qglShadeModel (GL_FLAT);
 
 	GL_TextureMode( gl_texturemode->string );
 	GL_TextureAlphaMode( gl_texturealphamode->string );
@@ -208,7 +209,7 @@ void GL_SetDefaultState( void )
 
 	GX_SetMinMag(gx_filter_min, gx_filter_max);
 
-	GL_TexEnv( GX_REPLACE );
+	GX_TexEnv( GX_REPLACE );
 
 	if ( qglPointParameterfEXT )
 	{
@@ -224,7 +225,7 @@ void GL_SetDefaultState( void )
 		qglPointParameterfvEXT( GL_DISTANCE_ATTENUATION_EXT, attenuations );
 	}
 
-	if ( qglColorTableEXT && gl_ext_palettedtexture->value )
+	if ( qgxLoadTlut && gl_ext_palettedtexture->value )
 	{
 		qglEnable( GL_SHARED_TEXTURE_PALETTE_EXT );
 

@@ -189,10 +189,6 @@ void glDrawBuffer(GLenum mode);
 
 void glClear(GLbitfield mask);
 
-void glShadeModel(GLenum mode);
-
-void glHint(GLenum target, GLenum mode);
-
 void glFinish(void);
 
 void glReadBuffer(GLenum mode);
@@ -374,8 +370,6 @@ void glGetTexLevelParameteriv(GLenum target, GLint level, GLenum pname, GLint *p
 void glGetTexParameterfv(GLenum target, GLenum pname, GLfloat *params);
 
 void glGetTexParameteriv(GLenum target, GLenum pname, GLint *params);
-
-void glHint(GLenum target, GLenum mode);
 
 void glIndexMask(GLuint mask);
 
@@ -598,8 +592,6 @@ GLint glRenderMode(GLenum mode);
 void glScissor(GLint x, GLint y, GLsizei width, GLsizei height);
 
 void glSelectBuffer(GLsizei size, GLuint *buffer);
-
-void glShadeModel(GLenum mode);
 
 void glStencilFunc(GLenum func, GLint ref, GLuint mask);
 

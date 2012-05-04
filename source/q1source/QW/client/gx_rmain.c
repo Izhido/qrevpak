@@ -596,20 +596,23 @@ void R_DrawAliasModel (entity_t *e)
 		    GX_Bind(playertextures + i);
 	}
 
-	if (gl_smoothmodels.value)
-		glShadeModel (GL_SMOOTH);
+	// Implement this ASAP:
+	//if (gl_smoothmodels.value)
+	//	glShadeModel (GL_SMOOTH);
 	GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
 
-	if (gl_affinemodels.value)
-		glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+	// Implement this ASAP:
+	//if (gl_affinemodels.value)
+	//	glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
 
 	R_SetupAliasFrame (currententity->frame, paliashdr);
 
 	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
 
-	glShadeModel (GL_FLAT);
-	if (gl_affinemodels.value)
-		glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+	// Implement this ASAP:
+	//glShadeModel (GL_FLAT);
+	//if (gl_affinemodels.value)
+	//	glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
 	gxu_cur_modelview_matrix--;
 	GX_LoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);

@@ -911,9 +911,10 @@ void R_DrawAliasModel (entity_t *e)
 
 	// draw it
 
-	qglShadeModel (GL_SMOOTH);
+	// Implement this ASAP:
+	//qglShadeModel (GL_SMOOTH);
 
-	GL_TexEnv( GX_MODULATE );
+	GX_TexEnv( GX_MODULATE );
 	if ( currententity->flags & RF_TRANSLUCENT )
 	{
 		qgxSetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
@@ -942,8 +943,9 @@ void R_DrawAliasModel (entity_t *e)
 		currententity->backlerp = 0;
 	GL_DrawAliasFrameLerp (paliashdr, currententity->backlerp);
 
-	GL_TexEnv( GX_REPLACE );
-	qglShadeModel (GL_FLAT);
+	GX_TexEnv( GX_REPLACE );
+	// Implement this ASAP:
+	//qglShadeModel (GL_FLAT);
 
 	gxu_cur_modelview_matrix--;
 	qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);

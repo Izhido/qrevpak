@@ -611,20 +611,23 @@ void R_DrawAliasModel (entity_t *e)
 		    GX_Bind(playertextures - 1 + i);
 	}
 
-	if (gl_smoothmodels.value)
-		glShadeModel (GL_SMOOTH);
+	// Implement this ASAP:
+	//if (gl_smoothmodels.value)
+	//	glShadeModel (GL_SMOOTH);
 	GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
 
-	if (gl_affinemodels.value)
-		glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+	// Implement this ASAP:
+	//if (gl_affinemodels.value)
+	//	glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
 
 	R_SetupAliasFrame (currententity->frame, paliashdr);
 
 	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
 
-	glShadeModel (GL_FLAT);
-	if (gl_affinemodels.value)
-		glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+	// Implement this ASAP:
+	//glShadeModel (GL_FLAT);
+	//if (gl_affinemodels.value)
+	//	glHint (GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
 	gxu_cur_modelview_matrix--;
 	GX_LoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
@@ -1236,7 +1239,8 @@ r_refdef must be set before the first call
 void R_RenderView (void)
 {
 	double	time1, time2;
-	GLfloat colors[4] = {(GLfloat) 0.0, (GLfloat) 0.0, (GLfloat) 1, (GLfloat) 0.20};
+	//Data for experimental silly looking fog:
+	//GLfloat colors[4] = {(GLfloat) 0.0, (GLfloat) 0.0, (GLfloat) 1, (GLfloat) 0.20};
 
 	if (r_norefresh.value)
 		return;

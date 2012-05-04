@@ -167,7 +167,11 @@ model_t *Mod_ForName (char *name, qboolean crash)
 		break;
 	
 	case IDBSPHEADER:
-		loadmodel->extradata = Hunk_Begin (0x1000000);
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Scaling back hunk memory usage for maps, from 16MB to 12MB:
+		//loadmodel->extradata = Hunk_Begin (0x1000000);
+		loadmodel->extradata = Hunk_Begin (0xC00000);
+// <<< FIX
 		Mod_LoadBrushModel (mod, buf);
 		break;
 

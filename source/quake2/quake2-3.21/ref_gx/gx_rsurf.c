@@ -517,13 +517,13 @@ void R_RenderBrushPoly (msurface_t *fa)
 		GX_Bind( image->texnum );
 
 		// warp texture, no lightmaps
-		GL_TexEnv( GX_MODULATE );
+		GX_TexEnv( GX_MODULATE );
 		gxu_cur_r = gx_state.inverse_intensity*255;
 		gxu_cur_g = gx_state.inverse_intensity*255;
 		gxu_cur_b = gx_state.inverse_intensity*255;
 		gxu_cur_a = 255;
 		EmitWaterPolys (fa);
-		GL_TexEnv( GX_REPLACE );
+		GX_TexEnv( GX_REPLACE );
 
 		return;
 	}
@@ -531,7 +531,7 @@ void R_RenderBrushPoly (msurface_t *fa)
 	{
 		GX_Bind( image->texnum );
 
-		GL_TexEnv( GX_REPLACE );
+		GX_TexEnv( GX_REPLACE );
 	}
 
 //======
@@ -622,7 +622,7 @@ void R_DrawAlphaSurfaces (void)
 	qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 
 	qgxSetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
-	GL_TexEnv( GX_MODULATE );
+	GX_TexEnv( GX_MODULATE );
 
 	// the textures are prescaled up for a better lighting range,
 	// so scale it back down
@@ -649,7 +649,7 @@ void R_DrawAlphaSurfaces (void)
 			DrawGLPoly (s->polys);
 	}
 
-	GL_TexEnv( GX_REPLACE );
+	GX_TexEnv( GX_REPLACE );
 	gxu_cur_r = 255;
 	gxu_cur_g = 255;
 	gxu_cur_b = 255;
@@ -728,7 +728,7 @@ void DrawTextureChains (void)
 //		GL_EnableMultitexture( true );
 	}
 
-	GL_TexEnv( GX_REPLACE );
+	GX_TexEnv( GX_REPLACE );
 }
 
 
@@ -933,7 +933,7 @@ void R_DrawInlineBModel (void)
 		gxu_cur_g = 255;
 		gxu_cur_b = 255;
 		gxu_cur_a = 63;
-		GL_TexEnv( GX_MODULATE );
+		GX_TexEnv( GX_MODULATE );
 	}
 
 	//
@@ -980,7 +980,7 @@ void R_DrawInlineBModel (void)
 		gxu_cur_g = 255;
 		gxu_cur_b = 255;
 		gxu_cur_a = 255;
-		GL_TexEnv( GX_REPLACE );
+		GX_TexEnv( GX_REPLACE );
 	}
 }
 
@@ -1047,10 +1047,10 @@ e->angles[0] = -e->angles[0];	// stupid quake bug
 e->angles[2] = -e->angles[2];	// stupid quake bug
 
 	GL_EnableMultitexture( true );
-	GL_SelectTexture( GL_TEXTURE0);
-	GL_TexEnv( GX_REPLACE );
-	GL_SelectTexture( GL_TEXTURE1);
-	GL_TexEnv( GX_MODULATE );
+	GX_SelectTexture( GL_TEXTURE0);
+	GX_TexEnv( GX_REPLACE );
+	GX_SelectTexture( GL_TEXTURE1);
+	GX_TexEnv( GX_MODULATE );
 
 	R_DrawInlineBModel ();
 	GL_EnableMultitexture( false );
@@ -1265,14 +1265,14 @@ void R_DrawWorld (void)
 	{
 		GL_EnableMultitexture( true );
 
-		GL_SelectTexture( GL_TEXTURE0);
-		GL_TexEnv( GX_REPLACE );
-		GL_SelectTexture( GL_TEXTURE1);
+		GX_SelectTexture( GL_TEXTURE0);
+		GX_TexEnv( GX_REPLACE );
+		GX_SelectTexture( GL_TEXTURE1);
 
 		if ( gl_lightmap->value )
-			GL_TexEnv( GX_REPLACE );
+			GX_TexEnv( GX_REPLACE );
 		else 
-			GL_TexEnv( GX_MODULATE );
+			GX_TexEnv( GX_MODULATE );
 
 		R_RecursiveWorldNode (r_worldmodel->nodes);
 
@@ -1604,7 +1604,7 @@ void GL_BeginBuildingLightmaps (model_t *m)
 	r_framecount = 1;		// no dlightcache
 
 	GL_EnableMultitexture( true );
-	GL_SelectTexture( GL_TEXTURE1);
+	GX_SelectTexture( GL_TEXTURE1);
 
 	/*
 	** setup the base lightstyles so the lightmaps won't have to be regenerated

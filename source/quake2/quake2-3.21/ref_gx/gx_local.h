@@ -267,9 +267,9 @@ void GL_MBind( GLenum target, int texnum );
 void GX_LoadAndBind (void* data, int length, int width, int height, int format);
 void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int height, int format);
 void GX_SetMinMag (int minfilt, int magfilt);
-void GL_TexEnv( GLenum value );
+void GX_TexEnv( GLenum value );
 void GL_EnableMultitexture( qboolean enable );
-void GL_SelectTexture( GLenum );
+void GX_SelectTexture( GLenum );
 
 void R_LightPoint (vec3_t p, vec3_t color);
 void R_PushDlights (void);
