@@ -44,7 +44,6 @@ void		GLimp_Shutdown( void )
 int     	GLimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen )
 {
 	int width, height;
-	GLint attribs[32];
 
 	fprintf(stderr, "GLimp_SetMode\n");
 

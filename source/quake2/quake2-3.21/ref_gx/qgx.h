@@ -114,7 +114,6 @@ extern  void ( APIENTRY * qglGenTextures )(GLsizei n, GLuint *textures);
 extern  void ( APIENTRY * qglGetBooleanv )(GLenum pname, GLboolean *params);
 extern  void ( APIENTRY * qglGetClipPlane )(GLenum plane, GLdouble *equation);
 extern  void ( APIENTRY * qglGetDoublev )(GLenum pname, GLdouble *params);
-extern  GLenum ( APIENTRY * qglGetError )(void);
 extern  void ( APIENTRY * qglGetIntegerv )(GLenum pname, GLint *params);
 extern  void ( APIENTRY * qglGetLightfv )(GLenum light, GLenum pname, GLfloat *params);
 extern  void ( APIENTRY * qglGetLightiv )(GLenum light, GLenum pname, GLint *params);

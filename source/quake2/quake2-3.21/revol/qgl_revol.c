@@ -110,7 +110,6 @@ void ( APIENTRY * qglGenTextures )(GLsizei n, GLuint *textures);
 void ( APIENTRY * qglGetBooleanv )(GLenum pname, GLboolean *params);
 void ( APIENTRY * qglGetClipPlane )(GLenum plane, GLdouble *equation);
 void ( APIENTRY * qglGetDoublev )(GLenum pname, GLdouble *params);
-GLenum ( APIENTRY * qglGetError )(void);
 void ( APIENTRY * qglGetIntegerv )(GLenum pname, GLint *params);
 void ( APIENTRY * qglGetLightfv )(GLenum light, GLenum pname, GLfloat *params);
 void ( APIENTRY * qglGetLightiv )(GLenum light, GLenum pname, GLint *params);
@@ -349,7 +348,6 @@ static void ( APIENTRY * dllGenTextures )(GLsizei n, GLuint *textures);
 static void ( APIENTRY * dllGetBooleanv )(GLenum pname, GLboolean *params);
 static void ( APIENTRY * dllGetClipPlane )(GLenum plane, GLdouble *equation);
 static void ( APIENTRY * dllGetDoublev )(GLenum pname, GLdouble *params);
-GLenum ( APIENTRY * dllGetError )(void);
 static void ( APIENTRY * dllGetIntegerv )(GLenum pname, GLint *params);
 static void ( APIENTRY * dllGetLightfv )(GLenum light, GLenum pname, GLfloat *params);
 static void ( APIENTRY * dllGetLightiv )(GLenum light, GLenum pname, GLint *params);
@@ -896,12 +894,6 @@ static void APIENTRY logGetDoublev(GLenum pname, GLdouble *params)
 {
 	SIG( "glGetDoublev" );
 	dllGetDoublev( pname, params );
-}
-
-static GLenum APIENTRY logGetError(void)
-{
-	SIG( "glGetError" );
-	return dllGetError();
 }
 
 static void APIENTRY logGetIntegerv(GLenum pname, GLint *params)
@@ -1950,7 +1942,6 @@ void QGL_Shutdown( void )
 	qglGetBooleanv               = NULL;
 	qglGetClipPlane              = NULL;
 	qglGetDoublev                = NULL;
-	qglGetError                  = NULL;
 	qglGetIntegerv               = NULL;
 	qglGetLightfv                = NULL;
 	qglGetLightiv                = NULL;
@@ -2130,8 +2121,6 @@ void QGL_Shutdown( void )
 */
 qboolean QGL_Init( const char *dllname )
 {
-	gx_config.allow_cds = true;
-
 	qguMtxConcat                 = dllMtxConcat = guMtxConcat;
 	qguMtxCopy                   = dllMtxCopy = guMtxCopy;
 	qguMtxIdentity               = dllMtxIdentity = guMtxIdentity;
@@ -2204,7 +2193,6 @@ qboolean QGL_Init( const char *dllname )
 	qglGetBooleanv               = 	dllGetBooleanv               = glGetBooleanv;
 	qglGetClipPlane              = 	dllGetClipPlane              = glGetClipPlane;
 	qglGetDoublev                = 	dllGetDoublev                = glGetDoublev;
-	qglGetError                  = 	dllGetError                  = glGetError;
 	qglGetIntegerv               = 	dllGetIntegerv               = glGetIntegerv;
 	qglGetLightfv                = 	dllGetLightfv                = glGetLightfv;
 	qglGetLightiv                = 	dllGetLightiv                = glGetLightiv;
@@ -2476,7 +2464,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglGetBooleanv               = 	logGetBooleanv               ;
 		qglGetClipPlane              = 	logGetClipPlane              ;
 		qglGetDoublev                = 	logGetDoublev                ;
-		qglGetError                  = 	logGetError                  ;
 		qglGetIntegerv               = 	logGetIntegerv               ;
 		qglGetLightfv                = 	logGetLightfv                ;
 		qglGetLightiv                = 	logGetLightiv                ;
@@ -2714,7 +2701,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglGetBooleanv               = 	dllGetBooleanv               ;
 		qglGetClipPlane              = 	dllGetClipPlane              ;
 		qglGetDoublev                = 	dllGetDoublev                ;
-		qglGetError                  = 	dllGetError                  ;
 		qglGetIntegerv               = 	dllGetIntegerv               ;
 		qglGetLightfv                = 	dllGetLightfv                ;
 		qglGetLightiv                = 	dllGetLightiv                ;

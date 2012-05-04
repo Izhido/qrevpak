@@ -327,8 +327,6 @@ void glGetClipPlane(GLenum plane, GLdouble *equation);
 
 void glGetDoublev(GLenum pname, GLdouble *params);
 
-GLenum glGetError(void);
-
 void glGetIntegerv(GLenum pname, GLint *params);
 
 void glGetLightfv(GLenum light, GLenum pname, GLfloat *params);

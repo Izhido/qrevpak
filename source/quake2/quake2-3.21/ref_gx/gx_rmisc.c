@@ -166,10 +166,7 @@ void GL_ScreenShot_f (void)
 */
 void GL_Strings_f( void )
 {
-	ri.Con_Printf (PRINT_ALL, "GL_VENDOR: %s\n", gx_config.vendor_string );
-	ri.Con_Printf (PRINT_ALL, "GL_RENDERER: %s\n", gx_config.renderer_string );
-	ri.Con_Printf (PRINT_ALL, "GL_VERSION: %s\n", gx_config.version_string );
-	ri.Con_Printf (PRINT_ALL, "GL_EXTENSIONS: %s\n", gx_config.extensions_string );
+	ri.Con_Printf (PRINT_ALL, "Wii GX hardware-accelerated renderer\n");
 }
 
 /*

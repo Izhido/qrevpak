@@ -291,11 +291,6 @@ void glGetDoublev(GLenum pname, GLdouble *params)
 {
 }
 
-GLenum glGetError(void)
-{
-	return GL_NO_ERROR;
-}
-
 void glGetIntegerv(GLenum pname, GLint *params)
 {
 }
