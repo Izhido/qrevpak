@@ -20,8 +20,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // r_main.c
 #include "gx_local.h"
 
-#include "gxutils.h"
-
 extern int gx_tex_allocated;
 
 void R_Clear (void);
@@ -1235,23 +1233,15 @@ qboolean R_Init( void *hinstance, void *hWnd )
 		ri.Con_Printf( PRINT_ALL, "...GL_EXT_point_parameters not found\n" );
 	/*}*/
 
-	/*if ( !qglColorTableEXT &&
-		strstr( gx_config.extensions_string, "GL_EXT_paletted_texture" ) && 
-		strstr( gx_config.extensions_string, "GL_EXT_shared_texture_palette" ) )
+	/*if ( gl_ext_palettedtexture->value )
 	{
-		if ( gl_ext_palettedtexture->value )
-		{
-			ri.Con_Printf( PRINT_ALL, "...using GL_EXT_shared_texture_palette\n" );
-			qglColorTableEXT = ( void ( APIENTRY * ) ( int, int, int, int, int, const void * ) ) qwglGetProcAddress( "glColorTableEXT" );
-		}
-		else
-		{
-			ri.Con_Printf( PRINT_ALL, "...ignoring GL_EXT_shared_texture_palette\n" );
-		}
+		ri.Con_Printf( PRINT_ALL, "...using GL_EXT_shared_texture_palette\n" );
+		qgxInitTlutObj = GX_InitTlutObj;
+		qgxLoadTlut = GX_LoadTlut;
 	}
 	else
 	{*/
-		ri.Con_Printf( PRINT_ALL, "...GL_EXT_shared_texture_palette not found\n" );
+		ri.Con_Printf( PRINT_ALL, "...ignoring GL_EXT_shared_texture_palette\n" );
 	/*}*/
 
 	/*if ( strstr( gx_config.extensions_string, "GL_ARB_multitexture" ) )

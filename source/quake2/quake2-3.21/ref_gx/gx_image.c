@@ -48,26 +48,31 @@ int		gx_filter_max = GX_LINEAR;
 
 int		gx_tex_allocated; // To track amount of memory used for textures
 
-GXTlutObj palobj;
+u16*	gx_paldata = NULL;
+GXTlutObj gx_palobj;
 
 void GL_SetTexturePalette( unsigned palette[256] )
 {
 	int i;
-	unsigned char* temptable = Sys_BigStackAlloc(768, "GL_SetTexturePalette");
 
 	if ( qgxLoadTlut && gl_ext_palettedtexture->value )
 	{
+		if(gx_paldata == NULL)
+			gx_paldata = memalign(32, 256 * sizeof(u16));
+
 		for ( i = 0; i < 256; i++ )
 		{
-			temptable[i*3+0] = ( palette[i] >> 0 ) & 0xff;
-			temptable[i*3+1] = ( palette[i] >> 8 ) & 0xff;
-			temptable[i*3+2] = ( palette[i] >> 16 ) & 0xff;
+			gx_paldata[i] = 0x8000 
+				          | ((( palette[i] >> (3 + 0 )) & 0x1f) << 10) 
+			              | ((( palette[i] >> (3 + 8 )) & 0x1f) << 5) 
+			              | ((( palette[i] >> (3 + 16)) & 0x1f) << 0);
 		}
 
-		qgxInitTlutObj(&palobj, temptable, GX_TL_RGB565, 256);
-		qgxLoadTlut(&palobj, GX_TLUT0);
+		DCFlushRange(gx_paldata, 256 * sizeof(u16));
+		qgxInvalidateTexAll();
+		qgxInitTlutObj(&gx_palobj, gx_paldata, GX_TL_RGB565, 256);
+		qgxLoadTlut(&gx_palobj, GX_TLUT0);
 	}
-	Sys_BigStackFree(768, "GL_SetTexturePalette");
 }
 
 void GL_EnableMultitexture( qboolean enable )
@@ -201,7 +206,12 @@ void GX_BindCurrentTex(qboolean changed, int format, int mipmap)
 {
 	int texnum = gx_state.currenttextures[gx_state.currenttmu];
 	DCFlushRange(gxtexobjs[texnum].data, gxtexobjs[texnum].length);
-	qgxInitTexObj(&gxtexobjs[texnum].texobj, gxtexobjs[texnum].data, gxtexobjs[texnum].width, gxtexobjs[texnum].height, format, GX_REPEAT, GX_REPEAT, mipmap);
+
+	if(format == GX_TF_CI8)
+		qgxInitTexObjCI(&gxtexobjs[texnum].texobj, gxtexobjs[texnum].data, gxtexobjs[texnum].width, gxtexobjs[texnum].height, format, GX_REPEAT, GX_REPEAT, mipmap, GX_TLUT0);
+	else
+		qgxInitTexObj(&gxtexobjs[texnum].texobj, gxtexobjs[texnum].data, gxtexobjs[texnum].width, gxtexobjs[texnum].height, format, GX_REPEAT, GX_REPEAT, mipmap);
+
 	qgxLoadTexObj(&gxtexobjs[texnum].texobj, GX_TEXMAP0 + gx_state.currenttmu);
 	if(changed)
 		qgxInvalidateTexAll();

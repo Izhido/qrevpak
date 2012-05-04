@@ -152,8 +152,8 @@ extern  void ( APIENTRY * qglIndexub )(GLubyte c);
 extern  void ( APIENTRY * qglIndexubv )(const GLubyte *c);
 extern  void ( APIENTRY * qglInitNames )(void);
 extern  void ( APIENTRY * qgxInitTexObj )(GXTexObj *obj, void *img_ptr, u16 wd, u16 ht, u8 fmt, u8 wrap_s, u8 wrap_t, u8 mipmap);
+extern  void ( APIENTRY * qgxInitTexObjCI )(GXTexObj *obj, void *img_ptr, u16 wd, u16 ht, u8 fmt, u8 wrap_s, u8 wrap_t, u8 mipmap, u32 tlut_name);
 extern  void ( APIENTRY * qgxInitTexObjFilterMode )(GXTexObj *obj, u8 minfilt, u8 magfilt);
-extern  void ( APIENTRY * qgxInitTlutObj )(GXTlutObj *obj, void *lut, u8 fmt, u16 entries);
 extern  void ( APIENTRY * qglInterleavedArrays )(GLenum format, GLsizei stride, const GLvoid *pointer);
 extern  void ( APIENTRY * qgxInvalidateTexAll )(void);
 extern  GLboolean ( APIENTRY * qglIsEnabled )(GLenum cap);
@@ -174,7 +174,6 @@ extern  void ( APIENTRY * qglLoadName )(GLuint name);
 extern	void ( APIENTRY * qgxLoadPosMtxImm )(Mtx mt, u32 pnidx);
 extern	void ( APIENTRY * qgxLoadProjectionMtx )(Mtx44 mt, u8 type);
 extern  void ( APIENTRY * qgxLoadTexObj )(GXTexObj *obj, u8 mapid);
-extern	void ( APIENTRY * qgxLoadTlut)(GXTlutObj *obj, u32 tlut_name);
 extern  void ( APIENTRY * qglLogicOp )(GLenum opcode);
 extern  void ( APIENTRY * qglMap1d )(GLenum target, GLdouble u1, GLdouble u2, GLint stride, GLint order, const GLdouble *points);
 extern  void ( APIENTRY * qglMap1f )(GLenum target, GLfloat u1, GLfloat u2, GLint stride, GLint order, const GLfloat *points);
@@ -279,6 +278,9 @@ extern  void ( APIENTRY * qglVertexPointer )(GLint size, GLenum type, GLsizei st
 
 extern	void ( APIENTRY * qglPointParameterfEXT)( GLenum param, GLfloat value );
 extern	void ( APIENTRY * qglPointParameterfvEXT)( GLenum param, const GLfloat *value );
+
+extern  void ( APIENTRY * qgxInitTlutObj )(GXTlutObj *obj, void *lut, u8 fmt, u16 entries);
+extern	void ( APIENTRY * qgxLoadTlut)(GXTlutObj *obj, u32 tlut_name);
 
 extern	void ( APIENTRY * qglLockArraysEXT) (int , int);
 extern	void ( APIENTRY * qglUnlockArraysEXT) (void);

@@ -34,8 +34,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define QGL
 #include "../ref_gx/gx_local.h"
 
-#include "gxutils.h"
-
 static FILE *log_fp = NULL;
 
 void ( APIENTRY * qguMtxConcat )(Mtx a, Mtx b, Mtx ab);
@@ -148,8 +146,8 @@ void ( APIENTRY * qglIndexub )(GLubyte c);
 void ( APIENTRY * qglIndexubv )(const GLubyte *c);
 void ( APIENTRY * qglInitNames )(void);
 void ( APIENTRY * qgxInitTexObj )(GXTexObj *obj, void *img_ptr, u16 wd, u16 ht, u8 fmt, u8 wrap_s, u8 wrap_t, u8 mipmap);
+void ( APIENTRY * qgxInitTexObjCI )(GXTexObj *obj, void *img_ptr, u16 wd, u16 ht, u8 fmt, u8 wrap_s, u8 wrap_t, u8 mipmap, u32 tlut_name);
 void ( APIENTRY * qgxInitTexObjFilterMode )(GXTexObj *obj, u8 minfilt, u8 magfilt);
-void ( APIENTRY * qgxInitTlutObj )(GXTlutObj *obj, void *lut, u8 fmt, u16 entries);
 void ( APIENTRY * qglInterleavedArrays )(GLenum format, GLsizei stride, const GLvoid *pointer);
 void ( APIENTRY * qgxInvalidateTexAll )(void);
 GLboolean ( APIENTRY * qglIsEnabled )(GLenum cap);
@@ -170,7 +168,6 @@ void ( APIENTRY * qglLoadName )(GLuint name);
 void ( APIENTRY * qgxLoadPosMtxImm )(Mtx mt, u32 pnidx);
 void ( APIENTRY * qgxLoadProjectionMtx )(Mtx44 mt, u8 type);
 void ( APIENTRY * qgxLoadTexObj )(GXTexObj *obj, u8 mapid);
-void ( APIENTRY * qgxLoadTlut)(GXTlutObj *obj, u32 tlut_name);
 void ( APIENTRY * qglLogicOp )(GLenum opcode);
 void ( APIENTRY * qglMap1d )(GLenum target, GLdouble u1, GLdouble u2, GLint stride, GLint order, const GLdouble *points);
 void ( APIENTRY * qglMap1f )(GLenum target, GLfloat u1, GLfloat u2, GLint stride, GLint order, const GLfloat *points);
@@ -275,6 +272,9 @@ void ( APIENTRY * qglVertexPointer )(GLint size, GLenum type, GLsizei stride, co
 
 void ( APIENTRY * qglLockArraysEXT)( int, int);
 void ( APIENTRY * qglUnlockArraysEXT) ( void );
+
+void ( APIENTRY * qgxInitTlutObj )(GXTlutObj *obj, void *lut, u8 fmt, u16 entries);
+void ( APIENTRY * qgxLoadTlut)(GXTlutObj *obj, u32 tlut_name);
 
 void ( APIENTRY * qglPointParameterfEXT)( GLenum param, GLfloat value );
 void ( APIENTRY * qglPointParameterfvEXT)( GLenum param, const GLfloat *value );
@@ -385,6 +385,7 @@ static void ( APIENTRY * dllIndexub )(GLubyte c);
 static void ( APIENTRY * dllIndexubv )(const GLubyte *c);
 static void ( APIENTRY * dllInitNames )(void);
 static void ( APIENTRY * dllInitTexObj )(GXTexObj *obj, void *img_ptr, u16 wd, u16 ht, u8 fmt, u8 wrap_s, u8 wrap_t, u8 mipmap);
+static void ( APIENTRY * dllInitTexObjCI )(GXTexObj *obj, void *img_ptr, u16 wd, u16 ht, u8 fmt, u8 wrap_s, u8 wrap_t, u8 mipmap, u32 tlut_name);
 static void ( APIENTRY * dllInitTexObjFilterMode )(GXTexObj *obj, u8 minfilt, u8 magfilt);
 static void ( APIENTRY * dllInterleavedArrays )(GLenum format, GLsizei stride, const GLvoid *pointer);
 static void ( APIENTRY * dllInvalidateTexAll )(void);
@@ -1118,6 +1119,12 @@ static void APIENTRY logInitTexObj(GXTexObj *obj, void *img_ptr, u16 wd, u16 ht,
 {
 	SIG( "GX_InitTexObj" );
 	dllInitTexObj(obj, img_ptr, wd, ht, fmt, wrap_s, wrap_t, mipmap);
+}
+
+static void APIENTRY logInitTexObjCI(GXTexObj *obj, void *img_ptr, u16 wd, u16 ht, u8 fmt, u8 wrap_s, u8 wrap_t, u8 mipmap, u32 tlut_name)
+{
+	SIG( "GX_InitTexObjCI" );
+	dllInitTexObjCI(obj, img_ptr, wd, ht, fmt, wrap_s, wrap_t, mipmap, tlut_name);
 }
 
 static void APIENTRY logInitTexObjFilterMode(GXTexObj *obj,u8 minfilt,u8 magfilt)
@@ -1965,6 +1972,7 @@ void QGL_Shutdown( void )
 	qglIndexubv                  = NULL;
 	qglInitNames                 = NULL;
 	qgxInitTexObj                = NULL;
+	qgxInitTexObjCI              = NULL;
 	qgxInitTexObjFilterMode      = NULL;
 	qglInterleavedArrays         = NULL;
 	qgxInvalidateTexAll          = NULL;
@@ -2127,7 +2135,7 @@ qboolean QGL_Init( const char *dllname )
 	qglClearIndex                = dllClearIndex = glClearIndex;
 	qglClearStencil              = dllClearStencil = glClearStencil;
 	qglClipPlane                 = dllClipPlane = glClipPlane;
-	qgxColor4u8                  = dllColor4u8 = GXU_CallGXColor4u8;
+	qgxColor4u8                  = dllColor4u8 = /*GXU_Call*/GX_Color4u8;
 	qglColorMask                 = dllColorMask = glColorMask;
 	qglColorMaterial             = dllColorMaterial = glColorMaterial;
 	qglColorPointer              = dllColorPointer = glColorPointer;
@@ -2215,6 +2223,7 @@ qboolean QGL_Init( const char *dllname )
 	qglIndexubv                  = 	dllIndexubv                  = glIndexubv;
 	qglInitNames                 = 	dllInitNames                 = glInitNames;
 	qgxInitTexObj                =  dllInitTexObj                = GX_InitTexObj;
+	qgxInitTexObjCI              =  dllInitTexObjCI              = GX_InitTexObjCI;
 	qgxInitTexObjFilterMode      =  dllInitTexObjFilterMode      = GX_InitTexObjFilterMode;
 	qglInterleavedArrays         = 	dllInterleavedArrays         = glInterleavedArrays;
 	qgxInvalidateTexAll          =  dllInvalidateTexAll          = GX_InvalidateTexAll;
@@ -2277,7 +2286,7 @@ qboolean QGL_Init( const char *dllname )
 	qglPopAttrib                 = 	dllPopAttrib                 = glPopAttrib;
 	qglPopClientAttrib           = 	dllPopClientAttrib           = glPopClientAttrib;
 	qglPopName                   = 	dllPopName                   = glPopName;
-	qgxPosition3f32              = 	dllPosition3f32              = GXU_CallGXPosition3f32;
+	qgxPosition3f32              = 	dllPosition3f32              = /*GXU_Call*/GX_Position3f32;
 	qglPrioritizeTextures        = 	dllPrioritizeTextures        = glPrioritizeTextures;
 	qglPushAttrib                = 	dllPushAttrib                = glPushAttrib;
 	qglPushClientAttrib          = 	dllPushClientAttrib          = glPushClientAttrib;
@@ -2328,7 +2337,7 @@ qboolean QGL_Init( const char *dllname )
 	qglStencilFunc               = 	dllStencilFunc               = glStencilFunc;
 	qglStencilMask               = 	dllStencilMask               = glStencilMask;
 	qglStencilOp                 = 	dllStencilOp                 = glStencilOp;
-	qgxTexCoord2f32              = 	dllTexCoord2f32              = GXU_CallGXTexCoord2f32;
+	qgxTexCoord2f32              = 	dllTexCoord2f32              = /*GXU_Call*/GX_TexCoord2f32;
 	qglTexCoordPointer           = 	dllTexCoordPointer           = glTexCoordPointer;
 	qglTexGend                   = 	dllTexGend                   = glTexGend;
 	qglTexGendv                  = 	dllTexGendv                  = glTexGendv;
@@ -2484,6 +2493,7 @@ void GLimp_EnableLogging( qboolean enable )
 		qglIndexubv                  = 	logIndexubv                  ;
 		qglInitNames                 = 	logInitNames                 ;
 		qgxInitTexObj                =  logInitTexObj                ;
+		qgxInitTexObjCI              =  logInitTexObjCI              ;
 		qgxInitTexObjFilterMode      =  logInitTexObjFilterMode      ;
 		qglInterleavedArrays         = 	logInterleavedArrays         ;
 		qgxInvalidateTexAll          =  logInvalidateTexAll          ;
@@ -2719,6 +2729,7 @@ void GLimp_EnableLogging( qboolean enable )
 		qglIndexubv                  = 	dllIndexubv                  ;
 		qglInitNames                 = 	dllInitNames                 ;
 		qgxInitTexObj                =  dllInitTexObj                ;
+		qgxInitTexObjCI              =  dllInitTexObjCI              ;
 		qgxInitTexObjFilterMode      =  dllInitTexObjFilterMode      ;
 		qglInterleavedArrays         = 	dllInterleavedArrays         ;
 		qgxInvalidateTexAll          =  dllInvalidateTexAll          ;
