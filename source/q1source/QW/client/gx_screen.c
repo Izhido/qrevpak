@@ -122,6 +122,8 @@ qboolean        block_drawing;
 void SCR_ScreenShot_f (void);
 void SCR_RSShot_f (void);
 
+void VID_DrawWmoteGuide(void);
+
 /*
 ===============================================================================
 

@@ -196,7 +196,6 @@ extern	qboolean	mirror;
 extern	mplane_t	*mirror_plane;
 
 void R_TranslatePlayerSkin (int playernum);
-void GL_Bind (int texnum);
 
 void GX_Bind (int texnum);
 void GX_LoadAndBind (void* data, int length, int width, int height, int format);
@@ -247,7 +246,7 @@ void R_StoreEfrags (efrag_t **ppefrag);
 //
 // gl_mesh.c
 //
-void GL_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr);
+void GX_MakeAliasModelDisplayLists (model_t *m, aliashdr_t *hdr);
 
 //
 // gl_rsurf.c

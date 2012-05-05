@@ -1233,16 +1233,16 @@ qboolean R_Init( void *hinstance, void *hWnd )
 		ri.Con_Printf( PRINT_ALL, "...GL_EXT_point_parameters not found\n" );
 	/*}*/
 
-	/*if ( gl_ext_palettedtexture->value )
+	if ( gl_ext_palettedtexture->value )
 	{
 		ri.Con_Printf( PRINT_ALL, "...using GL_EXT_shared_texture_palette\n" );
 		qgxInitTlutObj = GX_InitTlutObj;
 		qgxLoadTlut = GX_LoadTlut;
 	}
 	else
-	{*/
+	{
 		ri.Con_Printf( PRINT_ALL, "...ignoring GL_EXT_shared_texture_palette\n" );
-	/*}*/
+	}
 
 	/*if ( strstr( gx_config.extensions_string, "GL_ARB_multitexture" ) )
 	{
