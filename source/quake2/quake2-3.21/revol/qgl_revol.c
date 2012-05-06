@@ -121,7 +121,6 @@ void ( APIENTRY * qglGetPixelMapuiv )(GLenum map, GLuint *values);
 void ( APIENTRY * qglGetPixelMapusv )(GLenum map, GLushort *values);
 void ( APIENTRY * qglGetPointerv )(GLenum pname, GLvoid* *params);
 void ( APIENTRY * qglGetPolygonStipple )(GLubyte *mask);
-const GLubyte * ( APIENTRY * qglGetString )(GLenum name);
 void ( APIENTRY * qglGetTexEnvfv )(GLenum target, GLenum pname, GLfloat *params);
 void ( APIENTRY * qglGetTexEnviv )(GLenum target, GLenum pname, GLint *params);
 void ( APIENTRY * qglGetTexGendv )(GLenum coord, GLenum pname, GLdouble *params);
@@ -202,7 +201,6 @@ void ( APIENTRY * qglPixelStorei )(GLenum pname, GLint param);
 void ( APIENTRY * qglPixelTransferf )(GLenum pname, GLfloat param);
 void ( APIENTRY * qglPixelTransferi )(GLenum pname, GLint param);
 void ( APIENTRY * qglPixelZoom )(GLfloat xfactor, GLfloat yfactor);
-void ( APIENTRY * qglPointSize )(GLfloat size);
 void ( APIENTRY * qglPolygonMode )(GLenum face, GLenum mode);
 void ( APIENTRY * qglPolygonOffset )(GLfloat factor, GLfloat units);
 void ( APIENTRY * qglPolygonStipple )(const GLubyte *mask);
@@ -276,12 +274,7 @@ void ( APIENTRY * qglUnlockArraysEXT) ( void );
 void ( APIENTRY * qgxInitTlutObj )(GXTlutObj *obj, void *lut, u8 fmt, u16 entries);
 void ( APIENTRY * qgxLoadTlut)(GXTlutObj *obj, u32 tlut_name);
 
-void ( APIENTRY * qglPointParameterfEXT)( GLenum param, GLfloat value );
-void ( APIENTRY * qglPointParameterfvEXT)( GLenum param, const GLfloat *value );
-void ( APIENTRY * qglSelectTextureSGIS)( GLenum );
-void ( APIENTRY * qglMTexCoord2fSGIS)( GLenum, GLfloat, GLfloat );
-void ( APIENTRY * qglActiveTextureARB) ( GLenum );
-void ( APIENTRY * qglClientActiveTextureARB) ( GLenum );
+void ( APIENTRY * qgxSetPointSize)(u8 width, u8 fmt);
 
 static void ( APIENTRY * dllAccum )(GLenum op, GLfloat value);
 GLboolean ( APIENTRY * dllAreTexturesResident )(GLsizei n, const GLuint *textures, GLboolean *residences);
@@ -360,7 +353,6 @@ static void ( APIENTRY * dllGetPixelMapuiv )(GLenum map, GLuint *values);
 static void ( APIENTRY * dllGetPixelMapusv )(GLenum map, GLushort *values);
 static void ( APIENTRY * dllGetPointerv )(GLenum pname, GLvoid* *params);
 static void ( APIENTRY * dllGetPolygonStipple )(GLubyte *mask);
-const GLubyte * ( APIENTRY * dllGetString )(GLenum name);
 static void ( APIENTRY * dllGetTexEnvfv )(GLenum target, GLenum pname, GLfloat *params);
 static void ( APIENTRY * dllGetTexEnviv )(GLenum target, GLenum pname, GLint *params);
 static void ( APIENTRY * dllGetTexGendv )(GLenum coord, GLenum pname, GLdouble *params);
@@ -449,7 +441,6 @@ static void ( APIENTRY * dllPixelStorei )(GLenum pname, GLint param);
 static void ( APIENTRY * dllPixelTransferf )(GLenum pname, GLfloat param);
 static void ( APIENTRY * dllPixelTransferi )(GLenum pname, GLint param);
 static void ( APIENTRY * dllPixelZoom )(GLfloat xfactor, GLfloat yfactor);
-static void ( APIENTRY * dllPointSize )(GLfloat size);
 static void ( APIENTRY * dllPolygonMode )(GLenum face, GLenum mode);
 static void ( APIENTRY * dllPolygonOffset )(GLfloat factor, GLfloat units);
 static void ( APIENTRY * dllPolygonStipple )(const GLubyte *mask);
@@ -972,12 +963,6 @@ static void APIENTRY logGetPolygonStipple(GLubyte *mask)
 	dllGetPolygonStipple( mask );
 }
 
-static const GLubyte * APIENTRY logGetString(GLenum name)
-{
-	SIG( "glGetString" );
-	return dllGetString( name );
-}
-
 static void APIENTRY logGetTexEnvfv(GLenum target, GLenum pname, GLfloat *params)
 {
 	SIG( "glGetTexEnvfv" );
@@ -1492,12 +1477,6 @@ static void APIENTRY logPixelZoom(GLfloat xfactor, GLfloat yfactor)
 	dllPixelZoom( xfactor, yfactor );
 }
 
-static void APIENTRY logPointSize(GLfloat size)
-{
-	SIG( "glPointSize" );
-	dllPointSize( size );
-}
-
 static void APIENTRY logPolygonMode(GLenum face, GLenum mode)
 {
 	fprintf( log_fp, "glPolygonMode( 0x%x, 0x%x )\n", face, mode );
@@ -1947,7 +1926,6 @@ void QGL_Shutdown( void )
 	qglGetPixelMapusv            = NULL;
 	qglGetPointerv               = NULL;
 	qglGetPolygonStipple         = NULL;
-	qglGetString                 = NULL;
 	qglGetTexEnvfv               = NULL;
 	qglGetTexEnviv               = NULL;
 	qglGetTexGendv               = NULL;
@@ -2028,7 +2006,6 @@ void QGL_Shutdown( void )
 	qglPixelTransferf            = NULL;
 	qglPixelTransferi            = NULL;
 	qglPixelZoom                 = NULL;
-	qglPointSize                 = NULL;
 	qglPolygonMode               = NULL;
 	qglPolygonOffset             = NULL;
 	qglPolygonStipple            = NULL;
@@ -2135,7 +2112,7 @@ qboolean QGL_Init( const char *dllname )
 	qglClearIndex                = dllClearIndex = glClearIndex;
 	qglClearStencil              = dllClearStencil = glClearStencil;
 	qglClipPlane                 = dllClipPlane = glClipPlane;
-	qgxColor4u8                  = dllColor4u8 = /*GXU_Call*/GX_Color4u8;
+	qgxColor4u8                  = dllColor4u8 = GX_Color4u8;
 	qglColorMask                 = dllColorMask = glColorMask;
 	qglColorMaterial             = dllColorMaterial = glColorMaterial;
 	qglColorPointer              = dllColorPointer = glColorPointer;
@@ -2158,7 +2135,7 @@ qboolean QGL_Init( const char *dllname )
 	qglEnable                    = 	dllEnable                    = glEnable;
 	qglEnableClientState         = 	dllEnableClientState         = glEnableClientState;
 	qgxEnableTexture             = 	dllEnableTexture             = GXU_EnableTexture;
-	qgxEnd                       = 	dllEnd                       = GXU_CallGXEnd;
+	qgxEnd                       = 	dllEnd                       = GX_End;
 	qglEndList                   = 	dllEndList                   = glEndList;
 	qglEvalCoord1d				 = 	dllEvalCoord1d				 = glEvalCoord1d;
 	qglEvalCoord1dv              = 	dllEvalCoord1dv              = glEvalCoord1dv;
@@ -2198,7 +2175,6 @@ qboolean QGL_Init( const char *dllname )
 	qglGetPixelMapusv            = 	dllGetPixelMapusv            = glGetPixelMapusv;
 	qglGetPointerv               = 	dllGetPointerv               = glGetPointerv;
 	qglGetPolygonStipple         = 	dllGetPolygonStipple         = glGetPolygonStipple;
-	qglGetString                 = 	dllGetString                 = glGetString;
 	qglGetTexEnvfv               = 	dllGetTexEnvfv               = glGetTexEnvfv;
 	qglGetTexEnviv               = 	dllGetTexEnviv               = glGetTexEnviv;
 	qglGetTexGendv               = 	dllGetTexGendv               = glGetTexGendv;
@@ -2279,14 +2255,13 @@ qboolean QGL_Init( const char *dllname )
 	qglPixelTransferf            = 	dllPixelTransferf            = glPixelTransferf;
 	qglPixelTransferi            = 	dllPixelTransferi            = glPixelTransferi;
 	qglPixelZoom                 = 	dllPixelZoom                 = glPixelZoom;
-	qglPointSize                 = 	dllPointSize                 = glPointSize;
 	qglPolygonMode               = 	dllPolygonMode               = glPolygonMode;
 	qglPolygonOffset             = 	dllPolygonOffset             = glPolygonOffset;
 	qglPolygonStipple            = 	dllPolygonStipple            = glPolygonStipple;
 	qglPopAttrib                 = 	dllPopAttrib                 = glPopAttrib;
 	qglPopClientAttrib           = 	dllPopClientAttrib           = glPopClientAttrib;
 	qglPopName                   = 	dllPopName                   = glPopName;
-	qgxPosition3f32              = 	dllPosition3f32              = /*GXU_Call*/GX_Position3f32;
+	qgxPosition3f32              = 	dllPosition3f32              = GX_Position3f32;
 	qglPrioritizeTextures        = 	dllPrioritizeTextures        = glPrioritizeTextures;
 	qglPushAttrib                = 	dllPushAttrib                = glPushAttrib;
 	qglPushClientAttrib          = 	dllPushClientAttrib          = glPushClientAttrib;
@@ -2337,7 +2312,7 @@ qboolean QGL_Init( const char *dllname )
 	qglStencilFunc               = 	dllStencilFunc               = glStencilFunc;
 	qglStencilMask               = 	dllStencilMask               = glStencilMask;
 	qglStencilOp                 = 	dllStencilOp                 = glStencilOp;
-	qgxTexCoord2f32              = 	dllTexCoord2f32              = /*GXU_Call*/GX_TexCoord2f32;
+	qgxTexCoord2f32              = 	dllTexCoord2f32              = GX_TexCoord2f32;
 	qglTexCoordPointer           = 	dllTexCoordPointer           = glTexCoordPointer;
 	qglTexGend                   = 	dllTexGend                   = glTexGend;
 	qglTexGendv                  = 	dllTexGendv                  = glTexGendv;
@@ -2350,14 +2325,9 @@ qboolean QGL_Init( const char *dllname )
 	qglLockArraysEXT = 0;
 	qglUnlockArraysEXT = 0;
 
-	qglPointParameterfEXT = 0;
-	qglPointParameterfvEXT = 0;
+	qgxSetPointSize = 0;
 	qgxInitTlutObj = 0;
 	qgxLoadTlut = 0;
-	qglSelectTextureSGIS = 0;
-	qglMTexCoord2fSGIS = 0;
-	qglActiveTextureARB = 0;
-	qglClientActiveTextureARB = 0;
 
 	return true;
 }
@@ -2468,7 +2438,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglGetPixelMapusv            = 	logGetPixelMapusv            ;
 		qglGetPointerv               = 	logGetPointerv               ;
 		qglGetPolygonStipple         = 	logGetPolygonStipple         ;
-		qglGetString                 = 	logGetString                 ;
 		qglGetTexEnvfv               = 	logGetTexEnvfv               ;
 		qglGetTexEnviv               = 	logGetTexEnviv               ;
 		qglGetTexGendv               = 	logGetTexGendv               ;
@@ -2549,7 +2518,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglPixelTransferf            = 	logPixelTransferf            ;
 		qglPixelTransferi            = 	logPixelTransferi            ;
 		qglPixelZoom                 = 	logPixelZoom                 ;
-		qglPointSize                 = 	logPointSize                 ;
 		qglPolygonMode               = 	logPolygonMode               ;
 		qglPolygonOffset             = 	logPolygonOffset             ;
 		qglPolygonStipple            = 	logPolygonStipple            ;
@@ -2704,7 +2672,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglGetPixelMapusv            = 	dllGetPixelMapusv            ;
 		qglGetPointerv               = 	dllGetPointerv               ;
 		qglGetPolygonStipple         = 	dllGetPolygonStipple         ;
-		qglGetString                 = 	dllGetString                 ;
 		qglGetTexEnvfv               = 	dllGetTexEnvfv               ;
 		qglGetTexEnviv               = 	dllGetTexEnviv               ;
 		qglGetTexGendv               = 	dllGetTexGendv               ;
@@ -2785,7 +2752,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglPixelTransferf            = 	dllPixelTransferf            ;
 		qglPixelTransferi            = 	dllPixelTransferi            ;
 		qglPixelZoom                 = 	dllPixelZoom                 ;
-		qglPointSize                 = 	dllPointSize                 ;
 		qglPolygonMode               = 	dllPolygonMode               ;
 		qglPolygonOffset             = 	dllPolygonOffset             ;
 		qglPolygonStipple            = 	dllPolygonStipple            ;

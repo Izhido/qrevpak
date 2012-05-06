@@ -672,7 +672,7 @@ void DrawTextureChains (void)
 
 //	GL_TexEnv( GL_REPLACE );
 
-	if ( !qglSelectTextureSGIS && !qglActiveTextureARB )
+	if ( GX_TEXTURE0 == GX_TEXTURE1 )
 	{
 		for ( i = 0, image=gxtextures ; i<numgxtextures ; i++,image++)
 		{
@@ -706,7 +706,7 @@ void DrawTextureChains (void)
 			}
 		}
 
-		GL_EnableMultitexture( false );
+		GX_EnableMultitexture( false );
 		for ( i = 0, image=gxtextures ; i<numgxtextures ; i++,image++)
 		{
 			if (!image->registration_sequence)
@@ -772,13 +772,12 @@ dynamic:
 			R_BuildLightMap( surf, (void *)temp, smax*4 );
 			R_SetCacheState( surf );
 
-			GL_MBind( GL_TEXTURE1, gx_state.lightmap_textures + surf->lightmaptexturenum );
+			GX_MBind( GX_TEXTURE1, gx_state.lightmap_textures + surf->lightmaptexturenum );
 
 			lmtex = surf->lightmaptexturenum;
 
 			GX_LoadSubAndBind(temp, surf->light_s, surf->light_t, smax, tmax, GX_LIGHTMAP_FORMAT);
 
-			Sys_BigStackFree(128*128 * sizeof(unsigned), "GL_RenderLightmappedPoly");
 		}
 		else
 		{
@@ -787,7 +786,7 @@ dynamic:
 
 			R_BuildLightMap( surf, (void *)temp, smax*4 );
 
-			GL_MBind( GL_TEXTURE1, gx_state.lightmap_textures + 0 );
+			GX_MBind( GX_TEXTURE1, gx_state.lightmap_textures + 0 );
 
 			lmtex = 0;
 
@@ -795,10 +794,12 @@ dynamic:
 
 		}
 
+		Sys_BigStackFree(128*128 * sizeof(unsigned), "GL_RenderLightmappedPoly");
+
 		c_brush_polys++;
 
-		GL_MBind( GL_TEXTURE0, image->texnum );
-		GL_MBind( GL_TEXTURE1, gx_state.lightmap_textures + lmtex );
+		GX_MBind( GX_TEXTURE0, image->texnum );
+		GX_MBind( GX_TEXTURE1, gx_state.lightmap_textures + lmtex );
 
 //==========
 //PGM
@@ -816,10 +817,10 @@ dynamic:
 				qgxBegin (GX_TRIANGLEFAN, gxu_cur_vertex_format, nv);
 				for (i=0 ; i< nv; i++, v+= VERTEXSIZE)
 				{
-					qglMTexCoord2fSGIS( GL_TEXTURE0, (v[3]+scroll), v[4]);
-					qglMTexCoord2fSGIS( GL_TEXTURE1, v[5], v[6]);
 					qgxPosition3f32 (v[0], v[1], v[2]);
 					qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
+					qgxTexCoord2f32((v[3]+scroll), v[4]);
+					qgxTexCoord2f32(v[5], v[6]);
 				}
 				qgxEnd ();
 			}
@@ -832,10 +833,10 @@ dynamic:
 				qgxBegin (GX_TRIANGLEFAN, gxu_cur_vertex_format, nv);
 				for (i=0 ; i< nv; i++, v+= VERTEXSIZE)
 				{
-					qglMTexCoord2fSGIS( GL_TEXTURE0, v[3], v[4]);
-					qglMTexCoord2fSGIS( GL_TEXTURE1, v[5], v[6]);
 					qgxPosition3f32 (v[0], v[1], v[2]);
 					qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
+					qgxTexCoord2f32( v[3], v[4]);
+					qgxTexCoord2f32( v[5], v[6]);
 				}
 				qgxEnd ();
 			}
@@ -847,8 +848,8 @@ dynamic:
 	{
 		c_brush_polys++;
 
-		GL_MBind( GL_TEXTURE0, image->texnum );
-		GL_MBind( GL_TEXTURE1, gx_state.lightmap_textures + lmtex );
+		GX_MBind( GX_TEXTURE0, image->texnum );
+		GX_MBind( GX_TEXTURE1, gx_state.lightmap_textures + lmtex );
 
 //==========
 //PGM
@@ -866,10 +867,10 @@ dynamic:
 				qgxBegin (GX_TRIANGLEFAN, gxu_cur_vertex_format, nv);
 				for (i=0 ; i< nv; i++, v+= VERTEXSIZE)
 				{
-					qglMTexCoord2fSGIS( GL_TEXTURE0, (v[3]+scroll), v[4]);
-					qglMTexCoord2fSGIS( GL_TEXTURE1, v[5], v[6]);
 					qgxPosition3f32 (v[0], v[1], v[2]);
 					qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
+					qgxTexCoord2f32( (v[3]+scroll), v[4]);
+					qgxTexCoord2f32( v[5], v[6]);
 				}
 				qgxEnd ();
 			}
@@ -884,10 +885,10 @@ dynamic:
 				qgxBegin (GX_TRIANGLEFAN, gxu_cur_vertex_format, nv);
 				for (i=0 ; i< nv; i++, v+= VERTEXSIZE)
 				{
-					qglMTexCoord2fSGIS( GL_TEXTURE0, v[3], v[4]);
-					qglMTexCoord2fSGIS( GL_TEXTURE1, v[5], v[6]);
 					qgxPosition3f32 (v[0], v[1], v[2]);
 					qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
+					qgxTexCoord2f32( v[3], v[4]);
+					qgxTexCoord2f32( v[5], v[6]);
 				}
 				qgxEnd ();
 			}
@@ -953,22 +954,22 @@ void R_DrawInlineBModel (void)
 				psurf->texturechain = r_alpha_surfaces;
 				r_alpha_surfaces = psurf;
 			}
-			else if ( qglMTexCoord2fSGIS && !( psurf->flags & SURF_DRAWTURB ) )
+			else if ( (GX_TEXTURE0 != GX_TEXTURE1) && !( psurf->flags & SURF_DRAWTURB ) )
 			{
 				GL_RenderLightmappedPoly( psurf );
 			}
 			else
 			{
-				GL_EnableMultitexture( false );
+				GX_EnableMultitexture( false );
 				R_RenderBrushPoly( psurf );
-				GL_EnableMultitexture( true );
+				GX_EnableMultitexture( true );
 			}
 		}
 	}
 
 	if ( !(currententity->flags & RF_TRANSLUCENT) )
 	{
-		if ( !qglMTexCoord2fSGIS )
+		if ( GX_TEXTURE0 == GX_TEXTURE1 )
 			R_BlendLightmaps ();
 	}
 	else
@@ -1044,14 +1045,14 @@ e->angles[2] = -e->angles[2];	// stupid quake bug
 e->angles[0] = -e->angles[0];	// stupid quake bug
 e->angles[2] = -e->angles[2];	// stupid quake bug
 
-	GL_EnableMultitexture( true );
-	GX_SelectTexture( GL_TEXTURE0);
+	GX_EnableMultitexture( true );
+	GX_SelectTexture( GX_TEXTURE0);
 	GX_TexEnv( GX_REPLACE );
-	GX_SelectTexture( GL_TEXTURE1);
+	GX_SelectTexture( GX_TEXTURE1);
 	GX_TexEnv( GX_MODULATE );
 
 	R_DrawInlineBModel ();
-	GL_EnableMultitexture( false );
+	GX_EnableMultitexture( false );
 
 	gxu_cur_modelview_matrix--;
 	qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
@@ -1169,7 +1170,7 @@ void R_RecursiveWorldNode (mnode_t *node)
 		}
 		else
 		{
-			if ( qglMTexCoord2fSGIS && !( surf->flags & SURF_DRAWTURB ) )
+			if ( (GX_TEXTURE0 != GX_TEXTURE1) && !( surf->flags & SURF_DRAWTURB ) )
 			{
 				GL_RenderLightmappedPoly( surf );
 			}
@@ -1259,13 +1260,13 @@ void R_DrawWorld (void)
 	memset (gl_lms.lightmap_surfaces, 0, sizeof(gl_lms.lightmap_surfaces));
 	R_ClearSkyBox ();
 
-	if ( qglMTexCoord2fSGIS )
+	if ( GX_TEXTURE0 != GX_TEXTURE1 )
 	{
-		GL_EnableMultitexture( true );
+		GX_EnableMultitexture( true );
 
-		GX_SelectTexture( GL_TEXTURE0);
+		GX_SelectTexture( GX_TEXTURE0);
 		GX_TexEnv( GX_REPLACE );
-		GX_SelectTexture( GL_TEXTURE1);
+		GX_SelectTexture( GX_TEXTURE1);
 
 		if ( gl_lightmap->value )
 			GX_TexEnv( GX_REPLACE );
@@ -1274,7 +1275,7 @@ void R_DrawWorld (void)
 
 		R_RecursiveWorldNode (r_worldmodel->nodes);
 
-		GL_EnableMultitexture( false );
+		GX_EnableMultitexture( false );
 	}
 	else
 	{
@@ -1601,8 +1602,8 @@ void GL_BeginBuildingLightmaps (model_t *m)
 
 	r_framecount = 1;		// no dlightcache
 
-	GL_EnableMultitexture( true );
-	GX_SelectTexture( GL_TEXTURE1);
+	GX_EnableMultitexture( true );
+	GX_SelectTexture( GX_TEXTURE1);
 
 	/*
 	** setup the base lightstyles so the lightmaps won't have to be regenerated
@@ -1681,6 +1682,6 @@ GL_EndBuildingLightmaps
 void GL_EndBuildingLightmaps (void)
 {
 	LM_UploadBlock( false );
-	GL_EnableMultitexture( false );
+	GX_EnableMultitexture( false );
 }
 

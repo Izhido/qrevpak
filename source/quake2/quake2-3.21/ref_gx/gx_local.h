@@ -28,12 +28,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "GL/glu.h"
 #include <math.h>
 
-#ifndef __linux__
-#ifndef GL_COLOR_INDEX8_EXT
-#define GL_COLOR_INDEX8_EXT GL_COLOR_INDEX
-#endif
-#endif
-
 #include "../client/ref.h"
 
 #include <gccore.h>
@@ -132,11 +126,11 @@ typedef enum
 
 #include "gx_model.h"
 
-void GL_BeginRendering (int *x, int *y, int *width, int *height);
-void GL_EndRendering (void);
+void GX_BeginRendering (int *x, int *y, int *width, int *height);
+void GX_EndRendering (void);
 
-void GL_SetDefaultState( void );
-void GL_UpdateSwapInterval( void );
+void GX_SetDefaultState( void );
+void GX_UpdateSwapInterval( void );
 
 extern	float	gxdepthmin, gxdepthmax;
 
@@ -265,12 +259,12 @@ extern	Mtx		r_world_matrix;
 
 void R_TranslatePlayerSkin (int playernum);
 void GX_Bind (int texnum);
-void GL_MBind( GLenum target, int texnum );
+void GX_MBind( GLenum target, int texnum );
 void GX_LoadAndBind (void* data, int length, int width, int height, int format);
 void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int height, int format);
 void GX_SetMinMag (int minfilt, int magfilt);
 void GX_TexEnv( GLenum value );
-void GL_EnableMultitexture( qboolean enable );
+void GX_EnableMultitexture( qboolean enable );
 void GX_SelectTexture( GLenum );
 
 void R_LightPoint (vec3_t p, vec3_t color);
@@ -341,25 +335,25 @@ void	R_SetPalette ( const unsigned char *palette);
 
 int		Draw_GetPalette (void);
 
-void GL_ResampleTexture (unsigned *in, int inwidth, int inheight, unsigned *out,  int outwidth, int outheight);
+void GX_ResampleTexture (unsigned *in, int inwidth, int inheight, unsigned *out,  int outwidth, int outheight);
 
 struct image_s *R_RegisterSkin (char *name);
 
 void LoadPCX (char *filename, byte **pic, byte **palette, int *width, int *height);
-image_t *GL_LoadPic (char *name, byte *pic, int width, int height, imagetype_t type, int bits);
-image_t	*GL_FindImage (char *name, imagetype_t type);
-void	GL_TextureMode( char *string );
+image_t *GX_LoadPic (char *name, byte *pic, int width, int height, imagetype_t type, int bits);
+image_t	*GX_FindImage (char *name, imagetype_t type);
+void	GX_TextureMode( char *string );
 void	GL_ImageList_f (void);
 
-void	GL_SetTexturePalette( unsigned palette[256] );
+void	GX_SetTexturePalette( unsigned palette[256] );
 
-void	GL_InitImages (void);
-void	GL_ShutdownImages (void);
+void	GX_InitImages (void);
+void	GX_ShutdownImages (void);
 
-void	GL_FreeUnusedImages (void);
+void	GX_FreeUnusedImages (void);
 
-void GL_TextureAlphaMode( char *string );
-void GL_TextureSolidMode( char *string );
+void GX_TextureAlphaMode( char *string );
+void GX_TextureSolidMode( char *string );
 
 /*
 ** GL extension emulation functions

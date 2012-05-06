@@ -65,14 +65,6 @@ void GXU_DisableTexture(void);
 
 void GXU_CallguMtxRotAxisDeg(Mtx mt, guVector* axis, f32 deg);
 
-void GXU_CallGXPosition3f32(f32 x, f32 y, f32 z);
-
-void GXU_CallGXColor4u8(u8 r,u8 g,u8 b,u8 a);
-
-void GXU_CallGXTexCoord2f32(f32 s, f32 t);
-
-void GXU_CallGXEnd(void);
-
 unsigned char* GX_CopyTexRGBA8(unsigned char* src, int width, int height, unsigned char* dst);
 
 unsigned char* GX_CopyTexRGB5A3(unsigned char* src, int width, int height, unsigned char* dst);

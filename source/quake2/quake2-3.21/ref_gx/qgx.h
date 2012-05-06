@@ -127,7 +127,6 @@ extern  void ( APIENTRY * qglGetPixelMapuiv )(GLenum map, GLuint *values);
 extern  void ( APIENTRY * qglGetPixelMapusv )(GLenum map, GLushort *values);
 extern  void ( APIENTRY * qglGetPointerv )(GLenum pname, GLvoid* *params);
 extern  void ( APIENTRY * qglGetPolygonStipple )(GLubyte *mask);
-extern  const GLubyte * ( APIENTRY * qglGetString )(GLenum name);
 extern  void ( APIENTRY * qglGetTexEnvfv )(GLenum target, GLenum pname, GLfloat *params);
 extern  void ( APIENTRY * qglGetTexEnviv )(GLenum target, GLenum pname, GLint *params);
 extern  void ( APIENTRY * qglGetTexGendv )(GLenum coord, GLenum pname, GLdouble *params);
@@ -208,7 +207,6 @@ extern  void ( APIENTRY * qglPixelStorei )(GLenum pname, GLint param);
 extern  void ( APIENTRY * qglPixelTransferf )(GLenum pname, GLfloat param);
 extern  void ( APIENTRY * qglPixelTransferi )(GLenum pname, GLint param);
 extern  void ( APIENTRY * qglPixelZoom )(GLfloat xfactor, GLfloat yfactor);
-extern  void ( APIENTRY * qglPointSize )(GLfloat size);
 extern  void ( APIENTRY * qglPolygonMode )(GLenum face, GLenum mode);
 extern  void ( APIENTRY * qglPolygonOffset )(GLfloat factor, GLfloat units);
 extern  void ( APIENTRY * qglPolygonStipple )(const GLubyte *mask);
@@ -276,20 +274,13 @@ extern  void ( APIENTRY * qglTexGeni )(GLenum coord, GLenum pname, GLint param);
 extern  void ( APIENTRY * qglTexGeniv )(GLenum coord, GLenum pname, const GLint *params);
 extern  void ( APIENTRY * qglVertexPointer )(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer);
 
-extern	void ( APIENTRY * qglPointParameterfEXT)( GLenum param, GLfloat value );
-extern	void ( APIENTRY * qglPointParameterfvEXT)( GLenum param, const GLfloat *value );
+extern	void ( APIENTRY * qgxSetPointSize)(u8 width, u8 fmt);
 
 extern  void ( APIENTRY * qgxInitTlutObj )(GXTlutObj *obj, void *lut, u8 fmt, u16 entries);
 extern	void ( APIENTRY * qgxLoadTlut)(GXTlutObj *obj, u32 tlut_name);
 
 extern	void ( APIENTRY * qglLockArraysEXT) (int , int);
 extern	void ( APIENTRY * qglUnlockArraysEXT) (void);
-
-extern	void ( APIENTRY * qglMTexCoord2fSGIS)( GLenum, GLfloat, GLfloat );
-extern	void ( APIENTRY * qglSelectTextureSGIS)( GLenum );
-
-extern	void ( APIENTRY * qglActiveTextureARB)( GLenum );
-extern	void ( APIENTRY * qglClientActiveTextureARB)( GLenum );
 
 #ifdef _WIN32
 
@@ -370,11 +361,6 @@ extern void (*qglXSwapBuffers)( Display *dpy, GLXDrawable drawable );
 #define GL_SHARED_TEXTURE_PALETTE_EXT		0x81FB
 #endif
 
-#define GL_TEXTURE0_SGIS					0x835E
-#define GL_TEXTURE1_SGIS					0x835F
-#define GL_TEXTURE0_ARB						0x84C0
-#define GL_TEXTURE1_ARB						0x84C1
-
-extern int GL_TEXTURE0, GL_TEXTURE1;
+extern int GX_TEXTURE0, GX_TEXTURE1;
 
 #endif

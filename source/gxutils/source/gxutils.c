@@ -140,26 +140,6 @@ void GXU_CallguMtxRotAxisDeg(Mtx mt, guVector* axis, f32 deg)
 	guMtxRotAxisDeg(mt, axis, deg);
 }
 
-void GXU_CallGXPosition3f32(f32 x, f32 y, f32 z)
-{
-	GX_Position3f32(x, y, z);
-}
-
-void GXU_CallGXColor4u8(u8 r, u8 g, u8 b, u8 a)
-{
-	GX_Color4u8(r, g, b, a);
-}
-
-void GXU_CallGXTexCoord2f32(f32 s, f32 t)
-{
-	GX_TexCoord2f32(s, t);
-}
-
-void GXU_CallGXEnd(void)
-{
-	GX_End();
-}
-
 unsigned char* GX_CopyTexRGBA8(unsigned char* src, int width, int height, unsigned char* dst)
 {
 	int x;

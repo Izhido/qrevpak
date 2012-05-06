@@ -28,7 +28,7 @@ viddef_t	vid;
 
 refimport_t	ri;
 
-int GL_TEXTURE0, GL_TEXTURE1;
+int GX_TEXTURE0, GX_TEXTURE1;
 
 model_t		*r_worldmodel;
 
@@ -51,7 +51,7 @@ int			c_brush_polys, c_alias_polys;
 
 float		v_blend[4];			// final blending color
 
-void GL_Strings_f( void );
+void GX_Strings_f( void );
 
 //
 // view origin
@@ -499,7 +499,7 @@ R_DrawParticles
 */
 void R_DrawParticles (void)
 {
-	if ( gl_ext_pointparameters->value && qglPointParameterfEXT )
+	if ( gl_ext_pointparameters->value && qgxSetPointSize )
 	{
 		int i;
 		unsigned char color[4];
@@ -510,7 +510,7 @@ void R_DrawParticles (void)
 		qgxSetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 		qgxDisableTexture();
 
-		qglPointSize( gl_particle_size->value );
+		qgxSetPointSize( gl_particle_size->value * 16, GX_TO_ZERO );
 
 		qgxBegin (GX_POINTS, GX_VTXFMT0, r_newrefdef.num_particles);
 		for ( i = 0, p = r_newrefdef.particles; i < r_newrefdef.num_particles; i++, p++ )
@@ -1071,7 +1071,7 @@ void R_Register( void )
 	ri.Cmd_AddCommand( "imagelist", GL_ImageList_f );
 	ri.Cmd_AddCommand( "screenshot", GL_ScreenShot_f );
 	ri.Cmd_AddCommand( "modellist", Mod_Modellist_f );
-	ri.Cmd_AddCommand( "gl_strings", GL_Strings_f );
+	ri.Cmd_AddCommand( "gl_strings", GX_Strings_f );
 }
 
 /*
@@ -1215,81 +1215,44 @@ qboolean R_Init( void *hinstance, void *hWnd )
 	}
 #endif
 
-	/*if ( strstr( gx_config.extensions_string, "GL_EXT_point_parameters" ) )
+	/*if ( gl_ext_pointparameters->value )
 	{
-		if ( gl_ext_pointparameters->value )
-		{
-			qglPointParameterfEXT = ( void (APIENTRY *)( GLenum, GLfloat ) ) qwglGetProcAddress( "glPointParameterfEXT" );
-			qglPointParameterfvEXT = ( void (APIENTRY *)( GLenum, const GLfloat * ) ) qwglGetProcAddress( "glPointParameterfvEXT" );
-			ri.Con_Printf( PRINT_ALL, "...using GL_EXT_point_parameters\n" );
-		}
-		else
-		{
-			ri.Con_Printf( PRINT_ALL, "...ignoring GL_EXT_point_parameters\n" );
-		}
+
+		qgxSetPointSize = GX_SetPointSize;
+		ri.Con_Printf( PRINT_ALL, "...using GL_EXT_point_parameters\n" );
 	}
 	else
 	{*/
-		ri.Con_Printf( PRINT_ALL, "...GL_EXT_point_parameters not found\n" );
+		ri.Con_Printf( PRINT_ALL, "...ignoring GL_EXT_point_parameters\n" );
 	/*}*/
 
-	if ( gl_ext_palettedtexture->value )
+	/*if ( gl_ext_palettedtexture->value )
 	{
 		ri.Con_Printf( PRINT_ALL, "...using GL_EXT_shared_texture_palette\n" );
 		qgxInitTlutObj = GX_InitTlutObj;
 		qgxLoadTlut = GX_LoadTlut;
 	}
 	else
-	{
+	{*/
 		ri.Con_Printf( PRINT_ALL, "...ignoring GL_EXT_shared_texture_palette\n" );
-	}
-
-	/*if ( strstr( gx_config.extensions_string, "GL_ARB_multitexture" ) )
-	{
-		if ( gl_ext_multitexture->value )
-		{
-			ri.Con_Printf( PRINT_ALL, "...using GL_ARB_multitexture\n" );
-			qglMTexCoord2fSGIS = ( void * ) qwglGetProcAddress( "glMultiTexCoord2fARB" );
-			qglActiveTextureARB = ( void * ) qwglGetProcAddress( "glActiveTextureARB" );
-			qglClientActiveTextureARB = ( void * ) qwglGetProcAddress( "glClientActiveTextureARB" );
-			GL_TEXTURE0 = GL_TEXTURE0_ARB;
-			GL_TEXTURE1 = GL_TEXTURE1_ARB;
-		}
-		else
-		{
-			ri.Con_Printf( PRINT_ALL, "...ignoring GL_ARB_multitexture\n" );
-		}
-	}
-	else
-	{*/
-		ri.Con_Printf( PRINT_ALL, "...GL_ARB_multitexture not found\n" );
 	/*}*/
 
-	/*if ( strstr( gx_config.extensions_string, "GL_SGIS_multitexture" ) )
+	if ( gl_ext_multitexture->value )
 	{
-		if ( qglActiveTextureARB )
-		{
-			ri.Con_Printf( PRINT_ALL, "...GL_SGIS_multitexture deprecated in favor of ARB_multitexture\n" );
-		}
-		else if ( gl_ext_multitexture->value )
-		{
-			ri.Con_Printf( PRINT_ALL, "...using GL_SGIS_multitexture\n" );
-			qglMTexCoord2fSGIS = ( void * ) qwglGetProcAddress( "glMTexCoord2fSGIS" );
-			qglSelectTextureSGIS = ( void * ) qwglGetProcAddress( "glSelectTextureSGIS" );
-			GL_TEXTURE0 = GL_TEXTURE0_SGIS;
-			GL_TEXTURE1 = GL_TEXTURE1_SGIS;
-		}
-		else
-		{
-			ri.Con_Printf( PRINT_ALL, "...ignoring GL_SGIS_multitexture\n" );
-		}
+		ri.Con_Printf( PRINT_ALL, "...using GL_ARB_multitexture\n" );
+		GX_TEXTURE0 = GX_TEXMAP0;
+		GX_TEXTURE1 = GX_TEXMAP1;
 	}
 	else
-	{*/
-		ri.Con_Printf( PRINT_ALL, "...GL_SGIS_multitexture not found\n" );
-	/*}*/
+	{
+		ri.Con_Printf( PRINT_ALL, "...ignoring GL_ARB_multitexture\n" );
+		GX_TEXTURE0 = GX_TEXMAP0;
+		GX_TEXTURE1 = GX_TEXMAP0;
+	}
 
-	GL_SetDefaultState();
+	ri.Con_Printf( PRINT_ALL, "...GL_SGIS_multitexture not found\n" );
+
+	GX_SetDefaultState();
 
 	/*
 	** draw our stereo patterns
@@ -1298,7 +1261,7 @@ qboolean R_Init( void *hinstance, void *hWnd )
 	GL_DrawStereoPattern();
 #endif
 
-	GL_InitImages ();
+	GX_InitImages ();
 	Mod_Init ();
 	R_InitParticleTexture ();
 	Draw_InitLocal ();
@@ -1320,7 +1283,7 @@ void R_Shutdown (void)
 
 	Mod_FreeAll ();
 
-	GL_ShutdownImages ();
+	GX_ShutdownImages ();
 
 	/*
 	** shut down OS specific OpenGL stuff like contexts, etc.
@@ -1418,26 +1381,26 @@ void R_BeginFrame( float camera_separation )
 	*/
 	if ( gl_texturemode->modified )
 	{
-		GL_TextureMode( gl_texturemode->string );
+		GX_TextureMode( gl_texturemode->string );
 		gl_texturemode->modified = false;
 	}
 
 	if ( gl_texturealphamode->modified )
 	{
-		GL_TextureAlphaMode( gl_texturealphamode->string );
+		GX_TextureAlphaMode( gl_texturealphamode->string );
 		gl_texturealphamode->modified = false;
 	}
 
 	if ( gl_texturesolidmode->modified )
 	{
-		GL_TextureSolidMode( gl_texturesolidmode->string );
+		GX_TextureSolidMode( gl_texturesolidmode->string );
 		gl_texturesolidmode->modified = false;
 	}
 
 	/*
 	** swapinterval stuff
 	*/
-	GL_UpdateSwapInterval();
+	GX_UpdateSwapInterval();
 
 	//
 	// clear screen if desired
@@ -1478,7 +1441,7 @@ void R_SetPalette ( const unsigned char *palette)
 			rp[i*4+3] = 0xff;
 		}
 	}
-	GL_SetTexturePalette( r_rawpalette );
+	GX_SetTexturePalette( r_rawpalette );
 
 	qglClearColor (0,0,0,0);
 	qglClear (GL_COLOR_BUFFER_BIT);

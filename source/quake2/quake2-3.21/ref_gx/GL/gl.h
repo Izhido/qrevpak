@@ -59,8 +59,6 @@ typedef unsigned short GLushort;
 
 #define GL_BACK 16
 
-#define GL_COLOR_INDEX 21
-
 #define GL_TRIANGLE_FAN 22
 
 #define GL_SMOOTH 23
@@ -131,8 +129,6 @@ typedef unsigned short GLushort;
 
 #define GL_TEXTURE_WRAP_T 56
 
-#define GL_COLOR_INDEX8_EXT 57
-
 #define GL_RGBA8 58
 
 #define GL_RGB5_A1 59
@@ -196,8 +192,6 @@ void glReadBuffer(GLenum mode);
 void glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLvoid* data);
 
 void glFlush(void);
-
-const GLubyte* glGetString(GLenum name);
 
 void glClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
 
@@ -349,8 +343,6 @@ void glGetPointerv(GLenum pname, GLvoid* *params);
 
 void glGetPolygonStipple(GLubyte *mask);
 
-const GLubyte * glGetString(GLenum name);
-
 void glGetTexEnvfv(GLenum target, GLenum pname, GLfloat *params);
 
 void glGetTexEnviv(GLenum target, GLenum pname, GLint *params);
@@ -496,8 +488,6 @@ void glPixelTransferf(GLenum pname, GLfloat param);
 void glPixelTransferi(GLenum pname, GLint param);
 
 void glPixelZoom(GLfloat xfactor, GLfloat yfactor);
-
-void glPointSize(GLfloat size);
 
 void glPolygonMode(GLenum face, GLenum mode);
 

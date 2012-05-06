@@ -469,7 +469,7 @@ void Mod_LoadTexinfo (lump_t *l)
 		    out->next = NULL;
 		Com_sprintf (name, sizeof(name), "textures/%s.wal", in->texture);
 
-		out->image = GL_FindImage (name, it_wall);
+		out->image = GX_FindImage (name, it_wall);
 		if (!out->image)
 		{
 			ri.Con_Printf (PRINT_ALL, "Couldn't load %s\n", name);
@@ -1033,7 +1033,7 @@ void Mod_LoadAliasModel (model_t *mod, void *buffer)
 		pheader->num_skins*MAX_SKINNAME);
 	for (i=0 ; i<pheader->num_skins ; i++)
 	{
-		mod->skins[i] = GL_FindImage ((char *)pheader + pheader->ofs_skins + i*MAX_SKINNAME
+		mod->skins[i] = GX_FindImage ((char *)pheader + pheader->ofs_skins + i*MAX_SKINNAME
 			, it_skin);
 	}
 
@@ -1086,7 +1086,7 @@ void Mod_LoadSpriteModel (model_t *mod, void *buffer)
 		sprout->frames[i].origin_x = LittleLong (sprin->frames[i].origin_x);
 		sprout->frames[i].origin_y = LittleLong (sprin->frames[i].origin_y);
 		memcpy (sprout->frames[i].name, sprin->frames[i].name, MAX_SKINNAME);
-		mod->skins[i] = GL_FindImage (sprout->frames[i].name,
+		mod->skins[i] = GX_FindImage (sprout->frames[i].name,
 			it_sprite);
 	}
 
@@ -1146,13 +1146,13 @@ struct model_s *R_RegisterModel (char *name)
 		{
 			sprout = (dsprite_t *)mod->extradata;
 			for (i=0 ; i<sprout->numframes ; i++)
-				mod->skins[i] = GL_FindImage (sprout->frames[i].name, it_sprite);
+				mod->skins[i] = GX_FindImage (sprout->frames[i].name, it_sprite);
 		}
 		else if (mod->type == mod_alias)
 		{
 			pheader = (dmdl_t *)mod->extradata;
 			for (i=0 ; i<pheader->num_skins ; i++)
-				mod->skins[i] = GL_FindImage ((char *)pheader + pheader->ofs_skins + i*MAX_SKINNAME, it_skin);
+				mod->skins[i] = GX_FindImage ((char *)pheader + pheader->ofs_skins + i*MAX_SKINNAME, it_skin);
 //PGM
 			mod->numframes = pheader->num_frames;
 //PGM
@@ -1188,7 +1188,7 @@ void R_EndRegistration (void)
 		}
 	}
 
-	GL_FreeUnusedImages ();
+	GX_FreeUnusedImages ();
 }
 
 

@@ -56,7 +56,7 @@ void R_InitParticleTexture (void)
 			data[y][x][3] = dottexture[x][y]*255;
 		}
 	}
-	r_particletexture = GL_LoadPic ("***particle***", (byte *)data, 8, 8, it_sprite, 32);
+	r_particletexture = GX_LoadPic ("***particle***", (byte *)data, 8, 8, it_sprite, 32);
 
 	//
 	// also use this for bad textures, but without alpha
@@ -71,7 +71,7 @@ void R_InitParticleTexture (void)
 			data[y][x][3] = 255;
 		}
 	}
-	r_notexture = GL_LoadPic ("***r_notexture***", (byte *)data, 8, 8, it_wall, 32);
+	r_notexture = GX_LoadPic ("***r_notexture***", (byte *)data, 8, 8, it_wall, 32);
 }
 
 
@@ -160,17 +160,17 @@ void GL_ScreenShot_f (void)
 } 
 
 /*
-** GL_Strings_f
+** GX_Strings_f
 */
-void GL_Strings_f( void )
+void GX_Strings_f( void )
 {
 	ri.Con_Printf (PRINT_ALL, "Wii GX hardware-accelerated renderer\n");
 }
 
 /*
-** GL_SetDefaultState
+** GX_SetDefaultState
 */
-void GL_SetDefaultState( void )
+void GX_SetDefaultState( void )
 {
 	qglClearColor (1,0, 0.5 , 0.5);
 	gxu_cull_mode = GX_CULL_BACK;
@@ -201,15 +201,15 @@ void GL_SetDefaultState( void )
 	// Implement this ASAP:
 	//qglShadeModel (GL_FLAT);
 
-	GL_TextureMode( gl_texturemode->string );
-	GL_TextureAlphaMode( gl_texturealphamode->string );
-	GL_TextureSolidMode( gl_texturesolidmode->string );
+	GX_TextureMode( gl_texturemode->string );
+	GX_TextureAlphaMode( gl_texturealphamode->string );
+	GX_TextureSolidMode( gl_texturesolidmode->string );
 
 	GX_SetMinMag(gx_filter_min, gx_filter_max);
 
 	GX_TexEnv( GX_REPLACE );
 
-	if ( qglPointParameterfEXT )
+	if ( qgxSetPointSize )
 	{
 		float attenuations[3];
 
@@ -217,23 +217,24 @@ void GL_SetDefaultState( void )
 		attenuations[1] = gl_particle_att_b->value;
 		attenuations[2] = gl_particle_att_c->value;
 
-		qglEnable( GL_POINT_SMOOTH );
-		qglPointParameterfEXT( GL_POINT_SIZE_MIN_EXT, gl_particle_min_size->value );
-		qglPointParameterfEXT( GL_POINT_SIZE_MAX_EXT, gl_particle_max_size->value );
-		qglPointParameterfvEXT( GL_DISTANCE_ATTENUATION_EXT, attenuations );
+		// Implement these functions ASAP:
+		//qglEnable( GL_POINT_SMOOTH );
+		//qglPointParameterfEXT( GL_POINT_SIZE_MIN_EXT, gl_particle_min_size->value );
+		//qglPointParameterfEXT( GL_POINT_SIZE_MAX_EXT, gl_particle_max_size->value );
+		//qglPointParameterfvEXT( GL_DISTANCE_ATTENUATION_EXT, attenuations );
 	}
 
 	if ( qgxLoadTlut && gl_ext_palettedtexture->value )
 	{
 		qglEnable( GL_SHARED_TEXTURE_PALETTE_EXT );
 
-		GL_SetTexturePalette( d_8to24table );
+		GX_SetTexturePalette( d_8to24table );
 	}
 
-	GL_UpdateSwapInterval();
+	GX_UpdateSwapInterval();
 }
 
-void GL_UpdateSwapInterval( void )
+void GX_UpdateSwapInterval( void )
 {
 	if ( gl_swapinterval->modified )
 	{

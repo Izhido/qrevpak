@@ -51,7 +51,7 @@ int		gx_tex_allocated; // To track amount of memory used for textures
 u16*	gx_paldata = NULL;
 GXTlutObj gx_palobj;
 
-void GL_SetTexturePalette( unsigned palette[256] )
+void GX_SetTexturePalette( unsigned palette[256] )
 {
 	int i;
 
@@ -75,24 +75,28 @@ void GL_SetTexturePalette( unsigned palette[256] )
 	}
 }
 
-void GL_EnableMultitexture( qboolean enable )
+void GX_EnableMultitexture( qboolean enable )
 {
-	if ( !qglSelectTextureSGIS && !qglActiveTextureARB )
+	if ( GX_TEXTURE0 == GX_TEXTURE1 )
 		return;
 
 	if ( enable )
 	{
-		GX_SelectTexture( GL_TEXTURE1 );
-		qgxEnableTexture();
+		GX_SelectTexture( GX_TEXTURE1 );
+		GX_SetNumTexGens(2);
+		GX_SetNumTevStages(2);
+		GX_SetVtxDesc(GX_VA_TEX1, GX_DIRECT);
 		GX_TexEnv( GX_REPLACE );
 	}
 	else
 	{
-		GX_SelectTexture( GL_TEXTURE1 );
-		qgxDisableTexture();
+		GX_SelectTexture( GX_TEXTURE1 );
+		GX_SetVtxDesc(GX_VA_TEX1, GX_NONE);
+		GX_SetNumTevStages(1);
+		GX_SetNumTexGens(1);
 		GX_TexEnv( GX_REPLACE );
 	}
-	GX_SelectTexture( GL_TEXTURE0 );
+	GX_SelectTexture( GX_TEXTURE0 );
 	GX_TexEnv( GX_REPLACE );
 }
 
@@ -100,10 +104,10 @@ void GX_SelectTexture( GLenum texture )
 {
 	int tmu;
 
-	if ( !qglSelectTextureSGIS && !qglActiveTextureARB )
+	if ( GX_TEXTURE0 == GX_TEXTURE1 )
 		return;
 
-	if ( texture == GL_TEXTURE0 )
+	if ( texture == GX_TEXTURE0 )
 	{
 		tmu = 0;
 	}
@@ -118,16 +122,6 @@ void GX_SelectTexture( GLenum texture )
 	}
 
 	gx_state.currenttmu = tmu;
-
-	if ( qglSelectTextureSGIS )
-	{
-		qglSelectTextureSGIS( texture );
-	}
-	else if ( qglActiveTextureARB )
-	{
-		qglActiveTextureARB( texture );
-		qglClientActiveTextureARB( texture );
-	}
 }
 
 void GX_TexEnv( GLenum mode )
@@ -154,10 +148,10 @@ void GX_Bind (int texnum)
 		qgxLoadTexObj(&gxtexobjs[texnum].texobj, GX_TEXMAP0 + gx_state.currenttmu );
 }
 
-void GL_MBind( GLenum target, int texnum )
+void GX_MBind( GLenum target, int texnum )
 {
 	GX_SelectTexture( target );
-	if ( target == GL_TEXTURE0 )
+	if ( target == GX_TEXTURE0 )
 	{
 		if ( gx_state.currenttextures[0] == texnum )
 			return;
@@ -534,10 +528,10 @@ gltmode_t gl_solid_modes[] = {
 
 /*
 ===============
-GL_TextureMode
+GX_TextureMode
 ===============
 */
-void GL_TextureMode( char *string )
+void GX_TextureMode( char *string )
 {
 	int		i;
 	image_t	*glt;
@@ -570,10 +564,10 @@ void GL_TextureMode( char *string )
 
 /*
 ===============
-GL_TextureAlphaMode
+GX_TextureAlphaMode
 ===============
 */
-void GL_TextureAlphaMode( char *string )
+void GX_TextureAlphaMode( char *string )
 {
 	int		i;
 
@@ -594,10 +588,10 @@ void GL_TextureAlphaMode( char *string )
 
 /*
 ===============
-GL_TextureSolidMode
+GX_TextureSolidMode
 ===============
 */
-void GL_TextureSolidMode( char *string )
+void GX_TextureSolidMode( char *string )
 {
 	int		i;
 
@@ -1145,16 +1139,16 @@ void R_FloodFillSkin( byte *skin, int skinwidth, int skinheight )
 
 /*
 ================
-GL_ResampleTexture
+GX_ResampleTexture
 ================
 */
-void GL_ResampleTexture (unsigned *in, int inwidth, int inheight, unsigned *out,  int outwidth, int outheight)
+void GX_ResampleTexture (unsigned *in, int inwidth, int inheight, unsigned *out,  int outwidth, int outheight)
 {
 	int		i, j;
 	unsigned	*inrow, *inrow2;
 	unsigned	frac, fracstep;
-	unsigned*	p1 = Sys_BigStackAlloc(1024 * sizeof(unsigned), "GL_ResampleTexture");
-	unsigned*	p2 = Sys_BigStackAlloc(1024 * sizeof(unsigned), "GL_ResampleTexture");
+	unsigned*	p1 = Sys_BigStackAlloc(1024 * sizeof(unsigned), "GX_ResampleTexture");
+	unsigned*	p2 = Sys_BigStackAlloc(1024 * sizeof(unsigned), "GX_ResampleTexture");
 	byte		*pix1, *pix2, *pix3, *pix4;
 
 	fracstep = inwidth*0x10000/outwidth;
@@ -1190,7 +1184,7 @@ void GL_ResampleTexture (unsigned *in, int inwidth, int inheight, unsigned *out,
 		}
 	};
 
-	Sys_BigStackFree(2048 * sizeof(unsigned), "GL_ResampleTexture");
+	Sys_BigStackFree(2048 * sizeof(unsigned), "GX_ResampleTexture");
 }
 
 /*
@@ -1394,7 +1388,7 @@ qboolean GL_Upload32 (unsigned *data, int width, int height,  qboolean mipmap)
 		memcpy (scaled, data, width*height*4);
 	}
 	else
-		GL_ResampleTexture (data, width, height, scaled, scaled_width, scaled_height);
+		GX_ResampleTexture (data, width, height, scaled, scaled_width, scaled_height);
 
 	GL_LightScaleTexture (scaled, scaled_width, scaled_height, !mipmap );
 
@@ -1543,12 +1537,12 @@ qboolean GL_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboole
 
 /*
 ================
-GL_LoadPic
+GX_LoadPic
 
 This is also used as an entry point for the generated r_notexture
 ================
 */
-image_t *GL_LoadPic (char *name, byte *pic, int width, int height, imagetype_t type, int bits)
+image_t *GX_LoadPic (char *name, byte *pic, int width, int height, imagetype_t type, int bits)
 {
 	image_t		*image;
 	int			i;
@@ -1643,7 +1637,7 @@ image_t *GL_LoadWal (char *name)
 	ri.FS_LoadFile (name, (void **)&mt, true);
 	if (!mt)
 	{
-		ri.Con_Printf (PRINT_ALL, "GL_FindImage: can't load %s\n", name);
+		ri.Con_Printf (PRINT_ALL, "GX_FindImage: can't load %s\n", name);
 		return r_notexture;
 	}
 
@@ -1651,7 +1645,7 @@ image_t *GL_LoadWal (char *name)
 	height = LittleLong (mt->height);
 	ofs = LittleLong (mt->offsets[0]);
 
-	image = GL_LoadPic (name, (byte *)mt + ofs, width, height, it_wall, 8);
+	image = GX_LoadPic (name, (byte *)mt + ofs, width, height, it_wall, 8);
 
 	ri.FS_FreeFile ((void *)mt);
 
@@ -1660,12 +1654,12 @@ image_t *GL_LoadWal (char *name)
 
 /*
 ===============
-GL_FindImage
+GX_FindImage
 
 Finds or loads the given image
 ===============
 */
-image_t	*GL_FindImage (char *name, imagetype_t type)
+image_t	*GX_FindImage (char *name, imagetype_t type)
 {
 	image_t	*image;
 	int		i, len;
@@ -1673,10 +1667,10 @@ image_t	*GL_FindImage (char *name, imagetype_t type)
 	int		width, height;
 
 	if (!name)
-		return NULL;	//	ri.Sys_Error (ERR_DROP, "GL_FindImage: NULL name");
+		return NULL;	//	ri.Sys_Error (ERR_DROP, "GX_FindImage: NULL name");
 	len = strlen(name);
 	if (len<5)
-		return NULL;	//	ri.Sys_Error (ERR_DROP, "GL_FindImage: bad name: %s", name);
+		return NULL;	//	ri.Sys_Error (ERR_DROP, "GX_FindImage: bad name: %s", name);
 
 	// look for it
 	for (i=0, image=gxtextures ; i<numgxtextures ; i++,image++)
@@ -1697,8 +1691,8 @@ image_t	*GL_FindImage (char *name, imagetype_t type)
 	{
 		LoadPCX (name, &pic, &palette, &width, &height);
 		if (!pic)
-			return NULL; // ri.Sys_Error (ERR_DROP, "GL_FindImage: can't load %s", name);
-		image = GL_LoadPic (name, pic, width, height, type, 8);
+			return NULL; // ri.Sys_Error (ERR_DROP, "GX_FindImage: can't load %s", name);
+		image = GX_LoadPic (name, pic, width, height, type, 8);
 	}
 	else if (!strcmp(name+len-4, ".wal"))
 	{
@@ -1708,11 +1702,11 @@ image_t	*GL_FindImage (char *name, imagetype_t type)
 	{
 		LoadTGA (name, &pic, &width, &height);
 		if (!pic)
-			return NULL; // ri.Sys_Error (ERR_DROP, "GL_FindImage: can't load %s", name);
-		image = GL_LoadPic (name, pic, width, height, type, 32);
+			return NULL; // ri.Sys_Error (ERR_DROP, "GX_FindImage: can't load %s", name);
+		image = GX_LoadPic (name, pic, width, height, type, 32);
 	}
 	else
-		return NULL;	//	ri.Sys_Error (ERR_DROP, "GL_FindImage: bad extension on: %s", name);
+		return NULL;	//	ri.Sys_Error (ERR_DROP, "GX_FindImage: bad extension on: %s", name);
 
 
 	if (pic)
@@ -1732,19 +1726,19 @@ R_RegisterSkin
 */
 struct image_s *R_RegisterSkin (char *name)
 {
-	return GL_FindImage (name, it_skin);
+	return GX_FindImage (name, it_skin);
 }
 
 
 /*
 ================
-GL_FreeUnusedImages
+GX_FreeUnusedImages
 
 Any image that was not touched on this registration sequence
 will be freed.
 ================
 */
-void GL_FreeUnusedImages (void)
+void GX_FreeUnusedImages (void)
 {
 	int		i;
 	image_t	*image;
@@ -1808,10 +1802,10 @@ int Draw_GetPalette (void)
 
 /*
 ===============
-GL_InitImages
+GX_InitImages
 ===============
 */
-void	GL_InitImages (void)
+void	GX_InitImages (void)
 {
 	int		i, j;
 	float	g = vid_gamma->value;
@@ -1865,10 +1859,10 @@ void	GL_InitImages (void)
 
 /*
 ===============
-GL_ShutdownImages
+GX_ShutdownImages
 ===============
 */
-void	GL_ShutdownImages (void)
+void	GX_ShutdownImages (void)
 {
 	int		i;
 	image_t	*image;

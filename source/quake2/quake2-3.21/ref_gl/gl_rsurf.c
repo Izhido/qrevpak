@@ -741,7 +741,7 @@ dynamic:
 			R_BuildLightMap( surf, (void *)temp, smax*4 );
 			R_SetCacheState( surf );
 
-			GL_MBind( GL_TEXTURE1, gl_state.lightmap_textures + surf->lightmaptexturenum );
+			GX_MBind( GL_TEXTURE1, gl_state.lightmap_textures + surf->lightmaptexturenum );
 
 			lmtex = surf->lightmaptexturenum;
 
@@ -759,7 +759,7 @@ dynamic:
 
 			R_BuildLightMap( surf, (void *)temp, smax*4 );
 
-			GL_MBind( GL_TEXTURE1, gl_state.lightmap_textures + 0 );
+			GX_MBind( GL_TEXTURE1, gl_state.lightmap_textures + 0 );
 
 			lmtex = 0;
 
@@ -773,8 +773,8 @@ dynamic:
 
 		c_brush_polys++;
 
-		GL_MBind( GL_TEXTURE0, image->texnum );
-		GL_MBind( GL_TEXTURE1, gl_state.lightmap_textures + lmtex );
+		GX_MBind( GL_TEXTURE0, image->texnum );
+		GX_MBind( GL_TEXTURE1, gl_state.lightmap_textures + lmtex );
 
 //==========
 //PGM
@@ -821,8 +821,8 @@ dynamic:
 	{
 		c_brush_polys++;
 
-		GL_MBind( GL_TEXTURE0, image->texnum );
-		GL_MBind( GL_TEXTURE1, gl_state.lightmap_textures + lmtex );
+		GX_MBind( GL_TEXTURE0, image->texnum );
+		GX_MBind( GL_TEXTURE1, gl_state.lightmap_textures + lmtex );
 
 //==========
 //PGM

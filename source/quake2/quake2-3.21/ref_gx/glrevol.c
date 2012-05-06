@@ -35,33 +35,6 @@ void glFlush(void)
 {
 }
 
-const GLubyte* glGetString(GLenum name)
-{
-	switch(name)
-	{
-		case GL_VENDOR:
-		{
-			return "";
-		};
-		case GL_RENDERER:
-		{
-			return "glRevol - OpenGL to GX translator";
-		};
-		case GL_VERSION:
-		{
-			return "R1";
-		};
-		case GL_EXTENSIONS:
-		{
-			return "";
-		};
-		default:
-		{
-			return "";
-		};
-	};
-}
-
 void glClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
 {
 }
@@ -620,10 +593,6 @@ void glPixelTransferi(GLenum pname, GLint param)
 }
 
 void glPixelZoom(GLfloat xfactor, GLfloat yfactor)
-{
-}
-
-void glPointSize(GLfloat size)
 {
 }
 

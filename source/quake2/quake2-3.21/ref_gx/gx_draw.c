@@ -36,7 +36,7 @@ Draw_InitLocal
 void Draw_InitLocal (void)
 {
 	// load console characters (don't bilerp characters)
-	draw_chars = GL_FindImage ("pics/conchars.pcx", it_pic);
+	draw_chars = GX_FindImage ("pics/conchars.pcx", it_pic);
 	GX_Bind( draw_chars->texnum );
 	GX_SetMinMag(GX_NEAR, GX_NEAR);
 }
@@ -103,10 +103,10 @@ image_t	*Draw_FindPic (char *name)
 	if (name[0] != '/' && name[0] != '\\')
 	{
 		Com_sprintf (fullname, sizeof(fullname), "pics/%s.pcx", name);
-		gl = GL_FindImage (fullname, it_pic);
+		gl = GX_FindImage (fullname, it_pic);
 	}
 	else
-		gl = GL_FindImage (name+1, it_pic);
+		gl = GX_FindImage (name+1, it_pic);
 
 	return gl;
 }
