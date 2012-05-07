@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Include only for the GL builds (part 1):
+// Include only for GX hardware builds (part 1):
 #ifdef GXIMP
 // <<< FIX
 #include "../ref_gx/gx_local.h"
@@ -37,11 +37,11 @@ int gximp_pal_increment;
 
 int gximp_guide_texture;
 
-void		GLimp_BeginFrame( float camera_separation )
+void		GXimp_BeginFrame( float camera_separation )
 {
 }
 
-void		GLimp_EndFrame( void )
+void		GXimp_EndFrame( void )
 {
 	ir_t p;
 	u32 k;
@@ -70,7 +70,7 @@ void		GLimp_EndFrame( void )
 				;
 			hsw = sw / 2;
 
-			guide = Sys_BigStackAlloc(sw*sw * sizeof(unsigned), "GLimp_EndFrame");
+			guide = Sys_BigStackAlloc(sw*sw * sizeof(unsigned), "GXimp_EndFrame");
 
 			i = 0;
 			for(y = 0; y < sw; y++)
@@ -120,7 +120,7 @@ void		GLimp_EndFrame( void )
 			qgxTexCoord2f32 (0, 1);
 			qgxEnd ();
 
-			Sys_BigStackFree(sw*sw * sizeof(unsigned), "GLimp_EndFrame");
+			Sys_BigStackFree(sw*sw * sizeof(unsigned), "GXimp_EndFrame");
 		};
 		gximp_guide_increment += 0.02;
 		if(gximp_guide_increment > M_PI)
@@ -130,22 +130,22 @@ void		GLimp_EndFrame( void )
 	};
 }
 
-int 		GLimp_Init( void *hinstance, void *hWnd )
+int 		GXimp_Init( void *hinstance, void *hWnd )
 {
 	return true;
 }
 
-void		GLimp_Shutdown( void )
+void		GXimp_Shutdown( void )
 {
 }
 
-int     	GLimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen )
+int     	GXimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen )
 {
 	int width, height;
 
-	fprintf(stderr, "GLimp_SetMode\n");
+	fprintf(stderr, "GXimp_SetMode\n");
 
-	ri.Con_Printf( PRINT_ALL, "Initializing OpenGL display\n");
+	ri.Con_Printf( PRINT_ALL, "Initializing GX hardware...\n");
 
 	ri.Con_Printf (PRINT_ALL, "...setting mode %d:", mode );
 
@@ -158,7 +158,7 @@ int     	GLimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen
 	ri.Con_Printf( PRINT_ALL, " %d %d\n", width, height );
 
 	// destroy the existing window
-	GLimp_Shutdown ();
+	GXimp_Shutdown ();
 
 	*pwidth = width;
 	*pheight = height;
@@ -169,11 +169,11 @@ int     	GLimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen
 	return rserr_ok;
 }
 
-void		GLimp_AppActivate( qboolean active )
+void		GXimp_AppActivate( qboolean active )
 {
 }
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Include only for the GL builds (part 2):
+// Include only for GX hardware builds (part 2):
 #endif
 // <<< FIX
 

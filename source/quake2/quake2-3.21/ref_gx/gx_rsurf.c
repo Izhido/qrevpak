@@ -179,7 +179,7 @@ void DrawGLWaterPolyLightmap (glpoly_t *p)
 DrawGLPoly
 ================
 */
-void DrawGLPoly (glpoly_t *p)
+void DrawGLPoly (gxpoly_t *p)
 {
 	int		i;
 	float	*v;
@@ -206,7 +206,7 @@ void DrawGLFlowingPoly (msurface_t *fa)
 {
 	int		i;
 	float	*v;
-	glpoly_t *p;
+	gxpoly_t *p;
 	float	scroll;
 
 	p = fa->polys;
@@ -234,7 +234,7 @@ void DrawGLFlowingPoly (msurface_t *fa)
 void R_DrawTriangleOutlines (void)
 {
 	int			i, j;
-	glpoly_t	*p;
+	gxpoly_t	*p;
 
 	if (!gl_showtris->value)
 		return;
@@ -281,7 +281,7 @@ void R_DrawTriangleOutlines (void)
 /*
 ** DrawGLPolyChain
 */
-void DrawGLPolyChain( glpoly_t *p, float soffset, float toffset )
+void DrawGLPolyChain( gxpoly_t *p, float soffset, float toffset )
 {
 	if ( soffset == 0 && toffset == 0 )
 	{
@@ -738,7 +738,7 @@ static void GX_RenderLightmappedPoly( msurface_t *surf )
 	image_t *image = R_TextureAnimation( surf->texinfo );
 	qboolean is_dynamic = false;
 	unsigned lmtex = surf->lightmaptexturenum;
-	glpoly_t *p;
+	gxpoly_t *p;
 
 	for ( map = 0; map < MAXLIGHTMAPS && surf->styles[map] != 255; map++ )
 	{
@@ -1484,7 +1484,7 @@ void GX_BuildPolygonFromSurface(msurface_t *fa)
 	int			vertpage;
 	float		*vec;
 	float		s, t;
-	glpoly_t	*poly;
+	gxpoly_t	*poly;
 	vec3_t		total;
 
 // reconstruct the polygon
@@ -1496,7 +1496,7 @@ void GX_BuildPolygonFromSurface(msurface_t *fa)
 	//
 	// draw texture
 	//
-	poly = Hunk_Alloc (sizeof(glpoly_t) + (lnumverts-4) * VERTEXSIZE*sizeof(float));
+	poly = Hunk_Alloc (sizeof(gxpoly_t) + (lnumverts-4) * VERTEXSIZE*sizeof(float));
 	poly->next = fa->polys;
 	poly->flags = fa->flags;
 	fa->polys = poly;

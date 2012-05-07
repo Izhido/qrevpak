@@ -78,16 +78,10 @@
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\cd_revol.c">
       <Filter>Source Files\revol</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\glimp_revol.c">
-      <Filter>Source Files\revol</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\in_revol.c">
       <Filter>Source Files\revol</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\net_udp.c">
-      <Filter>Source Files\revol</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\qgl_revol.c">
       <Filter>Source Files\revol</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\snddma_revol.c">
@@ -389,6 +383,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\gxutils\source\gxutils.c">
       <Filter>Source Files\gxutils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\qgx_revol.c">
+      <Filter>Source Files\revol</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\gximp_revol.c">
+      <Filter>Source Files\revol</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

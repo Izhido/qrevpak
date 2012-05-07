@@ -18,11 +18,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 /*
-** QGL.H
+** QGX.H
 */
 
-#ifndef __QGL_H__
-#define __QGL_H__
+#ifndef __QGX_H__
+#define __QGX_H__
 
 #ifdef _WIN32
 #  include <windows.h>
@@ -35,8 +35,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "GL/glx.h"
 #endif
 
-qboolean QGL_Init( const char *dllname );
-void     QGL_Shutdown( void );
+qboolean QGX_Init( const char *dllname );
+void     QGX_Shutdown( void );
 
 #ifndef APIENTRY
 #  define APIENTRY

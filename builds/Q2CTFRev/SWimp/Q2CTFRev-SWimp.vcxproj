@@ -92,11 +92,11 @@ make</NMakeReBuildCommandLine>
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\p_weapon.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\q_shared.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\cd_revol.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\glimp_revol.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\gximp_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\in_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\net_udp.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\osk_revol.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\qgl_revol.c" />
+    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\qgx_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\snddma_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\swimp_revol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\revol\sys_revol.c" />

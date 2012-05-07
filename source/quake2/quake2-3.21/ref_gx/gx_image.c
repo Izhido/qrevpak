@@ -96,7 +96,7 @@ void GX_EnableMultitexture( qboolean enable )
 	GX_TexEnv( GX_REPLACE );
 }
 
-void GX_SelectTexture( GLenum texture )
+void GX_SelectTexture( int texture )
 {
 	int tmu;
 
@@ -120,7 +120,7 @@ void GX_SelectTexture( GLenum texture )
 	gx_state.currenttmu = tmu;
 }
 
-void GX_TexEnv( GLenum mode )
+void GX_TexEnv( u8 mode )
 {
 	static int lastmodes[2] = { -1, -1 };
 
@@ -144,7 +144,7 @@ void GX_Bind (int texnum)
 		qgxLoadTexObj(&gxtexobjs[texnum].texobj, GX_TEXMAP0 + gx_state.currenttmu );
 }
 
-void GX_MBind( GLenum target, int texnum )
+void GX_MBind( int target, int texnum )
 {
 	GX_SelectTexture( target );
 	if ( target == GX_TEXTURE0 )

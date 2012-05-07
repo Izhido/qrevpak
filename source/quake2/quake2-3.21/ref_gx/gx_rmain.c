@@ -1102,7 +1102,7 @@ qboolean R_SetMode (void)
 	vid_fullscreen->modified = false;
 	gl_mode->modified = false;
 
-	if ( ( err = GLimp_SetMode( &vid.width, &vid.height, gl_mode->value, fullscreen ) ) == rserr_ok )
+	if ( ( err = GXimp_SetMode( &vid.width, &vid.height, gl_mode->value, fullscreen ) ) == rserr_ok )
 	{
 		gx_state.prev_mode = gl_mode->value;
 	}
@@ -1113,7 +1113,7 @@ qboolean R_SetMode (void)
 			ri.Cvar_SetValue( "vid_fullscreen", 0);
 			vid_fullscreen->modified = false;
 			ri.Con_Printf( PRINT_ALL, "ref_gx::R_SetMode() - fullscreen unavailable in this mode\n" );
-			if ( ( err = GLimp_SetMode( &vid.width, &vid.height, gl_mode->value, false ) ) == rserr_ok )
+			if ( ( err = GXimp_SetMode( &vid.width, &vid.height, gl_mode->value, false ) ) == rserr_ok )
 				return true;
 		}
 		else if ( err == rserr_invalid_mode )
@@ -1124,7 +1124,7 @@ qboolean R_SetMode (void)
 		}
 
 		// try setting it back to something safe
-		if ( ( err = GLimp_SetMode( &vid.width, &vid.height, gx_state.prev_mode, false ) ) != rserr_ok )
+		if ( ( err = GXimp_SetMode( &vid.width, &vid.height, gx_state.prev_mode, false ) ) != rserr_ok )
 		{
 			ri.Con_Printf( PRINT_ALL, "ref_gx::R_SetMode() - could not revert to safe mode\n" );
 			return false;
@@ -1157,18 +1157,18 @@ qboolean R_Init( void *hinstance, void *hWnd )
 
 	R_Register();
 
-	// initialize our QGL dynamic bindings
-	if ( !QGL_Init( gl_driver->string ) )
+	// initialize our QGX dynamic bindings
+	if ( !QGX_Init( gl_driver->string ) )
 	{
-		QGL_Shutdown();
+		QGX_Shutdown();
         ri.Con_Printf (PRINT_ALL, "ref_gx::R_Init() - could not load \"%s\"\n", gl_driver->string );
 		return -1;
 	}
 
 	// initialize OS-specific parts of OpenGL
-	if ( !GLimp_Init( hinstance, hWnd ) )
+	if ( !GXimp_Init( hinstance, hWnd ) )
 	{
-		QGL_Shutdown();
+		QGX_Shutdown();
 		return -1;
 	}
 
@@ -1178,7 +1178,7 @@ qboolean R_Init( void *hinstance, void *hWnd )
 	// create the window and set up the context
 	if ( !R_SetMode () )
 	{
-		QGL_Shutdown();
+		QGX_Shutdown();
         ri.Con_Printf (PRINT_ALL, "ref_gx::R_Init() - could not R_SetMode()\n" );
 		return -1;
 	}
@@ -1284,12 +1284,12 @@ void R_Shutdown (void)
 	/*
 	** shut down OS specific OpenGL stuff like contexts, etc.
 	*/
-	GLimp_Shutdown();
+	GXimp_Shutdown();
 
 	/*
-	** shutdown our QGL subsystem
+	** shutdown our QGX subsystem
 	*/
-	QGL_Shutdown();
+	QGX_Shutdown();
 }
 
 
@@ -1317,13 +1317,13 @@ void R_BeginFrame( float camera_separation )
 
 	if ( gl_log->modified )
 	{
-		GLimp_EnableLogging( gl_log->value );
+		GXimp_EnableLogging( gl_log->value );
 		gl_log->modified = false;
 	}
 
 	if ( gl_log->value )
 	{
-		GLimp_LogNewFrame();
+		GXimp_LogNewFrame();
 	}
 
 	if ( vid_gamma->modified )
@@ -1331,7 +1331,7 @@ void R_BeginFrame( float camera_separation )
 		vid_gamma->modified = false;
 	}
 
-	GLimp_BeginFrame( camera_separation );
+	GXimp_BeginFrame( camera_separation );
 
 	/*
 	** go into 2D mode
@@ -1585,9 +1585,9 @@ refexport_t GetRefAPI (refimport_t rimp )
 
 	re.CinematicSetPalette = R_SetPalette;
 	re.BeginFrame = R_BeginFrame;
-	re.EndFrame = GLimp_EndFrame;
+	re.EndFrame = GXimp_EndFrame;
 
-	re.AppActivate = GLimp_AppActivate;
+	re.AppActivate = GXimp_AppActivate;
 
 	Swap_Init ();
 

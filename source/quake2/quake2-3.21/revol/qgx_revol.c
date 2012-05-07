@@ -18,20 +18,24 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 /*
-** qgl_revol.c
+** qgx_revol.c
 **
-** This file implements the operating system binding of GL to QGL function
-** pointers.  When doing a port of Quake2 you must implement the following
-** two functions:
+** This file, originally based on qgl_irix.c, implements the bindings 
+** of GX/gu/GXU functions to the new qgx/qgu (originally qgl) function 
+** pointers, mapping the GX hardware functions of the Wii hardware
+** to the engine, while at the same time supporting logging as it was
+** defined in the original code.
+** When doing a port of Quake2, using this particular code, you must 
+** implement the following two functions:
 **
-** QGL_Init() - loads libraries, assigns function pointers, etc.
-** QGL_Shutdown() - unloads libraries, NULLs function pointers
+** QGX_Init() - loads libraries, assigns function pointers, etc.
+** QGX_Shutdown() - unloads libraries, NULLs function pointers
 */
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Include only for the GL builds (part 1):
+// Include only for GX hardware builds (part 1):
 #ifdef GXIMP
 // <<< FIX
-#define QGL
+#define QGX
 #include "../ref_gx/gx_local.h"
 
 static FILE *log_fp = NULL;
@@ -1862,11 +1866,11 @@ static void APIENTRY logVertexPointer(GLint size, GLenum type, GLsizei stride, c
 }
 
 /*
-** QGL_Shutdown
+** QGX_Shutdown
 **
-** Unloads the specified DLL then nulls out all the proc pointers.
+** Nulls out all the proc pointers, signaling the end of usage of this driver.
 */
-void QGL_Shutdown( void )
+void QGX_Shutdown( void )
 {
 	qguMtxConcat                 = NULL;
 	qguMtxCopy                   = NULL;
@@ -2110,16 +2114,13 @@ void QGL_Shutdown( void )
 }
 
 /*
-** QGL_Init
+** QGX_Init
 **
-** This is responsible for binding our qgl function pointers to 
-** the appropriate GL stuff.  In Windows this means doing a 
-** LoadLibrary and a bunch of calls to GetProcAddress.  On other
-** operating systems we need to do the right thing, whatever that
-** might be.
+** This is responsible for binding our qgx/qgu function pointers to 
+** the GX layer.
 ** 
 */
-qboolean QGL_Init( const char *dllname )
+qboolean QGX_Init( const char *dllname )
 {
 	qguMtxConcat                 = dllMtxConcat = guMtxConcat;
 	qguMtxCopy                   = dllMtxCopy = guMtxCopy;
@@ -2364,7 +2365,7 @@ qboolean QGL_Init( const char *dllname )
 	return true;
 }
 
-void GLimp_EnableLogging( qboolean enable )
+void GXimp_EnableLogging( qboolean enable )
 {
 	if ( enable )
 	{
@@ -2861,7 +2862,7 @@ void GLimp_EnableLogging( qboolean enable )
 }
 
 
-void GLimp_LogNewFrame( void )
+void GXimp_LogNewFrame( void )
 {
 	fprintf( log_fp, "*** R_BeginFrame ***\n");
 }
@@ -2871,6 +2872,6 @@ void *qwglGetProcAddress(char *symbol)
 	return NULL;
 }
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
-// Include only for the GL builds (part 2):
+// Include only for GX hardware builds (part 2):
 #endif
 // <<< FIX

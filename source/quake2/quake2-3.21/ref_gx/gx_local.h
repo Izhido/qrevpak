@@ -36,7 +36,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "qgx.h"
 
-#define	REF_VERSION	"GL 0.01"
+#define	REF_VERSION	"GX 1.0"
 
 // up / down
 #define	PITCH	0
@@ -89,7 +89,7 @@ typedef struct image_s
 	int		upload_width, upload_height;	// after power of two and picmip
 	int		registration_sequence;		// 0 = free
 	struct msurface_s	*texturechain;	// for sort-by-texture world drawing
-	int		texnum;						// gl texture binding
+	int		texnum;						// gx texture binding
 	float	sl, tl, sh, th;				// 0,0 - 1,1 unless part of the scrap
 	qboolean	scrap;
 	qboolean	has_alpha;
@@ -139,7 +139,7 @@ typedef struct
 	float	x, y, z;
 	float	s, t;
 	float	r, g, b;
-} glvert_t;
+} gxvert_t;
 
 
 #define	MAX_LBM_HEIGHT		480
@@ -259,13 +259,13 @@ extern	Mtx		r_world_matrix;
 
 void R_TranslatePlayerSkin (int playernum);
 void GX_Bind (int texnum);
-void GX_MBind( GLenum target, int texnum );
+void GX_MBind( int target, int texnum );
 void GX_LoadAndBind (void* data, int length, int width, int height, int format);
 void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int height, int format);
 void GX_SetMinMag (int minfilt, int magfilt);
-void GX_TexEnv( GLenum value );
+void GX_TexEnv( u8 value );
 void GX_EnableMultitexture( qboolean enable );
-void GX_SelectTexture( GLenum );
+void GX_SelectTexture( int );
 
 void R_LightPoint (vec3_t p, vec3_t color);
 void R_PushDlights (void);
@@ -301,7 +301,7 @@ qboolean R_CullBox (vec3_t mins, vec3_t maxs);
 void R_RotateForEntity (entity_t *e);
 void R_MarkLeaves (void);
 
-glpoly_t *WaterWarpPolyVerts (glpoly_t *p);
+gxpoly_t *WaterWarpPolyVerts (gxpoly_t *p);
 void EmitWaterPolys (msurface_t *fa);
 void R_AddSkySurface (msurface_t *fa);
 void R_ClearSkyBox (void);
@@ -356,7 +356,7 @@ void GX_TextureAlphaMode( char *string );
 void GX_TextureSolidMode( char *string );
 
 /*
-** GL extension emulation functions
+** GX extension emulation functions
 */
 void GX_DrawParticles( int n, const particle_t particles[], const unsigned colortable[768] );
 
@@ -403,12 +403,12 @@ IMPLEMENTATION SPECIFIC FUNCTIONS
 ====================================================================
 */
 
-void		GLimp_BeginFrame( float camera_separation );
-void		GLimp_EndFrame( void );
-int 		GLimp_Init( void *hinstance, void *hWnd );
-void		GLimp_Shutdown( void );
-int     	GLimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen );
-void		GLimp_AppActivate( qboolean active );
-void		GLimp_EnableLogging( qboolean enable );
-void		GLimp_LogNewFrame( void );
+void		GXimp_BeginFrame( float camera_separation );
+void		GXimp_EndFrame( void );
+int 		GXimp_Init( void *hinstance, void *hWnd );
+void		GXimp_Shutdown( void );
+int     	GXimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen );
+void		GXimp_AppActivate( qboolean active );
+void		GXimp_EnableLogging( qboolean enable );
+void		GXimp_LogNewFrame( void );
 
