@@ -428,10 +428,10 @@ void R_DrawEntitiesOnList (void)
 }
 
 /*
-** GL_DrawParticles
+** GX_DrawParticles
 **
 */
-void GL_DrawParticles( int num_particles, const particle_t particles[], const unsigned colortable[768] )
+void GX_DrawParticles( int num_particles, const particle_t particles[], const unsigned colortable[768] )
 {
 	const particle_t *p;
 	int				i;
@@ -535,7 +535,7 @@ void R_DrawParticles (void)
 	}
 	else
 	{
-		GL_DrawParticles( r_newrefdef.num_particles, r_newrefdef.particles, d_8to24table );
+		GX_DrawParticles( r_newrefdef.num_particles, r_newrefdef.particles, d_8to24table );
 	}
 }
 
@@ -714,10 +714,16 @@ void R_SetupFrame (void)
 	if ( r_newrefdef.rdflags & RDF_NOWORLDMODEL )
 	{
 		qglEnable( GL_SCISSOR_TEST );
-		qglClearColor( 0.3, 0.3, 0.3, 1 );
+		gxu_background_color.r = 77;
+		gxu_background_color.g = 77;
+		gxu_background_color.b = 77;
+		gxu_background_color.a = 255;
 		qglScissor( r_newrefdef.x, vid.height - r_newrefdef.height - r_newrefdef.y, r_newrefdef.width, r_newrefdef.height );
 		qglClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-		qglClearColor( 1, 0, 0.5, 0.5 );
+		gxu_background_color.r = 255;
+		gxu_background_color.g = 0;
+		gxu_background_color.b = 127;
+		gxu_background_color.a = 127;
 		qglDisable( GL_SCISSOR_TEST );
 	}
 }
@@ -741,14 +747,14 @@ void R_SetupGL (void)
 	//
 	x = floor(r_newrefdef.x * vid.width / vid.width);
 	x2 = ceil((r_newrefdef.x + r_newrefdef.width) * vid.width / vid.width);
-	y = floor(vid.height - r_newrefdef.y * vid.height / vid.height);
-	y2 = ceil(vid.height - (r_newrefdef.y + r_newrefdef.height) * vid.height / vid.height);
+	y = floor(r_newrefdef.y * vid.height / vid.height);
+	y2 = ceil((r_newrefdef.y + r_newrefdef.height) * vid.height / vid.height);
 
 	w = x2 - x;
-	h = y - y2;
+	h = y2 - y;
 
 	gxu_viewport_x = x;
-	gxu_viewport_y = y2;
+	gxu_viewport_y = y;
 	gxu_viewport_width = w;
 	gxu_viewport_height = h;
 	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxdepthmin, gxdepthmax);
@@ -1068,8 +1074,8 @@ void R_Register( void )
 	vid_gamma = ri.Cvar_Get( "vid_gamma", "1.0", CVAR_ARCHIVE );
 	vid_ref = ri.Cvar_Get( "vid_ref", "soft", CVAR_ARCHIVE );
 
-	ri.Cmd_AddCommand( "imagelist", GL_ImageList_f );
-	ri.Cmd_AddCommand( "screenshot", GL_ScreenShot_f );
+	ri.Cmd_AddCommand( "imagelist", GX_ImageList_f );
+	ri.Cmd_AddCommand( "screenshot", GX_ScreenShot_f );
 	ri.Cmd_AddCommand( "modellist", Mod_Modellist_f );
 	ri.Cmd_AddCommand( "gl_strings", GX_Strings_f );
 }
@@ -1191,17 +1197,7 @@ qboolean R_Init( void *hinstance, void *hWnd )
 	/*
 	** grab extensions
 	*/
-	/*if ( strstr( gx_config.extensions_string, "GL_EXT_compiled_vertex_array" ) || 
-		 strstr( gx_config.extensions_string, "GL_SGI_compiled_vertex_array" ) )
-	{
-		ri.Con_Printf( PRINT_ALL, "...enabling GL_EXT_compiled_vertex_array\n" );
-		qglLockArraysEXT = ( void * ) qwglGetProcAddress( "glLockArraysEXT" );
-		qglUnlockArraysEXT = ( void * ) qwglGetProcAddress( "glUnlockArraysEXT" );
-	}
-	else
-	{*/
-		ri.Con_Printf( PRINT_ALL, "...GL_EXT_compiled_vertex_array not found\n" );
-	/*}*/
+	ri.Con_Printf( PRINT_ALL, "...GL_EXT_compiled_vertex_array not found\n" );
 
 #ifdef _WIN32
 	if ( strstr( gx_config.extensions_string, "WGL_EXT_swap_control" ) )
@@ -1443,9 +1439,15 @@ void R_SetPalette ( const unsigned char *palette)
 	}
 	GX_SetTexturePalette( r_rawpalette );
 
-	qglClearColor (0,0,0,0);
+	gxu_background_color.r = 0;
+	gxu_background_color.g = 0;
+	gxu_background_color.b = 0;
+	gxu_background_color.a = 0;
 	qglClear (GL_COLOR_BUFFER_BIT);
-	qglClearColor (1,0, 0.5 , 0.5);
+	gxu_background_color.r = 255;
+	gxu_background_color.g = 0;
+	gxu_background_color.b = 127;
+	gxu_background_color.a = 127;
 }
 
 /*

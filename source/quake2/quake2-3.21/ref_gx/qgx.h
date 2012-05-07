@@ -59,7 +59,6 @@ extern  void ( APIENTRY * qglCallList )(GLuint list);
 extern  void ( APIENTRY * qglCallLists )(GLsizei n, GLenum type, const GLvoid *lists);
 extern  void ( APIENTRY * qglClear )(GLbitfield mask);
 extern  void ( APIENTRY * qglClearAccum )(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
-extern  void ( APIENTRY * qglClearColor )(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
 extern  void ( APIENTRY * qglClearDepth )(GLclampd depth);
 extern  void ( APIENTRY * qglClearIndex )(GLfloat c);
 extern  void ( APIENTRY * qglClearStencil )(GLint s);
@@ -76,6 +75,7 @@ extern  void ( APIENTRY * qglCopyTexSubImage2D )(GLenum target, GLint level, GLi
 extern  void ( APIENTRY * qglDeleteLists )(GLuint list, GLsizei range);
 extern  void ( APIENTRY * qglDisable )(GLenum cap);
 extern  void ( APIENTRY * qglDisableClientState )(GLenum array);
+extern  void ( APIENTRY * qgxDisableTexStage1 )(void);
 extern  void ( APIENTRY * qgxDisableTexture )(void);
 extern  void ( APIENTRY * qglDrawArrays )(GLenum mode, GLint first, GLsizei count);
 extern  void ( APIENTRY * qglDrawBuffer )(GLenum mode);
@@ -86,6 +86,7 @@ extern  void ( APIENTRY * qglEdgeFlagPointer )(GLsizei stride, const GLvoid *poi
 extern  void ( APIENTRY * qglEdgeFlagv )(const GLboolean *flag);
 extern  void ( APIENTRY * qglEnable )(GLenum cap);
 extern  void ( APIENTRY * qglEnableClientState )(GLenum array);
+extern  void ( APIENTRY * qgxEnableTexStage1 )(void);
 extern  void ( APIENTRY * qgxEnableTexture )(void);
 extern  void ( APIENTRY * qgxEnd )(void);
 extern  void ( APIENTRY * qglEndList )(void);
@@ -155,6 +156,7 @@ extern  void ( APIENTRY * qgxInitTexObjCI )(GXTexObj *obj, void *img_ptr, u16 wd
 extern  void ( APIENTRY * qgxInitTexObjFilterMode )(GXTexObj *obj, u8 minfilt, u8 magfilt);
 extern  void ( APIENTRY * qglInterleavedArrays )(GLenum format, GLsizei stride, const GLvoid *pointer);
 extern  void ( APIENTRY * qgxInvalidateTexAll )(void);
+extern  void ( APIENTRY * qgxInvVtxCache )(void);
 extern  GLboolean ( APIENTRY * qglIsEnabled )(GLenum cap);
 extern  GLboolean ( APIENTRY * qglIsList )(GLuint list);
 extern  GLboolean ( APIENTRY * qglIsTexture )(GLuint texture);
@@ -256,10 +258,12 @@ extern  GLint ( APIENTRY * qglRenderMode )(GLenum mode);
 extern  void ( APIENTRY * qglScissor )(GLint x, GLint y, GLsizei width, GLsizei height);
 extern  void ( APIENTRY * qglSelectBuffer )(GLsizei size, GLuint *buffer);
 extern  void ( APIENTRY * qgxSetAlphaCompare )(u8 comp0, u8 ref0, u8 aop, u8 comp1, u8 ref1);
+extern  void ( APIENTRY * qgxSetArray )(u32 attr, void *ptr, u8 stride);
 extern  void ( APIENTRY * qgxSetBlendMode )(u8 type, u8 src_fact, u8 dst_fact, u8 op);
 extern  void ( APIENTRY * qgxSetCullMode )(u8 mode);
 extern  void ( APIENTRY * qgxSetTevOp )(u8 tevstage, u8 mode);
 extern  void ( APIENTRY * qgxSetViewport )(f32 xOrig, f32 yOrig, f32 wd, f32 ht, f32 nearZ, f32 farZ);
+extern  void ( APIENTRY * qgxSetVtxDesc )(u8 attr, u8 type);
 extern  void ( APIENTRY * qgxSetZMode )(u8 enable, u8 func, u8 update_enable);
 extern  void ( APIENTRY * qglStencilFunc )(GLenum func, GLint ref, GLuint mask);
 extern  void ( APIENTRY * qglStencilMask )(GLuint mask);
@@ -278,9 +282,6 @@ extern	void ( APIENTRY * qgxSetPointSize)(u8 width, u8 fmt);
 
 extern  void ( APIENTRY * qgxInitTlutObj )(GXTlutObj *obj, void *lut, u8 fmt, u16 entries);
 extern	void ( APIENTRY * qgxLoadTlut)(GXTlutObj *obj, u32 tlut_name);
-
-extern	void ( APIENTRY * qglLockArraysEXT) (int , int);
-extern	void ( APIENTRY * qglUnlockArraysEXT) (void);
 
 #ifdef _WIN32
 

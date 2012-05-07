@@ -193,8 +193,6 @@ void glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format
 
 void glFlush(void);
 
-void glClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
-
 void glPolygonMode(GLenum face, GLenum mode);
 
 GLboolean glIsEnabled(GLenum cap);
@@ -214,8 +212,6 @@ void glCallLists(GLsizei n, GLenum type, const GLvoid *lists);
 void glClear(GLbitfield mask);
 
 void glClearAccum(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
-
-void glClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
 
 void glClearDepth(GLclampd depth);
 

@@ -246,11 +246,11 @@ extern	cvar_t	*vid_gamma;
 
 extern	cvar_t		*intensity;
 
-extern	int		gl_lightmap_format;
-extern	int		gl_solid_format;
-extern	int		gl_alpha_format;
-extern	int		gl_tex_solid_format;
-extern	int		gl_tex_alpha_format;
+extern	int		gx_lightmap_format;
+extern	int		gx_solid_format;
+extern	int		gx_alpha_format;
+extern	int		gx_tex_solid_format;
+extern	int		gx_tex_alpha_format;
 
 extern	int		c_visible_lightmaps;
 extern	int		c_visible_textures;
@@ -285,7 +285,7 @@ int 	R_Init( void *hinstance, void *hWnd );
 void	R_Shutdown( void );
 
 void R_RenderView (refdef_t *fd);
-void GL_ScreenShot_f (void);
+void GX_ScreenShot_f (void);
 void R_DrawAliasModel (entity_t *e);
 void R_DrawBrushModel (entity_t *e);
 void R_DrawSpriteModel (entity_t *e);
@@ -296,7 +296,7 @@ void R_DrawAlphaSurfaces (void);
 void R_RenderBrushPoly (msurface_t *fa);
 void R_InitParticleTexture (void);
 void Draw_InitLocal (void);
-void GL_SubdivideSurface (msurface_t *fa);
+void GX_SubdivideSurface (msurface_t *fa);
 qboolean R_CullBox (vec3_t mins, vec3_t maxs);
 void R_RotateForEntity (entity_t *e);
 void R_MarkLeaves (void);
@@ -343,7 +343,7 @@ void LoadPCX (char *filename, byte **pic, byte **palette, int *width, int *heigh
 image_t *GX_LoadPic (char *name, byte *pic, int width, int height, imagetype_t type, int bits);
 image_t	*GX_FindImage (char *name, imagetype_t type);
 void	GX_TextureMode( char *string );
-void	GL_ImageList_f (void);
+void	GX_ImageList_f (void);
 
 void	GX_SetTexturePalette( unsigned palette[256] );
 
@@ -358,7 +358,7 @@ void GX_TextureSolidMode( char *string );
 /*
 ** GL extension emulation functions
 */
-void GL_DrawParticles( int n, const particle_t particles[], const unsigned colortable[768] );
+void GX_DrawParticles( int n, const particle_t particles[], const unsigned colortable[768] );
 
 typedef struct
 {

@@ -330,9 +330,7 @@ void GX_DisableMultitexture(void)
 {
 	if (mtexenabled) {
 		GX_SelectTexture(GX_TEXMAP0);
-		GX_SetVtxDesc(GX_VA_TEX1, GX_NONE);
-		GX_SetNumTevStages(1);
-		GX_SetNumTexGens(1);
+		GXU_DisableTexStage1();
 		mtexenabled = false;
 	}
 }
@@ -341,9 +339,7 @@ void GX_EnableMultitexture(void)
 {
 	if (gx_mtexable) {
 		GX_SelectTexture(GX_TEXMAP1);
-		GX_SetNumTexGens(2);
-		GX_SetNumTevStages(2);
-		GX_SetVtxDesc(GX_VA_TEX1, GX_DIRECT);
+		GXU_EnableTexStage1();
 		mtexenabled = true;
 	}
 }

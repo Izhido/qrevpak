@@ -542,10 +542,10 @@ void CalcSurfaceExtents (msurface_t *s)
 }
 
 
-void GL_BuildPolygonFromSurface(msurface_t *fa);
-void GL_CreateSurfaceLightmap (msurface_t *surf);
-void GL_EndBuildingLightmaps (void);
-void GL_BeginBuildingLightmaps (model_t *m);
+void GX_BuildPolygonFromSurface(msurface_t *fa);
+void GX_CreateSurfaceLightmap (msurface_t *surf);
+void GX_EndBuildingLightmaps (void);
+void GX_BeginBuildingLightmaps (model_t *m);
 
 /*
 =================
@@ -571,7 +571,7 @@ void Mod_LoadFaces (lump_t *l)
 
 	currentmodel = loadmodel;
 
-	GL_BeginBuildingLightmaps (loadmodel);
+	GX_BeginBuildingLightmaps (loadmodel);
 
 	for ( surfnum=0 ; surfnum<count ; surfnum++, in++, out++)
 	{
@@ -614,19 +614,19 @@ void Mod_LoadFaces (lump_t *l)
 				out->extents[i] = 16384;
 				out->texturemins[i] = -8192;
 			}
-			GL_SubdivideSurface (out);	// cut up polygon for warps
+			GX_SubdivideSurface (out);	// cut up polygon for warps
 		}
 
 		// create lightmaps and polygons
 		if ( !(out->texinfo->flags & (SURF_SKY|SURF_TRANS33|SURF_TRANS66|SURF_WARP) ) )
-			GL_CreateSurfaceLightmap (out);
+			GX_CreateSurfaceLightmap (out);
 
 		if (! (out->texinfo->flags & SURF_WARP) ) 
-			GL_BuildPolygonFromSurface(out);
+			GX_BuildPolygonFromSurface(out);
 
 	}
 
-	GL_EndBuildingLightmaps ();
+	GX_EndBuildingLightmaps ();
 }
 
 

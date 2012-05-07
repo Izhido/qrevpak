@@ -94,10 +94,10 @@ typedef struct _TargaHeader {
 
 /* 
 ================== 
-GL_ScreenShot_f
+GX_ScreenShot_f
 ================== 
 */  
-void GL_ScreenShot_f (void) 
+void GX_ScreenShot_f (void) 
 {
 	byte		*buffer;
 	char		picname[80]; 
@@ -172,7 +172,10 @@ void GX_Strings_f( void )
 */
 void GX_SetDefaultState( void )
 {
-	qglClearColor (1,0, 0.5 , 0.5);
+	gxu_background_color.r = 255;
+	gxu_background_color.g = 0;
+	gxu_background_color.b = 127;
+	gxu_background_color.a = 127;
 	gxu_cull_mode = GX_CULL_BACK;
 	if(gxu_cull_enabled)
 		qgxSetCullMode(gxu_cull_mode);
@@ -187,7 +190,7 @@ void GX_SetDefaultState( void )
 	gxu_z_test_enabled = GX_FALSE;
 	qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 	gxu_cull_enabled = false;
-	qgxSetCullMode(gxu_cull_mode);
+	qgxSetCullMode(GX_CULL_NONE);
 	gxu_blend_src_value = GX_BL_SRCALPHA;
 	gxu_blend_dst_value = GX_BL_INVSRCALPHA;
 	qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
@@ -226,8 +229,6 @@ void GX_SetDefaultState( void )
 
 	if ( qgxLoadTlut && gl_ext_palettedtexture->value )
 	{
-		qglEnable( GL_SHARED_TEXTURE_PALETTE_EXT );
-
 		GX_SetTexturePalette( d_8to24table );
 	}
 

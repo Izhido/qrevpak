@@ -33,15 +33,15 @@ cvar_t		*intensity;
 
 unsigned	d_8to24table[256];
 
-qboolean GL_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboolean is_sky );
-qboolean GL_Upload32 (unsigned *data, int width, int height,  qboolean mipmap);
+qboolean GX_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboolean is_sky );
+qboolean GX_Upload32 (unsigned *data, int width, int height,  qboolean mipmap);
 
 
-int		gl_solid_format = 3;
-int		gl_alpha_format = 4;
+int		gx_solid_format = 3;
+int		gx_alpha_format = 4;
 
-int		gl_tex_solid_format = 3;
-int		gl_tex_alpha_format = 4;
+int		gx_tex_solid_format = 3;
+int		gx_tex_alpha_format = 4;
 
 int		gx_filter_min = GX_LIN_MIP_NEAR;
 int		gx_filter_max = GX_LINEAR;
@@ -69,9 +69,9 @@ void GX_SetTexturePalette( unsigned palette[256] )
 		}
 
 		DCFlushRange(gx_paldata, 256 * sizeof(u16));
-		qgxInvalidateTexAll();
 		qgxInitTlutObj(&gx_palobj, gx_paldata, GX_TL_RGB565, 256);
 		qgxLoadTlut(&gx_palobj, GX_TLUT0);
+		qgxInvalidateTexAll();
 	}
 }
 
@@ -83,17 +83,13 @@ void GX_EnableMultitexture( qboolean enable )
 	if ( enable )
 	{
 		GX_SelectTexture( GX_TEXTURE1 );
-		GX_SetNumTexGens(2);
-		GX_SetNumTevStages(2);
-		GX_SetVtxDesc(GX_VA_TEX1, GX_DIRECT);
+		qgxEnableTexStage1();
 		GX_TexEnv( GX_REPLACE );
 	}
 	else
 	{
 		GX_SelectTexture( GX_TEXTURE1 );
-		GX_SetVtxDesc(GX_VA_TEX1, GX_NONE);
-		GX_SetNumTevStages(1);
-		GX_SetNumTexGens(1);
+		qgxDisableTexStage1();
 		GX_TexEnv( GX_REPLACE );
 	}
 	GX_SelectTexture( GX_TEXTURE0 );
@@ -482,9 +478,9 @@ typedef struct
 {
 	char *name;
 	int	minimize, maximize;
-} glmode_t;
+} gxmode_t;
 
-glmode_t modes[] = {
+gxmode_t modes[] = {
 	{"GX_NEAR", GX_NEAR, GX_NEAR},
 	{"GX_LINEAR", GX_LINEAR, GX_LINEAR},
 	{"GX_NEAR_MIP_NEAR", GX_NEAR_MIP_NEAR, GX_NEAR},
@@ -493,38 +489,25 @@ glmode_t modes[] = {
 	{"GX_LIN_MIP_LIN", GX_LIN_MIP_LIN, GX_LINEAR}
 };
 
-#define NUM_GL_MODES (sizeof(modes) / sizeof (glmode_t))
+#define NUM_GX_MODES (sizeof(modes) / sizeof (gxmode_t))
 
 typedef struct
 {
 	char *name;
 	int mode;
-} gltmode_t;
+} gxtmode_t;
 
-gltmode_t gl_alpha_modes[] = {
-	{"default", 4},
-	{"GL_RGBA", GL_RGBA},
-	{"GL_RGBA8", GL_RGBA8},
-	{"GL_RGB5_A1", GL_RGB5_A1},
-	{"GL_RGBA4", GL_RGBA4},
-	{"GL_RGBA2", GL_RGBA2},
+gxtmode_t gx_alpha_modes[] = {
+	{"default", 4}
 };
 
-#define NUM_GL_ALPHA_MODES (sizeof(gl_alpha_modes) / sizeof (gltmode_t))
+#define NUM_GX_ALPHA_MODES (sizeof(gx_alpha_modes) / sizeof (gxtmode_t))
 
-gltmode_t gl_solid_modes[] = {
-	{"default", 3},
-	{"GL_RGB", GL_RGB},
-	{"GL_RGB8", GL_RGB8},
-	{"GL_RGB5", GL_RGB5},
-	{"GL_RGB4", GL_RGB4},
-	{"GL_R3_G3_B2", GL_R3_G3_B2},
-#ifdef GL_RGB2_EXT
-	{"GL_RGB2", GL_RGB2_EXT},
-#endif
+gxtmode_t gx_solid_modes[] = {
+	{"default", 3}
 };
 
-#define NUM_GL_SOLID_MODES (sizeof(gl_solid_modes) / sizeof (gltmode_t))
+#define NUM_GX_SOLID_MODES (sizeof(gx_solid_modes) / sizeof (gxtmode_t))
 
 /*
 ===============
@@ -536,13 +519,13 @@ void GX_TextureMode( char *string )
 	int		i;
 	image_t	*glt;
 
-	for (i=0 ; i< NUM_GL_MODES ; i++)
+	for (i=0 ; i< NUM_GX_MODES ; i++)
 	{
 		if ( !Q_stricmp( modes[i].name, string ) )
 			break;
 	}
 
-	if (i == NUM_GL_MODES)
+	if (i == NUM_GX_MODES)
 	{
 		ri.Con_Printf (PRINT_ALL, "bad filter name\n");
 		return;
@@ -571,19 +554,19 @@ void GX_TextureAlphaMode( char *string )
 {
 	int		i;
 
-	for (i=0 ; i< NUM_GL_ALPHA_MODES ; i++)
+	for (i=0 ; i< NUM_GX_ALPHA_MODES ; i++)
 	{
-		if ( !Q_stricmp( gl_alpha_modes[i].name, string ) )
+		if ( !Q_stricmp( gx_alpha_modes[i].name, string ) )
 			break;
 	}
 
-	if (i == NUM_GL_ALPHA_MODES)
+	if (i == NUM_GX_ALPHA_MODES)
 	{
 		ri.Con_Printf (PRINT_ALL, "bad alpha texture mode name\n");
 		return;
 	}
 
-	gl_tex_alpha_format = gl_alpha_modes[i].mode;
+	gx_tex_alpha_format = gx_alpha_modes[i].mode;
 }
 
 /*
@@ -595,27 +578,27 @@ void GX_TextureSolidMode( char *string )
 {
 	int		i;
 
-	for (i=0 ; i< NUM_GL_SOLID_MODES ; i++)
+	for (i=0 ; i< NUM_GX_SOLID_MODES ; i++)
 	{
-		if ( !Q_stricmp( gl_solid_modes[i].name, string ) )
+		if ( !Q_stricmp( gx_solid_modes[i].name, string ) )
 			break;
 	}
 
-	if (i == NUM_GL_SOLID_MODES)
+	if (i == NUM_GX_SOLID_MODES)
 	{
 		ri.Con_Printf (PRINT_ALL, "bad solid texture mode name\n");
 		return;
 	}
 
-	gl_tex_solid_format = gl_solid_modes[i].mode;
+	gx_tex_solid_format = gx_solid_modes[i].mode;
 }
 
 /*
 ===============
-GL_ImageList_f
+GX_ImageList_f
 ===============
 */
-void	GL_ImageList_f (void)
+void	GX_ImageList_f (void)
 {
 	int		i;
 	image_t	*image;
@@ -727,7 +710,7 @@ void Scrap_Upload (void)
 {
 	scrap_uploads++;
 	GX_Bind(TEXNUM_SCRAPS);
-	GL_Upload8 (scrap_texels[0], BLOCK_WIDTH, BLOCK_HEIGHT, false, false );
+	GX_Upload8 (scrap_texels[0], BLOCK_WIDTH, BLOCK_HEIGHT, false, false );
 	scrap_dirty = false;
 }
 
@@ -1189,13 +1172,13 @@ void GX_ResampleTexture (unsigned *in, int inwidth, int inheight, unsigned *out,
 
 /*
 ================
-GL_LightScaleTexture
+GX_LightScaleTexture
 
 Scale up the pixel values in a texture to increase the
 lighting range
 ================
 */
-void GL_LightScaleTexture (unsigned *in, int inwidth, int inheight, qboolean only_gamma )
+void GX_LightScaleTexture (unsigned *in, int inwidth, int inheight, qboolean only_gamma )
 {
 	if ( only_gamma )
 	{
@@ -1231,12 +1214,12 @@ void GL_LightScaleTexture (unsigned *in, int inwidth, int inheight, qboolean onl
 
 /*
 ================
-GL_MipMap
+GX_MipMap
 
 Operates in place, quartering the size of the texture
 ================
 */
-void GL_MipMap (byte *in, int width, int height)
+void GX_MipMap (byte *in, int width, int height)
 {
 	int		i, j;
 	byte	*out;
@@ -1258,12 +1241,12 @@ void GL_MipMap (byte *in, int width, int height)
 
 /*
 ===============
-GL_Upload32
+GX_Upload32
 
 Returns has_alpha
 ===============
 */
-void GL_BuildPalettedTexture( unsigned char *paletted_texture, unsigned char *scaled, int scaled_width, int scaled_height )
+void GX_BuildPalettedTexture( unsigned char *paletted_texture, unsigned char *scaled, int scaled_width, int scaled_height )
 {
 	int i;
 
@@ -1286,11 +1269,11 @@ void GL_BuildPalettedTexture( unsigned char *paletted_texture, unsigned char *sc
 int		upload_width, upload_height;
 qboolean uploaded_paletted;
 
-qboolean GL_Upload32 (unsigned *data, int width, int height,  qboolean mipmap)
+qboolean GX_Upload32 (unsigned *data, int width, int height,  qboolean mipmap)
 {
 	int			samples;
-	unsigned*	scaled = Sys_BigStackAlloc(256*256 * sizeof(unsigned), "GL_Upload32");
-	unsigned char* paletted_texture = Sys_BigStackAlloc(256*256, "GL_Upload32");
+	unsigned*	scaled = Sys_BigStackAlloc(256*256 * sizeof(unsigned), "GX_Upload32");
+	unsigned char* paletted_texture = Sys_BigStackAlloc(256*256, "GX_Upload32");
 	int			scaled_width, scaled_height;
 	int			i, c;
 	byte		*scan;
@@ -1330,25 +1313,25 @@ qboolean GL_Upload32 (unsigned *data, int width, int height,  qboolean mipmap)
 	upload_height = scaled_height;
 
 	if (scaled_width * scaled_height > (256*256 * sizeof(unsigned))/4)
-		ri.Sys_Error (ERR_DROP, "GL_Upload32: too big");
+		ri.Sys_Error (ERR_DROP, "GX_Upload32: too big");
 
 	// scan the texture for any non-255 alpha
 	c = width*height;
 	scan = ((byte *)data) + 3;
-	samples = gl_solid_format;
+	samples = gx_solid_format;
 	for (i=0 ; i<c ; i++, scan += 4)
 	{
 		if ( *scan != 255 )
 		{
-			samples = gl_alpha_format;
+			samples = gx_alpha_format;
 			break;
 		}
 	}
 
-	if (samples == gl_solid_format)
-	    comp = gl_tex_solid_format;
-	else if (samples == gl_alpha_format)
-	    comp = gl_tex_alpha_format;
+	if (samples == gx_solid_format)
+	    comp = gx_tex_solid_format;
+	else if (samples == gx_alpha_format)
+	    comp = gx_tex_alpha_format;
 	else {
 	    ri.Con_Printf (PRINT_ALL,
 			   "Unknown number of texture components %i\n",
@@ -1373,10 +1356,10 @@ qboolean GL_Upload32 (unsigned *data, int width, int height,  qboolean mipmap)
 	{
 		if (!mipmap)
 		{
-			if ( qgxLoadTlut && gl_ext_palettedtexture->value && samples == gl_solid_format )
+			if ( qgxLoadTlut && gl_ext_palettedtexture->value && samples == gx_solid_format )
 			{
 				uploaded_paletted = true;
-				GL_BuildPalettedTexture( paletted_texture, ( unsigned char * ) data, scaled_width, scaled_height );
+				GX_BuildPalettedTexture( paletted_texture, ( unsigned char * ) data, scaled_width, scaled_height );
 				GX_LoadAndBind(paletted_texture, scaled_width * scaled_height, scaled_width, scaled_height, GX_TF_CI8);
 			}
 			else
@@ -1390,12 +1373,12 @@ qboolean GL_Upload32 (unsigned *data, int width, int height,  qboolean mipmap)
 	else
 		GX_ResampleTexture (data, width, height, scaled, scaled_width, scaled_height);
 
-	GL_LightScaleTexture (scaled, scaled_width, scaled_height, !mipmap );
+	GX_LightScaleTexture (scaled, scaled_width, scaled_height, !mipmap );
 
-	if ( qgxLoadTlut && gl_ext_palettedtexture->value && ( samples == gl_solid_format ) )
+	if ( qgxLoadTlut && gl_ext_palettedtexture->value && ( samples == gx_solid_format ) )
 	{
 		uploaded_paletted = true;
-		GL_BuildPalettedTexture( paletted_texture, ( unsigned char * ) scaled, scaled_width, scaled_height );
+		GX_BuildPalettedTexture( paletted_texture, ( unsigned char * ) scaled, scaled_width, scaled_height );
 		GX_LoadAndBind(paletted_texture, scaled_width * scaled_height, scaled_width, scaled_height, GX_TF_CI8);
 	}
 	else
@@ -1405,43 +1388,58 @@ qboolean GL_Upload32 (unsigned *data, int width, int height,  qboolean mipmap)
 
 	if (mipmap)
 	{
-		/*int		miplevel;
+		int texnum;
+		int	miplevel;
+		int sw;
+		int sh;
+		u32 scaledlen;
+		qboolean changed;
+		byte* dst;
 
-		miplevel = 0;
-		while (scaled_width > 1 || scaled_height > 1)
+		texnum = gx_state.currenttextures[gx_state.currenttmu];
+		miplevel = 1;
+		sw = scaled_width;
+		sh = scaled_height;
+		while (sw > 4 && sh > 4)
 		{
-			GL_MipMap ((byte *)scaled, scaled_width, scaled_height);
+			sw >>= 1;
+			sh >>= 1;
+			miplevel++;
+		};
+		scaledlen = GX_GetTexBufferSize(scaled_width, scaled_height, GX_TF_RGBA8, GX_TRUE, miplevel);
+		changed = GX_ReallocTex(scaledlen, scaled_width, scaled_height);
+		if ( qgxLoadTlut && gl_ext_palettedtexture->value && samples == gx_solid_format )
+		{
+			uploaded_paletted = true;
+			GX_BuildPalettedTexture( paletted_texture, ( unsigned char * ) scaled, scaled_width, scaled_height );
+			dst = GX_CopyTexV8(paletted_texture, scaled_width, scaled_height, (byte*)(gxtexobjs[texnum].data));
+		}
+		else
+		{
+			dst = GX_CopyTexRGBA8((byte*)scaled, scaled_width, scaled_height, (byte*)(gxtexobjs[texnum].data));
+		};
+		while (scaled_width > 4 && scaled_height > 4)
+		{
+			GX_MipMap ((byte *)scaled, scaled_width, scaled_height);
 			scaled_width >>= 1;
 			scaled_height >>= 1;
-			if (scaled_width < 1)
-				scaled_width = 1;
-			if (scaled_height < 1)
-				scaled_height = 1;
-			miplevel++;
-			if ( qgxLoadTlut && gl_ext_palettedtexture->value && samples == gl_solid_format )
+			if ( qgxLoadTlut && gl_ext_palettedtexture->value && samples == gx_solid_format )
 			{
 				uploaded_paletted = true;
-				GL_BuildPalettedTexture( paletted_texture, ( unsigned char * ) scaled, scaled_width, scaled_height );
-				qglTexImage2D( GL_TEXTURE_2D,
-							  miplevel,
-							  GL_COLOR_INDEX8_EXT,
-							  scaled_width,
-							  scaled_height,
-							  0,
-							  GL_COLOR_INDEX,
-							  GL_UNSIGNED_BYTE,
-							  paletted_texture );
+				GX_BuildPalettedTexture( paletted_texture, ( unsigned char * ) scaled, scaled_width, scaled_height );
+				dst = GX_CopyTexV8(paletted_texture, scaled_width, scaled_height, dst);
 			}
 			else
 			{
-				qglTexImage2D (GL_TEXTURE_2D, miplevel, comp, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaled);
+				dst = GX_CopyTexRGBA8((byte*)scaled, scaled_width, scaled_height, dst);
 			}
-		}*/
+		};
+		GX_BindCurrentTex(changed, GX_TF_RGBA8, GX_TRUE);
 	}
 done: ;
 #endif
 
-	Sys_BigStackFree(256*256 * sizeof(unsigned) + 256*256, "GL_Upload32");
+	Sys_BigStackFree(256*256 * sizeof(unsigned) + 256*256, "GX_Upload32");
 
 	if (mipmap)
 	{
@@ -1452,12 +1450,12 @@ done: ;
 		GX_SetMinMag(gx_filter_max, gx_filter_max);
 	}
 
-	return (samples == gl_alpha_format);
+	return (samples == gx_alpha_format);
 }
 
 /*
 ===============
-GL_Upload8
+GX_Upload8
 
 Returns has_alpha
 ===============
@@ -1479,7 +1477,7 @@ static qboolean IsPowerOf2( int value )
 }
 */
 
-qboolean GL_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboolean is_sky )
+qboolean GX_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboolean is_sky )
 {
 	unsigned*	trans;
 	int			i, s;
@@ -1489,7 +1487,7 @@ qboolean GL_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboole
 	s = width*height;
 
 	if (s > (512*256 * sizeof(unsigned))/4)
-		ri.Sys_Error (ERR_DROP, "GL_Upload8: too large");
+		ri.Sys_Error (ERR_DROP, "GX_Upload8: too large");
 
 	if ( qgxLoadTlut && 
 		 gl_ext_palettedtexture->value && 
@@ -1501,7 +1499,7 @@ qboolean GL_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboole
 	}
 	else
 	{
-		trans = Sys_BigStackAlloc(512*256 * sizeof(unsigned),"GL_Upload8");
+		trans = Sys_BigStackAlloc(512*256 * sizeof(unsigned),"GX_Upload8");
 		for (i=0 ; i<s ; i++)
 		{
 			p = data[i];
@@ -1528,8 +1526,8 @@ qboolean GL_Upload8 (byte *data, int width, int height,  qboolean mipmap, qboole
 			}
 		}
 
-		ret = GL_Upload32 (trans, width, height, mipmap);
-		Sys_BigStackFree(512*256 * sizeof(unsigned),"GL_Upload8");
+		ret = GX_Upload32 (trans, width, height, mipmap);
+		Sys_BigStackFree(512*256 * sizeof(unsigned),"GX_Upload8");
 		return ret;
 	};
 }
@@ -1607,9 +1605,9 @@ nonscrap:
 		GX_Bind(image->texnum);
 		// Mipmaps disabled; pointless for this engine in GX hardware:
 		if (bits == 8)
-			image->has_alpha = GL_Upload8 (pic, width, height, false/*(image->type != it_pic && image->type != it_sky)*/, image->type == it_sky );
+			image->has_alpha = GX_Upload8 (pic, width, height, false/*(image->type != it_pic && image->type != it_sky)*/, image->type == it_sky );
 		else
-			image->has_alpha = GL_Upload32 ((unsigned *)pic, width, height, false/*(image->type != it_pic && image->type != it_sky)*/ );
+			image->has_alpha = GX_Upload32 ((unsigned *)pic, width, height, false/*(image->type != it_pic && image->type != it_sky)*/ );
 		image->upload_width = upload_width;		// after power of 2 and scales
 		image->upload_height = upload_height;
 		image->paletted = uploaded_paletted;
@@ -1625,10 +1623,10 @@ nonscrap:
 
 /*
 ================
-GL_LoadWal
+GX_LoadWal
 ================
 */
-image_t *GL_LoadWal (char *name)
+image_t *GX_LoadWal (char *name)
 {
 	miptex_t	*mt;
 	int			width, height, ofs;
@@ -1696,7 +1694,7 @@ image_t	*GX_FindImage (char *name, imagetype_t type)
 	}
 	else if (!strcmp(name+len-4, ".wal"))
 	{
-		image = GL_LoadWal (name);
+		image = GX_LoadWal (name);
 	}
 	else if (!strcmp(name+len-4, ".tga"))
 	{

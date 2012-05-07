@@ -160,14 +160,14 @@ void SubdividePolygon (int numverts, float *verts)
 
 /*
 ================
-GL_SubdivideSurface
+GX_SubdivideSurface
 
 Breaks a polygon up along axial 64 unit
 boundaries so that turbulent and sky warps
 can be done reasonably.
 ================
 */
-void GL_SubdivideSurface (msurface_t *fa)
+void GX_SubdivideSurface (msurface_t *fa)
 {
 	vec3_t*		verts = Sys_BigStackAlloc(64 * sizeof(vec3_t), "GX_SubdivideSurface");
 	int			numverts;

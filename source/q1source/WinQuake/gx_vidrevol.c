@@ -71,7 +71,7 @@ void QGX_Init (void)
 {
 	CheckMultiTextureExtensions();
 
-	gxu_background_color.r = 1.0f;
+	gxu_background_color.r = 255;
 	gxu_cull_mode = GX_CULL_BACK;
 	if(gxu_cull_enabled)
 	{

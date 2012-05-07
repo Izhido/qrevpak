@@ -17,7 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
-// GL_RSURF.C: surface-related refresh code
+// GX_RSURF.C: surface-related refresh code
 #include <assert.h>
 
 #include "gx_local.h"
@@ -730,7 +730,7 @@ void DrawTextureChains (void)
 }
 
 
-static void GL_RenderLightmappedPoly( msurface_t *surf )
+static void GX_RenderLightmappedPoly( msurface_t *surf )
 {
 	int		i, nv = surf->polys->numverts;
 	int		map;
@@ -761,7 +761,7 @@ dynamic:
 
 	if ( is_dynamic )
 	{
-		unsigned*	temp = Sys_BigStackAlloc(128*128 * sizeof(unsigned), "GL_RenderLightmappedPoly");
+		unsigned*	temp = Sys_BigStackAlloc(128*128 * sizeof(unsigned), "GX_RenderLightmappedPoly");
 		int			smax, tmax;
 
 		if ( ( surf->styles[map] >= 32 || surf->styles[map] == 0 ) && ( surf->dlightframe != r_framecount ) )
@@ -794,7 +794,7 @@ dynamic:
 
 		}
 
-		Sys_BigStackFree(128*128 * sizeof(unsigned), "GL_RenderLightmappedPoly");
+		Sys_BigStackFree(128*128 * sizeof(unsigned), "GX_RenderLightmappedPoly");
 
 		c_brush_polys++;
 
@@ -956,7 +956,7 @@ void R_DrawInlineBModel (void)
 			}
 			else if ( (GX_TEXTURE0 != GX_TEXTURE1) && !( psurf->flags & SURF_DRAWTURB ) )
 			{
-				GL_RenderLightmappedPoly( psurf );
+				GX_RenderLightmappedPoly( psurf );
 			}
 			else
 			{
@@ -1172,7 +1172,7 @@ void R_RecursiveWorldNode (mnode_t *node)
 		{
 			if ( (GX_TEXTURE0 != GX_TEXTURE1) && !( surf->flags & SURF_DRAWTURB ) )
 			{
-				GL_RenderLightmappedPoly( surf );
+				GX_RenderLightmappedPoly( surf );
 			}
 			else
 			{
@@ -1474,10 +1474,10 @@ static qboolean LM_AllocBlock (int w, int h, int *x, int *y)
 
 /*
 ================
-GL_BuildPolygonFromSurface
+GX_BuildPolygonFromSurface
 ================
 */
-void GL_BuildPolygonFromSurface(msurface_t *fa)
+void GX_BuildPolygonFromSurface(msurface_t *fa)
 {
 	int			i, lindex, lnumverts;
 	medge_t		*pedges, *r_pedge;
@@ -1552,10 +1552,10 @@ void GL_BuildPolygonFromSurface(msurface_t *fa)
 
 /*
 ========================
-GL_CreateSurfaceLightmap
+GX_CreateSurfaceLightmap
 ========================
 */
-void GL_CreateSurfaceLightmap (msurface_t *surf)
+void GX_CreateSurfaceLightmap (msurface_t *surf)
 {
 	int		smax, tmax;
 	byte	*base;
@@ -1588,15 +1588,15 @@ void GL_CreateSurfaceLightmap (msurface_t *surf)
 
 /*
 ==================
-GL_BeginBuildingLightmaps
+GX_BeginBuildingLightmaps
 
 ==================
 */
-void GL_BeginBuildingLightmaps (model_t *m)
+void GX_BeginBuildingLightmaps (model_t *m)
 {
 	static lightstyle_t	lightstyles[MAX_LIGHTSTYLES];
 	int				i;
-	unsigned*		dummy = Sys_BigStackAlloc(128*128 * sizeof(unsigned), "GL_BeginBuildingLightmaps");
+	unsigned*		dummy = Sys_BigStackAlloc(128*128 * sizeof(unsigned), "GX_BeginBuildingLightmaps");
 
 	memset( gl_lms.allocated, 0, sizeof(gl_lms.allocated) );
 
@@ -1642,14 +1642,14 @@ void GL_BeginBuildingLightmaps (model_t *m)
 	*/
 	if ( toupper( gl_monolightmap->string[0] ) == 'A' )
 	{
-		gl_lms.internal_format = gl_tex_alpha_format;
+		gl_lms.internal_format = gx_tex_alpha_format;
 	}
 	/*
 	** try to do hacked colored lighting with a blended texture
 	*/
 	else if ( toupper( gl_monolightmap->string[0] ) == 'C' )
 	{
-		gl_lms.internal_format = gl_tex_alpha_format;
+		gl_lms.internal_format = gx_tex_alpha_format;
 	}
 	else if ( toupper( gl_monolightmap->string[0] ) == 'I' )
 	{
@@ -1661,7 +1661,7 @@ void GL_BeginBuildingLightmaps (model_t *m)
 	}
 	else
 	{
-		gl_lms.internal_format = gl_tex_solid_format;
+		gl_lms.internal_format = gx_tex_solid_format;
 	}
 
 	/*
@@ -1671,15 +1671,15 @@ void GL_BeginBuildingLightmaps (model_t *m)
 	GX_SetMinMag(GX_LINEAR, GX_LINEAR);
 	GX_LoadAndBind(dummy, BLOCK_WIDTH * BLOCK_HEIGHT * GX_LIGHTMAP_SIZE, BLOCK_WIDTH, BLOCK_HEIGHT, GX_LIGHTMAP_FORMAT);
 
-	Sys_BigStackFree(128*128 * sizeof(unsigned), "GL_BeginBuildingLightmaps");
+	Sys_BigStackFree(128*128 * sizeof(unsigned), "GX_BeginBuildingLightmaps");
 }
 
 /*
 =======================
-GL_EndBuildingLightmaps
+GX_EndBuildingLightmaps
 =======================
 */
-void GL_EndBuildingLightmaps (void)
+void GX_EndBuildingLightmaps (void)
 {
 	LM_UploadBlock( false );
 	GX_EnableMultitexture( false );

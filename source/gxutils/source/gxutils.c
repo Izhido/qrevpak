@@ -135,6 +135,21 @@ void GXU_DisableTexture(void)
 	GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
 }
 
+void GXU_EnableTexStage1(void)
+{
+	GX_SetNumTexGens(2);
+	GX_SetNumTevStages(2);
+	GX_SetVtxDesc(GX_VA_TEX1, GX_DIRECT);
+}
+
+void GXU_DisableTexStage1(void)
+{
+	GX_SetVtxDesc(GX_VA_TEX1, GX_NONE);
+	GX_SetNumTevStages(1);
+	GX_SetNumTexGens(1);
+}
+
+
 void GXU_CallguMtxRotAxisDeg(Mtx mt, guVector* axis, f32 deg)
 {
 	guMtxRotAxisDeg(mt, axis, deg);

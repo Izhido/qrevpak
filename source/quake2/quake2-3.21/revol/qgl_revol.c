@@ -53,7 +53,6 @@ void ( APIENTRY * qglCallList )(GLuint list);
 void ( APIENTRY * qglCallLists )(GLsizei n, GLenum type, const GLvoid *lists);
 void ( APIENTRY * qglClear )(GLbitfield mask);
 void ( APIENTRY * qglClearAccum )(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
-void ( APIENTRY * qglClearColor )(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
 void ( APIENTRY * qglClearDepth )(GLclampd depth);
 void ( APIENTRY * qglClearIndex )(GLfloat c);
 void ( APIENTRY * qglClearStencil )(GLint s);
@@ -70,6 +69,7 @@ void ( APIENTRY * qglCopyTexSubImage2D )(GLenum target, GLint level, GLint xoffs
 void ( APIENTRY * qglDeleteLists )(GLuint list, GLsizei range);
 void ( APIENTRY * qglDisable )(GLenum cap);
 void ( APIENTRY * qglDisableClientState )(GLenum array);
+void ( APIENTRY * qgxDisableTexStage1 )(void);
 void ( APIENTRY * qgxDisableTexture )(void);
 void ( APIENTRY * qglDrawArrays )(GLenum mode, GLint first, GLsizei count);
 void ( APIENTRY * qglDrawBuffer )(GLenum mode);
@@ -80,6 +80,7 @@ void ( APIENTRY * qglEdgeFlagPointer )(GLsizei stride, const GLvoid *pointer);
 void ( APIENTRY * qglEdgeFlagv )(const GLboolean *flag);
 void ( APIENTRY * qglEnable )(GLenum cap);
 void ( APIENTRY * qglEnableClientState )(GLenum array);
+void ( APIENTRY * qgxEnableTexStage1 )(void);
 void ( APIENTRY * qgxEnableTexture )(void);
 void ( APIENTRY * qgxEnd )(void);
 void ( APIENTRY * qglEndList )(void);
@@ -149,6 +150,7 @@ void ( APIENTRY * qgxInitTexObjCI )(GXTexObj *obj, void *img_ptr, u16 wd, u16 ht
 void ( APIENTRY * qgxInitTexObjFilterMode )(GXTexObj *obj, u8 minfilt, u8 magfilt);
 void ( APIENTRY * qglInterleavedArrays )(GLenum format, GLsizei stride, const GLvoid *pointer);
 void ( APIENTRY * qgxInvalidateTexAll )(void);
+void ( APIENTRY * qgxInvVtxCache )(void);
 GLboolean ( APIENTRY * qglIsEnabled )(GLenum cap);
 GLboolean ( APIENTRY * qglIsList )(GLuint list);
 GLboolean ( APIENTRY * qglIsTexture )(GLuint texture);
@@ -250,10 +252,12 @@ GLint ( APIENTRY * qglRenderMode )(GLenum mode);
 void ( APIENTRY * qglScissor )(GLint x, GLint y, GLsizei width, GLsizei height);
 void ( APIENTRY * qglSelectBuffer )(GLsizei size, GLuint *buffer);
 void ( APIENTRY * qgxSetAlphaCompare )(u8 comp0, u8 ref0, u8 aop, u8 comp1, u8 ref1);
+void ( APIENTRY * qgxSetArray )(u32 attr, void *ptr, u8 stride);
 void ( APIENTRY * qgxSetBlendMode )(u8 type, u8 src_fact, u8 dst_fact, u8 op);
 void ( APIENTRY * qgxSetCullMode )(u8 mode);
 void ( APIENTRY * qgxSetTevOp )(u8 tevstage, u8 mode);
 void ( APIENTRY * qgxSetViewport )(f32 xOrig, f32 yOrig, f32 wd, f32 ht, f32 nearZ, f32 farZ);
+void ( APIENTRY * qgxSetVtxDesc )(u8 attr, u8 type);
 void ( APIENTRY * qgxSetZMode )(u8 enable, u8 func, u8 update_enable);
 void ( APIENTRY * qglStencilFunc )(GLenum func, GLint ref, GLuint mask);
 void ( APIENTRY * qglStencilMask )(GLuint mask);
@@ -267,9 +271,6 @@ void ( APIENTRY * qglTexGenfv )(GLenum coord, GLenum pname, const GLfloat *param
 void ( APIENTRY * qglTexGeni )(GLenum coord, GLenum pname, GLint param);
 void ( APIENTRY * qglTexGeniv )(GLenum coord, GLenum pname, const GLint *params);
 void ( APIENTRY * qglVertexPointer )(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer);
-
-void ( APIENTRY * qglLockArraysEXT)( int, int);
-void ( APIENTRY * qglUnlockArraysEXT) ( void );
 
 void ( APIENTRY * qgxInitTlutObj )(GXTlutObj *obj, void *lut, u8 fmt, u16 entries);
 void ( APIENTRY * qgxLoadTlut)(GXTlutObj *obj, u32 tlut_name);
@@ -285,7 +286,6 @@ static void ( APIENTRY * dllCallList )(GLuint list);
 static void ( APIENTRY * dllCallLists )(GLsizei n, GLenum type, const GLvoid *lists);
 static void ( APIENTRY * dllClear )(GLbitfield mask);
 static void ( APIENTRY * dllClearAccum )(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
-static void ( APIENTRY * dllClearColor )(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
 static void ( APIENTRY * dllClearDepth )(GLclampd depth);
 static void ( APIENTRY * dllClearIndex )(GLfloat c);
 static void ( APIENTRY * dllClearStencil )(GLint s);
@@ -302,6 +302,7 @@ static void ( APIENTRY * dllCopyTexSubImage2D )(GLenum target, GLint level, GLin
 static void ( APIENTRY * dllDeleteLists )(GLuint list, GLsizei range);
 static void ( APIENTRY * dllDisable )(GLenum cap);
 static void ( APIENTRY * dllDisableClientState )(GLenum array);
+static void ( APIENTRY * dllDisableTexStage1 )(void);
 static void ( APIENTRY * dllDisableTexture )(void);
 static void ( APIENTRY * dllDrawArrays )(GLenum mode, GLint first, GLsizei count);
 static void ( APIENTRY * dllDrawBuffer )(GLenum mode);
@@ -312,6 +313,7 @@ static void ( APIENTRY * dllEdgeFlagPointer )(GLsizei stride, const GLvoid *poin
 static void ( APIENTRY * dllEdgeFlagv )(const GLboolean *flag);
 static void ( APIENTRY * dllEnable )(GLenum cap);
 static void ( APIENTRY * dllEnableClientState )(GLenum array);
+static void ( APIENTRY * dllEnableTexStage1 )(void);
 static void ( APIENTRY * dllEnableTexture )(void);
 static void ( APIENTRY * dllEnd )(void);
 static void ( APIENTRY * dllEndList )(void);
@@ -381,6 +383,7 @@ static void ( APIENTRY * dllInitTexObjCI )(GXTexObj *obj, void *img_ptr, u16 wd,
 static void ( APIENTRY * dllInitTexObjFilterMode )(GXTexObj *obj, u8 minfilt, u8 magfilt);
 static void ( APIENTRY * dllInterleavedArrays )(GLenum format, GLsizei stride, const GLvoid *pointer);
 static void ( APIENTRY * dllInvalidateTexAll )(void);
+static void ( APIENTRY * dllInvVtxCache )(void);
 GLboolean ( APIENTRY * dllIsEnabled )(GLenum cap);
 GLboolean ( APIENTRY * dllIsList )(GLuint list);
 GLboolean ( APIENTRY * dllIsTexture )(GLuint texture);
@@ -490,10 +493,12 @@ GLint ( APIENTRY * dllRenderMode )(GLenum mode);
 static void ( APIENTRY * dllScissor )(GLint x, GLint y, GLsizei width, GLsizei height);
 static void ( APIENTRY * dllSelectBuffer )(GLsizei size, GLuint *buffer);
 static void ( APIENTRY * dllSetAlphaCompare )(u8 comp0, u8 ref0, u8 aop, u8 comp1, u8 ref1);
+static void ( APIENTRY * dllSetArray )(u32 attr, void *ptr, u8 stride);
 static void ( APIENTRY * dllSetBlendMode )(u8 type, u8 src_fact, u8 dst_fact, u8 op);
 static void ( APIENTRY * dllSetCullMode )(u8 mode);
 static void ( APIENTRY * dllSetTevOp )(u8 tevstage, u8 mode);
 static void ( APIENTRY * dllSetViewport )(f32 xOrig, f32 yOrig, f32 wd, f32 ht, f32 nearZ, f32 farZ);
+static void ( APIENTRY * dllSetVtxDesc )(u8 attr, u8 type);
 static void ( APIENTRY * dllSetZMode )(u8 enable, u8 func, u8 update_enable);
 static void ( APIENTRY * dllStencilFunc )(GLenum func, GLint ref, GLuint mask);
 static void ( APIENTRY * dllStencilMask )(GLuint mask);
@@ -560,12 +565,6 @@ static void APIENTRY logClearAccum(GLfloat red, GLfloat green, GLfloat blue, GLf
 {
 	fprintf( log_fp, "glClearAccum\n" );
 	dllClearAccum( red, green, blue, alpha );
-}
-
-static void APIENTRY logClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
-{
-	fprintf( log_fp, "glClearColor\n" );
-	dllClearColor( red, green, blue, alpha );
 }
 
 static void APIENTRY logClearDepth(GLclampd depth)
@@ -664,6 +663,12 @@ static void APIENTRY logDisableClientState(GLenum array)
 	dllDisableClientState( array );
 }
 
+static void APIENTRY logDisableTexStage1(void)
+{
+	SIG( "GXU_DisableTexStage1" );
+	dllDisableTexStage1();
+}
+
 static void APIENTRY logDisableTexture(void)
 {
 	SIG( "GXU_DisableTexture" );
@@ -722,6 +727,12 @@ static void APIENTRY logEnableClientState(GLenum array)
 {
 	SIG( "glEnableClientState" );
 	dllEnableClientState( array );
+}
+
+static void APIENTRY logEnableTexStage1(void)
+{
+	SIG( "GXU_EnableTexStage1" );
+	dllEnableTexStage1();
 }
 
 static void APIENTRY logEnableTexture(void)
@@ -1128,6 +1139,12 @@ static void APIENTRY logInvalidateTexAll(void)
 {
 	SIG( "GX_InvalidateTexAll" );
 	dllInvalidateTexAll();
+}
+
+static void APIENTRY logInvVtxCache(void)
+{
+	SIG( "GX_InvVtxCache" );
+	dllInvVtxCache();
 }
 
 static GLboolean APIENTRY logIsEnabled(GLenum cap)
@@ -1734,6 +1751,11 @@ static void APIENTRY logSelectBuffer(GLsizei size, GLuint *buffer)
 	SIG( "glSelectBuffer" );
 	dllSelectBuffer( size, buffer );
 }
+static void APIENTRY logSetArray(u32 attr, void *ptr, u8 stride)
+{
+	fprintf( log_fp, "GX_SetArray( 0x%x, 0x%x, 0x%x )\n", attr, ptr, stride );
+	dllSetArray( attr, ptr, stride );
+}
 static void APIENTRY logSetAlphaCompare(u8 comp0, u8 ref0, u8 aop, u8 comp1, u8 ref1)
 {
 	fprintf( log_fp, "GX_SetAlphaCompare( 0x%x, 0x%x, 0x%x, 0x%x, 0x%x )\n", comp0, ref0, aop, comp1, ref1 );
@@ -1758,6 +1780,11 @@ static void APIENTRY logSetViewport(f32 xOrig, f32 yOrig, f32 wd, f32 ht, f32 ne
 {
 	SIG( "GX_SetViewport" );
 	dllSetViewport( xOrig, yOrig, wd, ht, nearZ, farZ );
+}
+static void APIENTRY logSetVtxDesc(u8 attr, u8 type)
+{
+	SIG( "GX_SetVtxDesc" );
+	dllSetVtxDesc( attr, type );
 }
 static void APIENTRY logSetZMode(u8 enable, u8 func, u8 update_enable)
 {
@@ -1858,7 +1885,6 @@ void QGL_Shutdown( void )
 	qglCallLists                 = NULL;
 	qglClear                     = NULL;
 	qglClearAccum                = NULL;
-	qglClearColor                = NULL;
 	qglClearDepth                = NULL;
 	qglClearIndex                = NULL;
 	qglClearStencil              = NULL;
@@ -1875,6 +1901,7 @@ void QGL_Shutdown( void )
 	qglDeleteLists               = NULL;
 	qglDisable                   = NULL;
 	qglDisableClientState        = NULL;
+	qgxDisableTexStage1          = NULL;
 	qgxDisableTexture            = NULL;
 	qglDrawArrays                = NULL;
 	qglDrawBuffer                = NULL;
@@ -1885,6 +1912,7 @@ void QGL_Shutdown( void )
 	qglEdgeFlagv                 = NULL;
 	qglEnable                    = NULL;
 	qglEnableClientState         = NULL;
+	qgxEnableTexStage1           = NULL;
 	qgxEnableTexture             = NULL;
 	qgxEnd                       = NULL;
 	qglEndList                   = NULL;
@@ -1954,6 +1982,7 @@ void QGL_Shutdown( void )
 	qgxInitTexObjFilterMode      = NULL;
 	qglInterleavedArrays         = NULL;
 	qgxInvalidateTexAll          = NULL;
+	qgxInvVtxCache               = NULL;
 	qglIsEnabled                 = NULL;
 	qglIsList                    = NULL;
 	qglIsTexture                 = NULL;
@@ -2055,10 +2084,12 @@ void QGL_Shutdown( void )
 	qglScissor                   = NULL;
 	qglSelectBuffer              = NULL;
 	qgxSetAlphaCompare           = NULL;
+	qgxSetArray                  = NULL;
 	qgxSetBlendMode              = NULL;
 	qgxSetCullMode               = NULL;
 	qgxSetTevOp                  = NULL;
 	qgxSetViewport               = NULL;
+	qgxSetVtxDesc                = NULL;
 	qgxSetZMode                  = NULL;
 	qglStencilFunc               = NULL;
 	qglStencilMask               = NULL;
@@ -2107,7 +2138,6 @@ qboolean QGL_Init( const char *dllname )
 	qglCallLists                 = dllCallLists = glCallLists;
 	qglClear                     = dllClear = glClear;
 	qglClearAccum                = dllClearAccum = glClearAccum;
-	qglClearColor                = dllClearColor = glClearColor;
 	qglClearDepth                = dllClearDepth = glClearDepth;
 	qglClearIndex                = dllClearIndex = glClearIndex;
 	qglClearStencil              = dllClearStencil = glClearStencil;
@@ -2124,6 +2154,7 @@ qboolean QGL_Init( const char *dllname )
 	qglDeleteLists               = dllDeleteLists = glDeleteLists;
 	qglDisable                   = dllDisable = glDisable;
 	qglDisableClientState        = dllDisableClientState = glDisableClientState;
+	qgxDisableTexStage1          = dllDisableTexStage1 = GXU_DisableTexStage1;
 	qgxDisableTexture            = dllDisableTexture = GXU_DisableTexture;
 	qglDrawArrays                = dllDrawArrays = glDrawArrays;
 	qglDrawBuffer                = dllDrawBuffer = glDrawBuffer;
@@ -2134,6 +2165,7 @@ qboolean QGL_Init( const char *dllname )
 	qglEdgeFlagv                 = dllEdgeFlagv = glEdgeFlagv;
 	qglEnable                    = 	dllEnable                    = glEnable;
 	qglEnableClientState         = 	dllEnableClientState         = glEnableClientState;
+	qgxEnableTexStage1           = 	dllEnableTexStage1           = GXU_EnableTexStage1;
 	qgxEnableTexture             = 	dllEnableTexture             = GXU_EnableTexture;
 	qgxEnd                       = 	dllEnd                       = GX_End;
 	qglEndList                   = 	dllEndList                   = glEndList;
@@ -2203,6 +2235,7 @@ qboolean QGL_Init( const char *dllname )
 	qgxInitTexObjFilterMode      =  dllInitTexObjFilterMode      = GX_InitTexObjFilterMode;
 	qglInterleavedArrays         = 	dllInterleavedArrays         = glInterleavedArrays;
 	qgxInvalidateTexAll          =  dllInvalidateTexAll          = GX_InvalidateTexAll;
+	qgxInvVtxCache               =  dllInvVtxCache               = GX_InvVtxCache;
 	qglIsEnabled                 = 	dllIsEnabled                 = glIsEnabled;
 	qglIsList                    = 	dllIsList                    = glIsList;
 	qglIsTexture                 = 	dllIsTexture                 = glIsTexture;
@@ -2304,10 +2337,12 @@ qboolean QGL_Init( const char *dllname )
 	qglScissor                   = 	dllScissor                   = glScissor;
 	qglSelectBuffer              = 	dllSelectBuffer              = glSelectBuffer;
 	qgxSetAlphaCompare           =  dllSetAlphaCompare           = GX_SetAlphaCompare;
+	qgxSetArray                  =  dllSetArray                  = GX_SetArray;
 	qgxSetBlendMode              = 	dllSetBlendMode              = GX_SetBlendMode;
 	qgxSetCullMode               =  dllSetCullMode               = GX_SetCullMode;
 	qgxSetTevOp                  = 	dllSetTevOp                  = GX_SetTevOp;
 	qgxSetViewport               = 	dllSetViewport               = GX_SetViewport;
+	qgxSetVtxDesc                = 	dllSetVtxDesc                = GX_SetVtxDesc;
 	qgxSetZMode                  = 	dllSetZMode                  = GX_SetZMode;
 	qglStencilFunc               = 	dllStencilFunc               = glStencilFunc;
 	qglStencilMask               = 	dllStencilMask               = glStencilMask;
@@ -2321,9 +2356,6 @@ qboolean QGL_Init( const char *dllname )
 	qglTexGeni                   = 	dllTexGeni                   = glTexGeni;
 	qglTexGeniv                  = 	dllTexGeniv                  = glTexGeniv;
 	qglVertexPointer             = 	dllVertexPointer             = glVertexPointer;
-
-	qglLockArraysEXT = 0;
-	qglUnlockArraysEXT = 0;
 
 	qgxSetPointSize = 0;
 	qgxInitTlutObj = 0;
@@ -2370,7 +2402,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglCallLists                 = logCallLists;
 		qglClear                     = logClear;
 		qglClearAccum                = logClearAccum;
-		qglClearColor                = logClearColor;
 		qglClearDepth                = logClearDepth;
 		qglClearIndex                = logClearIndex;
 		qglClearStencil              = logClearStencil;
@@ -2387,6 +2418,7 @@ void GLimp_EnableLogging( qboolean enable )
 		qglDeleteLists               = logDeleteLists ;
 		qglDisable                   = logDisable ;
 		qglDisableClientState        = logDisableClientState ;
+		qgxDisableTexStage1          = logDisableTexStage1 ;
 		qgxDisableTexture            = logDisableTexture ;
 		qglDrawArrays                = logDrawArrays ;
 		qglDrawBuffer                = logDrawBuffer ;
@@ -2397,6 +2429,7 @@ void GLimp_EnableLogging( qboolean enable )
 		qglEdgeFlagv                 = logEdgeFlagv ;
 		qglEnable                    = 	logEnable                    ;
 		qglEnableClientState         = 	logEnableClientState         ;
+		qgxEnableTexStage1           = 	logEnableTexStage1           ;
 		qgxEnableTexture             = 	logEnableTexture             ;
 		qgxEnd                       = 	logEnd                       ;
 		qglEndList                   = 	logEndList                   ;
@@ -2466,6 +2499,7 @@ void GLimp_EnableLogging( qboolean enable )
 		qgxInitTexObjFilterMode      =  logInitTexObjFilterMode      ;
 		qglInterleavedArrays         = 	logInterleavedArrays         ;
 		qgxInvalidateTexAll          =  logInvalidateTexAll          ;
+		qgxInvVtxCache               =  logInvVtxCache               ;
 		qglIsEnabled                 = 	logIsEnabled                 ;
 		qglIsList                    = 	logIsList                    ;
 		qglIsTexture                 = 	logIsTexture                 ;
@@ -2567,10 +2601,12 @@ void GLimp_EnableLogging( qboolean enable )
 		qglScissor                   = 	logScissor                   ;
 		qglSelectBuffer              = 	logSelectBuffer              ;
 		qgxSetAlphaCompare           =  logSetAlphaCompare           ;
+		qgxSetArray                  =  logSetArray                  ;
 		qgxSetBlendMode              = 	logSetBlendMode              ;
 		qgxSetCullMode               = 	logSetCullMode               ;
 		qgxSetTevOp                  = 	logSetTevOp                  ;
 		qgxSetViewport               = 	logSetViewport               ;
+		qgxSetVtxDesc                = 	logSetVtxDesc                ;
 		qgxSetZMode                  = 	logSetZMode                  ;
 		qglStencilFunc               = 	logStencilFunc               ;
 		qglStencilMask               = 	logStencilMask               ;
@@ -2604,7 +2640,6 @@ void GLimp_EnableLogging( qboolean enable )
 		qglCallLists                 = dllCallLists;
 		qglClear                     = dllClear;
 		qglClearAccum                = dllClearAccum;
-		qglClearColor                = dllClearColor;
 		qglClearDepth                = dllClearDepth;
 		qglClearIndex                = dllClearIndex;
 		qglClearStencil              = dllClearStencil;
@@ -2621,6 +2656,7 @@ void GLimp_EnableLogging( qboolean enable )
 		qglDeleteLists               = dllDeleteLists ;
 		qglDisable                   = dllDisable ;
 		qglDisableClientState        = dllDisableClientState ;
+		qgxDisableTexStage1          = dllDisableTexStage1 ;
 		qgxDisableTexture            = dllDisableTexture ;
 		qglDrawArrays                = dllDrawArrays ;
 		qglDrawBuffer                = dllDrawBuffer ;
@@ -2631,7 +2667,7 @@ void GLimp_EnableLogging( qboolean enable )
 		qglEdgeFlagv                 = dllEdgeFlagv ;
 		qglEnable                    = 	dllEnable                    ;
 		qglEnableClientState         = 	dllEnableClientState         ;
-		qgxEnableTexture             = 	dllEnableTexture             ;
+		qgxEnableTexStage1           = 	dllEnableTexStage1           ;
 		qgxEnd                       = 	dllEnd                       ;
 		qglEndList                   = 	dllEndList                   ;
 		qglEvalCoord1d				 = 	dllEvalCoord1d				 ;
@@ -2700,6 +2736,7 @@ void GLimp_EnableLogging( qboolean enable )
 		qgxInitTexObjFilterMode      =  dllInitTexObjFilterMode      ;
 		qglInterleavedArrays         = 	dllInterleavedArrays         ;
 		qgxInvalidateTexAll          =  dllInvalidateTexAll          ;
+		qgxInvVtxCache               =  dllInvVtxCache               ;
 		qglIsEnabled                 = 	dllIsEnabled                 ;
 		qglIsList                    = 	dllIsList                    ;
 		qglIsTexture                 = 	dllIsTexture                 ;
@@ -2801,10 +2838,12 @@ void GLimp_EnableLogging( qboolean enable )
 		qglScissor                   = 	dllScissor                   ;
 		qglSelectBuffer              = 	dllSelectBuffer              ;
 		qgxSetAlphaCompare           =  dllSetAlphaCompare           ;
+		qgxSetArray                  =  dllSetArray                  ;
 		qgxSetBlendMode              = 	dllSetBlendMode              ;
 		qgxSetCullMode               =  dllSetCullMode               ;
 		qgxSetTevOp                  = 	dllSetTevOp                  ;
 		qgxSetViewport               = 	dllSetViewport               ;
+		qgxSetVtxDesc                = 	dllSetVtxDesc                ;
 		qgxSetZMode                  = 	dllSetZMode                  ;
 		qglStencilFunc               = 	dllStencilFunc               ;
 		qglStencilMask               = 	dllStencilMask               ;

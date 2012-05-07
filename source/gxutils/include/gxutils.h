@@ -63,6 +63,10 @@ void GXU_EnableTexture(void);
 
 void GXU_DisableTexture(void);
 
+void GXU_EnableTexStage1(void);
+
+void GXU_DisableTexStage1(void);
+
 void GXU_CallguMtxRotAxisDeg(Mtx mt, guVector* axis, f32 deg);
 
 unsigned char* GX_CopyTexRGBA8(unsigned char* src, int width, int height, unsigned char* dst);

@@ -21,6 +21,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "gx_local.h"
 
+#include <malloc.h>
+
 /*
 =============================================================
 
@@ -37,8 +39,9 @@ float	r_avertexnormals[NUMVERTEXNORMALS][3] = {
 
 typedef float vec4_t[4];
 
-static	vec4_t	s_lerped[MAX_VERTS];
+static	vec4_t*	s_lerped;
 //static	vec3_t	lerped[MAX_VERTS];
+static u8* colorArray;
 
 vec3_t	shadevector;
 float	shadelight[3];
@@ -51,7 +54,7 @@ float	r_avertexnormal_dots[SHADEDOT_QUANT][256] =
 
 float	*shadedots = r_avertexnormal_dots[0];
 
-void GL_LerpVerts( int nverts, dtrivertx_t *v, dtrivertx_t *ov, dtrivertx_t *verts, float *lerp, float move[3], float frontv[3], float backv[3] )
+void GX_LerpVerts( int nverts, dtrivertx_t *v, dtrivertx_t *ov, dtrivertx_t *verts, float *lerp, float move[3], float frontv[3], float backv[3] )
 {
 	int i;
 
@@ -81,13 +84,13 @@ void GL_LerpVerts( int nverts, dtrivertx_t *v, dtrivertx_t *ov, dtrivertx_t *ver
 
 /*
 =============
-GL_DrawAliasFrameLerp
+GX_DrawAliasFrameLerp
 
 interpolates between two frames and origins
 FIXME: batch lerp all vertexes
 =============
 */
-void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
+void GX_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 {
 	float 	l;
 	daliasframe_t	*frame, *oldframe;
@@ -99,7 +102,7 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 	vec3_t	move, delta, vectors[3];
 	vec3_t	frontv, backv;
 	int		i;
-	int		index_xyz;
+	u16		index_xyz;
 	float	*lerp;
 	float	ccomp;
 
@@ -148,16 +151,17 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 		backv[i] = backlerp*oldframe->scale[i];
 	}
 
-	lerp = s_lerped[0];
+	if(s_lerped == NULL)
+		s_lerped = memalign(32, MAX_VERTS * sizeof(vec4_t));
 
-	GL_LerpVerts( paliashdr->num_xyz, v, ov, verts, lerp, move, frontv, backv );
+	lerp = (float*)s_lerped;
+
+	GX_LerpVerts( paliashdr->num_xyz, v, ov, verts, lerp, move, frontv, backv );
 
 	if ( gl_vertex_arrays->value )
 	{
-		float* colorArray = Sys_BigStackAlloc(MAX_VERTS*4 * sizeof(float), "GL_DrawAliasFrameLerp");
-
-		qglEnableClientState( GL_VERTEX_ARRAY );
-		qglVertexPointer( 3, GL_FLOAT, 16, s_lerped );	// padded for SIMD
+		if(colorArray == NULL)
+			colorArray = memalign(32, MAX_VERTS*4 * sizeof(u8));
 
 //		if ( currententity->flags & ( RF_SHELL_RED | RF_SHELL_GREEN | RF_SHELL_BLUE ) )
 		// PMM - added double damage shell
@@ -194,9 +198,6 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 		}
 		else
 		{
-			qglEnableClientState( GL_COLOR_ARRAY );
-			qglColorPointer( 3, GL_FLOAT, 0, colorArray );
-
 			//
 			// pre light everything
 			//
@@ -206,30 +207,41 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 
 				ccomp = l * shadelight[0];
 				if(ccomp < 0.0)
-					colorArray[i*3+0] = 0.0;
+					colorArray[i*3+0] = 0;
 				else if(ccomp > 1.0)
-					colorArray[i*3+0] = 1.0;
+					colorArray[i*3+0] = 255;
 				else
-					colorArray[i*3+0] = ccomp;
+					colorArray[i*3+0] = ccomp * 255;
 				ccomp = l * shadelight[1];
 				if(ccomp < 0.0)
-					colorArray[i*3+1] = 0.0;
+					colorArray[i*3+1] = 0;
 				else if(ccomp > 1.0)
-					colorArray[i*3+1] = 1.0;
+					colorArray[i*3+1] = 255;
 				else
-					colorArray[i*3+1] = ccomp;
+					colorArray[i*3+1] = ccomp * 255;
 				ccomp = l * shadelight[2];
 				if(ccomp < 0.0)
-					colorArray[i*3+2] = 0.0;
+					colorArray[i*3+2] = 0;
 				else if(ccomp > 1.0)
-					colorArray[i*3+2] = 1.0;
+					colorArray[i*3+2] = 255;
 				else
-					colorArray[i*3+2] = ccomp;
+					colorArray[i*3+2] = ccomp * 255;
+				colorArray[i*3+3] = 255;
 			}
 		}
 
-		if ( qglLockArraysEXT != 0 )
-			qglLockArraysEXT( 0, paliashdr->num_xyz );
+		DCFlushRange(s_lerped, MAX_VERTS * sizeof(vec4_t));
+		qgxSetVtxDesc(GX_VA_POS, GX_INDEX16);
+		qgxSetArray(GX_VA_POS, s_lerped, sizeof(vec4_t));	// padded for SIMD
+
+		if (!( currententity->flags & ( RF_SHELL_RED | RF_SHELL_GREEN | RF_SHELL_BLUE | RF_SHELL_DOUBLE | RF_SHELL_HALF_DAM) ))
+		{
+			DCFlushRange(colorArray, MAX_VERTS*4 * sizeof(u8));
+			qgxSetVtxDesc(GX_VA_CLR0, GX_INDEX16);
+			qgxSetArray(GX_VA_CLR0, colorArray, 4 * sizeof(u8));
+		};
+
+		qgxInvVtxCache();
 
 		while (1)
 		{
@@ -255,7 +267,7 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 					index_xyz = order[2];
 					order += 3;
 
-					qgxPosition3f32( s_lerped[index_xyz][0], s_lerped[index_xyz][1], s_lerped[index_xyz][2] );
+					GX_Position1x16(index_xyz);
 					qgxColor4u8 ( gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a );
 
 				} while (--count);
@@ -279,9 +291,8 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 //					l = shadedots[verts[index_xyz].lightnormalindex];
 					
 //					qglColor4f (l* shadelight[0], l*shadelight[1], l*shadelight[2], alpha);
-					//qglArrayElement( index_xyz );
-					qgxPosition3f32 (s_lerped[index_xyz][0], s_lerped[index_xyz][1], s_lerped[index_xyz][2]);
-					qgxColor4u8 (colorArray[3*index_xyz]*255, colorArray[3*index_xyz + 1]*255, colorArray[3*index_xyz + 2]*255, 255);
+					GX_Position1x16(index_xyz);
+					GX_Color1x16(index_xyz);
 
 					// texture coordinates come from the draw list
 					qgxTexCoord2f32 (((float *)order)[0], ((float *)order)[1]);
@@ -291,12 +302,12 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 				} while (--count);
 			}
 			qgxEnd ();
-		}
+		};
 
-		Sys_BigStackFree(MAX_VERTS*4 * sizeof(float), "GL_DrawAliasFrameLerp");
+		if (!( currententity->flags & ( RF_SHELL_RED | RF_SHELL_GREEN | RF_SHELL_BLUE | RF_SHELL_DOUBLE | RF_SHELL_HALF_DAM) ))
+			qgxSetVtxDesc(GX_VA_CLR0, GX_DIRECT);
 
-		if ( qglUnlockArraysEXT != 0 )
-			qglUnlockArraysEXT();
+		qgxSetVtxDesc(GX_VA_POS, GX_DIRECT);
 	}
 	else
 	{
@@ -428,12 +439,12 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 #if 1
 /*
 =============
-GL_DrawAliasShadow
+GX_DrawAliasShadow
 =============
 */
 extern	vec3_t			lightspot;
 
-void GL_DrawAliasShadow (dmdl_t *paliashdr, int posenum)
+void GX_DrawAliasShadow (dmdl_t *paliashdr, int posenum)
 {
 	dtrivertx_t	*verts;
 	int		*order;
@@ -939,7 +950,7 @@ void R_DrawAliasModel (entity_t *e)
 
 	if ( !r_lerpmodels->value )
 		currententity->backlerp = 0;
-	GL_DrawAliasFrameLerp (paliashdr, currententity->backlerp);
+	GX_DrawAliasFrameLerp (paliashdr, currententity->backlerp);
 
 	GX_TexEnv( GX_REPLACE );
 	// Implement this ASAP:
@@ -992,7 +1003,7 @@ void R_DrawAliasModel (entity_t *e)
 		gxu_cur_g = 0;
 		gxu_cur_b = 0;
 		gxu_cur_a = 127;
-		GL_DrawAliasShadow (paliashdr, currententity->frame );
+		GX_DrawAliasShadow (paliashdr, currententity->frame );
 		gxu_cur_vertex_format = GX_VTXFMT1;
 		qgxEnableTexture();
 		qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);

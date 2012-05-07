@@ -35,10 +35,6 @@ void glFlush(void)
 {
 }
 
-void glClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
-{
-}
-
 void glPolygonMode(GLenum face, GLenum mode)
 {
 }
