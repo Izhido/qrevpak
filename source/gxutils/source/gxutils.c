@@ -20,6 +20,8 @@ Mtx44 gxu_projection_matrices[2];
 
 int gxu_cur_projection_matrix = 0;
 
+u8 gxu_cur_projection_type = GX_PERSPECTIVE;
+
 Mtx gxu_modelview_matrices[32];
 
 int gxu_cur_modelview_matrix = 0;

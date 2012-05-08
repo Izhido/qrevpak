@@ -713,18 +713,21 @@ void R_SetupFrame (void)
 	// clear out the portion of the screen that the NOWORLDMODEL defines
 	if ( r_newrefdef.rdflags & RDF_NOWORLDMODEL )
 	{
-		qglEnable( GL_SCISSOR_TEST );
-		gxu_background_color.r = 77;
-		gxu_background_color.g = 77;
-		gxu_background_color.b = 77;
-		gxu_background_color.a = 255;
-		qglScissor( r_newrefdef.x, vid.height - r_newrefdef.height - r_newrefdef.y, r_newrefdef.width, r_newrefdef.height );
-		qglClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-		gxu_background_color.r = 255;
-		gxu_background_color.g = 0;
-		gxu_background_color.b = 127;
-		gxu_background_color.a = 127;
-		qglDisable( GL_SCISSOR_TEST );
+		qguOrtho(gxu_projection_matrices[gxu_cur_projection_matrix], 0, vid.height, 0, vid.width, 0, 300); //-99999, 99999);
+		gxu_cur_projection_type = GX_ORTHOGRAPHIC;
+		qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], gxu_cur_projection_type);
+		qgxDisableTexture();
+		qgxBegin (GX_QUADS, GX_VTXFMT0, 4);
+		qgxPosition3f32 (r_newrefdef.x, r_newrefdef.y, -299);
+		qgxColor4u8 (77, 77, 77, 255);
+		qgxPosition3f32 (r_newrefdef.x+r_newrefdef.width, r_newrefdef.y, -299);
+		qgxColor4u8 (77, 77, 77, 255);
+		qgxPosition3f32 (r_newrefdef.x+r_newrefdef.width, r_newrefdef.y+r_newrefdef.height, -299);
+		qgxColor4u8 (77, 77, 77, 255);
+		qgxPosition3f32 (r_newrefdef.x, r_newrefdef.y+r_newrefdef.height, -299);
+		qgxColor4u8 (77, 77, 77, 255);
+		qgxEnd ();
+		qgxEnableTexture();
 	}
 }
 
@@ -765,7 +768,8 @@ void R_SetupGL (void)
     screenaspect = (float)r_newrefdef.width/r_newrefdef.height;
 //	yfov = 2*atan((float)r_newrefdef.height/r_newrefdef.width)*180/M_PI;
 	qguPerspective(gxu_projection_matrices[gxu_cur_projection_matrix], r_newrefdef.fov_y,  screenaspect,  4,  4096);
-	qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], GX_PERSPECTIVE);
+	gxu_cur_projection_type = GX_PERSPECTIVE;
+	qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], gxu_cur_projection_type);
 
 	gxu_cull_mode = GX_CULL_BACK;
 	if(gxu_cull_enabled)
@@ -896,9 +900,6 @@ void R_RenderView (refdef_t *fd)
 
 	R_PushDlights ();
 
-	if (gl_finish->value)
-		qglFinish ();
-
 	R_SetupFrame ();
 
 	R_SetFrustum ();
@@ -940,7 +941,8 @@ void	R_SetGL2D (void)
 	gxu_viewport_height = vid.height;
 	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxdepthmin, gxdepthmax);
 	qguOrtho(gxu_projection_matrices[gxu_cur_projection_matrix], 0, vid.height, 0, vid.width, 0, 300); //-99999, 99999);
-	qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], GX_ORTHOGRAPHIC);
+	gxu_cur_projection_type = GX_ORTHOGRAPHIC;
+	qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], gxu_cur_projection_type);
 	qguMtxIdentity(gxu_modelview_matrices[gxu_cur_modelview_matrix]);
 	qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 	gxu_z_test_enabled = GX_FALSE;
@@ -1342,7 +1344,8 @@ void R_BeginFrame( float camera_separation )
 	gxu_viewport_height = vid.height;
 	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxdepthmin, gxdepthmax);
 	qguOrtho(gxu_projection_matrices[gxu_cur_projection_matrix], 0, vid.height, 0, vid.width, 0, 300); //-99999, 99999);
-	qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], GX_ORTHOGRAPHIC);
+	gxu_cur_projection_type = GX_ORTHOGRAPHIC;
+	qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], gxu_cur_projection_type);
 	qguMtxIdentity(gxu_modelview_matrices[gxu_cur_modelview_matrix]);
 	qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 	gxu_z_test_enabled = GX_FALSE;
@@ -1439,15 +1442,23 @@ void R_SetPalette ( const unsigned char *palette)
 	}
 	GX_SetTexturePalette( r_rawpalette );
 
-	gxu_background_color.r = 0;
-	gxu_background_color.g = 0;
-	gxu_background_color.b = 0;
-	gxu_background_color.a = 0;
-	qglClear (GL_COLOR_BUFFER_BIT);
-	gxu_background_color.r = 255;
-	gxu_background_color.g = 0;
-	gxu_background_color.b = 127;
-	gxu_background_color.a = 127;
+	gxu_cur_projection_matrix++;
+	qguOrtho(gxu_projection_matrices[gxu_cur_projection_matrix], 0, vid.height, 0, vid.width, 0, 300); //-99999, 99999);
+	qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], GX_ORTHOGRAPHIC);
+	qgxDisableTexture();
+	qgxBegin (GX_QUADS, GX_VTXFMT0, 4);
+	qgxPosition3f32 (0, r_newrefdef.y, -299);
+	qgxColor4u8 (0, 0, 0, 0);
+	qgxPosition3f32 (vid.width, 0, -299);
+	qgxColor4u8 (0, 0, 0, 0);
+	qgxPosition3f32 (vid.width, vid.height, -299);
+	qgxColor4u8 (0, 0, 0, 0);
+	qgxPosition3f32 (0, vid.height, -299);
+	qgxColor4u8 (0, 0, 0, 0);
+	qgxEnd ();
+	qgxEnableTexture();
+	gxu_cur_projection_matrix--;
+	qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], gxu_cur_projection_type);
 }
 
 /*

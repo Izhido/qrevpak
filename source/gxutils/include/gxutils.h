@@ -13,6 +13,8 @@ extern Mtx44 gxu_projection_matrices[];
 
 extern int gxu_cur_projection_matrix;
 
+extern u8 gxu_cur_projection_type;
+
 extern Mtx gxu_modelview_matrices[];
 
 extern int gxu_cur_modelview_matrix;
