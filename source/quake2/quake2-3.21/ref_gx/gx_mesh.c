@@ -887,8 +887,7 @@ void R_DrawAliasModel (entity_t *e)
 		qguMtxConcat(gxu_projection_matrices[gxu_cur_projection_matrix], m, gxu_projection_matrices[gxu_cur_projection_matrix]);
 		qguPerspective(m, r_newrefdef.fov_y, ( float ) r_newrefdef.width / r_newrefdef.height,  4,  4096);
 		qguMtxConcat(gxu_projection_matrices[gxu_cur_projection_matrix], m, gxu_projection_matrices[gxu_cur_projection_matrix]);
-		gxu_cur_projection_type = GX_PERSPECTIVE;
-		qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], gxu_cur_projection_type);
+		qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], GX_PERSPECTIVE);
 
 		gxu_cull_mode = GX_CULL_FRONT;
 		if(gxu_cull_enabled)
@@ -978,7 +977,6 @@ void R_DrawAliasModel (entity_t *e)
 	if ( ( currententity->flags & RF_WEAPONMODEL ) && ( r_lefthand->value == 1.0F ) )
 	{
 		gxu_cur_projection_matrix--;
-		gxu_cur_projection_type = GX_PERSPECTIVE;
 		qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], gxu_cur_projection_type);
 		gxu_cull_mode = GX_CULL_BACK;
 		if(gxu_cull_enabled)

@@ -3,6 +3,14 @@
 
 #include <gccore.h>
 
+#define GX_ORTHO_ZNEAR 0 
+
+#define GX_ORTHO_ZFAR 300
+
+#define GX_ORTHO_ZCOORD_MIDDLE -149
+
+#define GX_ORTHO_ZCOORD_BOTTOM -299
+
 extern GXColor gxu_background_color;
 
 extern u8 gxu_clear_buffers;

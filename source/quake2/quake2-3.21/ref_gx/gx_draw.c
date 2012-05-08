@@ -73,18 +73,18 @@ void Draw_Char (int x, int y, int num)
 	size = 0.0625;
 
 	GX_Bind (draw_chars->texnum);
-
+	for(;;);
 	qgxBegin (GX_QUADS, gxu_cur_vertex_format, 4);
-	qgxPosition3f32 (x, y, 0);
+	qgxPosition3f32 (x, y, GX_ORTHO_ZCOORD_MIDDLE);
 	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qgxTexCoord2f32 (fcol, frow);
-	qgxPosition3f32 (x+8, y, 0);
+	qgxPosition3f32 (x+8, y, GX_ORTHO_ZCOORD_MIDDLE);
 	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qgxTexCoord2f32 (fcol + size, frow);
-	qgxPosition3f32 (x+8, y+8, 0);
+	qgxPosition3f32 (x+8, y+8, GX_ORTHO_ZCOORD_MIDDLE);
 	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qgxTexCoord2f32 (fcol + size, frow + size);
-	qgxPosition3f32 (x, y+8, 0);
+	qgxPosition3f32 (x, y+8, GX_ORTHO_ZCOORD_MIDDLE);
 	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qgxTexCoord2f32 (fcol, frow + size);
 	qgxEnd ();
@@ -151,16 +151,16 @@ void Draw_StretchPic (int x, int y, int w, int h, char *pic)
 
 	GX_Bind (gl->texnum);
 	qgxBegin (GX_QUADS, gxu_cur_vertex_format, 4);
-	qgxPosition3f32 (x, y, 0);
+	qgxPosition3f32 (x, y, GX_ORTHO_ZCOORD_MIDDLE);
 	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qgxTexCoord2f32 (gl->sl, gl->tl);
-	qgxPosition3f32 (x+w, y, 0);
+	qgxPosition3f32 (x+w, y, GX_ORTHO_ZCOORD_MIDDLE);
 	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qgxTexCoord2f32 (gl->sh, gl->tl);
-	qgxPosition3f32 (x+w, y+h, 0);
+	qgxPosition3f32 (x+w, y+h, GX_ORTHO_ZCOORD_MIDDLE);
 	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qgxTexCoord2f32 (gl->sh, gl->th);
-	qgxPosition3f32 (x, y+h, 0);
+	qgxPosition3f32 (x, y+h, GX_ORTHO_ZCOORD_MIDDLE);
 	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qgxTexCoord2f32 (gl->sl, gl->th);
 	qgxEnd ();
@@ -187,16 +187,16 @@ void Draw_Pic (int x, int y, char *pic)
 
 	GX_Bind (gl->texnum);
 	qgxBegin (GX_QUADS, gxu_cur_vertex_format, 4);
-	qgxPosition3f32 (x, y, 0);
+	qgxPosition3f32 (x, y, GX_ORTHO_ZCOORD_MIDDLE);
 	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qgxTexCoord2f32 (gl->sl, gl->tl);
-	qgxPosition3f32 (x+gl->width, y, 0);
+	qgxPosition3f32 (x+gl->width, y, GX_ORTHO_ZCOORD_MIDDLE);
 	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qgxTexCoord2f32 (gl->sh, gl->tl);
-	qgxPosition3f32 (x+gl->width, y+gl->height, 0);
+	qgxPosition3f32 (x+gl->width, y+gl->height, GX_ORTHO_ZCOORD_MIDDLE);
 	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qgxTexCoord2f32 (gl->sh, gl->th);
-	qgxPosition3f32 (x, y+gl->height, 0);
+	qgxPosition3f32 (x, y+gl->height, GX_ORTHO_ZCOORD_MIDDLE);
 	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qgxTexCoord2f32 (gl->sl, gl->th);
 	qgxEnd ();
@@ -223,16 +223,16 @@ void Draw_TileClear (int x, int y, int w, int h, char *pic)
 
 	GX_Bind (image->texnum);
 	qgxBegin (GX_QUADS, gxu_cur_vertex_format, 4);
-	qgxPosition3f32 (x, y, 0);
+	qgxPosition3f32 (x, y, GX_ORTHO_ZCOORD_MIDDLE);
 	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qgxTexCoord2f32 (x/64.0, y/64.0);
-	qgxPosition3f32 (x+w, y, 0);
+	qgxPosition3f32 (x+w, y, GX_ORTHO_ZCOORD_MIDDLE);
 	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qgxTexCoord2f32 ( (x+w)/64.0, y/64.0);
-	qgxPosition3f32 (x+w, y+h, 0);
+	qgxPosition3f32 (x+w, y+h, GX_ORTHO_ZCOORD_MIDDLE);
 	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qgxTexCoord2f32 ( (x+w)/64.0, (y+h)/64.0);
-	qgxPosition3f32 (x, y+h, 0);
+	qgxPosition3f32 (x, y+h, GX_ORTHO_ZCOORD_MIDDLE);
 	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qgxTexCoord2f32 ( x/64.0, (y+h)/64.0 );
 	qgxEnd ();
@@ -263,13 +263,13 @@ void Draw_Fill (int x, int y, int w, int h, int c)
 
 	qgxBegin (GX_QUADS, GX_VTXFMT0, 4);
 
-	qgxPosition3f32 (x, y, 0);
+	qgxPosition3f32 (x, y, GX_ORTHO_ZCOORD_MIDDLE);
 	qgxColor4u8 (color.v[0], color.v[1], color.v[2], 255);
-	qgxPosition3f32 (x+w, y, 0);
+	qgxPosition3f32 (x+w, y, GX_ORTHO_ZCOORD_MIDDLE);
 	qgxColor4u8 (color.v[0], color.v[1], color.v[2], 255);
-	qgxPosition3f32 (x+w, y+h, 0);
+	qgxPosition3f32 (x+w, y+h, GX_ORTHO_ZCOORD_MIDDLE);
 	qgxColor4u8 (color.v[0], color.v[1], color.v[2], 255);
-	qgxPosition3f32 (x, y+h, 0);
+	qgxPosition3f32 (x, y+h, GX_ORTHO_ZCOORD_MIDDLE);
 	qgxColor4u8 (color.v[0], color.v[1], color.v[2], 255);
 
 	qgxEnd ();
@@ -290,13 +290,13 @@ void Draw_FadeScreen (void)
 	qgxDisableTexture();
 	qgxBegin (GX_QUADS, GX_VTXFMT0, 4);
 
-	qgxPosition3f32 (0, 0, 0);
+	qgxPosition3f32 (0, 0, GX_ORTHO_ZCOORD_MIDDLE);
 	qgxColor4u8 (0, 0, 0, 205);
-	qgxPosition3f32 (vid.width, 0, 0);
+	qgxPosition3f32 (vid.width, 0, GX_ORTHO_ZCOORD_MIDDLE);
 	qgxColor4u8 (0, 0, 0, 205);
-	qgxPosition3f32 (vid.width, vid.height, 0);
+	qgxPosition3f32 (vid.width, vid.height, GX_ORTHO_ZCOORD_MIDDLE);
 	qgxColor4u8 (0, 0, 0, 205);
-	qgxPosition3f32 (0, vid.height, 0);
+	qgxPosition3f32 (0, vid.height, GX_ORTHO_ZCOORD_MIDDLE);
 	qgxColor4u8 (0, 0, 0, 205);
 
 	qgxEnd ();
@@ -395,16 +395,16 @@ void Draw_StretchRaw (int x, int y, int w, int h, int cols, int rows, byte *data
 	GX_SetMinMag(GX_LINEAR, GX_LINEAR);
 
 	qgxBegin (GX_QUADS, gxu_cur_vertex_format, 4);
-	qgxPosition3f32 (x, y, 0);
+	qgxPosition3f32 (x, y, GX_ORTHO_ZCOORD_MIDDLE);
 	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qgxTexCoord2f32 (0, 0);
-	qgxPosition3f32 (x+w, y, 0);
+	qgxPosition3f32 (x+w, y, GX_ORTHO_ZCOORD_MIDDLE);
 	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qgxTexCoord2f32 (1, 0);
-	qgxPosition3f32 (x+w, y+h, 0);
+	qgxPosition3f32 (x+w, y+h, GX_ORTHO_ZCOORD_MIDDLE);
 	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qgxTexCoord2f32 (1, t);
-	qgxPosition3f32 (x, y+h, 0);
+	qgxPosition3f32 (x, y+h, GX_ORTHO_ZCOORD_MIDDLE);
 	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	qgxTexCoord2f32 (0, t);
 	qgxEnd ();

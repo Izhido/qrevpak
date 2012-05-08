@@ -713,21 +713,23 @@ void R_SetupFrame (void)
 	// clear out the portion of the screen that the NOWORLDMODEL defines
 	if ( r_newrefdef.rdflags & RDF_NOWORLDMODEL )
 	{
-		qguOrtho(gxu_projection_matrices[gxu_cur_projection_matrix], 0, vid.height, 0, vid.width, 0, 300); //-99999, 99999);
-		gxu_cur_projection_type = GX_ORTHOGRAPHIC;
-		qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], gxu_cur_projection_type);
+		gxu_cur_projection_matrix++;
+		qguOrtho(gxu_projection_matrices[gxu_cur_projection_matrix], 0, vid.height, 0, vid.width, GX_ORTHO_ZNEAR, GX_ORTHO_ZFAR);
+		qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], GX_ORTHOGRAPHIC);
 		qgxDisableTexture();
 		qgxBegin (GX_QUADS, GX_VTXFMT0, 4);
-		qgxPosition3f32 (r_newrefdef.x, r_newrefdef.y, -299);
+		qgxPosition3f32 (r_newrefdef.x, r_newrefdef.y, GX_ORTHO_ZCOORD_BOTTOM);
 		qgxColor4u8 (77, 77, 77, 255);
-		qgxPosition3f32 (r_newrefdef.x+r_newrefdef.width, r_newrefdef.y, -299);
+		qgxPosition3f32 (r_newrefdef.x+r_newrefdef.width, r_newrefdef.y, GX_ORTHO_ZCOORD_BOTTOM);
 		qgxColor4u8 (77, 77, 77, 255);
-		qgxPosition3f32 (r_newrefdef.x+r_newrefdef.width, r_newrefdef.y+r_newrefdef.height, -299);
+		qgxPosition3f32 (r_newrefdef.x+r_newrefdef.width, r_newrefdef.y+r_newrefdef.height, GX_ORTHO_ZCOORD_BOTTOM);
 		qgxColor4u8 (77, 77, 77, 255);
-		qgxPosition3f32 (r_newrefdef.x, r_newrefdef.y+r_newrefdef.height, -299);
+		qgxPosition3f32 (r_newrefdef.x, r_newrefdef.y+r_newrefdef.height, GX_ORTHO_ZCOORD_BOTTOM);
 		qgxColor4u8 (77, 77, 77, 255);
 		qgxEnd ();
 		qgxEnableTexture();
+		gxu_cur_projection_matrix--;
+		qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], gxu_cur_projection_type);
 	}
 }
 
@@ -940,7 +942,7 @@ void	R_SetGL2D (void)
 	gxu_viewport_width = vid.width;
 	gxu_viewport_height = vid.height;
 	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxdepthmin, gxdepthmax);
-	qguOrtho(gxu_projection_matrices[gxu_cur_projection_matrix], 0, vid.height, 0, vid.width, 0, 300); //-99999, 99999);
+	qguOrtho(gxu_projection_matrices[gxu_cur_projection_matrix], 0, vid.height, 0, vid.width, GX_ORTHO_ZNEAR, GX_ORTHO_ZFAR);
 	gxu_cur_projection_type = GX_ORTHOGRAPHIC;
 	qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], gxu_cur_projection_type);
 	qguMtxIdentity(gxu_modelview_matrices[gxu_cur_modelview_matrix]);
@@ -1343,7 +1345,7 @@ void R_BeginFrame( float camera_separation )
 	gxu_viewport_width = vid.width;
 	gxu_viewport_height = vid.height;
 	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxdepthmin, gxdepthmax);
-	qguOrtho(gxu_projection_matrices[gxu_cur_projection_matrix], 0, vid.height, 0, vid.width, 0, 300); //-99999, 99999);
+	qguOrtho(gxu_projection_matrices[gxu_cur_projection_matrix], 0, vid.height, 0, vid.width, GX_ORTHO_ZNEAR, GX_ORTHO_ZFAR);
 	gxu_cur_projection_type = GX_ORTHOGRAPHIC;
 	qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], gxu_cur_projection_type);
 	qguMtxIdentity(gxu_modelview_matrices[gxu_cur_modelview_matrix]);
@@ -1366,13 +1368,14 @@ void R_BeginFrame( float camera_separation )
 	{
 		gl_drawbuffer->modified = false;
 
-		if ( gx_state.camera_separation == 0 || !gx_state.stereo_enabled )
-		{
-			if ( Q_stricmp( gl_drawbuffer->string, "GL_FRONT" ) == 0 )
-				qglDrawBuffer( GL_FRONT );
-			else
-				qglDrawBuffer( GL_BACK );
-		}
+		// Implement this ASAP:
+		//if ( gx_state.camera_separation == 0 || !gx_state.stereo_enabled )
+		//{
+		//	if ( Q_stricmp( gl_drawbuffer->string, "GL_FRONT" ) == 0 )
+		//		qglDrawBuffer( GL_FRONT );
+		//	else
+		//		qglDrawBuffer( GL_BACK );
+		//}
 	}
 
 	/*
@@ -1443,17 +1446,17 @@ void R_SetPalette ( const unsigned char *palette)
 	GX_SetTexturePalette( r_rawpalette );
 
 	gxu_cur_projection_matrix++;
-	qguOrtho(gxu_projection_matrices[gxu_cur_projection_matrix], 0, vid.height, 0, vid.width, 0, 300); //-99999, 99999);
+	qguOrtho(gxu_projection_matrices[gxu_cur_projection_matrix], 0, vid.height, 0, vid.width, GX_ORTHO_ZNEAR, GX_ORTHO_ZFAR);
 	qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], GX_ORTHOGRAPHIC);
 	qgxDisableTexture();
 	qgxBegin (GX_QUADS, GX_VTXFMT0, 4);
-	qgxPosition3f32 (0, r_newrefdef.y, -299);
+	qgxPosition3f32 (0, r_newrefdef.y, GX_ORTHO_ZCOORD_BOTTOM);
 	qgxColor4u8 (0, 0, 0, 0);
-	qgxPosition3f32 (vid.width, 0, -299);
+	qgxPosition3f32 (vid.width, 0, GX_ORTHO_ZCOORD_BOTTOM);
 	qgxColor4u8 (0, 0, 0, 0);
-	qgxPosition3f32 (vid.width, vid.height, -299);
+	qgxPosition3f32 (vid.width, vid.height, GX_ORTHO_ZCOORD_BOTTOM);
 	qgxColor4u8 (0, 0, 0, 0);
-	qgxPosition3f32 (0, vid.height, -299);
+	qgxPosition3f32 (0, vid.height, GX_ORTHO_ZCOORD_BOTTOM);
 	qgxColor4u8 (0, 0, 0, 0);
 	qgxEnd ();
 	qgxEnableTexture();

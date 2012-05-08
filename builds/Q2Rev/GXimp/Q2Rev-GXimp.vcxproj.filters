@@ -55,9 +55,6 @@
     <Filter Include="Header Files\ref_gx">
       <UniqueIdentifier>{5427f42d-c8d1-488c-b1c5-670c0c20fcfb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\ref_gx\GL">
-      <UniqueIdentifier>{b4a6be73-ba24-425e-983d-528b540a847e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\ref_gx">
       <UniqueIdentifier>{a66a1559-b47f-4b34-b631-d9c011673fdf}</UniqueIdentifier>
     </Filter>
@@ -351,9 +348,6 @@
     <ClCompile Include="..\..\..\source\oggplayer\source\oggplayer.c">
       <Filter>Source Files\oggplayer</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gx\glrevol.c">
-      <Filter>Source Files\ref_gx</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gx\gx_draw.c">
       <Filter>Source Files\ref_gx</Filter>
     </ClCompile>
@@ -544,12 +538,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gx\warpsin.h">
       <Filter>Header Files\ref_gx</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gx\GL\gl.h">
-      <Filter>Header Files\ref_gx\GL</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gx\GL\glu.h">
-      <Filter>Header Files\ref_gx\GL</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gx\gx_local.h">
       <Filter>Header Files\ref_gx</Filter>

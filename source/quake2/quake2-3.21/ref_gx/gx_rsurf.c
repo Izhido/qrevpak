@@ -1653,11 +1653,11 @@ void GX_BeginBuildingLightmaps (model_t *m)
 	}
 	else if ( toupper( gl_monolightmap->string[0] ) == 'I' )
 	{
-		gl_lms.internal_format = GL_INTENSITY8;
+		gl_lms.internal_format = /*GL_INTENSITY8*/ 1;
 	}
 	else if ( toupper( gl_monolightmap->string[0] ) == 'L' ) 
 	{
-		gl_lms.internal_format = GL_LUMINANCE8;
+		gl_lms.internal_format = /*GL_LUMINANCE8*/ 1;
 	}
 	else
 	{

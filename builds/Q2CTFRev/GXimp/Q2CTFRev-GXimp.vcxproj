@@ -91,7 +91,6 @@ make</NMakeReBuildCommandLine>
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\p_view.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\p_weapon.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ctf\q_shared.c" />
-    <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gx\glrevol.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gx\gx_draw.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gx\gx_image.c" />
     <ClCompile Include="..\..\..\source\quake2\quake2-3.21\ref_gx\gx_light.c" />
@@ -163,8 +162,6 @@ make</NMakeReBuildCommandLine>
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\qcommon\qfiles.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gx\anorms.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gx\anormtab.h" />
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gx\GL\gl.h" />
-    <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gx\GL\glu.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gx\gx_local.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gx\gx_model.h" />
     <ClInclude Include="..\..\..\source\quake2\quake2-3.21\ref_gx\qgx.h" />

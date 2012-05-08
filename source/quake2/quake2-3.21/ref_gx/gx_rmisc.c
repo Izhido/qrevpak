@@ -140,7 +140,8 @@ void GX_ScreenShot_f (void)
 	buffer[15] = vid.height>>8;
 	buffer[16] = 24;	// pixel size
 
-	qglReadPixels (0, 0, vid.width, vid.height, GL_RGB, GL_UNSIGNED_BYTE, buffer+18 ); 
+	// Implement this ASAP:
+	//qglReadPixels (0, 0, vid.width, vid.height, GL_RGB, GL_UNSIGNED_BYTE, buffer+18 ); 
 
 	// swap rgb to bgr
 	c = 18+vid.width*vid.height*3;
@@ -200,7 +201,6 @@ void GX_SetDefaultState( void )
 	gxu_cur_b = 255;
 	gxu_cur_a = 255;
 
-	qglPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
 	// Implement this ASAP:
 	//qglShadeModel (GL_FLAT);
 
