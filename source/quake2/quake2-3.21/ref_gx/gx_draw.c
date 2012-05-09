@@ -73,7 +73,7 @@ void Draw_Char (int x, int y, int num)
 	size = 0.0625;
 
 	GX_Bind (draw_chars->texnum);
-	for(;;);
+
 	qgxBegin (GX_QUADS, gxu_cur_vertex_format, 4);
 	qgxPosition3f32 (x, y, GX_ORTHO_ZCOORD_MIDDLE);
 	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);

@@ -134,7 +134,7 @@ void VID_InitVidModes(void)
 {
 	vid_modes[0].description = sys_resolution_description;
 	vid_modes[0].width = sys_rmode->viWidth;
-	vid_modes[0].height = 9 * sys_rmode->viHeight / 10;
+	vid_modes[0].height = sys_rmode->viHeight;
 	vid_modes[0].mode = 0;
 }
 
