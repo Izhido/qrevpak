@@ -101,10 +101,14 @@ void QGX_Init (void)
 
 void GX_BeginRendering (int *x, int *y, int *width, int *height)
 {
+	// The following line applies a rough approximation of the Kell factor to the height of the screen.
+	// Seems like the width doesn't really need it:
+	int newheight = sys_rmode->efbHeight - (sys_rmode->efbHeight >> 3);
+
 	*x = 0;
-	*y = sys_rmode->efbHeight / 20;
+	*y = (sys_rmode->efbHeight - newheight) / 2;
 	*width = sys_rmode->fbWidth;
-	*height = 9 * sys_rmode->efbHeight / 10;
+	*height = newheight;
 	GX_SetScissor(*x, *y, *width, *height);
 }
 
@@ -264,7 +268,9 @@ void	VID_Init (unsigned char *palette)
 	int i;
 	char	gxdir[MAX_OSPATH];
 	int width = sys_rmode->fbWidth;
-	int height = sys_rmode->efbHeight;
+	// The following line applies a rough approximation of the Kell factor to the height of the screen.
+	// Seems like the width doesn't really need it:
+	int height = sys_rmode->efbHeight - (sys_rmode->efbHeight >> 3);
 
 	Cvar_RegisterVariable (&gl_ztrick);
 	
@@ -282,7 +288,7 @@ void	VID_Init (unsigned char *palette)
 	if ((i = COM_CheckParm("-conwidth")) != 0)
 		vid.conwidth = Q_atoi(com_argv[i+1]);
 	else
-		vid.conwidth = 640;
+		vid.conwidth = width;
 
 	vid.conwidth &= 0xfff8; // make it a multiple of eight
 
