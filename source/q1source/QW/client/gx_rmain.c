@@ -929,30 +929,30 @@ void R_SetupGX (void)
 	//
 	x = r_refdef.vrect.x * gxwidth/vid.width;
 	x2 = (r_refdef.vrect.x + r_refdef.vrect.width) * gxwidth/vid.width;
-	y = (vid.height-r_refdef.vrect.y) * gxheight/vid.height;
-	y2 = (vid.height - (r_refdef.vrect.y + r_refdef.vrect.height)) * gxheight/vid.height;
+	y = r_refdef.vrect.y * gxheight/vid.height;
+	y2 = (r_refdef.vrect.y + r_refdef.vrect.height) * gxheight/vid.height;
 
 	// fudge around because of frac screen scale
 	if (x > 0)
 		x--;
 	if (x2 < gxwidth)
 		x2++;
-	if (y2 < 0)
-		y2--;
-	if (y < gxheight)
-		y++;
+	if (y > 0)
+		y--;
+	if (y2 < gxheight)
+		y2++;
 
 	w = x2 - x;
-	h = y - y2;
+	h = y2 - y;
 
 	if (envmap)
 	{
-		x = y2 = 0;
+		x = y = 0;
 		w = h = 256;
 	}
 
 	gxu_viewport_x = gxx + x;
-	gxu_viewport_y = gxy/* + y2*/;
+	gxu_viewport_y = gxy + y;
 	gxu_viewport_width = w;
 	gxu_viewport_height = h;
 	GX_SetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxdepthmin, gxdepthmax);

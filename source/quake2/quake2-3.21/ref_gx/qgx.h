@@ -68,6 +68,7 @@ extern  void ( APIENTRY * qgxSetAlphaCompare )(u8 comp0, u8 ref0, u8 aop, u8 com
 extern  void ( APIENTRY * qgxSetArray )(u32 attr, void *ptr, u8 stride);
 extern  void ( APIENTRY * qgxSetBlendMode )(u8 type, u8 src_fact, u8 dst_fact, u8 op);
 extern  void ( APIENTRY * qgxSetCullMode )(u8 mode);
+extern  void ( APIENTRY * qgxSetScissor )(u32 xOrigin, u32 yOrigin, u32 wd, u32 ht);
 extern  void ( APIENTRY * qgxSetTevOp )(u8 tevstage, u8 mode);
 extern  void ( APIENTRY * qgxSetViewport )(f32 xOrig, f32 yOrig, f32 wd, f32 ht, f32 nearZ, f32 farZ);
 extern  void ( APIENTRY * qgxSetVtxDesc )(u8 attr, u8 type);

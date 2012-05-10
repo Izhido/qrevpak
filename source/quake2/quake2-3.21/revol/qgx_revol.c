@@ -68,6 +68,7 @@ void ( APIENTRY * qgxSetAlphaCompare )(u8 comp0, u8 ref0, u8 aop, u8 comp1, u8 r
 void ( APIENTRY * qgxSetArray )(u32 attr, void *ptr, u8 stride);
 void ( APIENTRY * qgxSetBlendMode )(u8 type, u8 src_fact, u8 dst_fact, u8 op);
 void ( APIENTRY * qgxSetCullMode )(u8 mode);
+void ( APIENTRY * qgxSetScissor )(u32 xOrigin, u32 yOrigin, u32 wd, u32 ht);
 void ( APIENTRY * qgxSetTevOp )(u8 tevstage, u8 mode);
 void ( APIENTRY * qgxSetViewport )(f32 xOrig, f32 yOrig, f32 wd, f32 ht, f32 nearZ, f32 farZ);
 void ( APIENTRY * qgxSetVtxDesc )(u8 attr, u8 type);
@@ -107,6 +108,7 @@ static void ( APIENTRY * dllSetAlphaCompare )(u8 comp0, u8 ref0, u8 aop, u8 comp
 static void ( APIENTRY * dllSetArray )(u32 attr, void *ptr, u8 stride);
 static void ( APIENTRY * dllSetBlendMode )(u8 type, u8 src_fact, u8 dst_fact, u8 op);
 static void ( APIENTRY * dllSetCullMode )(u8 mode);
+static void ( APIENTRY * dllSetScissor )(u32 xOrigin, u32 yOrigin, u32 wd, u32 ht);
 static void ( APIENTRY * dllSetTevOp )(u8 tevstage, u8 mode);
 static void ( APIENTRY * dllSetViewport )(f32 xOrig, f32 yOrig, f32 wd, f32 ht, f32 nearZ, f32 farZ);
 static void ( APIENTRY * dllSetVtxDesc )(u8 attr, u8 type);
@@ -279,6 +281,11 @@ static void APIENTRY logSetCullMode(u8 mode)
 	SIG( "GX_SetCullMode" );
 	dllSetCullMode( mode );
 }
+static void APIENTRY logSetScissor(u32 xOrigin, u32 yOrigin, u32 wd, u32 ht)
+{
+	SIG( "GX_SetScissor" );
+	dllSetScissor( xOrigin, yOrigin, wd, ht );
+}
 static void APIENTRY logSetTevOp(u8 tevstage, u8 mode)
 {
 	fprintf( log_fp, "GX_SetTevOp( 0x%x, 0x%x )\n", tevstage, mode );
@@ -341,6 +348,7 @@ void QGX_Shutdown( void )
 	qgxSetArray                  = NULL;
 	qgxSetBlendMode              = NULL;
 	qgxSetCullMode               = NULL;
+	qgxSetScissor                = NULL;
 	qgxSetTevOp                  = NULL;
 	qgxSetViewport               = NULL;
 	qgxSetVtxDesc                = NULL;
@@ -389,6 +397,7 @@ qboolean QGX_Init( const char *dllname )
 	qgxSetArray                  =  dllSetArray                  = GX_SetArray;
 	qgxSetBlendMode              = 	dllSetBlendMode              = GX_SetBlendMode;
 	qgxSetCullMode               =  dllSetCullMode               = GX_SetCullMode;
+	qgxSetScissor                =  dllSetScissor                = GX_SetScissor;
 	qgxSetTevOp                  = 	dllSetTevOp                  = GX_SetTevOp;
 	qgxSetViewport               = 	dllSetViewport               = GX_SetViewport;
 	qgxSetVtxDesc                = 	dllSetVtxDesc                = GX_SetVtxDesc;
@@ -451,6 +460,7 @@ void GXimp_EnableLogging( qboolean enable )
 		qgxSetArray                  =  logSetArray                  ;
 		qgxSetBlendMode              = 	logSetBlendMode              ;
 		qgxSetCullMode               = 	logSetCullMode               ;
+		qgxSetScissor                = 	logSetScissor                ;
 		qgxSetTevOp                  = 	logSetTevOp                  ;
 		qgxSetViewport               = 	logSetViewport               ;
 		qgxSetVtxDesc                = 	logSetVtxDesc                ;
@@ -486,6 +496,7 @@ void GXimp_EnableLogging( qboolean enable )
 		qgxSetArray                  =  dllSetArray                  ;
 		qgxSetBlendMode              = 	dllSetBlendMode              ;
 		qgxSetCullMode               =  dllSetCullMode               ;
+		qgxSetScissor                =  dllSetScissor                ;
 		qgxSetTevOp                  = 	dllSetTevOp                  ;
 		qgxSetViewport               = 	dllSetViewport               ;
 		qgxSetVtxDesc                = 	dllSetVtxDesc                ;

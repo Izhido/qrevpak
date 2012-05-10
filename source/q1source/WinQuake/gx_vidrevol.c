@@ -100,9 +100,10 @@ void QGX_Init (void)
 void GX_BeginRendering (int *x, int *y, int *width, int *height)
 {
 	*x = 0;
-	*y = 0;
+	*y = sys_rmode->efbHeight / 20;
 	*width = sys_rmode->fbWidth;
-	*height = sys_rmode->efbHeight;
+	*height = 9 * sys_rmode->efbHeight / 10;
+	GX_SetScissor(*x, *y, *width, *height);
 }
 
 void GX_EndRendering (void)
