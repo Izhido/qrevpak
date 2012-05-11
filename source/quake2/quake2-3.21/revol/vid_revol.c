@@ -132,9 +132,13 @@ vidmode_t vid_modes[1];
 
 void VID_InitVidModes(void)
 {
+	// The following line applies a rough approximation of the Kell factor to the height of the screen.
+	// Seems like the width doesn't really need it:
+	int newheight = sys_rmode->viHeight - (sys_rmode->viHeight >> 3);
+
 	vid_modes[0].description = sys_resolution_description;
 	vid_modes[0].width = sys_rmode->viWidth;
-	vid_modes[0].height = sys_rmode->viHeight;
+	vid_modes[0].height = newheight;
 	vid_modes[0].mode = 0;
 }
 
