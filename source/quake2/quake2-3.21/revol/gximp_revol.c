@@ -27,6 +27,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <gccore.h>
 #include <wiiuse/wpad.h>
 
+extern GXRModeObj* sys_rmode;
+
 extern	cvar_t*	wmotelookbinv;
 
 extern cvar_t* in_osk;

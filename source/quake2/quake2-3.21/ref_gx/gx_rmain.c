@@ -22,6 +22,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 extern int gx_tex_allocated;
 
+extern GXRModeObj* sys_rmode;
+
 void R_Clear (void);
 
 viddef_t	vid;
@@ -758,8 +760,8 @@ void R_SetupGL (void)
 	w = x2 - x;
 	h = y2 - y;
 
-	gxu_viewport_x = x;
-	gxu_viewport_y = y;
+	gxu_viewport_x = ((sys_rmode->viWidth - vid.width) / 2) + x;
+	gxu_viewport_y = ((sys_rmode->viHeight - vid.height) / 2) + y;
 	gxu_viewport_width = w;
 	gxu_viewport_height = h;
 	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxdepthmin, gxdepthmax);
@@ -933,12 +935,11 @@ void R_RenderView (refdef_t *fd)
 	}
 }
 
-
-void	R_SetGL2D (void)
+void	R_SetGX2D (void)
 {
 	// set 2D virtual screen size
-	gxu_viewport_x = 0;
-	gxu_viewport_y = 0;
+	gxu_viewport_x = (sys_rmode->viWidth - vid.width) / 2;
+	gxu_viewport_y = (sys_rmode->viHeight - vid.height) / 2;
 	gxu_viewport_width = vid.width;
 	gxu_viewport_height = vid.height;
 	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxdepthmin, gxdepthmax);
@@ -1005,7 +1006,7 @@ void R_RenderFrame (refdef_t *fd)
 {
 	R_RenderView( fd );
 	R_SetLightLevel ();
-	R_SetGL2D ();
+	R_SetGX2D ();
 }
 
 
@@ -1340,10 +1341,11 @@ void R_BeginFrame( float camera_separation )
 	/*
 	** go into 2D mode
 	*/
-	gxu_viewport_x = 0;
-	gxu_viewport_y = 0;
+	gxu_viewport_x = (sys_rmode->viWidth - vid.width) / 2;
+	gxu_viewport_y = (sys_rmode->viHeight - vid.height) / 2;
 	gxu_viewport_width = vid.width;
 	gxu_viewport_height = vid.height;
+	qgxSetScissor(gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height);
 	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxdepthmin, gxdepthmax);
 	qguOrtho(gxu_projection_matrices[gxu_cur_projection_matrix], 0, vid.height, 0, vid.width, GX_ORTHO_ZNEAR, GX_ORTHO_ZFAR);
 	gxu_cur_projection_type = GX_ORTHOGRAPHIC;

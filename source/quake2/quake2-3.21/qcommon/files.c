@@ -916,7 +916,11 @@ void FS_InitFilesystem (void)
 	// basedir <path>
 	// allows the game to run from outside the data tree
 	//
-	fs_basedir = Cvar_Get ("basedir", ".", CVAR_NOSET);
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// New basedir folder, in order to keep game data separated for all engines:
+	//fs_basedir = Cvar_Get ("basedir", ".", CVAR_NOSET);
+	fs_basedir = Cvar_Get ("basedir", "./Q2", CVAR_NOSET);
+// <<< FIX
 
 	//
 	// cddir <path>

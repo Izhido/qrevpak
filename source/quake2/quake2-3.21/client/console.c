@@ -267,7 +267,11 @@ If the line width has changed, reformat the buffer.
 void Con_CheckResize (void)
 {
 	int		i, j, width, oldwidth, oldtotallines, numlines, numchars;
-	char	tbuf[CON_TEXTSIZE];
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deferring allocation. Stack in this device is pretty small:
+	//char	tbuf[CON_TEXTSIZE];
+	char*	tbuf;
+// <<< FIX
 
 	width = (viddef.width >> 3) - 2;
 
@@ -297,6 +301,11 @@ void Con_CheckResize (void)
 		if (con.linewidth < numchars)
 			numchars = con.linewidth;
 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Allocating for previous fix in big stack:
+		tbuf = Sys_BigStackAlloc(CON_TEXTSIZE, "Con_CheckResize");
+// <<< FIX
+
 		memcpy (tbuf, con.text, CON_TEXTSIZE);
 		memset (con.text, ' ', CON_TEXTSIZE);
 
@@ -309,6 +318,11 @@ void Con_CheckResize (void)
 							  oldtotallines) * oldwidth + j];
 			}
 		}
+
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Deallocating from previous fix in big stack:
+		Sys_BigStackFree(CON_TEXTSIZE, "Con_CheckResize");
+// <<< FIX
 
 		Con_ClearNotify ();
 	}

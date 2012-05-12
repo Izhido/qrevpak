@@ -1120,7 +1120,7 @@ int main (int argc, char* argv[])
 	parms.memsize = 8*1024*1024;
 #endif
 	parms.membase = malloc (parms.memsize);
-	parms.basedir = ".";
+	parms.basedir = "./Q1";
 
 	COM_InitArgv (argc, argv);
 
