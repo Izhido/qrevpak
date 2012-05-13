@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "../client/qmenu.h"
 
 #define REF_SOFT	0
-#define REF_OPENGL	1
+#define LIBOGC_GX_MENU	1
 
 cvar_t		*vid_ref;
 extern cvar_t *vid_fullscreen;
@@ -209,10 +209,10 @@ MENU INTERACTION
 ====================================================================
 */
 #define SOFTWARE_MENU 0
-#define OPENGL_MENU   1
+#define LIBOGC_GX_MENU   1
 
 static menuframework_s  s_software_menu;
-static menuframework_s	s_opengl_menu;
+static menuframework_s	s_libogc_gx_menu;
 static menuframework_s *s_current_menu;
 static int				s_current_menu_index;
 
@@ -239,7 +239,7 @@ static void DriverCallback( void *unused )
 	}
 	else
 	{
-		s_current_menu = &s_opengl_menu;
+		s_current_menu = &s_libogc_gx_menu;
 		s_current_menu_index = 1;
 	}
 
@@ -296,7 +296,7 @@ static void ApplyChanges( void *unused )
 	Cvar_SetValue( "vid_fullscreen", s_fs_box[s_current_menu_index].curvalue );
 	Cvar_SetValue( "gl_ext_palettedtexture", s_paletted_texture_box.curvalue );
 	Cvar_SetValue( "sw_mode", s_mode_list[SOFTWARE_MENU].curvalue );
-	Cvar_SetValue( "gl_mode", s_mode_list[OPENGL_MENU].curvalue );
+	Cvar_SetValue( "gl_mode", s_mode_list[LIBOGC_GX_MENU].curvalue );
 	Cvar_SetValue( "_windowed_mouse", s_windowed_mouse.curvalue);
 
 	switch ( s_ref_list[s_current_menu_index].curvalue )
@@ -304,9 +304,9 @@ static void ApplyChanges( void *unused )
 	case REF_SOFT:
 		Cvar_Set( "vid_ref", "soft" );
 		break;
-	case REF_OPENGL:
+	case LIBOGC_GX_MENU:
 		Cvar_Set( "vid_ref", "gl" );
-		Cvar_Set( "gl_driver", "opengl32" );
+		Cvar_Set( "gl_driver", "libogc-gx" );
 		break;
 	}
 
@@ -372,7 +372,7 @@ void VID_MenuInit( void )
 // Selection based on the respective builds (part 2):
 #else
 // <<< FIX
-		"[default OpenGL]",
+		"[libogc GX]",
 // >>> FIX: For Nintendo Wii using devkitPPC / libogc
 // Selection based on the respective builds (part 3):
 #endif
@@ -388,7 +388,7 @@ void VID_MenuInit( void )
 	int i;
 
 	if ( !gl_driver )
-		gl_driver = Cvar_Get( "gl_driver", "opengl32", 0 );
+		gl_driver = Cvar_Get( "gl_driver", "libogc-gx", 0 );
 	if ( !gl_picmip )
 		gl_picmip = Cvar_Get( "gl_picmip", "0", 0 );
 	if ( !gl_mode )
@@ -409,13 +409,13 @@ void VID_MenuInit( void )
         _windowed_mouse = Cvar_Get( "_windowed_mouse", "0", CVAR_ARCHIVE );
 
 	s_mode_list[SOFTWARE_MENU].curvalue = sw_mode->value;
-	s_mode_list[OPENGL_MENU].curvalue = gl_mode->value;
+	s_mode_list[LIBOGC_GX_MENU].curvalue = gl_mode->value;
 
 	if ( !scr_viewsize )
 		scr_viewsize = Cvar_Get ("viewsize", "100", CVAR_ARCHIVE);
 
 	s_screensize_slider[SOFTWARE_MENU].curvalue = scr_viewsize->value/10;
-	s_screensize_slider[OPENGL_MENU].curvalue = scr_viewsize->value/10;
+	s_screensize_slider[LIBOGC_GX_MENU].curvalue = scr_viewsize->value/10;
 
 	if (strcmp( vid_ref->string, "soft" ) == 0 ) 
 	{
@@ -424,15 +424,15 @@ void VID_MenuInit( void )
 	}
 	else if ( strcmp( vid_ref->string, "gl" ) == 0 )
 	{
-		s_current_menu_index = OPENGL_MENU;
-		s_ref_list[s_current_menu_index].curvalue = REF_OPENGL;
+		s_current_menu_index = LIBOGC_GX_MENU;
+		s_ref_list[s_current_menu_index].curvalue = LIBOGC_GX_MENU;
 #if 0
 		if ( strcmp( gl_driver->string, "3dfxgl" ) == 0 )
 			s_ref_list[s_current_menu_index].curvalue = REF_3DFX;
 		else if ( strcmp( gl_driver->string, "pvrgl" ) == 0 )
 			s_ref_list[s_current_menu_index].curvalue = REF_POWERVR;
 		else if ( strcmp( gl_driver->string, "opengl32" ) == 0 )
-			s_ref_list[s_current_menu_index].curvalue = REF_OPENGL;
+			s_ref_list[s_current_menu_index].curvalue = LIBOGC_GX_MENU;
 		else
 			s_ref_list[s_current_menu_index].curvalue = REF_VERITE;
 #endif
@@ -440,8 +440,8 @@ void VID_MenuInit( void )
 
 	s_software_menu.x = viddef.width * 0.50;
 	s_software_menu.nitems = 0;
-	s_opengl_menu.x = viddef.width * 0.50;
-	s_opengl_menu.nitems = 0;
+	s_libogc_gx_menu.x = viddef.width * 0.50;
+	s_libogc_gx_menu.nitems = 0;
 
 	for ( i = 0; i < 2; i++ )
 	{
@@ -532,22 +532,22 @@ void VID_MenuInit( void )
 	Menu_AddItem( &s_software_menu, ( void * ) &s_stipple_box );
 	Menu_AddItem( &s_software_menu, ( void * ) &s_windowed_mouse );
 
-	Menu_AddItem( &s_opengl_menu, ( void * ) &s_ref_list[OPENGL_MENU] );
-	Menu_AddItem( &s_opengl_menu, ( void * ) &s_mode_list[OPENGL_MENU] );
-	Menu_AddItem( &s_opengl_menu, ( void * ) &s_screensize_slider[OPENGL_MENU] );
-	Menu_AddItem( &s_opengl_menu, ( void * ) &s_brightness_slider[OPENGL_MENU] );
-	Menu_AddItem( &s_opengl_menu, ( void * ) &s_fs_box[OPENGL_MENU] );
-	Menu_AddItem( &s_opengl_menu, ( void * ) &s_tq_slider );
-	Menu_AddItem( &s_opengl_menu, ( void * ) &s_paletted_texture_box );
+	Menu_AddItem( &s_libogc_gx_menu, ( void * ) &s_ref_list[LIBOGC_GX_MENU] );
+	Menu_AddItem( &s_libogc_gx_menu, ( void * ) &s_mode_list[LIBOGC_GX_MENU] );
+	Menu_AddItem( &s_libogc_gx_menu, ( void * ) &s_screensize_slider[LIBOGC_GX_MENU] );
+	Menu_AddItem( &s_libogc_gx_menu, ( void * ) &s_brightness_slider[LIBOGC_GX_MENU] );
+	Menu_AddItem( &s_libogc_gx_menu, ( void * ) &s_fs_box[LIBOGC_GX_MENU] );
+	Menu_AddItem( &s_libogc_gx_menu, ( void * ) &s_tq_slider );
+	Menu_AddItem( &s_libogc_gx_menu, ( void * ) &s_paletted_texture_box );
 
 	Menu_AddItem( &s_software_menu, ( void * ) &s_defaults_action[SOFTWARE_MENU] );
 	Menu_AddItem( &s_software_menu, ( void * ) &s_apply_action[SOFTWARE_MENU] );
-	Menu_AddItem( &s_opengl_menu, ( void * ) &s_defaults_action[OPENGL_MENU] );
-	Menu_AddItem( &s_opengl_menu, ( void * ) &s_apply_action[OPENGL_MENU] );
+	Menu_AddItem( &s_libogc_gx_menu, ( void * ) &s_defaults_action[LIBOGC_GX_MENU] );
+	Menu_AddItem( &s_libogc_gx_menu, ( void * ) &s_apply_action[LIBOGC_GX_MENU] );
 
 	Menu_Center( &s_software_menu );
-	Menu_Center( &s_opengl_menu );
-	s_opengl_menu.x -= 8;
+	Menu_Center( &s_libogc_gx_menu );
+	s_libogc_gx_menu.x -= 8;
 	s_software_menu.x -= 8;
 }
 
@@ -563,7 +563,7 @@ void VID_MenuDraw (void)
 	if ( s_current_menu_index == 0 )
 		s_current_menu = &s_software_menu;
 	else
-		s_current_menu = &s_opengl_menu;
+		s_current_menu = &s_libogc_gx_menu;
 
 	/*
 	** draw the banner

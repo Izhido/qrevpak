@@ -1054,7 +1054,7 @@ void R_Register( void )
 	gl_flashblend = ri.Cvar_Get ("gl_flashblend", "0", 0);
 	gl_playermip = ri.Cvar_Get ("gl_playermip", "0", 0);
 	gl_monolightmap = ri.Cvar_Get( "gl_monolightmap", "0", 0 );
-	gl_driver = ri.Cvar_Get( "gl_driver", "opengl32", CVAR_ARCHIVE );
+	gl_driver = ri.Cvar_Get( "gl_driver", "libogc-gx", CVAR_ARCHIVE );
 	gl_texturemode = ri.Cvar_Get( "gl_texturemode", "GX_LIN_MIP_NEAR", CVAR_ARCHIVE );
 	gl_texturealphamode = ri.Cvar_Get( "gl_texturealphamode", "default", CVAR_ARCHIVE );
 	gl_texturesolidmode = ri.Cvar_Get( "gl_texturesolidmode", "default", CVAR_ARCHIVE );
@@ -1170,7 +1170,7 @@ qboolean R_Init( void *hinstance, void *hWnd )
 		return -1;
 	}
 
-	// initialize OS-specific parts of OpenGL
+	// initialize GX specific parts
 	if ( !GXimp_Init( hinstance, hWnd ) )
 	{
 		QGX_Shutdown();
@@ -1287,7 +1287,7 @@ void R_Shutdown (void)
 	GX_ShutdownImages ();
 
 	/*
-	** shut down OS specific OpenGL stuff like contexts, etc.
+	** shut down GX specific stuff
 	*/
 	GXimp_Shutdown();
 

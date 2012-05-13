@@ -15,6 +15,37 @@
     <engine>Q1Rev-soft</engine>
     <parameters></parameters>
   </GameEntry>
+  <GameEntry crc="1050">
+    <name>Quake Mission Pack No. 1: Scourge of Armagon</name>
+    <description>
+      <line>From id Software's web site:</line>
+      <line>"After defeating Shub-Niggurath, you arrive back at</line>
+      <line>your home base on Earth, but it's not all blue skies</line>
+      <line>and butterflies. Apparently, not all QUAKE forces</line>
+      <line>have been subdued. Chaos ensues as you blast your</line>
+      <line>way through the QUAKE minions and toward the</line>
+      <line>infested gateway. Your only choice is to find the</line>
+      <line>source of evil and shut it down. Without any</line>
+      <line>hesitation, and with more guts than common sense,</line>
+      <line>you leap into a portal of unknown destination."</line>
+    </description>
+    <engine>Q1Rev-soft</engine>
+    <parameters>-game hipnotic -hipnotic</parameters>
+  </GameEntry>
+  <GameEntry crc="47026">
+    <name>Quake Mission Pack No. 2: Dissolution of Eternity</name>
+    <description>
+      <line>From id Software's web site:</line>
+      <line>"Your journey has led you down a path of no return.</line>
+      <line>The acrid smell of death fills the air. And you</line>
+      <line>know the road ahead may lead to your grave. But</line>
+      <line>Quake, with his insidious, apocalyptic plans, must</line>
+      <line>be crushed. If you fail, evil will shroud the</line>
+      <line>universe for all eternity."</line>
+    </description>
+    <engine>Q1Rev-soft</engine>
+    <parameters>-rogue</parameters>
+  </GameEntry>
   <GameEntry crc="24070">
     <name>QuakeWorld</name>
     <description>
@@ -38,7 +69,7 @@
     <engine>QWRev-soft</engine>
     <parameters></parameters>
   </GameEntry>
-  <GameEntry crc="50033">
+  <GameEntry crc="47448">
     <name>Quake II</name>
     <description>
       <line>From id Software's web site:</line>
@@ -48,12 +79,45 @@
       <line>heavily fortified military installations, lower</line>
       <line>the city's defenses and shut down the enemy's war</line>
       <line>machine. Only then will the fate of humanity</line>
-      <line>be known." (Software rendered version.)</line>
+      <line>be known."</line>
     </description>
     <engine>Q2Rev-SWimp</engine>
     <parameters></parameters>
   </GameEntry>
-  <GameEntry crc="44284">
+  <GameEntry crc="52364">
+    <name>Quake II Mission Pack: The Reckoning</name>
+    <description>
+      <line>From id Software's web site:</line>
+      <line>"You are part of an elite commando force that must</line>
+      <line>infiltrate a hostile alien cite. Once inside, you</line>
+      <line>must scour industrial landscapes, crawl through</line>
+      <line>waterways and air ducts, navigate treacherous</line>
+      <line>canyons teeming with vicious mutants, stow away on</line>
+      <line>an alien spacecraft, and destroy the enemy's secret</line>
+      <line>moon base."</line>
+    </description>
+    <engine>Q2Rev-SWimp</engine>
+    <parameters>+set game xatrix</parameters>
+  </GameEntry>
+  <GameEntry crc="2988">
+    <name>Quake II Mission Pack: Ground Zero</name>
+    <description>
+      <line>From id Software's web site:</line>
+      <line>"Take out the Big Gun sounded simple enough, except</line>
+      <line>the Strogg were waiting. You, and a few marines like</line>
+      <line>you, are the lucky ones. You've made it down in one</line>
+      <line>piece and are still able to contact the fleet. The</line>
+      <line>Gravity Well, the Strogg's newest weapon in its</line>
+      <line>arsenal against mankind, is operational. With the</line>
+      <line>fleet around Stroggos, 5% of ground forces</line>
+      <line>surviving, and that number dwindling by the second,</line>
+      <line>your orders have changed: free your comrades.</line>
+      <line>Destroy the Gravity Well."</line>
+    </description>
+    <engine>Q2Rev-SWimp</engine>
+    <parameters>+set game rogue</parameters>
+  </GameEntry>
+  <GameEntry crc="40560">
     <name>Quake II ThreeWave Capture The Flag</name>
     <description>
       <line>From the game's documentation:</line>
@@ -61,8 +125,7 @@
       <line>addon for Quake2 that features a simple set of</line>
       <line>rules for team based play. It features five unique</line>
       <line>maps and special powerups to enhance and make the</line>
-      <line>gameplay more exciting." (Software rendered</line>
-      <line>version.)</line>
+      <line>gameplay more exciting."</line>
     </description>
     <engine>Q2CTFRev-SWimp</engine>
     <parameters></parameters>
