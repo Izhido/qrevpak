@@ -79,6 +79,8 @@ typedef struct
 	char** Description;
 	char* Engine;
 	char* Parameters;
+	int RequiredFilesCount;
+	char** RequiredFiles;
 } GameEntry;
 
 typedef struct
@@ -161,6 +163,7 @@ int main(int argc, char **argv)
 	char* engFullPath;
 	int newArgc;
 	char** newArgv;
+	char* reqFullPath;
 	TextParseState t;
 	int fg;
 	int bg;
@@ -202,6 +205,7 @@ int main(int argc, char **argv)
 	SelectedEntryIndex = 0;
 	TopEntryIndex = 0;
 	ScrollButtonInverted = false;
+	ErrorLinesCount = 0;
 	fatInitDefault();
 	if(getcwd(basedir, MAXPATHLEN) == 0)
 	{
@@ -1437,9 +1441,9 @@ int main(int argc, char **argv)
 				ScreenCache[i * w + j].Background = 44;
 				ScreenCache[i * w + j].Char = 219;
 			};
-			msg = "                  ";
+			msg = "                       ";
 			i = h - 3;
-			j = w - 21;
+			j = w - 26;
 			printf("\x1b[40m\x1b[30;0m\x1b[%d;%dH%s", i, j, msg);
 			l = strlen(msg);
 			for(p = 0; p < l; p++)
@@ -1631,6 +1635,29 @@ int main(int argc, char **argv)
 								Entries[j].Parameters = (char*)malloc(strlen(dat->txt) + 1);
 								strcpy(Entries[j].Parameters, dat->txt);
 							};
+							dat = ezxml_child(ent, "required");
+							if(dat != NULL)
+							{
+								lin = ezxml_child(dat, "file");
+								while(lin != NULL)
+								{
+									Entries[j].RequiredFilesCount++;
+									lin = lin->next;
+								};
+								if(Entries[j].RequiredFilesCount > 0)
+								{
+									Entries[j].RequiredFiles = (char**)malloc(Entries[j].RequiredFilesCount * sizeof(char*));
+									pl = 0;
+									lin = ezxml_child(dat, "file");
+									while(lin != NULL)
+									{
+										Entries[j].RequiredFiles[pl] = (char*)malloc(strlen(lin->txt) + 1);
+										strcpy(Entries[j].RequiredFiles[pl], lin->txt);
+										pl++;
+										lin = lin->next;
+									};
+								};
+							};
 							j++;
 							ent = ent->next;
 						};
@@ -1711,6 +1738,39 @@ int main(int argc, char **argv)
 										Entries[i].Parameters = (char*)malloc(strlen(dat->txt) + 1);
 										strcpy(Entries[i].Parameters, dat->txt);
 									};
+									if(Entries[i].RequiredFiles != NULL)
+									{
+										for(pl = Entries[i].RequiredFilesCount - 1; pl >= 0; pl--)
+										{
+											free(Entries[i].RequiredFiles[pl]); 
+										};
+										free(Entries[i].RequiredFiles);
+										Entries[i].RequiredFiles = NULL;
+										Entries[i].RequiredFilesCount = 0;
+									};
+									dat = ezxml_child(ent, "required");
+									if(dat != NULL)
+									{
+										lin = ezxml_child(dat, "file");
+										while(lin != NULL)
+										{
+											Entries[i].RequiredFilesCount++;
+											lin = lin->next;
+										};
+										if(Entries[i].RequiredFilesCount > 0)
+										{
+											Entries[i].RequiredFiles = (char**)malloc(Entries[i].RequiredFilesCount * sizeof(char*));
+											pl = 0;
+											lin = ezxml_child(dat, "file");
+											while(lin != NULL)
+											{
+												Entries[i].RequiredFiles[pl] = (char*)malloc(strlen(lin->txt) + 1);
+												strcpy(Entries[i].RequiredFiles[pl], lin->txt);
+												pl++;
+												lin = lin->next;
+											};
+										};
+									};
 								};
 							} else
 							{
@@ -1751,6 +1811,29 @@ int main(int argc, char **argv)
 								{
 									Entries[j].Parameters = (char*)malloc(strlen(dat->txt) + 1);
 									strcpy(Entries[j].Parameters, dat->txt);
+								};
+								dat = ezxml_child(ent, "required");
+								if(dat != NULL)
+								{
+									lin = ezxml_child(dat, "file");
+									while(lin != NULL)
+									{
+										Entries[j].RequiredFilesCount++;
+										lin = lin->next;
+									};
+									if(Entries[j].RequiredFilesCount > 0)
+									{
+										Entries[j].RequiredFiles = (char**)malloc(Entries[j].RequiredFilesCount * sizeof(char*));
+										pl = 0;
+										lin = ezxml_child(dat, "file");
+										while(lin != NULL)
+										{
+											Entries[j].RequiredFiles[pl] = (char*)malloc(strlen(lin->txt) + 1);
+											strcpy(Entries[j].RequiredFiles[pl], lin->txt);
+											pl++;
+											lin = lin->next;
+										};
+									};
 								};
 								j++;
 							};
@@ -1844,7 +1927,7 @@ int main(int argc, char **argv)
 										t = AtText;
 									};
 									j++;
-									if((j - p) > 15)
+									if((j - p) > 14)
 									{
 										Entries[i].NameLines[m].Start = p;
 										if(p < pl)
@@ -1928,6 +2011,22 @@ int main(int argc, char **argv)
 												};
 												msg = "</parameters>\n";
 												fwrite(msg, 1, strlen(msg), f);
+												if(Entries[i].RequiredFiles != NULL)
+												{
+													msg = "    <required>\n";
+													fwrite(msg, 1, strlen(msg), f);
+													for(pl = 0; pl < Entries[i].RequiredFilesCount; pl++)
+													{
+														msg = "      <file>";
+														fwrite(msg, 1, strlen(msg), f);
+														msg = Entries[i].RequiredFiles[pl];
+														fwrite(msg, 1, strlen(msg), f);
+														msg = "</file>\n";
+														fwrite(msg, 1, strlen(msg), f);
+													};
+													msg = "    </required>\n";
+													fwrite(msg, 1, strlen(msg), f);
+												};
 												msg = "  </GameEntry>\n";
 												fwrite(msg, 1, strlen(msg), f);
 											};
@@ -2185,6 +2284,7 @@ int main(int argc, char **argv)
 				State = LoadError;
 			} else
 			{
+				DefaultListState = ListWait;
 				State = List;
 			};
 		} else if((State == LoadErrorAReleased) || (State == ListBReleased))
@@ -2220,6 +2320,11 @@ int main(int argc, char **argv)
 			{
 				for(i = EntriesCount - 1; i >= 0; i--)
 				{
+					for(j = Entries[i].RequiredFilesCount  - 1; j >= 0; j--)
+					{
+						free(Entries[i].RequiredFiles[j]); 
+					};
+					free(Entries[i].RequiredFiles); 
 					free(Entries[i].Parameters); 
 					free(Entries[i].Engine); 
 					for(j = Entries[i].DescriptionCount  - 1; j >= 0; j--)
@@ -2462,23 +2567,61 @@ int main(int argc, char **argv)
 					j++;
 				};
 			};
-			runDOL(eng, newArgc, (const char**)newArgv);
-			if(newArgv != NULL)
+			reqFullPath = NULL;
+			if(Entries[EntryIndices[SelectedEntryIndex]].RequiredFilesCount > 0)
 			{
-				free(newArgv);
-				free(msg);
-				free(engFullPath);
+				i = 0;
+				do
+				{
+					m = strlen(basedir) + strlen(Entries[EntryIndices[SelectedEntryIndex]].RequiredFiles[i]);
+					reqFullPath = (char*)malloc(m + 1);
+					strcpy(reqFullPath, basedir);
+					strcat(reqFullPath, Entries[EntryIndices[SelectedEntryIndex]].RequiredFiles[i]);
+					f = fopen(reqFullPath, "rb");
+					if(f == NULL)
+					{
+						ErrorLinesCount = 6;
+						ErrorLines = (char**)malloc(ErrorLinesCount * sizeof(char*));
+						ErrorLines[0] = (char*)malloc(40);
+						strcpy(ErrorLines[0], "The following file couldn't be found:");
+						ErrorLines[1] = (char*)malloc(1);
+						ErrorLines[1][0] = 0;
+						ErrorLines[2] = reqFullPath;
+						ErrorLines[3] = (char*)malloc(1);
+						ErrorLines[3][0] = 0;
+						ErrorLines[4] = (char*)malloc(50);
+						strcpy(ErrorLines[4], "Be sure that the file exists at that location");
+						ErrorLines[5] = (char*)malloc(30);
+						strcpy(ErrorLines[5], "in order to launch the game.");
+						State = LoadError;
+					} else
+					{
+						fclose(f);
+						free(reqFullPath);
+						i++;
+					};
+				} while((State == Launch)&&(i < Entries[EntryIndices[SelectedEntryIndex]].RequiredFilesCount));
 			};
-			ErrorLinesCount = 2;
-			ErrorLines = (char**)malloc(ErrorLinesCount * sizeof(char*));
-			ErrorLines[0] = (char*)malloc(20 + strlen(eng));
-			strcpy(ErrorLines[0], "Can't launch \"");
-			strcat(ErrorLines[0], eng);
-			strcat(ErrorLines[0], "\".");
-			ErrorLines[1] = (char*)malloc(32);
-			strcpy(ErrorLines[1], "It is not possible to continue.");
-			free(eng);
-			State = LoadError;
+			if(State == Launch)
+			{
+				runDOL(eng, newArgc, (const char**)newArgv);
+				if(newArgv != NULL)
+				{
+					free(newArgv);
+					free(msg);
+					free(engFullPath);
+				};
+				ErrorLinesCount = 2;
+				ErrorLines = (char**)malloc(ErrorLinesCount * sizeof(char*));
+				ErrorLines[0] = (char*)malloc(20 + strlen(eng));
+				strcpy(ErrorLines[0], "Can't launch \"");
+				strcat(ErrorLines[0], eng);
+				strcat(ErrorLines[0], "\".");
+				ErrorLines[1] = (char*)malloc(32);
+				strcpy(ErrorLines[1], "It is not possible to continue.");
+				State = LoadError;
+				free(eng);
+			};
 		};
 		if((State != Finishing) && (State != Finished))
 		{
@@ -2730,6 +2873,11 @@ int main(int argc, char **argv)
 	{
 		for(i = EntriesCount - 1; i >= 0; i--)
 		{
+			for(j = Entries[i].RequiredFilesCount  - 1; j >= 0; j--)
+			{
+				free(Entries[i].RequiredFiles[j]); 
+			};
+			free(Entries[i].RequiredFiles);
 			free(Entries[i].Parameters); 
 			free(Entries[i].Engine); 
 			for(j = Entries[i].DescriptionCount  - 1; j >= 0; j--)
