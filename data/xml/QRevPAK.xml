@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <GameEntries>
-  <GameEntry crc="46601">
+  <GameEntry crc="50693">
     <name>Quake</name>
     <description>
       <line>From id Software's web site:</line>
@@ -18,7 +18,7 @@
       <file>Q1/ID1/PAK0.PAK</file>
     </required>
   </GameEntry>
-  <GameEntry crc="1050">
+  <GameEntry crc="10840">
     <name>Quake Mission Pack No. 1: Scourge of Armagon</name>
     <description>
       <line>From id Software's web site:</line>
@@ -41,7 +41,7 @@
       <file>Q1/HIPNOTIC/PAK0.PAK</file>
     </required>
   </GameEntry>
-  <GameEntry crc="47026">
+  <GameEntry crc="55457">
     <name>Quake Mission Pack No. 2: Dissolution of Eternity</name>
     <description>
       <line>From id Software's web site:</line>
@@ -60,7 +60,7 @@
       <file>Q1/ROGUE/PAK0.PAK</file>
     </required>
   </GameEntry>
-  <GameEntry crc="24070">
+  <GameEntry crc="30234">
     <name>QuakeWorld</name>
     <description>
       <line>From QuakeWorld.net:</line>
@@ -87,7 +87,7 @@
       <file>Q1/ID1/PAK1.PAK</file>
     </required>
   </GameEntry>
-  <GameEntry crc="47448">
+  <GameEntry crc="52117">
     <name>Quake II</name>
     <description>
       <line>From id Software's web site:</line>
@@ -105,7 +105,7 @@
       <file>Q2/baseq2/pak0.pak</file>
     </required>
   </GameEntry>
-  <GameEntry crc="52364">
+  <GameEntry crc="59779">
     <name>Quake II Mission Pack: The Reckoning</name>
     <description>
       <line>From id Software's web site:</line>
@@ -124,7 +124,7 @@
       <file>Q2/xatrix/pak0.pak</file>
     </required>
   </GameEntry>
-  <GameEntry crc="2988">
+  <GameEntry crc="10277">
     <name>Quake II Mission Pack: Ground Zero</name>
     <description>
       <line>From id Software's web site:</line>
@@ -146,7 +146,7 @@
       <file>Q2/rogue/pak0.pak</file>
     </required>
   </GameEntry>
-  <GameEntry crc="40560">
+  <GameEntry crc="45229">
     <name>Quake II ThreeWave Capture The Flag</name>
     <description>
       <line>From the game's documentation:</line>
