@@ -1439,9 +1439,9 @@ void R_SetPalette ( const unsigned char *palette)
 	{
 		for ( i = 0; i < 256; i++ )
 		{
-			rp[i*4+0] = d_8to24table[i] & 0xff;
-			rp[i*4+1] = ( d_8to24table[i] >> 8 ) & 0xff;
-			rp[i*4+2] = ( d_8to24table[i] >> 16 ) & 0xff;
+			rp[i*4+0] = ( d_8to24table[i] >> 24 ) & 0xff;
+			rp[i*4+1] = ( d_8to24table[i] >> 16 ) & 0xff;
+			rp[i*4+2] = ( d_8to24table[i] >> 8 ) & 0xff;
 			rp[i*4+3] = 0xff;
 		}
 	}
@@ -1474,7 +1474,6 @@ void R_DrawBeam( entity_t *e )
 #define NUM_BEAM_SEGS 6
 
 	int	i;
-	float r, g, b;
 
 	vec3_t perpvec;
 	vec3_t direction, normalized_direction;
@@ -1511,17 +1510,9 @@ void R_DrawBeam( entity_t *e )
 	gxu_z_write_enabled = GX_FALSE;
 	qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 
-	r = ( d_8to24table[e->skinnum & 0xFF] ) & 0xFF;
-	g = ( d_8to24table[e->skinnum & 0xFF] >> 8 ) & 0xFF;
-	b = ( d_8to24table[e->skinnum & 0xFF] >> 16 ) & 0xFF;
-
-	r *= 1/255.0F;
-	g *= 1/255.0F;
-	b *= 1/255.0F;
-
-	gxu_cur_r = r * 255;
-	gxu_cur_g = g * 255;
-	gxu_cur_b = b * 255;
+	gxu_cur_r = ( d_8to24table[e->skinnum & 0xFF] >> 24 ) & 0xFF;
+	gxu_cur_g = ( d_8to24table[e->skinnum & 0xFF] >> 16 ) & 0xFF;
+	gxu_cur_b = ( d_8to24table[e->skinnum & 0xFF] >> 8  ) & 0xFF;
 	gxu_cur_a = e->alpha * 255;
 
 	qgxBegin (GX_TRIANGLESTRIP, GX_VTXFMT0, NUM_BEAM_SEGS * 4);

@@ -343,7 +343,7 @@ image_t	*GX_FindImage (char *name, imagetype_t type);
 void	GX_TextureMode( char *string );
 void	GX_ImageList_f (void);
 
-void	GX_SetTexturePalette( unsigned palette[256] );
+void	GX_SetTexturePalette( unsigned* palette );
 
 void	GX_InitImages (void);
 void	GX_ShutdownImages (void);

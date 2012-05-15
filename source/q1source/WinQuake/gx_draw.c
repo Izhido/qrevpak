@@ -142,6 +142,7 @@ void GX_LoadAndBind (void* data, int length, int width, int height, int format)
 	case GX_TF_RGB5A3:
 		GX_CopyTexRGB5A3((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
 		break;
+	case GX_TF_CI8:
 	case GX_TF_I8:
 	case GX_TF_A8:
 		GX_CopyTexV8((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));

@@ -51,7 +51,7 @@ int		gx_tex_allocated; // To track amount of memory used for textures
 u16*	gx_paldata = NULL;
 GXTlutObj gx_palobj;
 
-void GX_SetTexturePalette( unsigned palette[256] )
+void GX_SetTexturePalette( unsigned* palette )
 {
 	int i;
 
@@ -62,12 +62,10 @@ void GX_SetTexturePalette( unsigned palette[256] )
 
 		for ( i = 0; i < 256; i++ )
 		{
-			gx_paldata[i] = 0x8000 
-				          | ((( palette[i] >> (3 + 0 )) & 0x1f) << 10) 
-			              | ((( palette[i] >> (3 + 8 )) & 0x1f) << 5) 
-			              | ((( palette[i] >> (3 + 16)) & 0x1f) << 0);
+			gx_paldata[i] = ((( palette[i] >> (3 + 24)) & 0x1f) << 11) 
+			              | ((( palette[i] >> (2 + 16)) & 0x3f) << 5) 
+			              | ((( palette[i] >> (3 + 8 )) & 0x1f) << 0);
 		}
-
 		DCFlushRange(gx_paldata, 256 * sizeof(u16));
 		qgxInitTlutObj(&gx_palobj, gx_paldata, GX_TL_RGB565, 256);
 		qgxLoadTlut(&gx_palobj, GX_TLUT0);
@@ -219,6 +217,7 @@ void GX_LoadAndBind (void* data, int length, int width, int height, int format)
 	case GX_TF_RGB5A3:
 		GX_CopyTexRGB5A3((byte*)data, width, height, (byte*)(gxtexobjs[texnum].data));
 		break;
+	case GX_TF_CI8:
 	case GX_TF_I8:
 	case GX_TF_A8:
 		GX_CopyTexV8((byte*)data, width, height, (byte*)(gxtexobjs[texnum].data));
