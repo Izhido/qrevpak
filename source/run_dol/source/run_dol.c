@@ -24,7 +24,7 @@ typedef struct _dol_header_t {
 static _dol_header dolHeader;
 typedef void (*entrypoint) (void);
 
-char *argvBuffer = (char *)0x81708000;
+static char argvBuffer[4096];
 extern char _start[];
 
 bool checkAddress(u32 start, u32 size ) {
