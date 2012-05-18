@@ -385,7 +385,7 @@ int main(int argc, char **argv)
 				ScreenCache[i * w + j].Background = 44;
 				ScreenCache[i * w + j].Char = 219;
 			};
-			msg = "Quake Rev PAK Release 3 (C) Heriberto Delgado.";
+			msg = "Quake Rev PAK Release 4 (C) Heriberto Delgado.";
 			i = h - 3;
 			j = 3;
 			printf("\x1b[40m\x1b[37m\x1b[%d;%dH%s", i, j, msg);

@@ -1197,12 +1197,9 @@ qboolean R_Init( void *hinstance, void *hWnd )
 
 	ri.Cvar_Set( "scr_drawall", "0" );
 
-	ri.Con_Printf( PRINT_ALL, "...disabling CDS\n" );
-
 	/*
 	** grab extensions
 	*/
-	ri.Con_Printf( PRINT_ALL, "...GL_EXT_compiled_vertex_array not found\n" );
 
 #ifdef _WIN32
 	if ( strstr( gx_config.extensions_string, "WGL_EXT_swap_control" ) )
@@ -1220,38 +1217,36 @@ qboolean R_Init( void *hinstance, void *hWnd )
 	{
 
 		qgxSetPointSize = GX_SetPointSize;
-		ri.Con_Printf( PRINT_ALL, "...using GL_EXT_point_parameters\n" );
+		ri.Con_Printf( PRINT_ALL, "...using point size parameters\n" );
 	}
 	else
 	{*/
-		ri.Con_Printf( PRINT_ALL, "...ignoring GL_EXT_point_parameters\n" );
+		ri.Con_Printf( PRINT_ALL, "...ignoring point size parameters\n" );
 	/*}*/
 
 	/*if ( gl_ext_palettedtexture->value )
 	{
-		ri.Con_Printf( PRINT_ALL, "...using GL_EXT_shared_texture_palette\n" );
+		ri.Con_Printf( PRINT_ALL, "...using color index mode\n" );
 		qgxInitTlutObj = GX_InitTlutObj;
 		qgxLoadTlut = GX_LoadTlut;
 	}
 	else
 	{*/
-		ri.Con_Printf( PRINT_ALL, "...ignoring GL_EXT_shared_texture_palette\n" );
+		ri.Con_Printf( PRINT_ALL, "...ignoring color index mode\n" );
 	/*}*/
 
 	if ( gl_ext_multitexture->value )
 	{
-		ri.Con_Printf( PRINT_ALL, "...using GL_ARB_multitexture\n" );
+		ri.Con_Printf( PRINT_ALL, "...using multitexture\n" );
 		GX_TEXTURE0 = GX_TEXMAP0;
 		GX_TEXTURE1 = GX_TEXMAP1;
 	}
 	else
 	{
-		ri.Con_Printf( PRINT_ALL, "...ignoring GL_ARB_multitexture\n" );
+		ri.Con_Printf( PRINT_ALL, "...ignoring multitexture\n" );
 		GX_TEXTURE0 = GX_TEXMAP0;
 		GX_TEXTURE1 = GX_TEXMAP0;
 	}
-
-	ri.Con_Printf( PRINT_ALL, "...GL_SGIS_multitexture not found\n" );
 
 	GX_SetDefaultState();
 
