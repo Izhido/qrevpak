@@ -324,6 +324,26 @@ static float LittleFloat (const float *l) { return FloatSwap(l); }
 
 #endif
 
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+//======================= devkitPPC / libogc DEFINES =====================
+
+#define stricmp strcasecmp
+
+#define MAC_STATIC
+#define ID_INLINE inline 
+
+#define CPUSTRING       "powerpc-eabi"
+
+#define	PATH_SEP '/'
+
+#define BigShort
+static short LittleShort(short l) { return ShortSwap(l); }
+#define BigLong
+static int LittleLong (int l) { return LongSwap(l); }
+#define BigFloat
+static float LittleFloat (const float *l) { return FloatSwap(l); }
+// <<< FIX
+
 //=============================================================
 
 typedef unsigned char 		byte;

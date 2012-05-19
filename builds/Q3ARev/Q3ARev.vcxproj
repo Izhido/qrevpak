@@ -1,0 +1,195 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\ai_chat.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\ai_cmd.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\ai_dmnet.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\ai_dmq3.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\ai_main.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\ai_team.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\ai_vcmd.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\bg_lib.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\bg_misc.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\bg_pmove.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\bg_slidemove.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_active.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_arenas.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_bot.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_client.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_cmds.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_combat.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_items.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_main.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_mem.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_misc.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_missile.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_mover.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_rankings.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_session.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_spawn.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_svcmds.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_syscalls.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_target.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_team.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_trigger.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_utils.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_weapon.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\q_math.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\q_shared.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\cmd.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\cm_load.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\cm_patch.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\cm_polylib.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\cm_test.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\cm_trace.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\common.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\cvar.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\files.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\huffman.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\md4.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\msg.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\net_chan.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\unzip.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm_interpreted.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm_ppc.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm_ppc_new.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm_x86.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_animation.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_backend.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_bsp.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_cmds.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_curve.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_flares.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_font.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_image.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_init.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_light.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_main.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_marks.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_mesh.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_model.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_noise.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_scene.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_shade.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_shader.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_shade_calc.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_shadows.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_sky.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_surface.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_world.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_client.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_glimp.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_input.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_main.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_snddma.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Makefile" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\ai_chat.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\ai_cmd.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\ai_dmnet.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\ai_dmq3.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\ai_main.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\ai_team.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\ai_vcmd.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\be_aas.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\be_ai_char.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\be_ai_chat.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\be_ai_gen.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\be_ai_goal.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\be_ai_move.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\be_ai_weap.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\be_ea.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\bg_lib.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\bg_local.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\bg_public.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\botlib.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\chars.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\g_local.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\g_public.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\g_rankings.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\g_team.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\inv.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\match.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\q_shared.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\surfaceflags.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\syn.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\qcommon\cm_local.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\qcommon\cm_patch.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\qcommon\cm_polylib.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\qcommon\cm_public.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\qcommon\qcommon.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\qcommon\qfiles.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\qcommon\unzip.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\qcommon\vm_local.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\qgl.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\qgl_linked.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_local.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_public.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{FA8142DF-8EA9-4A43-A8F3-C58DF2740FA4}</ProjectGuid>
+    <Keyword>MakeFileProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <OutDir>$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <OutDir>$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <NMakeBuildCommandLine>make</NMakeBuildCommandLine>
+    <NMakeCleanCommandLine>make clean</NMakeCleanCommandLine>
+    <NMakePreprocessorDefinitions>$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeReBuildCommandLine>make clean
+make</NMakeReBuildCommandLine>
+    <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeForcedIncludes>$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakeAssemblySearchPath>$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+    <NMakeForcedUsingAssemblies>$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <NMakeBuildCommandLine>make</NMakeBuildCommandLine>
+    <NMakeCleanCommandLine>make clean</NMakeCleanCommandLine>
+    <NMakePreprocessorDefinitions>$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeIncludeSearchPath>$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeForcedIncludes>$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakeAssemblySearchPath>$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+    <NMakeForcedUsingAssemblies>$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+    <NMakeReBuildCommandLine>make clean
+make</NMakeReBuildCommandLine>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

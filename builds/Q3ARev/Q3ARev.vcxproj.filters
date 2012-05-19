@@ -1,0 +1,420 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{e80096c9-1785-4383-9e5d-43156057ea9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{e13d8ac6-b6d8-45a1-b2d5-495e0de434e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{e16416af-b0cb-45ac-8e6f-627c8510aea3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\code">
+      <UniqueIdentifier>{6c04db50-ff0e-44ff-8a9c-b15f622390f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\code\revol">
+      <UniqueIdentifier>{f1e5132e-117a-4b3c-bf12-1a831036fca3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\code\game">
+      <UniqueIdentifier>{fcf4e8e5-83c4-47a9-8679-f9e442814db0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\code">
+      <UniqueIdentifier>{f7952d52-8ffb-4435-8439-bc4b53e5a700}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\code\game">
+      <UniqueIdentifier>{f7e353d1-c187-4fdf-b052-9fdd02af6f50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\code\renderer_gx">
+      <UniqueIdentifier>{61f03351-4825-4806-b602-68d9acf6d803}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\code\renderer_gx">
+      <UniqueIdentifier>{a85f4ed9-f672-4d6c-afde-b0e3626120c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\code\qcommon">
+      <UniqueIdentifier>{c431f06c-6b85-4341-8cbd-ae652e7317a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\code\qcommon">
+      <UniqueIdentifier>{a80d5c64-c098-4f30-9c8c-2daafc14c505}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_client.c">
+      <Filter>Source Files\code\revol</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_glimp.c">
+      <Filter>Source Files\code\revol</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_input.c">
+      <Filter>Source Files\code\revol</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_main.c">
+      <Filter>Source Files\code\revol</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_snddma.c">
+      <Filter>Source Files\code\revol</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\ai_chat.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\ai_cmd.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\ai_dmnet.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\ai_dmq3.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\ai_main.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\ai_team.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\ai_vcmd.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\bg_lib.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\bg_misc.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\bg_pmove.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\bg_slidemove.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_active.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_arenas.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_bot.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_client.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_cmds.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_combat.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_items.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_main.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_mem.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_misc.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_missile.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_mover.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_rankings.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_session.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_spawn.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_svcmds.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_syscalls.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_target.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_team.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_trigger.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_utils.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_weapon.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\q_math.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\game\q_shared.c">
+      <Filter>Source Files\code\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_net.c">
+      <Filter>Source Files\code\revol</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_world.c">
+      <Filter>Source Files\code\renderer_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_animation.c">
+      <Filter>Source Files\code\renderer_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_backend.c">
+      <Filter>Source Files\code\renderer_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_bsp.c">
+      <Filter>Source Files\code\renderer_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_cmds.c">
+      <Filter>Source Files\code\renderer_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_curve.c">
+      <Filter>Source Files\code\renderer_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_flares.c">
+      <Filter>Source Files\code\renderer_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_font.c">
+      <Filter>Source Files\code\renderer_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_image.c">
+      <Filter>Source Files\code\renderer_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_init.c">
+      <Filter>Source Files\code\renderer_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_light.c">
+      <Filter>Source Files\code\renderer_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_main.c">
+      <Filter>Source Files\code\renderer_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_marks.c">
+      <Filter>Source Files\code\renderer_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_mesh.c">
+      <Filter>Source Files\code\renderer_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_model.c">
+      <Filter>Source Files\code\renderer_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_noise.c">
+      <Filter>Source Files\code\renderer_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_scene.c">
+      <Filter>Source Files\code\renderer_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_shade.c">
+      <Filter>Source Files\code\renderer_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_shade_calc.c">
+      <Filter>Source Files\code\renderer_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_shader.c">
+      <Filter>Source Files\code\renderer_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_shadows.c">
+      <Filter>Source Files\code\renderer_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_sky.c">
+      <Filter>Source Files\code\renderer_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_surface.c">
+      <Filter>Source Files\code\renderer_gx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm_x86.c">
+      <Filter>Source Files\code\qcommon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\cm_load.c">
+      <Filter>Source Files\code\qcommon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\cm_patch.c">
+      <Filter>Source Files\code\qcommon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\cm_polylib.c">
+      <Filter>Source Files\code\qcommon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\cm_test.c">
+      <Filter>Source Files\code\qcommon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\cm_trace.c">
+      <Filter>Source Files\code\qcommon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\cmd.c">
+      <Filter>Source Files\code\qcommon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\common.c">
+      <Filter>Source Files\code\qcommon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\cvar.c">
+      <Filter>Source Files\code\qcommon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\files.c">
+      <Filter>Source Files\code\qcommon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\huffman.c">
+      <Filter>Source Files\code\qcommon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\md4.c">
+      <Filter>Source Files\code\qcommon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\msg.c">
+      <Filter>Source Files\code\qcommon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\net_chan.c">
+      <Filter>Source Files\code\qcommon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\unzip.c">
+      <Filter>Source Files\code\qcommon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm.c">
+      <Filter>Source Files\code\qcommon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm_interpreted.c">
+      <Filter>Source Files\code\qcommon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm_ppc.c">
+      <Filter>Source Files\code\qcommon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm_ppc_new.c">
+      <Filter>Source Files\code\qcommon</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Makefile" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\ai_chat.h">
+      <Filter>Header Files\code\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\ai_cmd.h">
+      <Filter>Header Files\code\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\ai_dmnet.h">
+      <Filter>Header Files\code\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\ai_dmq3.h">
+      <Filter>Header Files\code\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\ai_main.h">
+      <Filter>Header Files\code\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\ai_team.h">
+      <Filter>Header Files\code\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\ai_vcmd.h">
+      <Filter>Header Files\code\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\be_aas.h">
+      <Filter>Header Files\code\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\be_ai_char.h">
+      <Filter>Header Files\code\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\be_ai_chat.h">
+      <Filter>Header Files\code\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\be_ai_gen.h">
+      <Filter>Header Files\code\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\be_ai_goal.h">
+      <Filter>Header Files\code\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\be_ai_move.h">
+      <Filter>Header Files\code\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\be_ai_weap.h">
+      <Filter>Header Files\code\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\be_ea.h">
+      <Filter>Header Files\code\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\bg_lib.h">
+      <Filter>Header Files\code\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\bg_local.h">
+      <Filter>Header Files\code\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\bg_public.h">
+      <Filter>Header Files\code\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\botlib.h">
+      <Filter>Header Files\code\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\chars.h">
+      <Filter>Header Files\code\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\g_local.h">
+      <Filter>Header Files\code\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\g_public.h">
+      <Filter>Header Files\code\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\g_rankings.h">
+      <Filter>Header Files\code\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\g_team.h">
+      <Filter>Header Files\code\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\inv.h">
+      <Filter>Header Files\code\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\match.h">
+      <Filter>Header Files\code\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\q_shared.h">
+      <Filter>Header Files\code\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\surfaceflags.h">
+      <Filter>Header Files\code\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\game\syn.h">
+      <Filter>Header Files\code\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\qgl.h">
+      <Filter>Header Files\code\renderer_gx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\qgl_linked.h">
+      <Filter>Header Files\code\renderer_gx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_local.h">
+      <Filter>Header Files\code\renderer_gx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_public.h">
+      <Filter>Header Files\code\renderer_gx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\qcommon\cm_local.h">
+      <Filter>Header Files\code\qcommon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\qcommon\cm_patch.h">
+      <Filter>Header Files\code\qcommon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\qcommon\cm_polylib.h">
+      <Filter>Header Files\code\qcommon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\qcommon\cm_public.h">
+      <Filter>Header Files\code\qcommon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\qcommon\qcommon.h">
+      <Filter>Header Files\code\qcommon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\qcommon\qfiles.h">
+      <Filter>Header Files\code\qcommon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\qcommon\unzip.h">
+      <Filter>Header Files\code\qcommon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\qcommon\vm_local.h">
+      <Filter>Header Files\code\qcommon</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

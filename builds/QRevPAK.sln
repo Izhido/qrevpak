@@ -19,6 +19,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QRevPAK", "QRevPAK\QRevPAK.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Q1Rev-GX", "Q1Rev\GX\Q1Rev-GX.vcxproj", "{B8DB2596-9EF6-43C5-B456-AF4CF8EB1199}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Q3ARev", "Q3ARev\Q3ARev.vcxproj", "{FA8142DF-8EA9-4A43-A8F3-C58DF2740FA4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -61,6 +63,10 @@ Global
 		{B8DB2596-9EF6-43C5-B456-AF4CF8EB1199}.Debug|Win32.Build.0 = Debug|Win32
 		{B8DB2596-9EF6-43C5-B456-AF4CF8EB1199}.Release|Win32.ActiveCfg = Release|Win32
 		{B8DB2596-9EF6-43C5-B456-AF4CF8EB1199}.Release|Win32.Build.0 = Release|Win32
+		{FA8142DF-8EA9-4A43-A8F3-C58DF2740FA4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FA8142DF-8EA9-4A43-A8F3-C58DF2740FA4}.Debug|Win32.Build.0 = Debug|Win32
+		{FA8142DF-8EA9-4A43-A8F3-C58DF2740FA4}.Release|Win32.ActiveCfg = Release|Win32
+		{FA8142DF-8EA9-4A43-A8F3-C58DF2740FA4}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
