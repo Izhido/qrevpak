@@ -123,9 +123,6 @@
     <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_mover.c">
       <Filter>Source Files\code\game</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_rankings.c">
-      <Filter>Source Files\code\game</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_session.c">
       <Filter>Source Files\code\game</Filter>
     </ClCompile>
@@ -158,9 +155,6 @@
     </ClCompile>
     <ClCompile Include="..\..\source\quake3-1.32b\code\game\q_shared.c">
       <Filter>Source Files\code\game</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_net.c">
-      <Filter>Source Files\code\revol</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_world.c">
       <Filter>Source Files\code\renderer_gx</Filter>
@@ -231,9 +225,6 @@
     <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_surface.c">
       <Filter>Source Files\code\renderer_gx</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm_x86.c">
-      <Filter>Source Files\code\qcommon</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\cm_load.c">
       <Filter>Source Files\code\qcommon</Filter>
     </ClCompile>
@@ -282,10 +273,16 @@
     <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm_interpreted.c">
       <Filter>Source Files\code\qcommon</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm_ppc.c">
+    <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_net.c">
+      <Filter>Source Files\code\revol</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm_x86.c.donotinclude">
       <Filter>Source Files\code\qcommon</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm_ppc_new.c">
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm_ppc_new.c.donotinclude">
+      <Filter>Source Files\code\qcommon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm_ppc.c.donotinclude">
       <Filter>Source Files\code\qcommon</Filter>
     </ClCompile>
   </ItemGroup>
@@ -380,12 +377,6 @@
     <ClInclude Include="..\..\source\quake3-1.32b\code\game\syn.h">
       <Filter>Header Files\code\game</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\qgl.h">
-      <Filter>Header Files\code\renderer_gx</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\qgl_linked.h">
-      <Filter>Header Files\code\renderer_gx</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_local.h">
       <Filter>Header Files\code\renderer_gx</Filter>
     </ClInclude>
@@ -415,6 +406,12 @@
     </ClInclude>
     <ClInclude Include="..\..\source\quake3-1.32b\code\qcommon\vm_local.h">
       <Filter>Header Files\code\qcommon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\qgx.h">
+      <Filter>Header Files\code\renderer_gx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\qgx_linked.h">
+      <Filter>Header Files\code\renderer_gx</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

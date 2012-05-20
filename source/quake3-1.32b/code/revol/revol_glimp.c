@@ -22,20 +22,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../renderer_gx/tr_local.h"
 
 
-qboolean ( * qwglSwapIntervalEXT)( int interval );
-void ( * qglMultiTexCoord2fARB )( GLenum texture, float s, float t );
-void ( * qglActiveTextureARB )( GLenum texture );
-void ( * qglClientActiveTextureARB )( GLenum texture );
-
-
-void ( * qglLockArraysEXT)( int, int);
-void ( * qglUnlockArraysEXT) ( void );
-
-
 void		GLimp_EndFrame( void ) {
 }
 
-int 		GLimp_Init( void )
+void 		GLimp_Init( void )
 {
 }
 

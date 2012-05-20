@@ -20,11 +20,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 /*
-** QGL.H
+** QGX.H
+** (based on QGL.H)
 */
 
-#ifndef __QGL_H__
-#define __QGL_H__
+#ifndef __QGX_H__
+#define __QGX_H__
 
 #if defined( __LINT__ )
 
@@ -61,10 +62,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if defined(__FX__)
 #include <GL/fxmesa.h>
 #endif
-
-#else
-
-#include <gl.h>
 
 #endif
 
@@ -145,21 +142,12 @@ typedef void (APIENTRY * PFNGLCLIENTACTIVETEXTUREARBPROC) (GLenum target);
 #define GL_RGB4_S3TC						0x83A1
 
 
-// extensions will be function pointers on all platforms
-
-extern	void ( APIENTRY * qglMultiTexCoord2fARB )( GLenum texture, GLfloat s, GLfloat t );
-extern	void ( APIENTRY * qglActiveTextureARB )( GLenum texture );
-extern	void ( APIENTRY * qglClientActiveTextureARB )( GLenum texture );
-
-extern	void ( APIENTRY * qglLockArraysEXT) (GLint, GLint);
-extern	void ( APIENTRY * qglUnlockArraysEXT) (void);
-
 //===========================================================================
 
 // non-windows systems will just redefine qgl* to gl*
 #if !defined( _WIN32 ) && !defined(MACOS_X) && !defined( __linux__ ) && !defined( __FreeBSD__ ) // rb010123
 
-#include "qgl_linked.h"
+#include "qgx_linked.h"
 
 #elif defined(MACOS_X)
 // This includes #ifdefs for optional logging and GL error checking after every GL call as well as #defines to prevent incorrect usage of the non-'qgl' versions of the GL API.

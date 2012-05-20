@@ -34,7 +34,6 @@
     <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_misc.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_missile.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_mover.c" />
-    <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_rankings.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_session.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_spawn.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\game\g_svcmds.c" />
@@ -62,9 +61,9 @@
     <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\unzip.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm_interpreted.c" />
-    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm_ppc.c" />
-    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm_ppc_new.c" />
-    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm_x86.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm_ppc.c.donotinclude" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm_ppc_new.c.donotinclude" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm_x86.c.donotinclude" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_animation.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_backend.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_bsp.c" />
@@ -92,6 +91,7 @@
     <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_glimp.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_input.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_main.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_net.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_snddma.c" />
   </ItemGroup>
   <ItemGroup>
@@ -135,8 +135,8 @@
     <ClInclude Include="..\..\source\quake3-1.32b\code\qcommon\qfiles.h" />
     <ClInclude Include="..\..\source\quake3-1.32b\code\qcommon\unzip.h" />
     <ClInclude Include="..\..\source\quake3-1.32b\code\qcommon\vm_local.h" />
-    <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\qgl.h" />
-    <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\qgl_linked.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\qgx.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\qgx_linked.h" />
     <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_local.h" />
     <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_public.h" />
   </ItemGroup>

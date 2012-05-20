@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../qcommon/qfiles.h"
 #include "../qcommon/qcommon.h"
 #include "tr_public.h"
-#include "qgl.h"
+#include "qgx.h"
 
 #define GL_INDEX_TYPE		GL_UNSIGNED_INT
 typedef unsigned int glIndex_t;
@@ -94,7 +94,7 @@ typedef struct image_s {
 	char		imgName[MAX_QPATH];		// game path, including extension
 	int			width, height;				// source image
 	int			uploadWidth, uploadHeight;	// after power of two and picmip but not including clamp to MAX_TEXTURE_SIZE
-	GLuint		texnum;					// gl texture binding
+	int			texnum;					// gl texture binding
 
 	int			frameUsed;			// for texture usage in frame statistics
 

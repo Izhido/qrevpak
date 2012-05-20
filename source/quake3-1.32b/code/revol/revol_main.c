@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <errno.h>
 #include <stdio.h>
+#include "../game/q_shared.h"
 #include "../qcommon/qcommon.h"
 
 int			sys_curtime;
@@ -31,18 +32,18 @@ int			sys_curtime;
 
 //===================================================================
 
-void Sys_BeginStreamedFile( FILE *f, int readAhead ) {
+void Sys_BeginStreamedFile( fileHandle_t f, int readAhead ) {
 }
 
-void Sys_EndStreamedFile( FILE *f ) {
+void Sys_EndStreamedFile( fileHandle_t f ) {
 }
 
-int Sys_StreamedRead( void *buffer, int size, int count, FILE *f ) {
-	return fread( buffer, size, count, f );
+int Sys_StreamedRead( void *buffer, int size, int count, fileHandle_t f ) {
+	return fread( buffer, size, count, (FILE*)f );
 }
 
-void Sys_StreamSeek( FILE *f, int offset, int origin ) {
-	fseek( f, offset, origin );
+void Sys_StreamSeek( fileHandle_t f, int offset, int origin ) {
+	fseek( (FILE*)f, offset, origin );
 }
 
 
@@ -52,7 +53,7 @@ void Sys_StreamSeek( FILE *f, int offset, int origin ) {
 void Sys_mkdir ( const char *path ) {
 }
 
-void Sys_Error (char *error, ...) {
+void Sys_Error (const char *error, ...) {
 	va_list		argptr;
 
 	printf ("Sys_Error: ");	
@@ -83,7 +84,7 @@ int		Sys_Milliseconds (void) {
 	return 0;
 }
 
-void	Sys_Mkdir (char *path) {
+void	Sys_Mkdir (const char *path) {
 }
 
 char	*Sys_FindFirst (char *path, unsigned musthave, unsigned canthave) {
@@ -106,12 +107,28 @@ void	Sys_EarlyOutput( char *string ) {
 }
 
 
-void main (int argc, char **argv) {
-	Com_Init (argc, argv);
+int main (int argc, char **argv) {
+	int   len, i;
+	char  *cmdline;
+
+	// merge the command line, this is kinda silly
+	for (len = 1, i = 1; i < argc; i++)
+		len += strlen(argv[i]) + 1;
+	cmdline = malloc(len);
+	*cmdline = 0;
+	for (i = 1; i < argc; i++)
+	{
+		if (i > 1)
+			strcat(cmdline, " ");
+		strcat(cmdline, argv[i]);
+	}
+
+	Com_Init(cmdline);
 
 	while (1) {
 		Com_Frame( );
 	}
+	return 0;
 }
 
 
