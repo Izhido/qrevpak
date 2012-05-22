@@ -135,8 +135,6 @@
     <ClInclude Include="..\..\source\quake3-1.32b\code\qcommon\qfiles.h" />
     <ClInclude Include="..\..\source\quake3-1.32b\code\qcommon\unzip.h" />
     <ClInclude Include="..\..\source\quake3-1.32b\code\qcommon\vm_local.h" />
-    <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\qgx.h" />
-    <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\qgx_linked.h" />
     <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_local.h" />
     <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_public.h" />
   </ItemGroup>

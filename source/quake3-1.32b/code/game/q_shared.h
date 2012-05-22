@@ -337,11 +337,11 @@ static float LittleFloat (const float *l) { return FloatSwap(l); }
 #define	PATH_SEP '/'
 
 #define BigShort
-static short LittleShort(short l) { return ShortSwap(l); }
+#define LittleShort Sys_LittleShort
 #define BigLong
-static int LittleLong (int l) { return LongSwap(l); }
+#define LittleLong Sys_LittleLong
 #define BigFloat
-static float LittleFloat (const float l) { return FloatSwap(&l); }
+#define LittleFloat Sys_LittleFloat
 // <<< FIX
 
 //=============================================================

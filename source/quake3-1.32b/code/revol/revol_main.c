@@ -32,6 +32,23 @@ int			sys_curtime;
 
 //===================================================================
 
+inline short Sys_LittleShort(short l)
+{ 
+	return ShortSwap(l);
+}
+
+inline int Sys_LittleLong (int l)
+{ 
+	return LongSwap(l); 
+}
+
+inline float Sys_LittleFloat (const float l) 
+{ 
+	return FloatSwap(&l);
+}
+
+//===================================================================
+
 void Sys_BeginStreamedFile( fileHandle_t f, int readAhead ) {
 }
 

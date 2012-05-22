@@ -407,11 +407,5 @@
     <ClInclude Include="..\..\source\quake3-1.32b\code\qcommon\vm_local.h">
       <Filter>Header Files\code\qcommon</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\qgx.h">
-      <Filter>Header Files\code\renderer_gx</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\qgx_linked.h">
-      <Filter>Header Files\code\renderer_gx</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

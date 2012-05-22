@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "tr_local.h"
 
+#include <gccore.h>
+
 backEndData_t	*backEndData[SMP_FRAMES];
 backEndState_t	backEnd;
 
@@ -34,6 +36,16 @@ static float	s_flipMatrix[16] = {
 	0, 0, 0, 1
 };
 
+typedef struct
+{
+	GXTexObj texobj;
+	u16 width;
+	u16 height;
+	void* data;
+	u32 length;
+} gxtexobj_t;
+
+gxtexobj_t	gxtexobjs[1024 + MAX_DRAWIMAGES];
 
 /*
 ** GL_Bind
@@ -55,7 +67,8 @@ void GL_Bind( image_t *image ) {
 	if ( glState.currenttextures[glState.currenttmu] != texnum ) {
 		image->frameUsed = tr.frameCount;
 		glState.currenttextures[glState.currenttmu] = texnum;
-		qglBindTexture (GL_TEXTURE_2D, texnum);
+		if(gxtexobjs[texnum].data != NULL)
+			GX_LoadTexObj(&gxtexobjs[texnum].texobj, GX_TEXMAP0 + glState.currenttmu );
 	}
 }
 
