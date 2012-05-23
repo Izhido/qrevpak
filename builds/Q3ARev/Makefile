@@ -20,11 +20,18 @@ BUILD		:=	build
 SOURCES		:=	../../source/quake3-1.32b/code/revol \
                 ../../source/quake3-1.32b/code/game \
                 ../../source/quake3-1.32b/code/renderer_gx \
-                ../../source/quake3-1.32b/code/qcommon
-DATA		:=	
+                ../../source/quake3-1.32b/code/qcommon \
+                ../../source/quake3-1.32b/code/client \
+                ../../source/quake3-1.32b/code/server \
+                ../../source/oskrevol/source \
+                ../../source/oggplayer/source \
+                ../../source/gxutils/source
+DATA		:=	../../data
 INCLUDES	:=  ../../source/quake3-1.32b/code/game \
                 ../../source/quake3-1.32b/code/renderer_gx \
-                ../../source/quake3-1.32b/code/qcommon
+                ../../source/quake3-1.32b/code/qcommon \
+                ../../source/quake3-1.32b/code/client \
+                ../../source/quake3-1.32b/code/server
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -38,13 +45,16 @@ LDFLAGS	=	-g $(MACHDEP) -Wl,-Map,$(notdir $@).map
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
 #---------------------------------------------------------------------------------
-LIBS	:=	 -lwiiuse -lbte -logc -lm
+LIBS	:=	 -lwiikeyboard -lvorbisidec -lasnd -lwiiuse -lbte -lfat -logc -lm
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:= 
+LIBDIRS	:= $(PORTLIBS) \
+           $(CURDIR)/../../source/oskrevol \
+           $(CURDIR)/../../source/oggplayer \
+           $(CURDIR)/../../source/gxutils
 
 #---------------------------------------------------------------------------------
 # no real need to edit anything past this point unless you need to add additional
@@ -123,6 +133,22 @@ DEPENDS	:=	$(OFILES:.o=.d)
 #---------------------------------------------------------------------------------
 $(OUTPUT).dol: $(OUTPUT).elf
 $(OUTPUT).elf: $(OFILES)
+
+#---------------------------------------------------------------------------------
+# This rule links in binary data with the .img extension
+#---------------------------------------------------------------------------------
+%.img.o	:	%.img
+#---------------------------------------------------------------------------------
+	@echo $(notdir $<)
+	$(bin2o)
+
+#---------------------------------------------------------------------------------
+# This rule links in binary data with the .dat extension
+#---------------------------------------------------------------------------------
+%.dat.o	:	%.dat
+#---------------------------------------------------------------------------------
+	@echo $(notdir $<)
+	$(bin2o)
 
 -include $(DEPENDS)
 

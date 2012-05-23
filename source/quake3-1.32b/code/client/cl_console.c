@@ -154,7 +154,11 @@ void Con_Clear_f (void) {
 	int		i;
 
 	for ( i = 0 ; i < CON_TEXTSIZE ; i++ ) {
-		con.text[i] = (ColorIndex(COLOR_WHITE)<<8) | ' ';
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Using renamed color constants:
+		//con.text[i] = (ColorIndex(COLOR_WHITE)<<8) | ' ';
+		con.text[i] = (ColorIndex(Q_COLOR_WHITE)<<8) | ' ';
+// <<< FIX
 	}
 
 	Con_Bottom();		// go to end
@@ -262,7 +266,11 @@ void Con_CheckResize (void)
 		con.totallines = CON_TEXTSIZE / con.linewidth;
 		for(i=0; i<CON_TEXTSIZE; i++)
 
-			con.text[i] = (ColorIndex(COLOR_WHITE)<<8) | ' ';
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Using renamed color constants:
+			//con.text[i] = (ColorIndex(COLOR_WHITE)<<8) | ' ';
+			con.text[i] = (ColorIndex(Q_COLOR_WHITE)<<8) | ' ';
+// <<< FIX
 	}
 	else
 	{
@@ -283,7 +291,11 @@ void Con_CheckResize (void)
 		Com_Memcpy (tbuf, con.text, CON_TEXTSIZE * sizeof(short));
 		for(i=0; i<CON_TEXTSIZE; i++)
 
-			con.text[i] = (ColorIndex(COLOR_WHITE)<<8) | ' ';
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Using renamed color constants:
+			//con.text[i] = (ColorIndex(COLOR_WHITE)<<8) | ' ';
+			con.text[i] = (ColorIndex(Q_COLOR_WHITE)<<8) | ' ';
+// <<< FIX
 
 
 		for (i=0 ; i<numlines ; i++)
@@ -355,7 +367,11 @@ void Con_Linefeed (qboolean skipnotify)
 		con.display++;
 	con.current++;
 	for(i=0; i<con.linewidth; i++)
-		con.text[(con.current%con.totallines)*con.linewidth+i] = (ColorIndex(COLOR_WHITE)<<8) | ' ';
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Using renamed color constants:
+		//con.text[(con.current%con.totallines)*con.linewidth+i] = (ColorIndex(COLOR_WHITE)<<8) | ' ';
+		con.text[(con.current%con.totallines)*con.linewidth+i] = (ColorIndex(Q_COLOR_WHITE)<<8) | ' ';
+// <<< FIX
 }
 
 /*
@@ -396,7 +412,11 @@ void CL_ConsolePrint( char *txt ) {
 		con.initialized = qtrue;
 	}
 
-	color = ColorIndex(COLOR_WHITE);
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Using renamed color constants:
+	//color = ColorIndex(COLOR_WHITE);
+	color = ColorIndex(Q_COLOR_WHITE);
+// <<< FIX
 
 	while ( (c = *txt) != 0 ) {
 		if ( Q_IsColorString( txt ) ) {
@@ -616,7 +636,11 @@ void Con_DrawSolidConsole( float frac ) {
 
 	// draw the version number
 
-	re.SetColor( g_color_table[ColorIndex(COLOR_RED)] );
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Using renamed color constants:
+	//re.SetColor( g_color_table[ColorIndex(COLOR_RED)] );
+	re.SetColor( g_color_table[ColorIndex(Q_COLOR_RED)] );
+// <<< FIX
 
 	i = strlen( Q3_VERSION );
 
@@ -639,7 +663,11 @@ void Con_DrawSolidConsole( float frac ) {
 	if (con.display != con.current)
 	{
 	// draw arrows to show the buffer is backscrolled
-		re.SetColor( g_color_table[ColorIndex(COLOR_RED)] );
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Using renamed color constants:
+		//re.SetColor( g_color_table[ColorIndex(COLOR_RED)] );
+		re.SetColor( g_color_table[ColorIndex(Q_COLOR_RED)] );
+// <<< FIX
 		for (x=0 ; x<con.linewidth ; x+=4)
 			SCR_DrawSmallChar( con.xadjust + (x+1)*SMALLCHAR_WIDTH, y, '^' );
 		y -= SMALLCHAR_HEIGHT;

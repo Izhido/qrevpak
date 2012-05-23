@@ -853,27 +853,48 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 	default:
 	case SAY_ALL:
 		G_LogPrintf( "say: %s: %s\n", ent->client->pers.netname, chatText );
-		Com_sprintf (name, sizeof(name), "%s%c%c"EC": ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE );
-		color = COLOR_GREEN;
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Using renamed color constants:
+		//Com_sprintf (name, sizeof(name), "%s%c%c"EC": ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE );
+		//color = COLOR_GREEN;
+		Com_sprintf (name, sizeof(name), "%s%c%c"EC": ", ent->client->pers.netname, Q_COLOR_ESCAPE, Q_COLOR_WHITE );
+		color = Q_COLOR_GREEN;
+// <<< FIX
 		break;
 	case SAY_TEAM:
 		G_LogPrintf( "sayteam: %s: %s\n", ent->client->pers.netname, chatText );
 		if (Team_GetLocationMsg(ent, location, sizeof(location)))
 			Com_sprintf (name, sizeof(name), EC"(%s%c%c"EC") (%s)"EC": ", 
-				ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, location);
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Using renamed color constants:
+				//ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, location);
+				ent->client->pers.netname, Q_COLOR_ESCAPE, Q_COLOR_WHITE, location);
+// <<< FIX
 		else
 			Com_sprintf (name, sizeof(name), EC"(%s%c%c"EC")"EC": ", 
-				ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE );
-		color = COLOR_CYAN;
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Using renamed color constants:
+		//		ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE );
+		//color = COLOR_CYAN;
+				ent->client->pers.netname, Q_COLOR_ESCAPE, Q_COLOR_WHITE );
+		color = Q_COLOR_CYAN;
+// <<< FIX
 		break;
 	case SAY_TELL:
 		if (target && g_gametype.integer >= GT_TEAM &&
 			target->client->sess.sessionTeam == ent->client->sess.sessionTeam &&
 			Team_GetLocationMsg(ent, location, sizeof(location)))
-			Com_sprintf (name, sizeof(name), EC"[%s%c%c"EC"] (%s)"EC": ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, location );
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Using renamed color constants:
+		//	Com_sprintf (name, sizeof(name), EC"[%s%c%c"EC"] (%s)"EC": ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, location );
+		//else
+		//	Com_sprintf (name, sizeof(name), EC"[%s%c%c"EC"]"EC": ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE );
+		//color = COLOR_MAGENTA;
+			Com_sprintf (name, sizeof(name), EC"[%s%c%c"EC"] (%s)"EC": ", ent->client->pers.netname, Q_COLOR_ESCAPE, Q_COLOR_WHITE, location );
 		else
-			Com_sprintf (name, sizeof(name), EC"[%s%c%c"EC"]"EC": ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE );
-		color = COLOR_MAGENTA;
+			Com_sprintf (name, sizeof(name), EC"[%s%c%c"EC"]"EC": ", ent->client->pers.netname, Q_COLOR_ESCAPE, Q_COLOR_WHITE );
+		color = Q_COLOR_MAGENTA;
+// <<< FIX
 		break;
 	}
 
@@ -981,15 +1002,27 @@ static void G_VoiceTo( gentity_t *ent, gentity_t *other, int mode, const char *i
 	}
 
 	if (mode == SAY_TEAM) {
-		color = COLOR_CYAN;
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Using renamed color constants:
+		//color = COLOR_CYAN;
+		color = Q_COLOR_CYAN;
+// <<< FIX
 		cmd = "vtchat";
 	}
 	else if (mode == SAY_TELL) {
-		color = COLOR_MAGENTA;
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Using renamed color constants:
+		//color = COLOR_MAGENTA;
+		color = Q_COLOR_MAGENTA;
+// <<< FIX
 		cmd = "vtell";
 	}
 	else {
-		color = COLOR_GREEN;
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// Using renamed color constants:
+		//color = COLOR_GREEN;
+		color = Q_COLOR_GREEN;
+// <<< FIX
 		cmd = "vchat";
 	}
 

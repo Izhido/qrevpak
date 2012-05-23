@@ -37,6 +37,18 @@
     <Filter Include="Header Files\code\qcommon">
       <UniqueIdentifier>{a80d5c64-c098-4f30-9c8c-2daafc14c505}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\code\client">
+      <UniqueIdentifier>{42779159-8797-4e58-a653-21d90ad27473}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\code\server">
+      <UniqueIdentifier>{2d0aa01c-43e8-4f46-baef-770e3cff1f15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\code\client">
+      <UniqueIdentifier>{41c96d3b-b683-4d87-b10f-a1361f08a9d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\code\server">
+      <UniqueIdentifier>{b1072002-4f10-4514-88c7-43171883cb47}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_client.c">
@@ -285,6 +297,81 @@
     <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm_ppc.c.donotinclude">
       <Filter>Source Files\code\qcommon</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\client\cl_cgame.c">
+      <Filter>Source Files\code\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\client\cl_cin.c">
+      <Filter>Source Files\code\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\client\cl_console.c">
+      <Filter>Source Files\code\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\client\cl_input.c">
+      <Filter>Source Files\code\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\client\cl_keys.c">
+      <Filter>Source Files\code\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\client\cl_main.c">
+      <Filter>Source Files\code\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\client\cl_net_chan.c">
+      <Filter>Source Files\code\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\client\cl_parse.c">
+      <Filter>Source Files\code\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\client\cl_scrn.c">
+      <Filter>Source Files\code\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\client\cl_ui.c">
+      <Filter>Source Files\code\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\client\snd_adpcm.c">
+      <Filter>Source Files\code\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\client\snd_dma.c">
+      <Filter>Source Files\code\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\client\snd_mem.c">
+      <Filter>Source Files\code\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\client\snd_mix.c">
+      <Filter>Source Files\code\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\client\snd_wavelet.c">
+      <Filter>Source Files\code\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\server\sv_world.c">
+      <Filter>Source Files\code\server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\server\sv_bot.c">
+      <Filter>Source Files\code\server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\server\sv_ccmds.c">
+      <Filter>Source Files\code\server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\server\sv_client.c">
+      <Filter>Source Files\code\server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\server\sv_game.c">
+      <Filter>Source Files\code\server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\server\sv_init.c">
+      <Filter>Source Files\code\server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\server\sv_main.c">
+      <Filter>Source Files\code\server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\server\sv_net_chan.c">
+      <Filter>Source Files\code\server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\server\sv_rankings.c">
+      <Filter>Source Files\code\server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\server\sv_snapshot.c">
+      <Filter>Source Files\code\server</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Makefile" />
@@ -406,6 +493,21 @@
     </ClInclude>
     <ClInclude Include="..\..\source\quake3-1.32b\code\qcommon\vm_local.h">
       <Filter>Header Files\code\qcommon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\client\client.h">
+      <Filter>Header Files\code\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\client\keys.h">
+      <Filter>Header Files\code\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\client\snd_local.h">
+      <Filter>Header Files\code\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\client\snd_public.h">
+      <Filter>Header Files\code\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\server\server.h">
+      <Filter>Header Files\code\server</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

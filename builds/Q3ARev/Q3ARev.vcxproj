@@ -11,6 +11,21 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\client\cl_cgame.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\client\cl_cin.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\client\cl_console.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\client\cl_input.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\client\cl_keys.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\client\cl_main.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\client\cl_net_chan.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\client\cl_parse.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\client\cl_scrn.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\client\cl_ui.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\client\snd_adpcm.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\client\snd_dma.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\client\snd_mem.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\client\snd_mix.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\client\snd_wavelet.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\game\ai_chat.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\game\ai_cmd.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\game\ai_dmnet.c" />
@@ -93,11 +108,25 @@
     <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_main.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_net.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_snddma.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\server\sv_bot.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\server\sv_ccmds.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\server\sv_client.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\server\sv_game.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\server\sv_init.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\server\sv_main.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\server\sv_net_chan.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\server\sv_rankings.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\server\sv_snapshot.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\server\sv_world.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Makefile" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\client\client.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\client\keys.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\client\snd_local.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\client\snd_public.h" />
     <ClInclude Include="..\..\source\quake3-1.32b\code\game\ai_chat.h" />
     <ClInclude Include="..\..\source\quake3-1.32b\code\game\ai_cmd.h" />
     <ClInclude Include="..\..\source\quake3-1.32b\code\game\ai_dmnet.h" />
@@ -137,6 +166,7 @@
     <ClInclude Include="..\..\source\quake3-1.32b\code\qcommon\vm_local.h" />
     <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_local.h" />
     <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_public.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\server\server.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{FA8142DF-8EA9-4A43-A8F3-C58DF2740FA4}</ProjectGuid>
