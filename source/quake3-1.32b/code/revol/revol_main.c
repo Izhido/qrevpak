@@ -27,7 +27,37 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../game/q_shared.h"
 #include "../qcommon/qcommon.h"
 
+#include <gccore.h>
+#include <dirent.h>
+#include <ogc/lwp_watchdog.h>
+#include <wiiuse/wpad.h>
+#include "gxutils.h"
+#include <fat.h>
+#include <network.h>
+#include <wiikeyboard/keyboard.h>
+#include "osk_revol.h"
+#include "Keys_dat.h"
+#include <ogc/usbmouse.h>
+
+extern cvar_t* in_osk;
+
 int			sys_curtime;
+
+void* sys_framebuffer[2] = {NULL, NULL};
+
+GXRModeObj* sys_rmode;
+
+int sys_previous_time;
+
+int sys_netinit_error;
+
+u32 sys_frame_count;
+
+char sys_ipaddress_text[16];
+
+s32 sys_mouse_valid;
+
+mouse_event sys_mouse_event;
 
 
 //===================================================================
@@ -67,17 +97,34 @@ void Sys_StreamSeek( fileHandle_t f, int offset, int origin ) {
 //===================================================================
 
 
-void Sys_mkdir ( const char *path ) {
-}
-
 void Sys_Error (const char *error, ...) {
 	va_list		argptr;
+	FILE* f;
+	time_t rawtime;
+	struct tm * timeinfo;
+	char stime[32];
 
+	f= fopen("QRevPAK.err", "ab");
+	if(f != NULL)
+	{
+		time(&rawtime);
+		timeinfo = localtime (&rawtime);
+		strftime(stime, 32, "%Y/%m/%d %H:%M:%S",timeinfo);
+		fprintf(f, "%s : Sys_Error: ", stime);
+		va_start(argptr, error);
+		vfprintf(f, error, argptr);
+		va_end(argptr);
+		fprintf(f, "\n\n");
+		fclose(f);
+	};
 	printf ("Sys_Error: ");	
 	va_start (argptr,error);
 	vprintf (error,argptr);
 	va_end (argptr);
 	printf ("\n");
+
+	VIDEO_SetNextFramebuffer(sys_framebuffer[0]);
+	VIDEO_WaitVSync();
 
 	exit (1);
 }
@@ -98,33 +145,98 @@ char *Sys_GetClipboardData( void ) {
 }
 
 int		Sys_Milliseconds (void) {
-	return 0;
+	static int		base;
+	static qboolean	initialized = qfalse;
+	u64 t;
+	int ms;
+
+	t = gettime();
+	ms = ticks_to_millisecs(t);
+	if (!initialized)
+	{
+		base = ms;
+		initialized = qtrue;
+	}
+	sys_curtime = ms - base;
+
+	return sys_curtime;
 }
 
 void	Sys_Mkdir (const char *path) {
-}
-
-char	*Sys_FindFirst (char *path, unsigned musthave, unsigned canthave) {
-	return NULL;
-}
-
-char	*Sys_FindNext (unsigned musthave, unsigned canthave) {
-	return NULL;
-}
-
-void	Sys_FindClose (void) {
+	mkdir(path, 0777);
 }
 
 void	Sys_Init (void) {
 }
 
+void Sys_KeyPress(char c)
+{
+	// Do nothing; keys are being polled straight from the keyboard
+}
 
-void	Sys_EarlyOutput( char *string ) {
-	printf( "%s", string );
+void Sys_PowerOff(s32 chan)
+{
+	if(chan == WPAD_CHAN_0)
+	{
+		SYS_ResetSystem(SYS_POWEROFF, 0, 0);
+	};
 }
 
 
 int main (int argc, char **argv) {
+
+	VIDEO_Init();
+	WPAD_Init();
+	PAD_Init();
+
+	sys_rmode = VIDEO_GetPreferredMode(NULL);
+
+	sys_framebuffer[0] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(sys_rmode));
+	sys_framebuffer[1] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(sys_rmode));
+
+	sys_frame_count = 0;
+
+	CON_Init(sys_framebuffer[sys_frame_count & 1], 20, 20, sys_rmode->fbWidth, sys_rmode->xfbHeight, sys_rmode->fbWidth * VI_DISPLAY_PIX_SZ);
+
+	VIDEO_Configure(sys_rmode);
+	VIDEO_SetNextFramebuffer(sys_framebuffer[sys_frame_count & 1]);
+	VIDEO_SetBlack(FALSE);
+	VIDEO_Flush();
+	VIDEO_WaitVSync();
+	if(sys_rmode->viTVMode & VI_NON_INTERLACE)
+	{
+		VIDEO_WaitVSync();
+	};
+
+	sys_frame_count++;
+
+	GXU_Init(sys_rmode, sys_framebuffer[sys_frame_count & 1]);
+
+	WPAD_SetDataFormat(WPAD_CHAN_0, WPAD_FMT_BTNS_ACC_IR);
+	WPAD_SetVRes(WPAD_CHAN_0, sys_rmode->fbWidth, sys_rmode->xfbHeight);
+
+	if(!fatInitDefault())
+	{
+		Sys_Error("Filesystem not enabled");
+	};
+
+	sys_previous_time = Sys_Milliseconds();
+	do 
+	{
+		sys_netinit_error = if_config(sys_ipaddress_text, NULL, NULL, true);
+	} while((sys_netinit_error == -EAGAIN)&&((Sys_Milliseconds() - sys_previous_time) < 3000));
+	if(sys_netinit_error < 0)
+	{
+		printf("Network not enabled\n");
+	};
+
+	if (KEYBOARD_Init(Sys_KeyPress) != 0)
+	{
+		printf("Keyboard not found\n");
+	};
+
+	OSK_LoadKeys(Keys_dat, Keys_dat_size);
+
 	int   len, i;
 	char  *cmdline;
 
@@ -142,8 +254,35 @@ int main (int argc, char **argv) {
 
 	Com_Init(cmdline);
 
+	WPAD_SetPowerButtonCallback(Sys_PowerOff);
+
 	while (1) {
+
+		sys_previous_time = Sys_Milliseconds();
+		if(MOUSE_IsConnected())
+		{
+			sys_mouse_valid = MOUSE_GetEvent(&sys_mouse_event);
+			if(sys_mouse_valid)	MOUSE_FlushEvents();
+		}
+		else
+		{
+			sys_mouse_valid = 0;
+			sys_mouse_event.button = 0;
+		};
+
 		Com_Frame( );
+
+		if(in_osk->value)
+		{
+			OSK_Draw(sys_rmode, sys_framebuffer[sys_frame_count & 1]);
+		};
+		sys_frame_count++;
+		GXU_EndFrame(sys_framebuffer[sys_frame_count & 1]);
+
+		KEYBOARD_FlushEvents();
+		VIDEO_Flush();
+		VIDEO_WaitVSync();
+
 	}
 	return 0;
 }

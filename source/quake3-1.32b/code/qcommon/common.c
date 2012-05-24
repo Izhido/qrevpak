@@ -30,7 +30,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if defined(MACOS_X)
 #include <netinet/in.h>
 #else
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// This code assumed the only remaining platform is Windows. Fixing:
+//#include <winsock.h>
+#if defined(WIN32)
 #include <winsock.h>
+#else
+#endif
+// <<< FIX
 #endif
 #endif
 

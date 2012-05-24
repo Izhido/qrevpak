@@ -66,7 +66,7 @@ void GL_Bind( image_t *image ) {
 		image->frameUsed = tr.frameCount;
 		glState.currenttextures[glState.currenttmu] = texnum;
 		if(gxtexobjs[texnum].data != NULL)
-			GX_LoadTexObj(&gxtexobjs[texnum].texobj, GX_TEXMAP0 + glState.currenttmu );
+			qgxLoadTexObj(&gxtexobjs[texnum].texobj, GX_TEXMAP0 + glState.currenttmu );
 	}
 }
 

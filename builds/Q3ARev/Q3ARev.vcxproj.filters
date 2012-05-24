@@ -49,6 +49,9 @@
     <Filter Include="Header Files\code\server">
       <UniqueIdentifier>{b1072002-4f10-4514-88c7-43171883cb47}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\code\revol">
+      <UniqueIdentifier>{3003e441-e2b6-4c4c-8e47-d5b28cd8fbdd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_client.c">
@@ -288,15 +291,6 @@
     <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_net.c">
       <Filter>Source Files\code\revol</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm_x86.c.donotinclude">
-      <Filter>Source Files\code\qcommon</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm_ppc_new.c.donotinclude">
-      <Filter>Source Files\code\qcommon</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm_ppc.c.donotinclude">
-      <Filter>Source Files\code\qcommon</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\quake3-1.32b\code\client\cl_cgame.c">
       <Filter>Source Files\code\client</Filter>
     </ClCompile>
@@ -366,11 +360,11 @@
     <ClCompile Include="..\..\source\quake3-1.32b\code\server\sv_net_chan.c">
       <Filter>Source Files\code\server</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\quake3-1.32b\code\server\sv_rankings.c">
-      <Filter>Source Files\code\server</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\quake3-1.32b\code\server\sv_snapshot.c">
       <Filter>Source Files\code\server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_qgx.c">
+      <Filter>Source Files\code\revol</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -508,6 +502,12 @@
     </ClInclude>
     <ClInclude Include="..\..\source\quake3-1.32b\code\server\server.h">
       <Filter>Header Files\code\server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\qgx.h">
+      <Filter>Header Files\code\renderer_gx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\revol\revol_glw.h">
+      <Filter>Header Files\code\revol</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

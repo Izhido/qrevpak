@@ -76,9 +76,6 @@
     <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\unzip.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm_interpreted.c" />
-    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm_ppc.c.donotinclude" />
-    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm_ppc_new.c.donotinclude" />
-    <ClCompile Include="..\..\source\quake3-1.32b\code\qcommon\vm_x86.c.donotinclude" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_animation.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_backend.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_bsp.c" />
@@ -107,6 +104,7 @@
     <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_input.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_main.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_net.c" />
+    <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_qgx.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_snddma.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\server\sv_bot.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\server\sv_ccmds.c" />
@@ -115,7 +113,6 @@
     <ClCompile Include="..\..\source\quake3-1.32b\code\server\sv_init.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\server\sv_main.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\server\sv_net_chan.c" />
-    <ClCompile Include="..\..\source\quake3-1.32b\code\server\sv_rankings.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\server\sv_snapshot.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\server\sv_world.c" />
   </ItemGroup>
@@ -164,8 +161,10 @@
     <ClInclude Include="..\..\source\quake3-1.32b\code\qcommon\qfiles.h" />
     <ClInclude Include="..\..\source\quake3-1.32b\code\qcommon\unzip.h" />
     <ClInclude Include="..\..\source\quake3-1.32b\code\qcommon\vm_local.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\qgx.h" />
     <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_local.h" />
     <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_public.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\revol\revol_glw.h" />
     <ClInclude Include="..\..\source\quake3-1.32b\code\server\server.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
