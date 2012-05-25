@@ -11,6 +11,8 @@
 
 #define GX_ORTHO_ZCOORD_BOTTOM -299
 
+#define GX_TEVOP_ADD 10
+
 extern GXColor gxu_background_color;
 
 extern u8 gxu_clear_buffers;
@@ -86,5 +88,9 @@ unsigned char* GX_CopyTexRGB5A3(unsigned char* src, int width, int height, unsig
 unsigned char* GX_CopyTexV8(unsigned char* src, int width, int height, unsigned char* dst);
 
 unsigned char* GX_CopyTexIA4(unsigned char* src, int width, int height, unsigned char* dst);
+
+void GXU_SetTevOpBlend(u8 stage);
+
+void GXU_SetTevOpAdd(u8 stage);
 
 #endif

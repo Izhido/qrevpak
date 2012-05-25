@@ -344,16 +344,6 @@ void GX_EnableMultitexture(void)
 	}
 }
 
-void GX_SetTev1OpBlend()
-{
-	// This differs from the original GX_SetTevOp(GX_TEVSTAGE1, GX_BLEND) in one extra sum
-	// that causes an incorrect application of the lightmap textures:
-	GX_SetTevColorIn(GX_TEVSTAGE1,GX_CC_CPREV,GX_CC_ZERO,GX_CC_TEXC,GX_CC_ZERO);
-	GX_SetTevAlphaIn(GX_TEVSTAGE1,GX_CA_ZERO,GX_CA_TEXA,GX_CA_APREV,GX_CA_RASA);
-	GX_SetTevColorOp(GX_TEVSTAGE1,GX_TEV_ADD,GX_TB_ZERO,GX_CS_SCALE_1,GX_TRUE,GX_TEVPREV);
-	GX_SetTevAlphaOp(GX_TEVSTAGE1,GX_TEV_ADD,GX_TB_ZERO,GX_CS_SCALE_1,GX_TRUE,GX_TEVPREV);
-}
-
 #if 0
 /*
 ================
@@ -500,7 +490,7 @@ void R_DrawSequentialPoly (msurface_t *s)
 				theRect->h = 0;
 				theRect->w = 0;
 			}
-			GX_SetTev1OpBlend();
+			GX_SetTevOpBlend(GX_TEVSTAGE1);
 			GX_Begin(GX_TRIANGLEFAN, gxu_cur_vertex_format, p->numverts);
 			v = p->verts[0];
 			for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
@@ -603,7 +593,7 @@ void R_DrawSequentialPoly (msurface_t *s)
 			theRect->h = 0;
 			theRect->w = 0;
 		}
-		GX_SetTev1OpBlend();
+		GX_SetTevOpBlend(GX_TEVSTAGE1);
 		GX_Begin(GX_TRIANGLEFAN, gxu_cur_vertex_format, p->numverts);
 		v = p->verts[0];
 		for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)

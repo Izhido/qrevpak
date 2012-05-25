@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 #include "tr_local.h"
+#include "gxutils.h"
 
 
 /*
@@ -210,7 +211,8 @@ void RB_ShadowTessEnd( void ) {
 	// draw the silhouette edges
 
 	GX_Bind( tr.whiteImage );
-	qglEnable( GL_CULL_FACE );
+	gxu_cull_enabled = true;
+	qgxSetCullMode(gxu_cull_mode);
 	GL_State( GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO );
 	qglColor3f( 0.2f, 0.2f, 0.2f );
 
@@ -222,22 +224,26 @@ void RB_ShadowTessEnd( void ) {
 
 	// mirrors have the culling order reversed
 	if ( backEnd.viewParms.isMirror ) {
-		qglCullFace( GL_FRONT );
+		gxu_cull_mode = GX_CULL_BACK;
+		qgxSetCullMode(gxu_cull_mode);
 		qglStencilOp( GL_KEEP, GL_KEEP, GL_INCR );
 
 		R_RenderShadowEdges();
 
-		qglCullFace( GL_BACK );
+		gxu_cull_mode = GX_CULL_FRONT;
+		qgxSetCullMode(gxu_cull_mode);
 		qglStencilOp( GL_KEEP, GL_KEEP, GL_DECR );
 
 		R_RenderShadowEdges();
 	} else {
-		qglCullFace( GL_BACK );
+		gxu_cull_mode = GX_CULL_FRONT;
+		qgxSetCullMode(gxu_cull_mode);
 		qglStencilOp( GL_KEEP, GL_KEEP, GL_INCR );
 
 		R_RenderShadowEdges();
 
-		qglCullFace( GL_FRONT );
+		gxu_cull_mode = GX_CULL_BACK;
+		qgxSetCullMode(gxu_cull_mode);
 		qglStencilOp( GL_KEEP, GL_KEEP, GL_DECR );
 
 		R_RenderShadowEdges();
@@ -270,7 +276,8 @@ void RB_ShadowFinish( void ) {
 	qglStencilFunc( GL_NOTEQUAL, 0, 255 );
 
 	qglDisable (GL_CLIP_PLANE0);
-	qglDisable (GL_CULL_FACE);
+	gxu_cull_enabled = false;
+	qgxSetCullMode(GX_CULL_NONE);
 
 	GX_Bind( tr.whiteImage );
 

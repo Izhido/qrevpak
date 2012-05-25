@@ -41,6 +41,7 @@ extern	void ( APIENTRY * qguMtxScale) (Mtx mt, f32 xS, f32 yS, f32 zS);
 extern  void ( APIENTRY * qguMtxTrans )(Mtx mt, f32 xT, f32 yT, f32 zT);
 extern  void ( APIENTRY * qguOrtho )(Mtx44 mt, f32 t, f32 b, f32 l, f32 r, f32 n, f32 f);
 extern  void ( APIENTRY * qguPerspective )(Mtx44 mt, f32 fovy, f32 aspect, f32 n, f32 f);
+extern  void ( APIENTRY * qguSetTevOpAdd )(u8 stage);
 extern  void ( APIENTRY * qgxBegin )(u8 primitve, u8 vtxfmt, u16 vtxcnt);
 extern  void ( APIENTRY * qgxColor4u8 )(u8 r, u8 g, u8 b, u8 a);
 extern  void ( APIENTRY * qgxDisableTexStage1 )(void);

@@ -52,6 +52,24 @@
     <Filter Include="Header Files\code\revol">
       <UniqueIdentifier>{3003e441-e2b6-4c4c-8e47-d5b28cd8fbdd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\oggplayer">
+      <UniqueIdentifier>{8e955477-50f7-45c0-aa87-c3ae4e1ae2cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\oskrevol">
+      <UniqueIdentifier>{62d21783-5f24-4d30-81f4-232a62b15351}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\gxutils">
+      <UniqueIdentifier>{73b16f49-ffe2-478f-b234-efdb61267731}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\gxutils">
+      <UniqueIdentifier>{788ade16-68f9-4298-a8c1-e2a963b79533}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\oggplayer">
+      <UniqueIdentifier>{c39a86a4-27ef-44f7-bc55-426949078c79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\oskrevol">
+      <UniqueIdentifier>{f87216d1-9647-41a1-b973-4a21850ff0fc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_client.c">
@@ -366,6 +384,15 @@
     <ClCompile Include="..\..\source\quake3-1.32b\code\revol\revol_qgx.c">
       <Filter>Source Files\code\revol</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\oggplayer\source\oggplayer.c">
+      <Filter>Source Files\oggplayer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\oskrevol\source\osk_revol.c">
+      <Filter>Source Files\oskrevol</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\gxutils\source\gxutils.c">
+      <Filter>Source Files\gxutils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Makefile" />
@@ -508,6 +535,15 @@
     </ClInclude>
     <ClInclude Include="..\..\source\quake3-1.32b\code\revol\revol_glw.h">
       <Filter>Header Files\code\revol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\gxutils\include\gxutils.h">
+      <Filter>Header Files\gxutils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\oggplayer\include\oggplayer.h">
+      <Filter>Header Files\oggplayer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\oskrevol\include\osk_revol.h">
+      <Filter>Header Files\oskrevol</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

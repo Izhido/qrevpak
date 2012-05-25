@@ -1144,8 +1144,8 @@ void	GX_SelectTexture( int unit );
 void	GL_TextureMode( const char *string );
 void	GL_CheckErrors( void );
 void	GL_State( unsigned long stateVector );
-void	GL_TexEnv( int env );
-void	GL_Cull( int cullType );
+void	GX_TexEnv( int env );
+void	GX_Cull( int cullType );
 
 #define GLS_SRCBLEND_ZERO						0x00000001
 #define GLS_SRCBLEND_ONE						0x00000002

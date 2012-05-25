@@ -1029,7 +1029,7 @@ void RB_StageIteratorGeneric( void )
 	//
 	// set face culling appropriately
 	//
-	GL_Cull( input->shader->cullType );
+	GX_Cull( input->shader->cullType );
 
 	// set polygon offset if necessary
 	if ( input->shader->polygonOffset )
@@ -1149,7 +1149,7 @@ void RB_StageIteratorVertexLitTexture( void )
 	//
 	// set face culling appropriately
 	//
-	GL_Cull( input->shader->cullType );
+	GX_Cull( input->shader->cullType );
 
 	//
 	// set arrays and lock
@@ -1217,7 +1217,7 @@ void RB_StageIteratorLightmappedMultitexture( void ) {
 	//
 	// set face culling appropriately
 	//
-	GL_Cull( input->shader->cullType );
+	GX_Cull( input->shader->cullType );
 
 	//
 	// set color, pointers, and lock

@@ -11,6 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\source\gxutils\source\gxutils.c" />
+    <ClCompile Include="..\..\source\oggplayer\source\oggplayer.c" />
+    <ClCompile Include="..\..\source\oskrevol\source\osk_revol.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\client\cl_cgame.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\client\cl_cin.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\client\cl_console.c" />
@@ -120,6 +123,9 @@
     <None Include="Makefile" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\source\gxutils\include\gxutils.h" />
+    <ClInclude Include="..\..\source\oggplayer\include\oggplayer.h" />
+    <ClInclude Include="..\..\source\oskrevol\include\osk_revol.h" />
     <ClInclude Include="..\..\source\quake3-1.32b\code\client\client.h" />
     <ClInclude Include="..\..\source\quake3-1.32b\code\client\keys.h" />
     <ClInclude Include="..\..\source\quake3-1.32b\code\client\snd_local.h" />

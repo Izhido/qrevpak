@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // tr_init.c -- functions that are not called every frame
 
 #include "tr_local.h"
+#include "gxutils.h"
 
 glconfig_t	glConfig;
 glstate_t	glState;
@@ -704,8 +705,6 @@ void GL_SetDefaultState( void )
 {
 	qglClearDepth( 1.0f );
 
-	qglCullFace(GL_FRONT);
-
 	qglColor4f (1,1,1,1);
 
 	// initialize downstream texture unit if we're running
@@ -738,7 +737,9 @@ void GL_SetDefaultState( void )
 	qglDepthMask( GL_TRUE );
 	qglDisable( GL_DEPTH_TEST );
 	qglEnable( GL_SCISSOR_TEST );
-	qglDisable( GL_CULL_FACE );
+	gxu_cull_enabled = false;
+	qgxSetCullMode(GX_CULL_NONE);
+	gxu_cull_mode = GX_CULL_FRONT;
 	qglDisable( GL_BLEND );
 }
 

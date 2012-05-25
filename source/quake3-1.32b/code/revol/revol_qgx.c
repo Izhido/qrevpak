@@ -46,6 +46,7 @@ void ( APIENTRY * qguMtxScale) (Mtx mt, f32 xS, f32 yS, f32 zS);
 void ( APIENTRY * qguMtxTrans )(Mtx mt, f32 xT, f32 yT, f32 zT);
 void ( APIENTRY * qguOrtho )(Mtx44 mt, f32 t, f32 b, f32 l, f32 r, f32 n, f32 f);
 void ( APIENTRY * qguPerspective )(Mtx44 mt, f32 fovy, f32 aspect, f32 n, f32 f);
+void ( APIENTRY * qguSetTevOpAdd )(u8 stage);
 void ( APIENTRY * qgxBegin )(u8 primitve, u8 vtxfmt, u16 vtxcnt);
 void ( APIENTRY * qgxColor4u8 )(u8 r, u8 g, u8 b, u8 a);
 void ( APIENTRY * qgxDisableTexStage1 )(void);
@@ -108,6 +109,7 @@ static void ( APIENTRY * dllSetBlendMode )(u8 type, u8 src_fact, u8 dst_fact, u8
 static void ( APIENTRY * dllSetCullMode )(u8 mode);
 static void ( APIENTRY * dllSetScissor )(u32 xOrigin, u32 yOrigin, u32 wd, u32 ht);
 static void ( APIENTRY * dllSetTevOp )(u8 tevstage, u8 mode);
+static void ( APIENTRY * dllSetTevOpAdd )(u8 stage);
 static void ( APIENTRY * dllSetViewport )(f32 xOrig, f32 yOrig, f32 wd, f32 ht, f32 nearZ, f32 farZ);
 static void ( APIENTRY * dllSetVtxDesc )(u8 attr, u8 type);
 static void ( APIENTRY * dllSetZMode )(u8 enable, u8 func, u8 update_enable);
@@ -289,6 +291,11 @@ static void APIENTRY logSetTevOp(u8 tevstage, u8 mode)
 	fprintf( glw_state.log_fp, "GX_SetTevOp( 0x%x, 0x%x )\n", tevstage, mode );
 	dllSetTevOp( tevstage, mode );
 }
+static void APIENTRY logSetTevOpAdd(u8 stage)
+{
+	fprintf( glw_state.log_fp, "GXU_SetTevOpAdd( 0x%x )\n", stage );
+	dllSetTevOpAdd( stage );
+}
 static void APIENTRY logSetViewport(f32 xOrig, f32 yOrig, f32 wd, f32 ht, f32 nearZ, f32 farZ)
 {
 	SIG( "GX_SetViewport" );
@@ -326,6 +333,7 @@ void QGL_Shutdown( void )
 	qguMtxTrans                  = NULL;
 	qguOrtho                     = NULL;
 	qguPerspective               = NULL;
+	qguSetTevOpAdd               = NULL;
 	qgxBegin                     = NULL;
 	qgxColor4u8                  = NULL;
 	qgxDisableTexStage1          = NULL;
@@ -374,6 +382,7 @@ qboolean QGL_Init( const char *dllname )
 	qguMtxScale                  = dllMtxScale = guMtxScale;
 	qguOrtho                     = dllOrtho = guOrtho;
 	qguPerspective               = dllPerspective = guPerspective;
+	qguSetTevOpAdd               = dllSetTevOpAdd = guSetTevOpAdd;
 	qguMtxTrans                  = dllMtxTrans = guMtxTrans;
 	qgxBegin                     = dllBegin = GX_Begin;
 	qgxColor4u8                  = dllColor4u8 = GX_Color4u8;
@@ -460,6 +469,7 @@ void QGL_EnableLogging( qboolean enable ) {
 		qguMtxTrans                  = logMtxTrans;
 		qguOrtho                     = logOrtho;
 		qguPerspective               = logPerspective;
+		qguSetTevOpAdd               = logSetTevOpAdd;
 		qgxBegin                     = logBegin;
 		qgxColor4u8                  = logColor4u8;
 		qgxDisableTexStage1          = logDisableTexStage1 ;
@@ -497,6 +507,7 @@ void QGL_EnableLogging( qboolean enable ) {
 		qguMtxTrans                  = dllMtxTrans;
 		qguOrtho                     = dllOrtho;
 		qguPerspective               = dllPerspective;
+		qguSetTevOpAdd               = dllSetTevOpAdd;
 		qgxBegin                     = dllBegin;
 		qgxColor4u8                  = dllColor4u8;
 		qgxDisableTexStage1          = dllDisableTexStage1 ;

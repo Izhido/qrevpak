@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 #include "tr_local.h"
+#include "gxutils.h"
 
 backEndData_t	*backEndData[SMP_FRAMES];
 backEndState_t	backEnd;
@@ -83,9 +84,9 @@ void GX_SelectTexture( int unit )
 
 
 /*
-** GL_BindMultitexture
+** GX_BindMultitexture
 */
-void GL_BindMultitexture( image_t *image0, GLuint env0, image_t *image1, GLuint env1 ) {
+void GX_BindMultitexture( image_t *image0, u32 env0, image_t *image1, u32 env1 ) {
 	int		texnum0, texnum1;
 
 	texnum0 = image0->texnum;
@@ -99,21 +100,23 @@ void GL_BindMultitexture( image_t *image0, GLuint env0, image_t *image1, GLuint 
 		GX_SelectTexture( 1 );
 		image1->frameUsed = tr.frameCount;
 		glState.currenttextures[1] = texnum1;
-		qglBindTexture( GL_TEXTURE_2D, texnum1 );
+		if(gxtexobjs[texnum1].data != NULL)
+			qgxLoadTexObj(&gxtexobjs[texnum1].texobj, GX_TEXMAP1 );
 	}
 	if ( glState.currenttextures[0] != texnum0 ) {
 		GX_SelectTexture( 0 );
 		image0->frameUsed = tr.frameCount;
 		glState.currenttextures[0] = texnum0;
-		qglBindTexture( GL_TEXTURE_2D, texnum0 );
+		if(gxtexobjs[texnum0].data != NULL)
+			qgxLoadTexObj(&gxtexobjs[texnum0].texobj, GX_TEXMAP0 );
 	}
 }
 
 
 /*
-** GL_Cull
+** GX_Cull
 */
-void GL_Cull( int cullType ) {
+void GX_Cull( int cullType ) {
 	if ( glState.faceCulling == cullType ) {
 		return;
 	}
@@ -122,41 +125,42 @@ void GL_Cull( int cullType ) {
 
 	if ( cullType == CT_TWO_SIDED ) 
 	{
-		qglDisable( GL_CULL_FACE );
+		gxu_cull_enabled = false;
+		qgxSetCullMode(GX_CULL_NONE);
 	} 
 	else 
 	{
-		qglEnable( GL_CULL_FACE );
-
 		if ( cullType == CT_BACK_SIDED )
 		{
 			if ( backEnd.viewParms.isMirror )
 			{
-				qglCullFace( GL_FRONT );
+				gxu_cull_mode = GX_CULL_BACK;
 			}
 			else
 			{
-				qglCullFace( GL_BACK );
+				gxu_cull_mode = GX_CULL_FRONT;
 			}
 		}
 		else
 		{
 			if ( backEnd.viewParms.isMirror )
 			{
-				qglCullFace( GL_BACK );
+				gxu_cull_mode = GX_CULL_FRONT;
 			}
 			else
 			{
-				qglCullFace( GL_FRONT );
+				gxu_cull_mode = GX_CULL_BACK;
 			}
 		}
+		gxu_cull_enabled = true;
+		qgxSetCullMode(gxu_cull_mode);
 	}
 }
 
 /*
-** GL_TexEnv
+** GX_TexEnv
 */
-void GL_TexEnv( int env )
+void GX_TexEnv( int env )
 {
 	if ( env == glState.texEnv[glState.currenttmu] )
 	{
@@ -168,17 +172,12 @@ void GL_TexEnv( int env )
 
 	switch ( env )
 	{
-	case GL_MODULATE:
-		qglTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
-		break;
-	case GL_REPLACE:
-		qglTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE );
-		break;
-	case GL_DECAL:
-		qglTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL );
-		break;
-	case GL_ADD:
-		qglTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_ADD );
+	case GX_MODULATE:
+	case GX_REPLACE:
+	case GX_DECAL:
+		qgxSetTevOp( GX_TEVSTAGE0 + glState.currenttmu, env );
+	case GXU_TEVOP_ADD:
+		qguSetTevOpAdd( GX_TEVSTAGE0 + glState.currenttmu );
 		break;
 	default:
 		ri.Error( ERR_DROP, "GL_TexEnv: invalid env '%d' passed\n", env );
@@ -693,7 +692,8 @@ void	RB_SetGL2D (void) {
 			  GLS_SRCBLEND_SRC_ALPHA |
 			  GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA );
 
-	qglDisable( GL_CULL_FACE );
+	gxu_cull_enabled = false;
+	qgxSetCullMode(GX_CULL_NONE);
 	qglDisable( GL_CLIP_PLANE0 );
 
 	// set time for 2D shaders

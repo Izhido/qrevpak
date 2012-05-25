@@ -313,3 +313,21 @@ unsigned char* GX_CopyTexIA4(unsigned char* src, int width, int height, unsigned
 	};
 	return dst;
 }
+
+void GXU_SetTevOpBlend(u8 stage)
+{
+	// This differs from the original GX_SetTevOp(GX_TEVSTAGE1, GX_BLEND) in one extra sum
+	// that causes an incorrect application of the lightmap textures:
+	GX_SetTevColorIn(stage, GX_CC_CPREV, GX_CC_ZERO, GX_CC_TEXC, GX_CC_ZERO);
+	GX_SetTevAlphaIn(stage, GX_CA_ZERO, GX_CA_TEXA, GX_CA_APREV, GX_CA_RASA);
+	GX_SetTevColorOp(stage, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+	GX_SetTevAlphaOp(stage, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+}
+
+void GXU_SetTevOpAdd(u8 stage)
+{
+	GX_SetTevColorIn(stage, GX_CC_CPREV, GX_CC_ZERO, GX_CC_ONE, GX_CC_CPREV);
+	GX_SetTevAlphaIn(stage, GX_CA_ZERO, GX_CA_TEXA, GX_CA_APREV, GX_CA_RASA);
+	GX_SetTevColorOp(stage, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+	GX_SetTevAlphaOp(stage, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+}

@@ -1438,7 +1438,7 @@ void R_DebugGraphics( void ) {
 	R_SyncRenderThread();
 
 	GX_Bind( tr.whiteImage);
-	GL_Cull( CT_FRONT_SIDED );
+	GX_Cull( CT_FRONT_SIDED );
 	ri.CM_DrawDebugSurface( R_DebugPolygon );
 }
 
