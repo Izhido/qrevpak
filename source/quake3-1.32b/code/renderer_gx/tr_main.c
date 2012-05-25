@@ -1437,7 +1437,7 @@ void R_DebugGraphics( void ) {
 	// the render thread can't make callbacks to the main thread
 	R_SyncRenderThread();
 
-	GL_Bind( tr.whiteImage);
+	GX_Bind( tr.whiteImage);
 	GL_Cull( CT_FRONT_SIDED );
 	ri.CM_DrawDebugSurface( R_DebugPolygon );
 }

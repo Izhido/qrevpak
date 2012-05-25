@@ -1747,7 +1747,7 @@ static qboolean CollapseMultitexture( void ) {
 	int i;
 	textureBundle_t tmpBundle;
 
-	if ( !qglActiveTextureARB ) {
+	if ( GX_TEXTURE0 == GX_TEXTURE1 ) {
 		return qfalse;
 	}
 

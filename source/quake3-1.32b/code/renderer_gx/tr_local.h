@@ -964,6 +964,22 @@ extern trGlobals_t	tr;
 extern glconfig_t	glConfig;		// outside of TR since it shouldn't be cleared during ref re-init
 extern glstate_t	glState;		// outside of TR since it shouldn't be cleared during ref re-init
 
+/*
+** gxtexobj_t 
+**
+** Contains references to texture objects required by the GX hardware.
+*/
+typedef struct
+{
+	GXTexObj texobj;
+	u16 width;
+	u16 height;
+	void* data;
+	u32 length;
+} gxtexobj_t;
+
+extern gxtexobj_t	gxtexobjs[1024 + MAX_DRAWIMAGES];
+
 
 //
 // cvars
@@ -1120,11 +1136,11 @@ int R_CullLocalPointAndRadius( vec3_t origin, float radius );
 void R_RotateForEntity( const trRefEntity_t *ent, const viewParms_t *viewParms, orientationr_t *or );
 
 /*
-** GL wrapper/helper functions
+** GX wrapper/helper functions
 */
-void	GL_Bind( image_t *image );
+void	GX_Bind( image_t *image );
 void	GL_SetDefaultState (void);
-void	GL_SelectTexture( int unit );
+void	GX_SelectTexture( int unit );
 void	GL_TextureMode( const char *string );
 void	GL_CheckErrors( void );
 void	GL_State( unsigned long stateVector );

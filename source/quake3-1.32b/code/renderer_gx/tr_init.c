@@ -148,13 +148,6 @@ int		max_polys;
 cvar_t	*r_maxpolyverts;
 int		max_polyverts;
 
-void ( APIENTRY * qglMultiTexCoord2fARB )( GLenum texture, GLfloat s, GLfloat t );
-void ( APIENTRY * qglActiveTextureARB )( GLenum texture );
-void ( APIENTRY * qglClientActiveTextureARB )( GLenum texture );
-
-void ( APIENTRY * qglLockArraysEXT)( GLint, GLint);
-void ( APIENTRY * qglUnlockArraysEXT) ( void );
-
 static void AssertCvarRange( cvar_t *cv, float minVal, float maxVal, qboolean shouldBeIntegral )
 {
 	if ( shouldBeIntegral )
@@ -717,12 +710,12 @@ void GL_SetDefaultState( void )
 
 	// initialize downstream texture unit if we're running
 	// in a multitexture environment
-	if ( qglActiveTextureARB ) {
-		GL_SelectTexture( 1 );
+	if ( GX_TEXTURE0 != GX_TEXTURE1 ) {
+		GX_SelectTexture( 1 );
 		GL_TextureMode( r_textureMode->string );
 		GL_TexEnv( GL_MODULATE );
 		qglDisable( GL_TEXTURE_2D );
-		GL_SelectTexture( 0 );
+		GX_SelectTexture( 0 );
 	}
 
 	qglEnable(GL_TEXTURE_2D);
@@ -823,7 +816,7 @@ void GfxInfo_f( void )
 	ri.Printf( PRINT_ALL, "texturemode: %s\n", r_textureMode->string );
 	ri.Printf( PRINT_ALL, "picmip: %d\n", r_picmip->integer );
 	ri.Printf( PRINT_ALL, "texture bits: %d\n", r_texturebits->integer );
-	ri.Printf( PRINT_ALL, "multitexture: %s\n", enablestrings[qglActiveTextureARB != 0] );
+	ri.Printf( PRINT_ALL, "multitexture: %s\n", enablestrings[ GX_TEXTURE0 != GX_TEXTURE1 ] );
 	ri.Printf( PRINT_ALL, "compiled vertex arrays: %s\n", enablestrings[qglLockArraysEXT != 0 ] );
 	ri.Printf( PRINT_ALL, "texenv add: %s\n", enablestrings[glConfig.textureEnvAddAvailable != 0] );
 	ri.Printf( PRINT_ALL, "compressed textures: %s\n", enablestrings[glConfig.textureCompression!=TC_NONE] );
@@ -1021,6 +1014,7 @@ void R_Init( void ) {
 	Com_Memset( &tr, 0, sizeof( tr ) );
 	Com_Memset( &backEnd, 0, sizeof( backEnd ) );
 	Com_Memset( &tess, 0, sizeof( tess ) );
+	Com_Memset( &gxtexobjs, 0, sizeof( gxtexobjs ) );
 
 //	Swap_Init();
 

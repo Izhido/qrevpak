@@ -209,7 +209,7 @@ void RB_ShadowTessEnd( void ) {
 
 	// draw the silhouette edges
 
-	GL_Bind( tr.whiteImage );
+	GX_Bind( tr.whiteImage );
 	qglEnable( GL_CULL_FACE );
 	GL_State( GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO );
 	qglColor3f( 0.2f, 0.2f, 0.2f );
@@ -272,7 +272,7 @@ void RB_ShadowFinish( void ) {
 	qglDisable (GL_CLIP_PLANE0);
 	qglDisable (GL_CULL_FACE);
 
-	GL_Bind( tr.whiteImage );
+	GX_Bind( tr.whiteImage );
 
     qglLoadIdentity ();
 

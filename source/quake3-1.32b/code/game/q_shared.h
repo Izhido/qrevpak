@@ -342,6 +342,11 @@ static float LittleFloat (const float *l) { return FloatSwap(l); }
 #define LittleLong Sys_LittleLong
 #define BigFloat
 #define LittleFloat Sys_LittleFloat
+
+short Sys_LittleShort(short l);
+int Sys_LittleLong (int l);
+float Sys_LittleFloat (const float l);
+
 // <<< FIX
 
 //=============================================================

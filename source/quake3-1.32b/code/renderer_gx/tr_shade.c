@@ -224,7 +224,7 @@ static void R_BindAnimatedImage( textureBundle_t *bundle ) {
 	}
 
 	if ( bundle->numImageAnimations <= 1 ) {
-		GL_Bind( bundle->image[0] );
+		GX_Bind( bundle->image[0] );
 		return;
 	}
 
@@ -238,7 +238,7 @@ static void R_BindAnimatedImage( textureBundle_t *bundle ) {
 	}
 	index %= bundle->numImageAnimations;
 
-	GL_Bind( bundle->image[ index ] );
+	GX_Bind( bundle->image[ index ] );
 }
 
 /*
@@ -249,7 +249,7 @@ Draws triangle outlines for debugging
 ================
 */
 static void DrawTris (shaderCommands_t *input) {
-	GL_Bind( tr.whiteImage );
+	GX_Bind( tr.whiteImage );
 	qglColor3f (1,1,1);
 
 	GL_State( GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE );
@@ -286,7 +286,7 @@ static void DrawNormals (shaderCommands_t *input) {
 	int		i;
 	vec3_t	temp;
 
-	GL_Bind( tr.whiteImage );
+	GX_Bind( tr.whiteImage );
 	qglColor3f (1,1,1);
 	qglDepthRange( 0, 0 );	// never occluded
 	GL_State( GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE );
@@ -358,14 +358,14 @@ static void DrawMultitextured( shaderCommands_t *input, int stage ) {
 	//
 	// base
 	//
-	GL_SelectTexture( 0 );
+	GX_SelectTexture( 0 );
 	qglTexCoordPointer( 2, GL_FLOAT, 0, input->svars.texcoords[0] );
 	R_BindAnimatedImage( &pStage->bundle[0] );
 
 	//
 	// lightmap/secondary pass
 	//
-	GL_SelectTexture( 1 );
+	GX_SelectTexture( 1 );
 	qglEnable( GL_TEXTURE_2D );
 	qglEnableClientState( GL_TEXTURE_COORD_ARRAY );
 
@@ -387,7 +387,7 @@ static void DrawMultitextured( shaderCommands_t *input, int stage ) {
 	//qglDisableClientState( GL_TEXTURE_COORD_ARRAY );
 	qglDisable( GL_TEXTURE_2D );
 
-	GL_SelectTexture( 0 );
+	GX_SelectTexture( 0 );
 }
 
 
@@ -593,7 +593,7 @@ static void ProjectDlightTexture( void ) {
 		qglEnableClientState( GL_COLOR_ARRAY );
 		qglColorPointer( 4, GL_UNSIGNED_BYTE, 0, colorArray );
 
-		GL_Bind( tr.dlightImage );
+		GX_Bind( tr.dlightImage );
 		// include GLS_DEPTHFUNC_EQUAL so alpha tested surfaces don't add light
 		// where they aren't rendered
 		if ( dl->additive ) {
@@ -634,7 +634,7 @@ static void RB_FogPass( void ) {
 
 	RB_CalcFogTexCoords( ( float * ) tess.svars.texcoords[0] );
 
-	GL_Bind( tr.fogImage );
+	GX_Bind( tr.fogImage );
 
 	if ( tess.shader->fogPass == FP_EQUAL ) {
 		GL_State( GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA | GLS_DEPTHFUNC_EQUAL );
@@ -984,7 +984,7 @@ static void RB_IterateStagesGeneric( shaderCommands_t *input )
 			//
 			if ( pStage->bundle[0].vertexLightmap && ( (r_vertexLight->integer && !r_uiFullScreen->integer) || glConfig.hardwareType == GLHW_PERMEDIA2 ) && r_lightmap->integer )
 			{
-				GL_Bind( tr.whiteImage );
+				GX_Bind( tr.whiteImage );
 			}
 			else 
 				R_BindAnimatedImage( &pStage->bundle[0] );
@@ -1237,7 +1237,7 @@ void RB_StageIteratorLightmappedMultitexture( void ) {
 	//
 	// select base stage
 	//
-	GL_SelectTexture( 0 );
+	GX_SelectTexture( 0 );
 
 	qglEnableClientState( GL_TEXTURE_COORD_ARRAY );
 	R_BindAnimatedImage( &tess.xstages[0]->bundle[0] );
@@ -1246,7 +1246,7 @@ void RB_StageIteratorLightmappedMultitexture( void ) {
 	//
 	// configure second stage
 	//
-	GL_SelectTexture( 1 );
+	GX_SelectTexture( 1 );
 	qglEnable( GL_TEXTURE_2D );
 	if ( r_lightmap->integer ) {
 		GL_TexEnv( GL_REPLACE );
@@ -1273,7 +1273,7 @@ void RB_StageIteratorLightmappedMultitexture( void ) {
 	qglDisable( GL_TEXTURE_2D );
 	qglDisableClientState( GL_TEXTURE_COORD_ARRAY );
 
-	GL_SelectTexture( 0 );
+	GX_SelectTexture( 0 );
 #ifdef REPLACE_MODE
 	GL_TexEnv( GL_MODULATE );
 	qglShadeModel( GL_SMOOTH );

@@ -365,7 +365,7 @@ static void DrawSkySide( struct image_s *image, const int mins[2], const int max
 {
 	int s, t;
 
-	GL_Bind( image );
+	GX_Bind( image );
 
 	for ( t = mins[1]+HALF_SKY_SUBDIVISIONS; t < maxs[1]+HALF_SKY_SUBDIVISIONS; t++ )
 	{

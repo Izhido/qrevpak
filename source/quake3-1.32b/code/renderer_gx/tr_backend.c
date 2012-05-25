@@ -34,25 +34,18 @@ static float	s_flipMatrix[16] = {
 	0, 0, 0, 1
 };
 
-typedef struct
-{
-	GXTexObj texobj;
-	u16 width;
-	u16 height;
-	void* data;
-	u32 length;
-} gxtexobj_t;
-
 gxtexobj_t	gxtexobjs[1024 + MAX_DRAWIMAGES];
 
+int GX_TEXTURE0, GX_TEXTURE1;
+
 /*
-** GL_Bind
+** GX_Bind
 */
-void GL_Bind( image_t *image ) {
+void GX_Bind( image_t *image ) {
 	int texnum;
 
 	if ( !image ) {
-		ri.Printf( PRINT_WARNING, "GL_Bind: NULL image\n" );
+		ri.Printf( PRINT_WARNING, "GX_Bind: NULL image\n" );
 		texnum = tr.defaultImage->texnum;
 	} else {
 		texnum = image->texnum;
@@ -71,30 +64,18 @@ void GL_Bind( image_t *image ) {
 }
 
 /*
-** GL_SelectTexture
+** GX_SelectTexture
 */
-void GL_SelectTexture( int unit )
+void GX_SelectTexture( int unit )
 {
 	if ( glState.currenttmu == unit )
 	{
 		return;
 	}
 
-	if ( unit == 0 )
+	if (( unit != 0 )&&( unit != 1 ))
 	{
-		qglActiveTextureARB( GL_TEXTURE0_ARB );
-		GLimp_LogComment( "glActiveTextureARB( GL_TEXTURE0_ARB )\n" );
-		qglClientActiveTextureARB( GL_TEXTURE0_ARB );
-		GLimp_LogComment( "glClientActiveTextureARB( GL_TEXTURE0_ARB )\n" );
-	}
-	else if ( unit == 1 )
-	{
-		qglActiveTextureARB( GL_TEXTURE1_ARB );
-		GLimp_LogComment( "glActiveTextureARB( GL_TEXTURE1_ARB )\n" );
-		qglClientActiveTextureARB( GL_TEXTURE1_ARB );
-		GLimp_LogComment( "glClientActiveTextureARB( GL_TEXTURE1_ARB )\n" );
-	} else {
-		ri.Error( ERR_DROP, "GL_SelectTexture: unit = %i", unit );
+		ri.Error( ERR_DROP, "GX_SelectTexture: unit = %i", unit );
 	}
 
 	glState.currenttmu = unit;
@@ -115,13 +96,13 @@ void GL_BindMultitexture( image_t *image0, GLuint env0, image_t *image1, GLuint 
 	}
 
 	if ( glState.currenttextures[1] != texnum1 ) {
-		GL_SelectTexture( 1 );
+		GX_SelectTexture( 1 );
 		image1->frameUsed = tr.frameCount;
 		glState.currenttextures[1] = texnum1;
 		qglBindTexture( GL_TEXTURE_2D, texnum1 );
 	}
 	if ( glState.currenttextures[0] != texnum0 ) {
-		GL_SelectTexture( 0 );
+		GX_SelectTexture( 0 );
 		image0->frameUsed = tr.frameCount;
 		glState.currenttextures[0] = texnum0;
 		qglBindTexture( GL_TEXTURE_2D, texnum0 );
@@ -756,7 +737,7 @@ void RE_StretchRaw (int x, int y, int w, int h, int cols, int rows, const byte *
 		ri.Error (ERR_DROP, "Draw_StretchRaw: size not a power of 2: %i by %i", cols, rows);
 	}
 
-	GL_Bind( tr.scratchImage[client] );
+	GX_Bind( tr.scratchImage[client] );
 
 	// if the scratchImage isn't in the format we want, specify it as a new texture
 	if ( cols != tr.scratchImage[client]->width || rows != tr.scratchImage[client]->height ) {
@@ -798,7 +779,7 @@ void RE_StretchRaw (int x, int y, int w, int h, int cols, int rows, const byte *
 
 void RE_UploadCinematic (int w, int h, int cols, int rows, const byte *data, int client, qboolean dirty) {
 
-	GL_Bind( tr.scratchImage[client] );
+	GX_Bind( tr.scratchImage[client] );
 
 	// if the scratchImage isn't in the format we want, specify it as a new texture
 	if ( cols != tr.scratchImage[client]->width || rows != tr.scratchImage[client]->height ) {
@@ -1001,7 +982,7 @@ void RB_ShowImages( void ) {
 			h *= image->uploadHeight / 512.0f;
 		}
 
-		GL_Bind( image );
+		GX_Bind( image );
 		qglBegin (GL_QUADS);
 		qglTexCoord2f( 0, 0 );
 		qglVertex2f( x, y );

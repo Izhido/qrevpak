@@ -22,11 +22,53 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../renderer_gx/tr_local.h"
 
 
+static void GLW_InitExtensions( void )
+{
+	if ( !r_allowExtensions->integer )
+	{
+		ri.Printf( PRINT_ALL, "*** IGNORING EXTENSIONS ***\n" );
+		return;
+	}
+
+	ri.Printf( PRINT_ALL, "Initializing extensions\n" );
+
+	// S3 texture compression
+	glConfig.textureCompression = TC_NONE;
+
+	// Texture environment add operation
+	if ( r_ext_texture_env_add->integer )
+	{
+		glConfig.textureEnvAddAvailable = qtrue;
+		ri.Printf( PRINT_ALL, "...using texture environment add operation\n" );
+	}
+	else
+	{
+		glConfig.textureEnvAddAvailable = qfalse;
+		ri.Printf( PRINT_ALL, "...ignoring texture environment add operation\n" );
+	}
+
+	// Multitexture
+	if ( r_ext_multitexture->integer )
+	{
+		ri.Printf( PRINT_ALL, "...using multitexture\n" );
+		GX_TEXTURE0 = GX_TEXMAP0;
+		GX_TEXTURE1 = GX_TEXMAP1;
+	}
+	else
+	{
+		ri.Printf( PRINT_ALL, "...ignoring multitexture\n" );
+		GX_TEXTURE0 = GX_TEXMAP0;
+		GX_TEXTURE1 = GX_TEXMAP0;
+	}
+}
+
+
 void		GLimp_EndFrame( void ) {
 }
 
 void 		GLimp_Init( void )
 {
+	GLW_InitExtensions();
 }
 
 void		GLimp_Shutdown( void ) {

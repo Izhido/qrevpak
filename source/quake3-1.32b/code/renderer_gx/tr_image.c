@@ -130,7 +130,7 @@ void GL_TextureMode( const char *string ) {
 	for ( i = 0 ; i < tr.numImages ; i++ ) {
 		glt = tr.images[ i ];
 		if ( glt->mipmap ) {
-			GL_Bind (glt);
+			GX_Bind (glt);
 			qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
 			qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
 		}
@@ -755,17 +755,17 @@ image_t *R_CreateImage( const char *name, const byte *pic, int width, int height
 	image->wrapClampMode = glWrapClampMode;
 
 	// lightmaps are always allocated on TMU 1
-	if ( qglActiveTextureARB && isLightmap ) {
+	if ( ( GX_TEXTURE0 != GX_TEXTURE1 ) && isLightmap ) {
 		image->TMU = 1;
 	} else {
 		image->TMU = 0;
 	}
 
-	if ( qglActiveTextureARB ) {
-		GL_SelectTexture( image->TMU );
+	if ( GX_TEXTURE0 != GX_TEXTURE1 ) {
+		GX_SelectTexture( image->TMU );
 	}
 
-	GL_Bind(image);
+	GX_Bind(image);
 
 	Upload32( (unsigned *)pic, image->width, image->height, 
 								image->mipmap,
@@ -781,7 +781,7 @@ image_t *R_CreateImage( const char *name, const byte *pic, int width, int height
 	qglBindTexture( GL_TEXTURE_2D, 0 );
 
 	if ( image->TMU == 1 ) {
-		GL_SelectTexture( 0 );
+		GX_SelectTexture( 0 );
 	}
 
 	hash = generateHashValue(name);
@@ -2233,10 +2233,10 @@ void R_DeleteTextures( void ) {
 
 	Com_Memset( glState.currenttextures, 0, sizeof( glState.currenttextures ) );
 	if ( qglBindTexture ) {
-		if ( qglActiveTextureARB ) {
-			GL_SelectTexture( 1 );
+		if ( GX_TEXTURE0 != GX_TEXTURE1 ) {
+			GX_SelectTexture( 1 );
 			qglBindTexture( GL_TEXTURE_2D, 0 );
-			GL_SelectTexture( 0 );
+			GX_SelectTexture( 0 );
 			qglBindTexture( GL_TEXTURE_2D, 0 );
 		} else {
 			qglBindTexture( GL_TEXTURE_2D, 0 );

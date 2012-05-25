@@ -73,4 +73,6 @@ extern	void ( APIENTRY * qgxSetPointSize)(u8 width, u8 fmt);
 extern  void ( APIENTRY * qgxInitTlutObj )(GXTlutObj *obj, void *lut, u8 fmt, u16 entries);
 extern	void ( APIENTRY * qgxLoadTlut)(GXTlutObj *obj, u32 tlut_name);
 
+extern int GX_TEXTURE0, GX_TEXTURE1;
+
 #endif
