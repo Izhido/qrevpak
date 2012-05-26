@@ -212,18 +212,18 @@ void GX_LoadAndBind (void* data, int length, int width, int height, int format)
 	switch(format)
 	{
 	case GX_TF_RGBA8:
-		GX_CopyTexRGBA8((byte*)data, width, height, (byte*)(gxtexobjs[texnum].data));
+		GXU_CopyTexRGBA8((byte*)data, width, height, (byte*)(gxtexobjs[texnum].data));
 		break;
 	case GX_TF_RGB5A3:
-		GX_CopyTexRGB5A3((byte*)data, width, height, (byte*)(gxtexobjs[texnum].data));
+		GXU_CopyTexRGB5A3((byte*)data, width, height, (byte*)(gxtexobjs[texnum].data));
 		break;
 	case GX_TF_CI8:
 	case GX_TF_I8:
 	case GX_TF_A8:
-		GX_CopyTexV8((byte*)data, width, height, (byte*)(gxtexobjs[texnum].data));
+		GXU_CopyTexV8((byte*)data, width, height, (byte*)(gxtexobjs[texnum].data));
 		break;
 	case GX_TF_IA4:
-		GX_CopyTexIA4((byte*)data, width, height, (byte*)(gxtexobjs[texnum].data));
+		GXU_CopyTexIA4((byte*)data, width, height, (byte*)(gxtexobjs[texnum].data));
 		break;
 	};
 	GX_BindCurrentTex(changed, format, GX_FALSE);
@@ -1411,11 +1411,11 @@ qboolean GX_Upload32 (unsigned *data, int width, int height,  qboolean mipmap)
 		{
 			uploaded_paletted = true;
 			GX_BuildPalettedTexture( paletted_texture, ( unsigned char * ) scaled, scaled_width, scaled_height );
-			dst = GX_CopyTexV8(paletted_texture, scaled_width, scaled_height, (byte*)(gxtexobjs[texnum].data));
+			dst = GXU_CopyTexV8(paletted_texture, scaled_width, scaled_height, (byte*)(gxtexobjs[texnum].data));
 		}
 		else
 		{
-			dst = GX_CopyTexRGBA8((byte*)scaled, scaled_width, scaled_height, (byte*)(gxtexobjs[texnum].data));
+			dst = GXU_CopyTexRGBA8((byte*)scaled, scaled_width, scaled_height, (byte*)(gxtexobjs[texnum].data));
 		};
 		while (scaled_width > 4 && scaled_height > 4)
 		{
@@ -1426,11 +1426,11 @@ qboolean GX_Upload32 (unsigned *data, int width, int height,  qboolean mipmap)
 			{
 				uploaded_paletted = true;
 				GX_BuildPalettedTexture( paletted_texture, ( unsigned char * ) scaled, scaled_width, scaled_height );
-				dst = GX_CopyTexV8(paletted_texture, scaled_width, scaled_height, dst);
+				dst = GXU_CopyTexV8(paletted_texture, scaled_width, scaled_height, dst);
 			}
 			else
 			{
-				dst = GX_CopyTexRGBA8((byte*)scaled, scaled_width, scaled_height, dst);
+				dst = GXU_CopyTexRGBA8((byte*)scaled, scaled_width, scaled_height, dst);
 			}
 		};
 		GX_BindCurrentTex(changed, GX_TF_RGBA8, GX_TRUE);

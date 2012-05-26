@@ -382,7 +382,7 @@ qboolean QGL_Init( const char *dllname )
 	qguMtxScale                  = dllMtxScale = guMtxScale;
 	qguOrtho                     = dllOrtho = guOrtho;
 	qguPerspective               = dllPerspective = guPerspective;
-	qguSetTevOpAdd               = dllSetTevOpAdd = guSetTevOpAdd;
+	qguSetTevOpAdd               = dllSetTevOpAdd = GXU_SetTevOpAdd;
 	qguMtxTrans                  = dllMtxTrans = guMtxTrans;
 	qgxBegin                     = dllBegin = GX_Begin;
 	qgxColor4u8                  = dllColor4u8 = GX_Color4u8;

@@ -180,7 +180,7 @@ void GX_TexEnv( int env )
 		qguSetTevOpAdd( GX_TEVSTAGE0 + glState.currenttmu );
 		break;
 	default:
-		ri.Error( ERR_DROP, "GL_TexEnv: invalid env '%d' passed\n", env );
+		ri.Error( ERR_DROP, "GX_TexEnv: invalid env '%d' passed\n", env );
 		break;
 	}
 }
@@ -207,11 +207,13 @@ void GL_State( unsigned long stateBits )
 	{
 		if ( stateBits & GLS_DEPTHFUNC_EQUAL )
 		{
-			qglDepthFunc( GL_EQUAL );
+			gxu_cur_z_func = GX_EQUAL;
+			GX_SetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 		}
 		else
 		{
-			qglDepthFunc( GL_LEQUAL );
+			gxu_cur_z_func = GX_LEQUAL;
+			GX_SetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 		}
 	}
 
@@ -220,41 +222,39 @@ void GL_State( unsigned long stateBits )
 	//
 	if ( diff & ( GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS ) )
 	{
-		GLenum srcFactor, dstFactor;
-
 		if ( stateBits & ( GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS ) )
 		{
 			switch ( stateBits & GLS_SRCBLEND_BITS )
 			{
 			case GLS_SRCBLEND_ZERO:
-				srcFactor = GL_ZERO;
+				gxu_blend_src_value = GX_BL_ZERO;
 				break;
 			case GLS_SRCBLEND_ONE:
-				srcFactor = GL_ONE;
+				gxu_blend_src_value = GX_BL_ONE;
 				break;
 			case GLS_SRCBLEND_DST_COLOR:
-				srcFactor = GL_DST_COLOR;
+				gxu_blend_src_value = GX_BL_DSTCLR;
 				break;
 			case GLS_SRCBLEND_ONE_MINUS_DST_COLOR:
-				srcFactor = GL_ONE_MINUS_DST_COLOR;
+				gxu_blend_src_value = GX_BL_INVDSTCLR;
 				break;
 			case GLS_SRCBLEND_SRC_ALPHA:
-				srcFactor = GL_SRC_ALPHA;
+				gxu_blend_src_value = GX_BL_SRCALPHA;
 				break;
 			case GLS_SRCBLEND_ONE_MINUS_SRC_ALPHA:
-				srcFactor = GL_ONE_MINUS_SRC_ALPHA;
+				gxu_blend_src_value = GX_BL_INVSRCALPHA;
 				break;
 			case GLS_SRCBLEND_DST_ALPHA:
-				srcFactor = GL_DST_ALPHA;
+				gxu_blend_src_value = GX_BL_DSTALPHA;
 				break;
 			case GLS_SRCBLEND_ONE_MINUS_DST_ALPHA:
-				srcFactor = GL_ONE_MINUS_DST_ALPHA;
+				gxu_blend_src_value = GX_BL_INVDSTALPHA;
 				break;
 			case GLS_SRCBLEND_ALPHA_SATURATE:
-				srcFactor = GL_SRC_ALPHA_SATURATE;
+				gxu_blend_src_value = GX_BL_SRCALPHA/*************************GL_SRC_ALPHA_SATURATE*/;
 				break;
 			default:
-				srcFactor = GL_ONE;		// to get warning to shut up
+				gxu_blend_src_value = GX_BL_ONE;		// to get warning to shut up
 				ri.Error( ERR_DROP, "GL_State: invalid src blend state bits\n" );
 				break;
 			}
@@ -262,41 +262,40 @@ void GL_State( unsigned long stateBits )
 			switch ( stateBits & GLS_DSTBLEND_BITS )
 			{
 			case GLS_DSTBLEND_ZERO:
-				dstFactor = GL_ZERO;
+				gxu_blend_dst_value = GX_BL_ZERO;
 				break;
 			case GLS_DSTBLEND_ONE:
-				dstFactor = GL_ONE;
+				gxu_blend_dst_value = GX_BL_ONE;
 				break;
 			case GLS_DSTBLEND_SRC_COLOR:
-				dstFactor = GL_SRC_COLOR;
+				gxu_blend_dst_value = GX_BL_SRCCLR;
 				break;
 			case GLS_DSTBLEND_ONE_MINUS_SRC_COLOR:
-				dstFactor = GL_ONE_MINUS_SRC_COLOR;
+				gxu_blend_dst_value = GX_BL_INVSRCCLR;
 				break;
 			case GLS_DSTBLEND_SRC_ALPHA:
-				dstFactor = GL_SRC_ALPHA;
+				gxu_blend_dst_value = GX_BL_SRCALPHA;
 				break;
 			case GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA:
-				dstFactor = GL_ONE_MINUS_SRC_ALPHA;
+				gxu_blend_dst_value = GX_BL_INVSRCALPHA;
 				break;
 			case GLS_DSTBLEND_DST_ALPHA:
-				dstFactor = GL_DST_ALPHA;
+				gxu_blend_dst_value = GX_BL_DSTALPHA;
 				break;
 			case GLS_DSTBLEND_ONE_MINUS_DST_ALPHA:
-				dstFactor = GL_ONE_MINUS_DST_ALPHA;
+				gxu_blend_dst_value = GX_BL_INVDSTALPHA;
 				break;
 			default:
-				dstFactor = GL_ONE;		// to get warning to shut up
+				gxu_blend_dst_value = GX_BL_ONE;		// to get warning to shut up
 				ri.Error( ERR_DROP, "GL_State: invalid dst blend state bits\n" );
 				break;
 			}
 
-			qglEnable( GL_BLEND );
-			qglBlendFunc( srcFactor, dstFactor );
+			qgxSetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 		}
 		else
 		{
-			qglDisable( GL_BLEND );
+			qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 		}
 	}
 
@@ -307,11 +306,13 @@ void GL_State( unsigned long stateBits )
 	{
 		if ( stateBits & GLS_DEPTHMASK_TRUE )
 		{
-			qglDepthMask( GL_TRUE );
+			gxu_z_write_enabled = GX_TRUE;
+			qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 		}
 		else
 		{
-			qglDepthMask( GL_FALSE );
+			gxu_z_write_enabled = GX_FALSE;
+			qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 		}
 	}
 
@@ -322,11 +323,13 @@ void GL_State( unsigned long stateBits )
 	{
 		if ( stateBits & GLS_POLYMODE_LINE )
 		{
-			qglPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+			// This is not yet available in the current platform. Removing:
+			//qglPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 		}
 		else
 		{
-			qglPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+			// This is not yet available in the current platform. Removing:
+			//qglPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 		}
 	}
 
@@ -337,11 +340,13 @@ void GL_State( unsigned long stateBits )
 	{
 		if ( stateBits & GLS_DEPTHTEST_DISABLE )
 		{
-			qglDisable( GL_DEPTH_TEST );
+			gxu_z_test_enabled = GX_FALSE;
+			qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 		}
 		else
 		{
-			qglEnable( GL_DEPTH_TEST );
+			gxu_z_test_enabled = GX_TRUE;
+			qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 		}
 	}
 
@@ -353,19 +358,26 @@ void GL_State( unsigned long stateBits )
 		switch ( stateBits & GLS_ATEST_BITS )
 		{
 		case 0:
-			qglDisable( GL_ALPHA_TEST );
+			gxu_alpha_test_enabled = false;
+			qgxSetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
 			break;
 		case GLS_ATEST_GT_0:
-			qglEnable( GL_ALPHA_TEST );
-			qglAlphaFunc( GL_GREATER, 0.0f );
+			gxu_alpha_test_lower = 0;
+			gxu_alpha_test_higher = 255;
+			gxu_alpha_test_enabled = true;
+			qgxSetAlphaCompare(GX_GREATER, gxu_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gxu_alpha_test_higher);
 			break;
 		case GLS_ATEST_LT_80:
-			qglEnable( GL_ALPHA_TEST );
-			qglAlphaFunc( GL_LESS, 0.5f );
+			gxu_alpha_test_lower = 0;
+			gxu_alpha_test_higher = 127;
+			gxu_alpha_test_enabled = true;
+			qgxSetAlphaCompare(GX_GEQUAL, gxu_alpha_test_lower, GX_AOP_AND, GX_LESS, gxu_alpha_test_higher);
 			break;
 		case GLS_ATEST_GE_80:
-			qglEnable( GL_ALPHA_TEST );
-			qglAlphaFunc( GL_GEQUAL, 0.5f );
+			gxu_alpha_test_lower = 128;
+			gxu_alpha_test_higher = 255;
+			gxu_alpha_test_enabled = true;
+			qgxSetAlphaCompare(GX_GEQUAL, gxu_alpha_test_lower, GX_AOP_AND, GX_LEQUAL, gxu_alpha_test_higher);
 			break;
 		default:
 			assert( 0 );

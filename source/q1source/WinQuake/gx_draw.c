@@ -137,18 +137,18 @@ void GX_LoadAndBind (void* data, int length, int width, int height, int format)
 	switch(format)
 	{
 	case GX_TF_RGBA8:
-		GX_CopyTexRGBA8((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
+		GXU_CopyTexRGBA8((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
 		break;
 	case GX_TF_RGB5A3:
-		GX_CopyTexRGB5A3((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
+		GXU_CopyTexRGB5A3((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
 		break;
 	case GX_TF_CI8:
 	case GX_TF_I8:
 	case GX_TF_A8:
-		GX_CopyTexV8((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
+		GXU_CopyTexV8((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
 		break;
 	case GX_TF_IA4:
-		GX_CopyTexIA4((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
+		GXU_CopyTexIA4((byte*)data, width, height, (byte*)(gxtexobjs[currenttexture].data));
 		break;
 	};
 	GX_BindCurrentTex(changed, format, GX_FALSE);
@@ -840,16 +840,16 @@ void Draw_Character (int x, int y, int num)
 	GX_Bind (char_texture);
 
 	GX_Begin (GX_QUADS, gxu_cur_vertex_format, 4);
-	GX_Position3f32(x, y, GX_ORTHO_ZCOORD_MIDDLE);
+	GX_Position3f32(x, y, GXU_ORTHO_ZCOORD_MIDDLE);
 	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (fcol, frow);
-	GX_Position3f32(x+8, y, GX_ORTHO_ZCOORD_MIDDLE);
+	GX_Position3f32(x+8, y, GXU_ORTHO_ZCOORD_MIDDLE);
 	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (fcol + size, frow);
-	GX_Position3f32(x+8, y+8, GX_ORTHO_ZCOORD_MIDDLE);
+	GX_Position3f32(x+8, y+8, GXU_ORTHO_ZCOORD_MIDDLE);
 	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (fcol + size, frow + size);
-	GX_Position3f32(x, y+8, GX_ORTHO_ZCOORD_MIDDLE);
+	GX_Position3f32(x, y+8, GXU_ORTHO_ZCOORD_MIDDLE);
 	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (fcol, frow + size);
 	GX_End ();
@@ -910,16 +910,16 @@ void Draw_AlphaPic (int x, int y, qpic_t *pic, float alpha)
 	gxu_cur_a = alpha * 255.0;
 	GX_Bind (gx->texnum);
 	GX_Begin (GX_QUADS, gxu_cur_vertex_format, 4);
-	GX_Position3f32(x, y, GX_ORTHO_ZCOORD_MIDDLE);
+	GX_Position3f32(x, y, GXU_ORTHO_ZCOORD_MIDDLE);
 	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (gx->sl, gx->tl);
-	GX_Position3f32(x+pic->width, y, GX_ORTHO_ZCOORD_MIDDLE);
+	GX_Position3f32(x+pic->width, y, GXU_ORTHO_ZCOORD_MIDDLE);
 	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (gx->sh, gx->tl);
-	GX_Position3f32(x+pic->width, y+pic->height, GX_ORTHO_ZCOORD_MIDDLE);
+	GX_Position3f32(x+pic->width, y+pic->height, GXU_ORTHO_ZCOORD_MIDDLE);
 	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (gx->sh, gx->th);
-	GX_Position3f32(x, y+pic->height, GX_ORTHO_ZCOORD_MIDDLE);
+	GX_Position3f32(x, y+pic->height, GXU_ORTHO_ZCOORD_MIDDLE);
 	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (gx->sl, gx->th);
 	GX_End ();
@@ -950,16 +950,16 @@ void Draw_Pic (int x, int y, qpic_t *pic)
 	gxu_cur_a = 255;
 	GX_Bind (gx->texnum);
 	GX_Begin (GX_QUADS, gxu_cur_vertex_format, 4);
-	GX_Position3f32(x, y, GX_ORTHO_ZCOORD_MIDDLE);
+	GX_Position3f32(x, y, GXU_ORTHO_ZCOORD_MIDDLE);
 	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (gx->sl, gx->tl);
-	GX_Position3f32(x+pic->width, y, GX_ORTHO_ZCOORD_MIDDLE);
+	GX_Position3f32(x+pic->width, y, GXU_ORTHO_ZCOORD_MIDDLE);
 	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (gx->sh, gx->tl);
-	GX_Position3f32(x+pic->width, y+pic->height, GX_ORTHO_ZCOORD_MIDDLE);
+	GX_Position3f32(x+pic->width, y+pic->height, GXU_ORTHO_ZCOORD_MIDDLE);
 	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (gx->sh, gx->th);
-	GX_Position3f32(x, y+pic->height, GX_ORTHO_ZCOORD_MIDDLE);
+	GX_Position3f32(x, y+pic->height, GXU_ORTHO_ZCOORD_MIDDLE);
 	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (gx->sl, gx->th);
 	GX_End ();
@@ -1029,16 +1029,16 @@ void Draw_TransPicTranslate (int x, int y, qpic_t *pic, byte *translation)
 	gxu_cur_b = 255;
 	gxu_cur_a = 255;
 	GX_Begin (GX_QUADS, gxu_cur_vertex_format, 4);
-	GX_Position3f32(x, y, GX_ORTHO_ZCOORD_MIDDLE);
+	GX_Position3f32(x, y, GXU_ORTHO_ZCOORD_MIDDLE);
 	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (0, 0);
-	GX_Position3f32(x+pic->width, y, GX_ORTHO_ZCOORD_MIDDLE);
+	GX_Position3f32(x+pic->width, y, GXU_ORTHO_ZCOORD_MIDDLE);
 	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (1, 0);
-	GX_Position3f32(x+pic->width, y+pic->height, GX_ORTHO_ZCOORD_MIDDLE);
+	GX_Position3f32(x+pic->width, y+pic->height, GXU_ORTHO_ZCOORD_MIDDLE);
 	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (1, 1);
-	GX_Position3f32(x, y+pic->height, GX_ORTHO_ZCOORD_MIDDLE);
+	GX_Position3f32(x, y+pic->height, GXU_ORTHO_ZCOORD_MIDDLE);
 	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (0, 1);
 	GX_End ();
@@ -1079,16 +1079,16 @@ void Draw_TileClear (int x, int y, int w, int h)
 	gxu_cur_a = 255;
 	GX_Bind (*(int *)draw_backtile->data);
 	GX_Begin (GX_QUADS, gxu_cur_vertex_format, 4);
-	GX_Position3f32(x, y, GX_ORTHO_ZCOORD_MIDDLE);
+	GX_Position3f32(x, y, GXU_ORTHO_ZCOORD_MIDDLE);
 	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (x/64.0, y/64.0);
-	GX_Position3f32(x+w, y, GX_ORTHO_ZCOORD_MIDDLE);
+	GX_Position3f32(x+w, y, GXU_ORTHO_ZCOORD_MIDDLE);
 	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 ( (x+w)/64.0, y/64.0);
-	GX_Position3f32(x+w, y+h, GX_ORTHO_ZCOORD_MIDDLE);
+	GX_Position3f32(x+w, y+h, GXU_ORTHO_ZCOORD_MIDDLE);
 	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 ( (x+w)/64.0, (y+h)/64.0);
-	GX_Position3f32(x, y+h, GX_ORTHO_ZCOORD_MIDDLE);
+	GX_Position3f32(x, y+h, GXU_ORTHO_ZCOORD_MIDDLE);
 	GX_Color4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	GX_TexCoord2f32 (x/64.0, (y+h)/64.0);
 	GX_End ();
@@ -1111,13 +1111,13 @@ void Draw_Fill (int x, int y, int w, int h, int c)
 	b = host_basepal[c*3+2];
 	GXU_DisableTexture();
 	GX_Begin(GX_QUADS, GX_VTXFMT0, 4);
-	GX_Position3f32(x, y, GX_ORTHO_ZCOORD_MIDDLE);
+	GX_Position3f32(x, y, GXU_ORTHO_ZCOORD_MIDDLE);
 	GX_Color4u8(r, g, b, 255);
-	GX_Position3f32(x+w, y, GX_ORTHO_ZCOORD_MIDDLE);
+	GX_Position3f32(x+w, y, GXU_ORTHO_ZCOORD_MIDDLE);
 	GX_Color4u8(r, g, b, 255);
-	GX_Position3f32(x+w, y+h, GX_ORTHO_ZCOORD_MIDDLE);
+	GX_Position3f32(x+w, y+h, GXU_ORTHO_ZCOORD_MIDDLE);
 	GX_Color4u8(r, g, b, 255);
-	GX_Position3f32(x, y+h, GX_ORTHO_ZCOORD_MIDDLE);
+	GX_Position3f32(x, y+h, GXU_ORTHO_ZCOORD_MIDDLE);
 	GX_Color4u8(r, g, b, 255);
 	GX_End();
 	GXU_EnableTexture();
@@ -1135,13 +1135,13 @@ void Draw_FadeScreen (void)
 	GX_SetBlendMode(GX_BM_BLEND, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP); 
 	GXU_DisableTexture();
 	GX_Begin(GX_QUADS, GX_VTXFMT0, 4);
-	GX_Position3f32(0, 0, GX_ORTHO_ZCOORD_MIDDLE);
+	GX_Position3f32(0, 0, GXU_ORTHO_ZCOORD_MIDDLE);
 	GX_Color4u8(0, 0, 0, 204);
-	GX_Position3f32(vid.width, 0, GX_ORTHO_ZCOORD_MIDDLE);
+	GX_Position3f32(vid.width, 0, GXU_ORTHO_ZCOORD_MIDDLE);
 	GX_Color4u8(0, 0, 0, 204);
-	GX_Position3f32(vid.width, vid.height, GX_ORTHO_ZCOORD_MIDDLE);
+	GX_Position3f32(vid.width, vid.height, GXU_ORTHO_ZCOORD_MIDDLE);
 	GX_Color4u8(0, 0, 0, 204);
-	GX_Position3f32(0, vid.height, GX_ORTHO_ZCOORD_MIDDLE);
+	GX_Position3f32(0, vid.height, GXU_ORTHO_ZCOORD_MIDDLE);
 	GX_Color4u8(0, 0, 0, 204);
 	GX_End();
 	GXU_EnableTexture();
@@ -1197,7 +1197,7 @@ void GX_Set2D (void)
 	gxu_viewport_height = gxheight;
 	GX_SetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxdepthmin, gxdepthmax);
 
-	GX_Ortho(gxu_projection_matrices[gxu_cur_projection_matrix], 0, vid.height, 0, vid.width, GX_ORTHO_ZNEAR, GX_ORTHO_ZFAR);
+	GX_Ortho(gxu_projection_matrices[gxu_cur_projection_matrix], 0, vid.height, 0, vid.width, GXU_ORTHO_ZNEAR, GXU_ORTHO_ZFAR);
 	GX_LoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], GX_ORTHOGRAPHIC);
 
 	guMtxIdentity(gxu_modelview_matrices[gxu_cur_modelview_matrix]);
@@ -1407,13 +1407,13 @@ texels += scaled_width * scaled_height;
 		};
 		scaledlen = GX_GetTexBufferSize(scaled_width, scaled_height, GX_TF_RGBA8, GX_TRUE, miplevel);
 		changed = GX_ReallocTex(scaledlen, scaled_width, scaled_height);
-		dst = GX_CopyTexRGBA8((byte*)scaled, scaled_width, scaled_height, (byte*)(gxtexobjs[currenttexture].data));
+		dst = GXU_CopyTexRGBA8((byte*)scaled, scaled_width, scaled_height, (byte*)(gxtexobjs[currenttexture].data));
 		while (scaled_width > 4 && scaled_height > 4)
 		{
 			GX_MipMap ((byte *)scaled, scaled_width, scaled_height);
 			scaled_width >>= 1;
 			scaled_height >>= 1;
-			dst = GX_CopyTexRGBA8((byte*)scaled, scaled_width, scaled_height, dst);
+			dst = GXU_CopyTexRGBA8((byte*)scaled, scaled_width, scaled_height, dst);
 		};
 		GX_BindCurrentTex(changed, GX_TF_RGBA8, GX_TRUE);
 	} else

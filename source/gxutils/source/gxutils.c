@@ -157,7 +157,7 @@ void GXU_CallguMtxRotAxisDeg(Mtx mt, guVector* axis, f32 deg)
 	guMtxRotAxisDeg(mt, axis, deg);
 }
 
-unsigned char* GX_CopyTexRGBA8(unsigned char* src, int width, int height, unsigned char* dst)
+unsigned char* GXU_CopyTexRGBA8(unsigned char* src, int width, int height, unsigned char* dst)
 {
 	int x;
 	int y;
@@ -204,7 +204,7 @@ unsigned char* GX_CopyTexRGBA8(unsigned char* src, int width, int height, unsign
 	return dst;
 }
 
-unsigned char* GX_CopyTexRGB5A3(unsigned char* src, int width, int height, unsigned char* dst)
+unsigned char* GXU_CopyTexRGB5A3(unsigned char* src, int width, int height, unsigned char* dst)
 {
 	int x;
 	int y;
@@ -244,7 +244,7 @@ unsigned char* GX_CopyTexRGB5A3(unsigned char* src, int width, int height, unsig
 	return dst;
 }
 
-unsigned char* GX_CopyTexV8(unsigned char* src, int width, int height, unsigned char* dst)
+unsigned char* GXU_CopyTexV8(unsigned char* src, int width, int height, unsigned char* dst)
 {
 	int x;
 	int y;
@@ -279,7 +279,7 @@ unsigned char* GX_CopyTexV8(unsigned char* src, int width, int height, unsigned 
 	return dst;
 }
 
-unsigned char* GX_CopyTexIA4(unsigned char* src, int width, int height, unsigned char* dst)
+unsigned char* GXU_CopyTexIA4(unsigned char* src, int width, int height, unsigned char* dst)
 {
 	int x;
 	int y;

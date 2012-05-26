@@ -370,9 +370,9 @@ static void DrawMultitextured( shaderCommands_t *input, int stage ) {
 	qglEnableClientState( GL_TEXTURE_COORD_ARRAY );
 
 	if ( r_lightmap->integer ) {
-		GL_TexEnv( GL_REPLACE );
+		GX_TexEnv( GL_REPLACE );
 	} else {
-		GL_TexEnv( tess.shader->multitextureEnv );
+		GX_TexEnv( tess.shader->multitextureEnv );
 	}
 
 	qglTexCoordPointer( 2, GL_FLOAT, 0, input->svars.texcoords[1] );
@@ -1249,9 +1249,9 @@ void RB_StageIteratorLightmappedMultitexture( void ) {
 	GX_SelectTexture( 1 );
 	qglEnable( GL_TEXTURE_2D );
 	if ( r_lightmap->integer ) {
-		GL_TexEnv( GL_REPLACE );
+		GX_TexEnv( GL_REPLACE );
 	} else {
-		GL_TexEnv( GL_MODULATE );
+		GX_TexEnv( GL_MODULATE );
 	}
 	R_BindAnimatedImage( &tess.xstages[0]->bundle[1] );
 	qglEnableClientState( GL_TEXTURE_COORD_ARRAY );

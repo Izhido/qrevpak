@@ -490,7 +490,7 @@ void R_DrawSequentialPoly (msurface_t *s)
 				theRect->h = 0;
 				theRect->w = 0;
 			}
-			GX_SetTevOpBlend(GX_TEVSTAGE1);
+			GXU_SetTevOpBlend(GX_TEVSTAGE1);
 			GX_Begin(GX_TRIANGLEFAN, gxu_cur_vertex_format, p->numverts);
 			v = p->verts[0];
 			for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)
@@ -593,7 +593,7 @@ void R_DrawSequentialPoly (msurface_t *s)
 			theRect->h = 0;
 			theRect->w = 0;
 		}
-		GX_SetTevOpBlend(GX_TEVSTAGE1);
+		GXU_SetTevOpBlend(GX_TEVSTAGE1);
 		GX_Begin(GX_TRIANGLEFAN, gxu_cur_vertex_format, p->numverts);
 		v = p->verts[0];
 		for (i=0 ; i<p->numverts ; i++, v+= VERTEXSIZE)

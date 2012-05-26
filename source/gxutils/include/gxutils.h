@@ -3,15 +3,15 @@
 
 #include <gccore.h>
 
-#define GX_ORTHO_ZNEAR 0 
+#define GXU_ORTHO_ZNEAR 0 
 
-#define GX_ORTHO_ZFAR 300
+#define GXU_ORTHO_ZFAR 300
 
-#define GX_ORTHO_ZCOORD_MIDDLE -149
+#define GXU_ORTHO_ZCOORD_MIDDLE -149
 
-#define GX_ORTHO_ZCOORD_BOTTOM -299
+#define GXU_ORTHO_ZCOORD_BOTTOM -299
 
-#define GX_TEVOP_ADD 10
+#define GXU_TEVOP_ADD 10
 
 extern GXColor gxu_background_color;
 
@@ -81,13 +81,13 @@ void GXU_DisableTexStage1(void);
 
 void GXU_CallguMtxRotAxisDeg(Mtx mt, guVector* axis, f32 deg);
 
-unsigned char* GX_CopyTexRGBA8(unsigned char* src, int width, int height, unsigned char* dst);
+unsigned char* GXU_CopyTexRGBA8(unsigned char* src, int width, int height, unsigned char* dst);
 
-unsigned char* GX_CopyTexRGB5A3(unsigned char* src, int width, int height, unsigned char* dst);
+unsigned char* GXU_CopyTexRGB5A3(unsigned char* src, int width, int height, unsigned char* dst);
 
-unsigned char* GX_CopyTexV8(unsigned char* src, int width, int height, unsigned char* dst);
+unsigned char* GXU_CopyTexV8(unsigned char* src, int width, int height, unsigned char* dst);
 
-unsigned char* GX_CopyTexIA4(unsigned char* src, int width, int height, unsigned char* dst);
+unsigned char* GXU_CopyTexIA4(unsigned char* src, int width, int height, unsigned char* dst);
 
 void GXU_SetTevOpBlend(u8 stage);
 

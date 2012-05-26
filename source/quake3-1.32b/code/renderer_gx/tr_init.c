@@ -712,14 +712,14 @@ void GL_SetDefaultState( void )
 	if ( GX_TEXTURE0 != GX_TEXTURE1 ) {
 		GX_SelectTexture( 1 );
 		GL_TextureMode( r_textureMode->string );
-		GL_TexEnv( GL_MODULATE );
+		GX_TexEnv( GL_MODULATE );
 		qglDisable( GL_TEXTURE_2D );
 		GX_SelectTexture( 0 );
 	}
 
 	qglEnable(GL_TEXTURE_2D);
 	GL_TextureMode( r_textureMode->string );
-	GL_TexEnv( GL_MODULATE );
+	GX_TexEnv( GL_MODULATE );
 
 	qglShadeModel( GL_SMOOTH );
 	qglDepthFunc( GL_LEQUAL );
