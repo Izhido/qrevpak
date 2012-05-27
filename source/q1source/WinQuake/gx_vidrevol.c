@@ -36,8 +36,6 @@ int		texture_mode = GX_LINEAR;
 
 int		texture_extension_number = 1;
 
-float		gxdepthmin, gxdepthmax;
-
 cvar_t	gl_ztrick = {"gl_ztrick","1"};
 
 static float vid_gamma = 1.0;

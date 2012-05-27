@@ -64,6 +64,10 @@ f32 gxu_viewport_width;
 
 f32 gxu_viewport_height;
 
+f32 gxu_depth_min;
+
+f32 gxu_depth_max;
+
 void GXU_Init(GXRModeObj* rmode, void* framebuffer)
 {
 	gxu_gpfifo = memalign(32, GXU_FIFO_SIZE);

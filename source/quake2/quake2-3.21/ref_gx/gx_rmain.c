@@ -34,8 +34,6 @@ int GX_TEXTURE0, GX_TEXTURE1;
 
 model_t		*r_worldmodel;
 
-float		gxdepthmin, gxdepthmax;
-
 gxstate_t  gx_state;
 
 image_t		*r_notexture;		// use for bad textures
@@ -764,7 +762,7 @@ void R_SetupGL (void)
 	gxu_viewport_y = ((sys_rmode->viHeight - vid.height) / 2) + y;
 	gxu_viewport_width = w;
 	gxu_viewport_height = h;
-	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxdepthmin, gxdepthmax);
+	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxu_depth_min, gxu_depth_max);
 
 	//
 	// set up projection matrix
@@ -844,15 +842,15 @@ void R_Clear (void)
 		trickframe++;
 		if (trickframe & 1)
 		{
-			gxdepthmin = 0;
-			gxdepthmax = 0.49999;
+			gxu_depth_min = 0;
+			gxu_depth_max = 0.49999;
 			gxu_cur_z_func = GX_LEQUAL;
 			qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 		}
 		else
 		{
-			gxdepthmin = 1;
-			gxdepthmax = 0.5;
+			gxu_depth_min = 1;
+			gxu_depth_max = 0.5;
 			gxu_cur_z_func = GX_GEQUAL;
 			qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 		}
@@ -864,13 +862,13 @@ void R_Clear (void)
 		else
 			gxu_clear_color_buffer = GX_FALSE;
 		gxu_clear_buffers = GX_TRUE;
-		gxdepthmin = 0;
-		gxdepthmax = 1;
+		gxu_depth_min = 0;
+		gxu_depth_max = 1;
 		gxu_cur_z_func = GX_LEQUAL;
 		qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 	}
 
-	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxdepthmin, gxdepthmax);
+	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxu_depth_min, gxu_depth_max);
 
 }
 
@@ -942,7 +940,7 @@ void	R_SetGX2D (void)
 	gxu_viewport_y = (sys_rmode->viHeight - vid.height) / 2;
 	gxu_viewport_width = vid.width;
 	gxu_viewport_height = vid.height;
-	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxdepthmin, gxdepthmax);
+	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxu_depth_min, gxu_depth_max);
 	qguOrtho(gxu_projection_matrices[gxu_cur_projection_matrix], 0, vid.height, 0, vid.width, GXU_ORTHO_ZNEAR, GXU_ORTHO_ZFAR);
 	gxu_cur_projection_type = GX_ORTHOGRAPHIC;
 	qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], gxu_cur_projection_type);
@@ -1341,7 +1339,7 @@ void R_BeginFrame( float camera_separation )
 	gxu_viewport_width = vid.width;
 	gxu_viewport_height = vid.height;
 	qgxSetScissor(gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height);
-	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxdepthmin, gxdepthmax);
+	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxu_depth_min, gxu_depth_max);
 	qguOrtho(gxu_projection_matrices[gxu_cur_projection_matrix], 0, vid.height, 0, vid.width, GXU_ORTHO_ZNEAR, GXU_ORTHO_ZFAR);
 	gxu_cur_projection_type = GX_ORTHOGRAPHIC;
 	qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], gxu_cur_projection_type);

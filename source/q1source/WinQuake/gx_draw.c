@@ -1195,7 +1195,7 @@ void GX_Set2D (void)
 	gxu_viewport_y = gxy;
 	gxu_viewport_width = gxwidth;
 	gxu_viewport_height = gxheight;
-	GX_SetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxdepthmin, gxdepthmax);
+	GX_SetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxu_depth_min, gxu_depth_max);
 
 	GX_Ortho(gxu_projection_matrices[gxu_cur_projection_matrix], 0, vid.height, 0, vid.width, GXU_ORTHO_ZNEAR, GXU_ORTHO_ZFAR);
 	GX_LoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], GX_ORTHOGRAPHIC);

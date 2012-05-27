@@ -52,6 +52,7 @@ extern  void ( APIENTRY * qgxEnd )(void);
 extern  void ( APIENTRY * qgxInitTexObj )(GXTexObj *obj, void *img_ptr, u16 wd, u16 ht, u8 fmt, u8 wrap_s, u8 wrap_t, u8 mipmap);
 extern  void ( APIENTRY * qgxInitTexObjCI )(GXTexObj *obj, void *img_ptr, u16 wd, u16 ht, u8 fmt, u8 wrap_s, u8 wrap_t, u8 mipmap, u32 tlut_name);
 extern  void ( APIENTRY * qgxInitTexObjFilterMode )(GXTexObj *obj, u8 minfilt, u8 magfilt);
+extern  void ( APIENTRY * qgxInitTexObjWrapMode )(GXTexObj *obj,u8 wrap_s,u8 wrap_t);
 extern  void ( APIENTRY * qgxInvalidateTexAll )(void);
 extern  void ( APIENTRY * qgxInvVtxCache )(void);
 extern	void ( APIENTRY * qgxLoadPosMtxImm )(Mtx mt, u32 pnidx);

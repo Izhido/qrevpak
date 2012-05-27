@@ -756,9 +756,9 @@ void R_DrawViewModel (void)
 	diffuse[0] = diffuse[1] = diffuse[2] = diffuse[3] = (float)shadelight / 128;
 
 	// hack the depth range to prevent view model from poking into walls
-	GX_SetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxdepthmin, gxdepthmin + 0.3*(gxdepthmax-gxdepthmin));
+	GX_SetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxu_depth_min, gxu_depth_min + 0.3*(gxu_depth_max - gxu_depth_min));
 	R_DrawAliasModel (currententity);
-	GX_SetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxdepthmin, gxdepthmax);
+	GX_SetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxu_depth_min, gxu_depth_max);
 }
 
 
@@ -955,7 +955,7 @@ void R_SetupGX (void)
 	gxu_viewport_y = gxy + y;
 	gxu_viewport_width = w;
 	gxu_viewport_height = h;
-	GX_SetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxdepthmin, gxdepthmax);
+	GX_SetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxu_depth_min, gxu_depth_max);
 	
 	guPerspective(gxu_projection_matrices[gxu_cur_projection_matrix], r_refdef.fov_y, (float)r_refdef.vrect.width/r_refdef.vrect.height, 4, 4096);
 
@@ -1080,8 +1080,8 @@ void R_Clear (void)
 		} else
 			gxu_clear_color_buffer = GX_FALSE;
 		gxu_clear_buffers = GX_TRUE;
-		gxdepthmin = 0;
-		gxdepthmax = 0.5;
+		gxu_depth_min = 0;
+		gxu_depth_max = 0.5;
 		gxu_cur_z_func = GX_LEQUAL;
 		GX_SetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 	}
@@ -1094,15 +1094,15 @@ void R_Clear (void)
 		trickframe++;
 		if (trickframe & 1)
 		{
-			gxdepthmin = 0;
-			gxdepthmax = 0.49999;
+			gxu_depth_min = 0;
+			gxu_depth_max = 0.49999;
 			gxu_cur_z_func = GX_LEQUAL;
 			GX_SetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 		}
 		else
 		{
-			gxdepthmin = 1;
-			gxdepthmax = 0.5;
+			gxu_depth_min = 1;
+			gxu_depth_max = 0.5;
 			gxu_cur_z_func = GX_GEQUAL;
 			GX_SetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 		}
@@ -1116,13 +1116,13 @@ void R_Clear (void)
 		} else
 			gxu_clear_color_buffer = GX_FALSE;
 		gxu_clear_buffers = GX_TRUE;
-		gxdepthmin = 0;
-		gxdepthmax = 1;
+		gxu_depth_min = 0;
+		gxu_depth_max = 1;
 		gxu_cur_z_func = GX_LEQUAL;
 		GX_SetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 	}
 
-	GX_SetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxdepthmin, gxdepthmax);
+	GX_SetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxu_depth_min, gxu_depth_max);
 }
 
 #if 0 //!!! FIXME, Zoid, mirror is disabled for now

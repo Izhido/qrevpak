@@ -67,6 +67,10 @@ extern f32 gxu_viewport_width;
 
 extern f32 gxu_viewport_height;
 
+extern f32 gxu_depth_min;
+
+extern f32 gxu_depth_max;
+
 void GXU_Init(GXRModeObj* rmode, void* framebuffer);
 
 void GXU_EndFrame(void* framebuffer);

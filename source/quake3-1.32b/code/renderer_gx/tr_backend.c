@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "tr_local.h"
 #include "gxutils.h"
+#include <malloc.h>
 
 backEndData_t	*backEndData[SMP_FRAMES];
 backEndState_t	backEnd;
@@ -38,6 +39,8 @@ static float	s_flipMatrix[16] = {
 gxtexobj_t	gxtexobjs[1024 + MAX_DRAWIMAGES];
 
 int GX_TEXTURE0, GX_TEXTURE1;
+
+int		gx_tex_allocated; // To track amount of memory used for textures
 
 /*
 ** GX_Bind
@@ -110,6 +113,312 @@ void GX_BindMultitexture( image_t *image0, u32 env0, image_t *image1, u32 env1 )
 		if(gxtexobjs[texnum0].data != NULL)
 			qgxLoadTexObj(&gxtexobjs[texnum0].texobj, GX_TEXMAP0 );
 	}
+}
+
+void GX_DeleteTexData(int texnum)
+{
+	if(gxtexobjs[texnum].data != NULL)
+	{
+		free(gxtexobjs[texnum].data);
+		gxtexobjs[texnum].data = NULL;
+		gx_tex_allocated -= gxtexobjs[texnum].length;
+		gxtexobjs[texnum].length = 0;
+	};
+}
+
+qboolean GX_ReallocTex(int length, int width, int height)
+{
+	qboolean changed = qfalse;
+	int texnum = glState.currenttextures[glState.currenttmu];
+	if(gxtexobjs[texnum].length < length)
+	{
+		GX_DeleteTexData(texnum);
+		gxtexobjs[texnum].data = memalign(32, length);
+		if(gxtexobjs[texnum].data == NULL)
+		{
+			Sys_Error("GX_ReallocTex: allocation failed on %i bytes", length);
+		};
+		gxtexobjs[texnum].length = length;
+		gx_tex_allocated += length;
+		changed = qtrue;
+	};
+	gxtexobjs[texnum].width = width;
+	gxtexobjs[texnum].height = height;
+	return changed;
+}
+
+void GX_BindCurrentTex(qboolean changed, int format, int mipmap)
+{
+	int texnum = glState.currenttextures[glState.currenttmu];
+	DCFlushRange(gxtexobjs[texnum].data, gxtexobjs[texnum].length);
+
+	if(format == GX_TF_CI8)
+		qgxInitTexObjCI(&gxtexobjs[texnum].texobj, gxtexobjs[texnum].data, gxtexobjs[texnum].width, gxtexobjs[texnum].height, format, GX_REPEAT, GX_REPEAT, mipmap, GX_TLUT0);
+	else
+		qgxInitTexObj(&gxtexobjs[texnum].texobj, gxtexobjs[texnum].data, gxtexobjs[texnum].width, gxtexobjs[texnum].height, format, GX_REPEAT, GX_REPEAT, mipmap);
+
+	qgxLoadTexObj(&gxtexobjs[texnum].texobj, GX_TEXMAP0 + glState.currenttmu);
+	if(changed)
+		qgxInvalidateTexAll();
+}
+
+void GX_LoadAndBind (void* data, int length, int width, int height, int format)
+{
+	qboolean changed = GX_ReallocTex(length, width, height);
+	int texnum = glState.currenttextures[glState.currenttmu];
+	switch(format)
+	{
+	case GX_TF_RGBA8:
+		GXU_CopyTexRGBA8((byte*)data, width, height, (byte*)(gxtexobjs[texnum].data));
+		break;
+	case GX_TF_RGB5A3:
+		GXU_CopyTexRGB5A3((byte*)data, width, height, (byte*)(gxtexobjs[texnum].data));
+		break;
+	case GX_TF_CI8:
+	case GX_TF_I8:
+	case GX_TF_A8:
+		GXU_CopyTexV8((byte*)data, width, height, (byte*)(gxtexobjs[texnum].data));
+		break;
+	case GX_TF_IA4:
+		GXU_CopyTexIA4((byte*)data, width, height, (byte*)(gxtexobjs[texnum].data));
+		break;
+	};
+	GX_BindCurrentTex(changed, format, GX_FALSE);
+}
+
+void GX_LoadSubAndBind (void* data, int xoffset, int yoffset, int width, int height, int format)
+{
+	byte* dst;
+	int tex_width;
+	int tex_height;
+	int ybegin;
+	int yend;
+	int x;
+	int y;
+	int xi;
+	int yi;
+	int xs;
+	int ys;
+	int k;
+	qboolean in;
+	byte s1;
+	byte s2;
+
+	if(format == GX_TF_RGBA8)
+	{
+		dst = (byte*)(gxtexobjs[glState.currenttextures[glState.currenttmu]].data);
+		if(dst != NULL)
+		{
+			tex_width = gxtexobjs[glState.currenttextures[glState.currenttmu]].width;
+			tex_height = gxtexobjs[glState.currenttextures[glState.currenttmu]].height;
+			ybegin = (yoffset >> 2) << 2;
+			if(ybegin < 0) 
+				ybegin = 0;
+			if(ybegin > tex_height) 
+				ybegin = tex_height;
+			yend = (((yoffset + height) >> 2) << 2) + 4;
+			if(yend < 0) 
+				yend = 0;
+			if(yend > tex_height) 
+				yend = tex_height;
+			if(ybegin > 0) 
+				dst += (4 * ybegin * tex_height);
+			for(y = ybegin; y < yend; y += 4)
+			{
+				for(x = 0; x < tex_width; x += 4)
+				{
+					for(yi = 0; yi < 4; yi++)
+					{
+						for(xi = 0; xi < 4; xi++)
+						{
+							in = false;
+							xs = x + xi - xoffset;
+							if((xs >= 0)&&(xs < width))
+							{
+								ys = y + yi - yoffset;
+								if((ys >= 0)&&(ys < height))
+								{
+									k = 4 * (ys * width + xs);
+									in = true;
+									*(dst++) = ((byte*)data)[k + 3];
+									*(dst++) = ((byte*)data)[k];
+								};
+							};
+							if(!in)
+								dst += 2;
+						};
+					};
+					for(yi = 0; yi < 4; yi++)
+					{
+						for(xi = 0; xi < 4; xi++)
+						{
+							in = false;
+							xs = x + xi - xoffset;
+							if((xs >= 0)&&(xs < width))
+							{
+								ys = y + yi - yoffset;
+								if((ys >= 0)&&(ys < height))
+								{
+									k = 4 * (ys * width + xs);
+									in = true;
+									*(dst++) = ((byte*)data)[k + 1];
+									*(dst++) = ((byte*)data)[k + 2];
+								};
+							};
+							if(!in)
+								dst += 2;
+						};
+					};
+				};
+			};
+		};
+		GX_BindCurrentTex(true, format, GX_FALSE);
+	} else if(format == GX_TF_RGB5A3)
+	{
+		dst = (byte*)(gxtexobjs[glState.currenttextures[glState.currenttmu]].data);
+		if(dst != NULL)
+		{
+			tex_width = gxtexobjs[glState.currenttextures[glState.currenttmu]].width;
+			tex_height = gxtexobjs[glState.currenttextures[glState.currenttmu]].height;
+			ybegin = (yoffset >> 2) << 2;
+			if(ybegin < 0) 
+				ybegin = 0;
+			if(ybegin > tex_height) 
+				ybegin = tex_height;
+			yend = (((yoffset + height) >> 2) << 2) + 4;
+			if(yend < 0) 
+				yend = 0;
+			if(yend > tex_height) 
+				yend = tex_height;
+			if(ybegin > 0) 
+				dst += (2 * ybegin * tex_height);
+			for(y = ybegin; y < yend; y += 4)
+			{
+				for(x = 0; x < tex_width; x += 4)
+				{
+					for(yi = 0; yi < 4; yi++)
+					{
+						for(xi = 0; xi < 4; xi++)
+						{
+							in = false;
+							xs = x + xi - xoffset;
+							if((xs >= 0)&&(xs < width))
+							{
+								ys = y + yi - yoffset;
+								if((ys >= 0)&&(ys < height))
+								{
+									k = 2 * (ys * width + xs);
+									in = true;
+									s1 = ((byte*)data)[k];
+									s2 = ((byte*)data)[k + 1];
+									*(dst++) = (((s2 & 15) >> 1) << 4) | (s1 >> 4);
+									*(dst++) = ((s1 & 15) << 4) | (s2 >> 4);
+								};
+							};
+							if(!in)
+								dst += 2;
+						};
+					};
+				};
+			};
+		};
+		GX_BindCurrentTex(true, format, GX_FALSE);
+	} else if((format == GX_TF_A8)||(format == GX_TF_I8))
+	{
+		dst = (byte*)(gxtexobjs[glState.currenttextures[glState.currenttmu]].data);
+		if(dst != NULL)
+		{
+			tex_width = gxtexobjs[glState.currenttextures[glState.currenttmu]].width;
+			tex_height = gxtexobjs[glState.currenttextures[glState.currenttmu]].height;
+			ybegin = (yoffset >> 2) << 2;
+			if(ybegin < 0) 
+				ybegin = 0;
+			if(ybegin > tex_height) 
+				ybegin = tex_height;
+			yend = (((yoffset + height) >> 2) << 2) + 4;
+			if(yend < 0) 
+				yend = 0;
+			if(yend > tex_height) 
+				yend = tex_height;
+			if(ybegin > 0) 
+				dst += (ybegin * tex_height);
+			for(y = ybegin; y < yend; y += 4)
+			{
+				for(x = 0; x < tex_width; x += 8)
+				{
+					for(yi = 0; yi < 4; yi++)
+					{
+						for(xi = 0; xi < 8; xi++)
+						{
+							in = false;
+							xs = x + xi - xoffset;
+							if((xs >= 0)&&(xs < width))
+							{
+								ys = y + yi - yoffset;
+								if((ys >= 0)&&(ys < height))
+								{
+									k = ys * width + xs;
+									in = true;
+									*(dst++) = ((byte*)data)[k];
+								};
+							};
+							if(!in)
+								dst++;
+						};
+					};
+				};
+			};
+		};
+		GX_BindCurrentTex(true, format, GX_FALSE);
+	} else if(format == GX_TF_IA4)
+	{
+		dst = (byte*)(gxtexobjs[glState.currenttextures[glState.currenttmu]].data);
+		if(dst != NULL)
+		{
+			tex_width = gxtexobjs[glState.currenttextures[glState.currenttmu]].width;
+			tex_height = gxtexobjs[glState.currenttextures[glState.currenttmu]].height;
+			ybegin = (yoffset >> 2) << 2;
+			if(ybegin < 0) 
+				ybegin = 0;
+			if(ybegin > tex_height) 
+				ybegin = tex_height;
+			yend = (((yoffset + height) >> 2) << 2) + 4;
+			if(yend < 0) 
+				yend = 0;
+			if(yend > tex_height) 
+				yend = tex_height;
+			if(ybegin > 0) 
+				dst += (ybegin * tex_height);
+			for(y = ybegin; y < yend; y += 4)
+			{
+				for(x = 0; x < tex_width; x += 8)
+				{
+					for(yi = 0; yi < 4; yi++)
+					{
+						for(xi = 0; xi < 8; xi++)
+						{
+							in = false;
+							xs = x + xi - xoffset;
+							if((xs >= 0)&&(xs < width))
+							{
+								ys = y + yi - yoffset;
+								if((ys >= 0)&&(ys < height))
+								{
+									k = ys * width + xs;
+									in = true;
+									s1 = ((byte*)data)[k];
+									*(dst++) = ((s1 & 15) << 4) | (s1 >> 4);
+								};
+							};
+							if(!in)
+								dst++;
+						};
+					};
+				};
+			};
+		};
+		GX_BindCurrentTex(true, format, GX_FALSE);
+	};
 }
 
 
@@ -398,30 +707,45 @@ A player has predicted a teleport, but hasn't arrived yet
 ================
 */
 static void RB_Hyperspace( void ) {
-	float		c;
+	int		c;
 
 	if ( !backEnd.isHyperspace ) {
 		// do initialization shit
 	}
 
-	c = ( backEnd.refdef.time & 255 ) / 255.0f;
-	qglClearColor( c, c, c, 1 );
-	qglClear( GL_COLOR_BUFFER_BIT );
+	c = backEnd.refdef.time & 255;
+	gxu_background_color.r = c;
+	gxu_background_color.g = c;
+	gxu_background_color.b = c;
+	gxu_background_color.a = 255;
+	//qglClear( GL_COLOR_BUFFER_BIT );
 
 	backEnd.isHyperspace = qtrue;
 }
 
 
 static void SetViewportAndScissor( void ) {
-	qglMatrixMode(GL_PROJECTION);
-	qglLoadMatrixf( backEnd.viewParms.projectionMatrix );
-	qglMatrixMode(GL_MODELVIEW);
+	int i, j, k;
+
+	k = 0;
+	for(i = 0; i < 4; i++)
+	{
+		for(j = 0; j < 4; j++)
+		{
+			gxu_projection_matrices[gxu_cur_projection_matrix][i][j] = backEnd.viewParms.projectionMatrix[k];
+			k++;
+		}
+	}
+
+	qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], gxu_cur_projection_type);
 
 	// set the window clipping
-	qglViewport( backEnd.viewParms.viewportX, backEnd.viewParms.viewportY, 
-		backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportHeight );
-	qglScissor( backEnd.viewParms.viewportX, backEnd.viewParms.viewportY, 
-		backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportHeight );
+	gxu_viewport_x = backEnd.viewParms.viewportX;
+	gxu_viewport_y = backEnd.viewParms.viewportY;
+	gxu_viewport_width = backEnd.viewParms.viewportWidth;
+	gxu_viewport_height = backEnd.viewParms.viewportHeight;
+	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxu_depth_min, gxu_depth_max);
+	qgxSetScissor(gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height);
 }
 
 /*
@@ -433,11 +757,11 @@ to actually render the visible surfaces for this view
 =================
 */
 void RB_BeginDrawingView (void) {
-	int clearBits = 0;
+	//int clearBits = 0;
 
 	// sync with gl if needed
 	if ( r_finish->integer == 1 && !glState.finishCalled ) {
-		qglFinish ();
+		//qglFinish ();
 		glState.finishCalled = qtrue;
 	}
 	if ( r_finish->integer == 0 ) {
@@ -447,6 +771,7 @@ void RB_BeginDrawingView (void) {
 	// we will need to change the projection matrix before drawing
 	// 2D images again
 	backEnd.projection2D = qfalse;
+	gxu_cur_projection_type = GX_PERSPECTIVE;
 
 	//
 	// set the modelview matrix for the viewer
@@ -456,22 +781,25 @@ void RB_BeginDrawingView (void) {
 	// ensures that depth writes are enabled for the depth clear
 	GL_State( GLS_DEFAULT );
 	// clear relevant buffers
-	clearBits = GL_DEPTH_BUFFER_BIT;
+	gxu_clear_buffers = GX_TRUE;
 
 	if ( r_measureOverdraw->integer || r_shadows->integer == 2 )
 	{
-		clearBits |= GL_STENCIL_BUFFER_BIT;
+		//clearBits |= GL_STENCIL_BUFFER_BIT;
 	}
 	if ( r_fastsky->integer && !( backEnd.refdef.rdflags & RDF_NOWORLDMODEL ) )
 	{
-		clearBits |= GL_COLOR_BUFFER_BIT;	// FIXME: only if sky shaders have been used
+		gxu_clear_color_buffer = GX_TRUE;	// FIXME: only if sky shaders have been used
 #ifdef _DEBUG
 		qglClearColor( 0.8f, 0.7f, 0.4f, 1.0f );	// FIXME: get color of sky
 #else
-		qglClearColor( 0.0f, 0.0f, 0.0f, 1.0f );	// FIXME: get color of sky
+		gxu_background_color.r = 0;
+		gxu_background_color.g = 0;
+		gxu_background_color.b = 0;
+		gxu_background_color.a = 255;	// FIXME: get color of sky
 #endif
 	}
-	qglClear( clearBits );
+	//qglClear( clearBits );
 
 	if ( ( backEnd.refdef.rdflags & RDF_HYPERSPACE ) )
 	{
@@ -489,7 +817,7 @@ void RB_BeginDrawingView (void) {
 	backEnd.skyRenderedThisView = qfalse;
 
 	// clip to the plane of the portal
-	if ( backEnd.viewParms.isPortal ) {
+	/*if ( backEnd.viewParms.isPortal ) {
 		float	plane[4];
 		double	plane2[4];
 
@@ -508,7 +836,7 @@ void RB_BeginDrawingView (void) {
 		qglEnable (GL_CLIP_PLANE0);
 	} else {
 		qglDisable (GL_CLIP_PLANE0);
-	}
+	}*/
 }
 
 
@@ -525,7 +853,7 @@ void RB_RenderDrawSurfList( drawSurf_t *drawSurfs, int numDrawSurfs ) {
 	int				entityNum, oldEntityNum;
 	int				dlighted, oldDlighted;
 	qboolean		depthRange, oldDepthRange;
-	int				i;
+	int				i, j, k;
 	drawSurf_t		*drawSurf;
 	int				oldSort;
 	float			originalTime;
@@ -625,17 +953,28 @@ void RB_RenderDrawSurfList( drawSurf_t *drawSurfs, int numDrawSurfs ) {
 				R_TransformDlights( backEnd.refdef.num_dlights, backEnd.refdef.dlights, &backEnd.or );
 			}
 
-			qglLoadMatrixf( backEnd.or.modelMatrix );
+			k = 0;
+			for(i = 0; i < 4; i++)
+			{
+				for(j = 0; j < 4; j++)
+				{
+					gxu_modelview_matrices[gxu_cur_modelview_matrix][i][j] = backEnd.or.modelMatrix[k];
+					k++;
+				}
+			}
 
 			//
 			// change depthrange if needed
 			//
 			if ( oldDepthRange != depthRange ) {
 				if ( depthRange ) {
-					qglDepthRange (0, 0.3);
+					gxu_depth_min = 0.0;
+					gxu_depth_max = 0.3;
 				} else {
-					qglDepthRange (0, 1);
+					gxu_depth_min = 0.0;
+					gxu_depth_max = 1.0;
 				}
+				qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxu_depth_min, gxu_depth_max);
 				oldDepthRange = depthRange;
 			}
 
@@ -654,9 +993,19 @@ void RB_RenderDrawSurfList( drawSurf_t *drawSurfs, int numDrawSurfs ) {
 	}
 
 	// go back to the world modelview matrix
-	qglLoadMatrixf( backEnd.viewParms.world.modelMatrix );
+	k = 0;
+	for(i = 0; i < 4; i++)
+	{
+		for(j = 0; j < 4; j++)
+		{
+			gxu_modelview_matrices[gxu_cur_modelview_matrix][i][j] = backEnd.viewParms.world.modelMatrix[k];
+			k++;
+		}
+	}
 	if ( depthRange ) {
-		qglDepthRange (0, 1);
+		gxu_depth_min = 0.0;
+		gxu_depth_max = 1.0;
+		qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxu_depth_min, gxu_depth_max);
 	}
 
 #if 0
@@ -690,15 +1039,20 @@ RB_SetGL2D
 */
 void	RB_SetGL2D (void) {
 	backEnd.projection2D = qtrue;
+	gxu_cur_projection_type = GX_ORTHOGRAPHIC;
 
 	// set 2D virtual screen size
-	qglViewport( 0, 0, glConfig.vidWidth, glConfig.vidHeight );
-	qglScissor( 0, 0, glConfig.vidWidth, glConfig.vidHeight );
-	qglMatrixMode(GL_PROJECTION);
-    qglLoadIdentity ();
-	qglOrtho (0, glConfig.vidWidth, glConfig.vidHeight, 0, 0, 1);
-	qglMatrixMode(GL_MODELVIEW);
-    qglLoadIdentity ();
+	gxu_viewport_x = 0;
+	gxu_viewport_y = 0;
+	gxu_viewport_width = glConfig.vidWidth;
+	gxu_viewport_height = glConfig.vidHeight;
+	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxu_depth_min, gxu_depth_max);
+	qgxSetScissor(gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height);
+	qguOrtho(gxu_projection_matrices[gxu_cur_projection_matrix], 0, glConfig.vidHeight, 0, glConfig.vidWidth, 0, 1);
+	gxu_cur_projection_type = GX_ORTHOGRAPHIC;
+	qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], gxu_cur_projection_type);
+	qguMtxIdentity(gxu_modelview_matrices[gxu_cur_modelview_matrix]);
+	qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 
 	GL_State( GLS_DEPTHTEST_DISABLE |
 			  GLS_SRCBLEND_SRC_ALPHA |
@@ -706,7 +1060,7 @@ void	RB_SetGL2D (void) {
 
 	gxu_cull_enabled = false;
 	qgxSetCullMode(GX_CULL_NONE);
-	qglDisable( GL_CLIP_PLANE0 );
+	//qglDisable( GL_CLIP_PLANE0 );
 
 	// set time for 2D shaders
 	backEnd.refdef.time = ri.Milliseconds();
@@ -733,7 +1087,7 @@ void RE_StretchRaw (int x, int y, int w, int h, int cols, int rows, const byte *
 	R_SyncRenderThread();
 
 	// we definately want to sync every frame for the cinematics
-	qglFinish();
+	//qglFinish();
 
 	start = end = 0;
 	if ( r_speeds->integer ) {
@@ -755,16 +1109,15 @@ void RE_StretchRaw (int x, int y, int w, int h, int cols, int rows, const byte *
 	if ( cols != tr.scratchImage[client]->width || rows != tr.scratchImage[client]->height ) {
 		tr.scratchImage[client]->width = tr.scratchImage[client]->uploadWidth = cols;
 		tr.scratchImage[client]->height = tr.scratchImage[client]->uploadHeight = rows;
-		qglTexImage2D( GL_TEXTURE_2D, 0, GL_RGB8, cols, rows, 0, GL_RGBA, GL_UNSIGNED_BYTE, data );
-		qglTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-		qglTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-		qglTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
-		qglTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );	
+		GX_LoadAndBind( data, cols * rows * 4, cols, rows, GX_TF_RGBA8 );
+		int texnum = glState.currenttextures[glState.currenttmu];
+		qgxInitTexObjFilterMode( &gxtexobjs[texnum].texobj, GX_LINEAR, GX_LINEAR );
+		qgxInitTexObjWrapMode( &gxtexobjs[texnum].texobj, GX_CLAMP, GX_CLAMP );
 	} else {
 		if (dirty) {
 			// otherwise, just subimage upload it so that drivers can tell we are going to be changing
 			// it and don't try and do a texture compression
-			qglTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, cols, rows, GL_RGBA, GL_UNSIGNED_BYTE, data );
+			GX_LoadSubAndBind( data, 0, 0, cols, rows, GX_TF_RGBA8 );
 		}
 	}
 

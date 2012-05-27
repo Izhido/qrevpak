@@ -57,6 +57,7 @@ void ( APIENTRY * qgxEnd )(void);
 void ( APIENTRY * qgxInitTexObj )(GXTexObj *obj, void *img_ptr, u16 wd, u16 ht, u8 fmt, u8 wrap_s, u8 wrap_t, u8 mipmap);
 void ( APIENTRY * qgxInitTexObjCI )(GXTexObj *obj, void *img_ptr, u16 wd, u16 ht, u8 fmt, u8 wrap_s, u8 wrap_t, u8 mipmap, u32 tlut_name);
 void ( APIENTRY * qgxInitTexObjFilterMode )(GXTexObj *obj, u8 minfilt, u8 magfilt);
+void ( APIENTRY * qgxInitTexObjWrapMode )(GXTexObj *obj,u8 wrap_s,u8 wrap_t);
 void ( APIENTRY * qgxInvalidateTexAll )(void);
 void ( APIENTRY * qgxInvVtxCache )(void);
 void ( APIENTRY * qgxLoadPosMtxImm )(Mtx mt, u32 pnidx);
@@ -89,6 +90,7 @@ static void ( APIENTRY * dllEnd )(void);
 static void ( APIENTRY * dllInitTexObj )(GXTexObj *obj, void *img_ptr, u16 wd, u16 ht, u8 fmt, u8 wrap_s, u8 wrap_t, u8 mipmap);
 static void ( APIENTRY * dllInitTexObjCI )(GXTexObj *obj, void *img_ptr, u16 wd, u16 ht, u8 fmt, u8 wrap_s, u8 wrap_t, u8 mipmap, u32 tlut_name);
 static void ( APIENTRY * dllInitTexObjFilterMode )(GXTexObj *obj, u8 minfilt, u8 magfilt);
+static void ( APIENTRY * dllInitTexObjWrapMode )(GXTexObj *obj,u8 wrap_s,u8 wrap_t);
 static void ( APIENTRY * dllInvalidateTexAll )(void);
 static void ( APIENTRY * dllInvVtxCache )(void);
 static void ( APIENTRY * dllLoadPosMtxImm )(Mtx mt, u32 pnidx);
@@ -175,6 +177,12 @@ static void APIENTRY logInitTexObjFilterMode(GXTexObj *obj,u8 minfilt,u8 magfilt
 {
 	SIG( "GX_InitTexObjFilterMode" );
 	dllInitTexObjFilterMode(obj, minfilt, magfilt);
+}
+
+static void APIENTRY logInitTexObjWrapMode(GXTexObj *obj,u8 wrap_s,u8 wrap_t)
+{
+	SIG( "GX_InitTexObjWrapMode" );
+	dllInitTexObjWrapMode(obj, wrap_s, wrap_t);
 }
 
 static void APIENTRY logInvalidateTexAll(void)
@@ -344,6 +352,7 @@ void QGL_Shutdown( void )
 	qgxInitTexObj                = NULL;
 	qgxInitTexObjCI              = NULL;
 	qgxInitTexObjFilterMode      = NULL;
+	qgxInitTexObjWrapMode        = NULL;
 	qgxInvalidateTexAll          = NULL;
 	qgxInvVtxCache               = NULL;
 	qgxLoadPosMtxImm             = NULL;
@@ -394,6 +403,7 @@ qboolean QGL_Init( const char *dllname )
 	qgxInitTexObj                =  dllInitTexObj                = GX_InitTexObj;
 	qgxInitTexObjCI              =  dllInitTexObjCI              = GX_InitTexObjCI;
 	qgxInitTexObjFilterMode      =  dllInitTexObjFilterMode      = GX_InitTexObjFilterMode;
+	qgxInitTexObjWrapMode        =  dllInitTexObjWrapMode        = GX_InitTexObjWrapMode;
 	qgxInvalidateTexAll          =  dllInvalidateTexAll          = GX_InvalidateTexAll;
 	qgxInvVtxCache               =  dllInvVtxCache               = GX_InvVtxCache;
 	qgxLoadPosMtxImm             =  dllLoadPosMtxImm             = GX_LoadPosMtxImm;
@@ -480,6 +490,7 @@ void QGL_EnableLogging( qboolean enable ) {
 		qgxInitTexObj                =  logInitTexObj                ;
 		qgxInitTexObjCI              =  logInitTexObjCI              ;
 		qgxInitTexObjFilterMode      =  logInitTexObjFilterMode      ;
+		qgxInitTexObjWrapMode        =  logInitTexObjWrapMode        ;
 		qgxInvalidateTexAll          =  logInvalidateTexAll          ;
 		qgxInvVtxCache               =  logInvVtxCache               ;
 		qgxLoadPosMtxImm             =  logLoadPosMtxImm             ;
@@ -517,6 +528,7 @@ void QGL_EnableLogging( qboolean enable ) {
 		qgxInitTexObj                =  dllInitTexObj                ;
 		qgxInitTexObjCI              =  dllInitTexObjCI              ;
 		qgxInitTexObjFilterMode      =  dllInitTexObjFilterMode      ;
+		qgxInitTexObjWrapMode        =  dllInitTexObjWrapMode        ;
 		qgxInvalidateTexAll          =  dllInvalidateTexAll          ;
 		qgxInvVtxCache               =  dllInvVtxCache               ;
 		qgxLoadPosMtxImm             =  dllLoadPosMtxImm             ;

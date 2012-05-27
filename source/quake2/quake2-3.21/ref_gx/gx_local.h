@@ -130,8 +130,6 @@ void GX_EndRendering (void);
 void GX_SetDefaultState( void );
 void GX_UpdateSwapInterval( void );
 
-extern	float	gxdepthmin, gxdepthmax;
-
 typedef struct
 {
 	float	x, y, z;
