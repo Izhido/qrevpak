@@ -27,6 +27,7 @@ backEndData_t	*backEndData[SMP_FRAMES];
 backEndState_t	backEnd;
 
 
+/*
 static float	s_flipMatrix[16] = {
 	// convert from our coordinate system (looking down X)
 	// to OpenGL's coordinate system (looking down -Z)
@@ -35,6 +36,7 @@ static float	s_flipMatrix[16] = {
 	0, 1, 0, 0,
 	0, 0, 0, 1
 };
+*/
 
 gxtexobj_t	gxtexobjs[1024 + MAX_DRAWIMAGES];
 
@@ -817,7 +819,9 @@ void RB_BeginDrawingView (void) {
 	backEnd.skyRenderedThisView = qfalse;
 
 	// clip to the plane of the portal
-	/*if ( backEnd.viewParms.isPortal ) {
+	// ***************** Clipping planes unavailable in this platform. Removing:
+	/*
+	if ( backEnd.viewParms.isPortal ) {
 		float	plane[4];
 		double	plane2[4];
 
@@ -836,7 +840,8 @@ void RB_BeginDrawingView (void) {
 		qglEnable (GL_CLIP_PLANE0);
 	} else {
 		qglDisable (GL_CLIP_PLANE0);
-	}*/
+	}
+	*/
 }
 
 
@@ -1109,7 +1114,7 @@ void RE_StretchRaw (int x, int y, int w, int h, int cols, int rows, const byte *
 	if ( cols != tr.scratchImage[client]->width || rows != tr.scratchImage[client]->height ) {
 		tr.scratchImage[client]->width = tr.scratchImage[client]->uploadWidth = cols;
 		tr.scratchImage[client]->height = tr.scratchImage[client]->uploadHeight = rows;
-		GX_LoadAndBind( data, cols * rows * 4, cols, rows, GX_TF_RGBA8 );
+		GX_LoadAndBind( (void*)data, cols * rows * 4, cols, rows, GX_TF_RGBA8 );
 		int texnum = glState.currenttextures[glState.currenttmu];
 		qgxInitTexObjFilterMode( &gxtexobjs[texnum].texobj, GX_LINEAR, GX_LINEAR );
 		qgxInitTexObjWrapMode( &gxtexobjs[texnum].texobj, GX_CLAMP, GX_CLAMP );
@@ -1117,7 +1122,7 @@ void RE_StretchRaw (int x, int y, int w, int h, int cols, int rows, const byte *
 		if (dirty) {
 			// otherwise, just subimage upload it so that drivers can tell we are going to be changing
 			// it and don't try and do a texture compression
-			GX_LoadSubAndBind( data, 0, 0, cols, rows, GX_TF_RGBA8 );
+			GX_LoadSubAndBind( (void*)data, 0, 0, cols, rows, GX_TF_RGBA8 );
 		}
 	}
 
@@ -1128,18 +1133,25 @@ void RE_StretchRaw (int x, int y, int w, int h, int cols, int rows, const byte *
 
 	RB_SetGL2D();
 
-	qglColor3f( tr.identityLight, tr.identityLight, tr.identityLight );
+	gxu_cur_r = tr.identityLight * 255.0;
+	gxu_cur_g = tr.identityLight * 255.0;
+	gxu_cur_b = tr.identityLight * 255.0;
+	gxu_cur_a = 255;
 
-	qglBegin (GL_QUADS);
-	qglTexCoord2f ( 0.5f / cols,  0.5f / rows );
-	qglVertex2f (x, y);
-	qglTexCoord2f ( ( cols - 0.5f ) / cols ,  0.5f / rows );
-	qglVertex2f (x+w, y);
-	qglTexCoord2f ( ( cols - 0.5f ) / cols, ( rows - 0.5f ) / rows );
-	qglVertex2f (x+w, y+h);
-	qglTexCoord2f ( 0.5f / cols, ( rows - 0.5f ) / rows );
-	qglVertex2f (x, y+h);
-	qglEnd ();
+	qgxBegin (GX_QUADS, gxu_cur_vertex_format, 4);
+	qgxPosition3f32 (x, y, 0);
+	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
+	qgxTexCoord2f32 ( 0.5f / cols,  0.5f / rows );
+	qgxPosition3f32 (x+w, y, 0);
+	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
+	qgxTexCoord2f32 ( ( cols - 0.5f ) / cols ,  0.5f / rows );
+	qgxPosition3f32 (x+w, y+h, 0);
+	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
+	qgxTexCoord2f32 ( ( cols - 0.5f ) / cols, ( rows - 0.5f ) / rows );
+	qgxPosition3f32 (x, y+h, 0);
+	qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
+	qgxTexCoord2f32 ( 0.5f / cols, ( rows - 0.5f ) / rows );
+	qgxEnd ();
 }
 
 void RE_UploadCinematic (int w, int h, int cols, int rows, const byte *data, int client, qboolean dirty) {
@@ -1150,16 +1162,15 @@ void RE_UploadCinematic (int w, int h, int cols, int rows, const byte *data, int
 	if ( cols != tr.scratchImage[client]->width || rows != tr.scratchImage[client]->height ) {
 		tr.scratchImage[client]->width = tr.scratchImage[client]->uploadWidth = cols;
 		tr.scratchImage[client]->height = tr.scratchImage[client]->uploadHeight = rows;
-		qglTexImage2D( GL_TEXTURE_2D, 0, GL_RGB8, cols, rows, 0, GL_RGBA, GL_UNSIGNED_BYTE, data );
-		qglTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-		qglTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-		qglTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
-		qglTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );	
+		GX_LoadAndBind( (void*)data, cols * rows * 4, cols, rows, GX_TF_RGBA8 );
+		int texnum = glState.currenttextures[glState.currenttmu];
+		qgxInitTexObjFilterMode( &gxtexobjs[texnum].texobj, GX_LINEAR, GX_LINEAR );
+		qgxInitTexObjWrapMode( &gxtexobjs[texnum].texobj, GX_CLAMP, GX_CLAMP );
 	} else {
 		if (dirty) {
 			// otherwise, just subimage upload it so that drivers can tell we are going to be changing
 			// it and don't try and do a texture compression
-			qglTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, cols, rows, GL_RGBA, GL_UNSIGNED_BYTE, data );
+			GX_LoadSubAndBind( (void*)data, 0, 0, cols, rows, GX_TF_RGBA8 );
 		}
 	}
 }
@@ -1296,12 +1307,15 @@ const void	*RB_DrawBuffer( const void *data ) {
 
 	cmd = (const drawBufferCommand_t *)data;
 
-	qglDrawBuffer( cmd->buffer );
+	//qglDrawBuffer( cmd->buffer );
 
 	// clear screen for debugging
 	if ( r_clear->integer ) {
-		qglClearColor( 1, 0, 0.5, 1 );
-		qglClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+		gxu_background_color.r = 255;
+		gxu_background_color.g = 0;
+		gxu_background_color.b = 127;
+		gxu_background_color.a = 255;
+		//qglClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	}
 
 	return (const void *)(cmd + 1);
@@ -1318,6 +1332,8 @@ Also called by RE_EndRegistration
 ===============
 */
 void RB_ShowImages( void ) {
+	// Temporarily deactivated, until we understand how to implement qglClear or qglFinish:
+	/*
 	int		i;
 	image_t	*image;
 	float	x, y, w, h;
@@ -1364,6 +1380,7 @@ void RB_ShowImages( void ) {
 
 	end = ri.Milliseconds();
 	ri.Printf( PRINT_ALL, "%i msec to draw all images\n", end - start );
+	*/
 
 }
 
@@ -1392,6 +1409,8 @@ const void	*RB_SwapBuffers( const void *data ) {
 	// we measure overdraw by reading back the stencil buffer and
 	// counting up the number of increments that have happened
 	if ( r_measureOverdraw->integer ) {
+		// Stencil buffer unavailable. Deactivating:
+		/*
 		int i;
 		long sum = 0;
 		unsigned char *stencilReadback;
@@ -1405,11 +1424,12 @@ const void	*RB_SwapBuffers( const void *data ) {
 
 		backEnd.pc.c_overDraw += sum;
 		ri.Hunk_FreeTempMemory( stencilReadback );
+		*/
 	}
 
 
 	if ( !glState.finishCalled ) {
-		qglFinish();
+		//qglFinish();
 	}
 
 	GLimp_LogComment( "***************** RB_SwapBuffers *****************\n\n\n" );

@@ -103,7 +103,7 @@ typedef struct image_s {
 
 	qboolean	mipmap;
 	qboolean	allowPicmip;
-	int			wrapClampMode;		// GL_CLAMP or GL_REPEAT
+	int			wrapClampMode;		// GX_CLAMP or GX_REPEAT
 
 	struct image_s*	next;
 } image_t;
@@ -1146,6 +1146,8 @@ void	GL_CheckErrors( void );
 void	GL_State( unsigned long stateVector );
 void	GX_TexEnv( int env );
 void	GX_Cull( int cullType );
+void	GX_DeleteTexData(int texnum);
+void	GX_LoadAndBind (void* data, int length, int width, int height, int format);
 
 #define GLS_SRCBLEND_ZERO						0x00000001
 #define GLS_SRCBLEND_ONE						0x00000002

@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 // tr_image.c
 #include "tr_local.h"
+#include "gxutils.h"
 
 /*
  * Include file for users of JPEG library.
@@ -41,8 +42,8 @@ static void LoadJPG( const char *name, byte **pic, int *width, int *height );
 static byte			 s_intensitytable[256];
 static unsigned char s_gammatable[256];
 
-int		gl_filter_min = GL_LINEAR_MIPMAP_NEAREST;
-int		gl_filter_max = GL_LINEAR;
+int		gl_filter_min = GX_LIN_MIP_NEAR;
+int		gl_filter_max = GX_LINEAR;
 
 #define FILE_HASH_SIZE		1024
 static	image_t*		hashTable[FILE_HASH_SIZE];
@@ -64,12 +65,12 @@ typedef struct {
 } textureMode_t;
 
 textureMode_t modes[] = {
-	{"GL_NEAREST", GL_NEAREST, GL_NEAREST},
-	{"GL_LINEAR", GL_LINEAR, GL_LINEAR},
-	{"GL_NEAREST_MIPMAP_NEAREST", GL_NEAREST_MIPMAP_NEAREST, GL_NEAREST},
-	{"GL_LINEAR_MIPMAP_NEAREST", GL_LINEAR_MIPMAP_NEAREST, GL_LINEAR},
-	{"GL_NEAREST_MIPMAP_LINEAR", GL_NEAREST_MIPMAP_LINEAR, GL_NEAREST},
-	{"GL_LINEAR_MIPMAP_LINEAR", GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR}
+	{"GX_NEAR", GX_NEAR, GX_NEAR},
+	{"GX_LINEAR", GX_LINEAR, GX_LINEAR},
+	{"GX_NEAR_MIP_NEAR", GX_NEAR_MIP_NEAR, GX_NEAR},
+	{"GX_LIN_MIP_NEAR", GX_LIN_MIP_NEAR, GX_LINEAR},
+	{"GX_NEAR_MIP_LIN", GX_NEAR_MIP_LIN, GX_NEAR},
+	{"GX_LIN_MIP_LIN", GX_LIN_MIP_LIN, GX_LINEAR}
 };
 
 /*
@@ -131,8 +132,8 @@ void GL_TextureMode( const char *string ) {
 		glt = tr.images[ i ];
 		if ( glt->mipmap ) {
 			GX_Bind (glt);
-			qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
-			qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
+			int texnum = glState.currenttextures[glState.currenttmu];
+			qgxInitTexObjFilterMode( &gxtexobjs[texnum].texobj, gl_filter_min, gl_filter_max );
 		}
 	}
 }
@@ -191,30 +192,21 @@ void R_ImageList_f( void ) {
 		case 4:
 			ri.Printf( PRINT_ALL, "RGBA " );
 			break;
-		case GL_RGBA8:
+		case GX_TF_RGBA8:
 			ri.Printf( PRINT_ALL, "RGBA8" );
 			break;
-		case GL_RGB8:
-			ri.Printf( PRINT_ALL, "RGB8" );
-			break;
-		case GL_RGB4_S3TC:
-			ri.Printf( PRINT_ALL, "S3TC " );
-			break;
-		case GL_RGBA4:
+		case GX_TF_RGB5A3:
 			ri.Printf( PRINT_ALL, "RGBA4" );
-			break;
-		case GL_RGB5:
-			ri.Printf( PRINT_ALL, "RGB5 " );
 			break;
 		default:
 			ri.Printf( PRINT_ALL, "???? " );
 		}
 
 		switch ( image->wrapClampMode ) {
-		case GL_REPEAT:
+		case GX_REPEAT:
 			ri.Printf( PRINT_ALL, "rept " );
 			break;
-		case GL_CLAMP:
+		case GX_CLAMP:
 			ri.Printf( PRINT_ALL, "clmp " );
 			break;
 		default:
@@ -513,8 +505,9 @@ static void Upload32( unsigned *data,
 	int			scaled_width, scaled_height;
 	int			i, c;
 	byte		*scan;
-	GLenum		internalFormat = GL_RGB;
+	u8			internalFormat = GX_TF_RGBA8;
 	float		rMax = 0, gMax = 0, bMax = 0;
+	int			texnum;
 
 	//
 	// convert to exact power of 2 sizes
@@ -598,17 +591,13 @@ static void Upload32( unsigned *data,
 		// select proper internal format
 		if ( samples == 3 )
 		{
-			if ( glConfig.textureCompression == TC_S3TC )
+			if ( r_texturebits->integer == 16 )
 			{
-				internalFormat = GL_RGB4_S3TC;
-			}
-			else if ( r_texturebits->integer == 16 )
-			{
-				internalFormat = GL_RGB5;
+				internalFormat = GX_TF_RGB565;
 			}
 			else if ( r_texturebits->integer == 32 )
 			{
-				internalFormat = GL_RGB8;
+				internalFormat = GX_TF_RGBA8;
 			}
 			else
 			{
@@ -619,11 +608,11 @@ static void Upload32( unsigned *data,
 		{
 			if ( r_texturebits->integer == 16 )
 			{
-				internalFormat = GL_RGBA4;
+				internalFormat = GX_TF_RGB5A3;
 			}
 			else if ( r_texturebits->integer == 32 )
 			{
-				internalFormat = GL_RGBA8;
+				internalFormat = GX_TF_RGBA8;
 			}
 			else
 			{
@@ -638,7 +627,7 @@ static void Upload32( unsigned *data,
 		( scaled_height == height ) ) {
 		if (!mipmap)
 		{
-			qglTexImage2D (GL_TEXTURE_2D, 0, internalFormat, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+			GX_LoadAndBind (data, scaled_width * scaled_height * 4, scaled_width, scaled_height, GX_TF_RGBA8); 
 			*pUploadWidth = scaled_width;
 			*pUploadHeight = scaled_height;
 			*format = internalFormat;
@@ -670,10 +659,12 @@ static void Upload32( unsigned *data,
 	*pUploadHeight = scaled_height;
 	*format = internalFormat;
 
-	qglTexImage2D (GL_TEXTURE_2D, 0, internalFormat, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaledBuffer );
+	GX_LoadAndBind (scaledBuffer, scaled_width * scaled_height * 4, scaled_width, scaled_height, GX_TF_RGBA8);
 
 	if (mipmap)
 	{
+		// Temporarily deactivated, until we learn how to do this properly:
+		/*
 		int		miplevel;
 
 		miplevel = 0;
@@ -694,18 +685,18 @@ static void Upload32( unsigned *data,
 
 			qglTexImage2D (GL_TEXTURE_2D, miplevel, internalFormat, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaledBuffer );
 		}
+		*/
 	}
 done:
 
+	texnum = glState.currenttextures[glState.currenttmu];
 	if (mipmap)
 	{
-		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
-		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
+		qgxInitTexObjFilterMode( &gxtexobjs[texnum].texobj, gl_filter_min, gl_filter_max );
 	}
 	else
 	{
-		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-		qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+		qgxInitTexObjFilterMode( &gxtexobjs[texnum].texobj, GX_LINEAR, GX_LINEAR );
 	}
 
 	GL_CheckErrors();
@@ -775,10 +766,11 @@ image_t *R_CreateImage( const char *name, const byte *pic, int width, int height
 								&image->uploadWidth,
 								&image->uploadHeight );
 
-	qglTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, glWrapClampMode );
-	qglTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, glWrapClampMode );
+	int texnum = glState.currenttextures[glState.currenttmu];
+	qgxInitTexObjFilterMode( &gxtexobjs[texnum].texobj, glWrapClampMode, glWrapClampMode );
 
-	qglBindTexture( GL_TEXTURE_2D, 0 );
+	// It is not clear why this would be needed. Also, it's the same as doing nothing on the current platform. Removing:
+	//qglBindTexture( GL_TEXTURE_2D, 0 );
 
 	if ( image->TMU == 1 ) {
 		GX_SelectTexture( 0 );
@@ -1941,7 +1933,7 @@ static void R_CreateDlightImage( void ) {
 			data[y][x][3] = 255;			
 		}
 	}
-	tr.dlightImage = R_CreateImage("*dlight", (byte *)data, DLIGHT_SIZE, DLIGHT_SIZE, qfalse, qfalse, GL_CLAMP );
+	tr.dlightImage = R_CreateImage("*dlight", (byte *)data, DLIGHT_SIZE, DLIGHT_SIZE, qfalse, qfalse, GX_CLAMP );
 }
 
 
@@ -2011,7 +2003,8 @@ static void R_CreateFogImage( void ) {
 	byte	*data;
 	float	g;
 	float	d;
-	float	borderColor[4];
+	// Disabled until we understand how to apply a border to polygons (part 1):
+	//float	borderColor[4];
 
 	data = ri.Hunk_AllocateTempMemory( FOG_S * FOG_T * 4 );
 
@@ -2031,15 +2024,18 @@ static void R_CreateFogImage( void ) {
 	// standard openGL clamping doesn't really do what we want -- it includes
 	// the border color at the edges.  OpenGL 1.2 has clamp-to-edge, which does
 	// what we want.
-	tr.fogImage = R_CreateImage("*fog", (byte *)data, FOG_S, FOG_T, qfalse, qfalse, GL_CLAMP );
+	tr.fogImage = R_CreateImage("*fog", (byte *)data, FOG_S, FOG_T, qfalse, qfalse, GX_CLAMP );
 	ri.Hunk_FreeTempMemory( data );
 
+	// Disabled until we understand how to apply a border to polygons (part 2):
+	/*
 	borderColor[0] = 1.0;
 	borderColor[1] = 1.0;
 	borderColor[2] = 1.0;
 	borderColor[3] = 1;
 
 	qglTexParameterfv( GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor );
+	*/
 }
 
 /*
@@ -2075,7 +2071,7 @@ static void R_CreateDefaultImage( void ) {
 		data[x][DEFAULT_SIZE-1][2] =
 		data[x][DEFAULT_SIZE-1][3] = 255;
 	}
-	tr.defaultImage = R_CreateImage("*default", (byte *)data, DEFAULT_SIZE, DEFAULT_SIZE, qtrue, qfalse, GL_REPEAT );
+	tr.defaultImage = R_CreateImage("*default", (byte *)data, DEFAULT_SIZE, DEFAULT_SIZE, qtrue, qfalse, GX_REPEAT );
 }
 
 /*
@@ -2091,7 +2087,7 @@ void R_CreateBuiltinImages( void ) {
 
 	// we use a solid white image instead of disabling texturing
 	Com_Memset( data, 255, sizeof( data ) );
-	tr.whiteImage = R_CreateImage("*white", (byte *)data, 8, 8, qfalse, qfalse, GL_REPEAT );
+	tr.whiteImage = R_CreateImage("*white", (byte *)data, 8, 8, qfalse, qfalse, GX_REPEAT );
 
 	// with overbright bits active, we need an image which is some fraction of full color,
 	// for default lightmaps, etc
@@ -2104,12 +2100,12 @@ void R_CreateBuiltinImages( void ) {
 		}
 	}
 
-	tr.identityLightImage = R_CreateImage("*identityLight", (byte *)data, 8, 8, qfalse, qfalse, GL_REPEAT );
+	tr.identityLightImage = R_CreateImage("*identityLight", (byte *)data, 8, 8, qfalse, qfalse, GX_REPEAT );
 
 
 	for(x=0;x<32;x++) {
 		// scratchimage is usually used for cinematic drawing
-		tr.scratchImage[x] = R_CreateImage("*scratch", (byte *)data, DEFAULT_SIZE, DEFAULT_SIZE, qfalse, qtrue, GL_CLAMP );
+		tr.scratchImage[x] = R_CreateImage("*scratch", (byte *)data, DEFAULT_SIZE, DEFAULT_SIZE, qfalse, qtrue, GX_CLAMP );
 	}
 
 	R_CreateDlightImage();
@@ -2225,13 +2221,15 @@ void R_DeleteTextures( void ) {
 	int		i;
 
 	for ( i=0; i<tr.numImages ; i++ ) {
-		qglDeleteTextures( 1, &tr.images[i]->texnum );
+		GX_DeleteTexData( tr.images[i]->texnum );
 	}
 	Com_Memset( tr.images, 0, sizeof( tr.images ) );
 
 	tr.numImages = 0;
 
 	Com_Memset( glState.currenttextures, 0, sizeof( glState.currenttextures ) );
+	// This code would do nothing in the current implementation. Deactivating:
+	/*
 	if ( qglBindTexture ) {
 		if ( GX_TEXTURE0 != GX_TEXTURE1 ) {
 			GX_SelectTexture( 1 );
@@ -2242,6 +2240,7 @@ void R_DeleteTextures( void ) {
 			qglBindTexture( GL_TEXTURE_2D, 0 );
 		}
 	}
+	*/
 }
 
 /*

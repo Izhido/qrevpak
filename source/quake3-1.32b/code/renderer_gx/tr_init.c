@@ -174,14 +174,14 @@ static void AssertCvarRange( cvar_t *cv, float minVal, float maxVal, qboolean sh
 
 
 /*
-** InitOpenGL
+** InitGX
 **
-** This function is responsible for initializing a valid OpenGL subsystem.  This
-** is done by calling GLimp_Init (which gives us a working OGL subsystem) then
-** setting variables, checking GL constants, and reporting the gfx system config
+** This function is responsible for setting up the GX hardware for use.  This
+** is done by calling GLimp_Init (which gives us a working GX system) then
+** setting variables, checking constants, and reporting the gfx system config
 ** to the user.
 */
-static void InitOpenGL( void )
+static void InitGX( void )
 {
 	char renderer_buffer[1024];
 
@@ -199,16 +199,13 @@ static void InitOpenGL( void )
 	
 	if ( glConfig.vidWidth == 0 )
 	{
-		GLint		temp;
-		
 		GLimp_Init();
 
 		strcpy( renderer_buffer, glConfig.renderer_string );
 		Q_strlwr( renderer_buffer );
 
-		// OpenGL driver constants
-		qglGetIntegerv( GL_MAX_TEXTURE_SIZE, &temp );
-		glConfig.maxTextureSize = temp;
+		// Max texture size
+		glConfig.maxTextureSize = 1024;
 
 		// stubbed or broken drivers may have reported 0...
 		if ( glConfig.maxTextureSize <= 0 ) 
@@ -233,7 +230,9 @@ GL_CheckErrors
 ==================
 */
 void GL_CheckErrors( void ) {
-    int		err;
+	// Current GX hardware does not report errors. Disabling:
+	/*
+	int		err;
     char	s[64];
 
     err = qglGetError();
@@ -268,6 +267,7 @@ void GL_CheckErrors( void ) {
     }
 
     ri.Error( ERR_FATAL, "GL_CheckErrors: %s", s );
+	*/
 }
 
 
@@ -378,7 +378,8 @@ void RB_TakeScreenshot( int x, int y, int width, int height, char *fileName ) {
 	buffer[15] = height >> 8;
 	buffer[16] = 24;	// pixel size
 
-	qglReadPixels( x, y, width, height, GL_RGB, GL_UNSIGNED_BYTE, buffer+18 ); 
+	// Disabled until we understand how to capture data from the screen:
+	//qglReadPixels( x, y, width, height, GL_RGB, GL_UNSIGNED_BYTE, buffer+18 ); 
 
 	// swap rgb to bgr
 	c = 18 + width * height * 3;
@@ -408,7 +409,8 @@ void RB_TakeScreenshotJPEG( int x, int y, int width, int height, char *fileName 
 
 	buffer = ri.Hunk_AllocateTempMemory(glConfig.vidWidth*glConfig.vidHeight*4);
 
-	qglReadPixels( x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buffer ); 
+	// Disabled until we understand how to capture data from the screen:
+	//qglReadPixels( x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buffer ); 
 
 	// gamma correct
 	if ( ( tr.overbrightBits > 0 ) && glConfig.deviceSupportsGamma ) {
@@ -542,7 +544,8 @@ void R_LevelShot( void ) {
 	buffer[14] = 128;
 	buffer[16] = 24;	// pixel size
 
-	qglReadPixels( 0, 0, glConfig.vidWidth, glConfig.vidHeight, GL_RGB, GL_UNSIGNED_BYTE, source ); 
+	// Disabled until we understand how to capture data from the screen:
+	//qglReadPixels( 0, 0, glConfig.vidWidth, glConfig.vidHeight, GL_RGB, GL_UNSIGNED_BYTE, source ); 
 
 	// resample from source
 	xScale = glConfig.vidWidth / 512.0f;
@@ -703,44 +706,50 @@ void R_ScreenShotJPEG_f (void) {
 */
 void GL_SetDefaultState( void )
 {
-	qglClearDepth( 1.0f );
-
-	qglColor4f (1,1,1,1);
+	
+	gxu_background_color.r = 255;
+	gxu_background_color.g = 255;
+	gxu_background_color.b = 255;
+	gxu_background_color.a = 255;
 
 	// initialize downstream texture unit if we're running
 	// in a multitexture environment
+	// ********************* Since this is run only at the beginning, it is not really required for GX. Disabling:
+	/*
 	if ( GX_TEXTURE0 != GX_TEXTURE1 ) {
 		GX_SelectTexture( 1 );
 		GL_TextureMode( r_textureMode->string );
-		GX_TexEnv( GL_MODULATE );
+		GX_TexEnv( GX_MODULATE );
+
 		qglDisable( GL_TEXTURE_2D );
 		GX_SelectTexture( 0 );
 	}
+	*/
 
-	qglEnable(GL_TEXTURE_2D);
+	qgxEnableTexture();
 	GL_TextureMode( r_textureMode->string );
-	GX_TexEnv( GL_MODULATE );
+	GX_TexEnv( GX_MODULATE );
 
-	qglShadeModel( GL_SMOOTH );
-	qglDepthFunc( GL_LEQUAL );
+	//qglShadeModel( GL_SMOOTH );
+	//qglDepthFunc( GL_LEQUAL );
 
 	// the vertex array is always enabled, but the color and texture
 	// arrays are enabled and disabled around the compiled vertex array call
-	qglEnableClientState (GL_VERTEX_ARRAY);
+	// ****************** However, GX does not require being notified about it.
+	// qglEnableClientState (GL_VERTEX_ARRAY);
 
 	//
 	// make sure our GL state vector is set correctly
 	//
 	glState.glStateBits = GLS_DEPTHTEST_DISABLE | GLS_DEPTHMASK_TRUE;
 
-	qglPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
-	qglDepthMask( GL_TRUE );
-	qglDisable( GL_DEPTH_TEST );
-	qglEnable( GL_SCISSOR_TEST );
+	gxu_z_write_enabled = GX_TRUE;
+	gxu_z_test_enabled = GX_FALSE;
+	qgxSetZMode(gxu_z_test_enabled, gxu_cur_z_func, gxu_z_write_enabled);
 	gxu_cull_enabled = false;
 	qgxSetCullMode(GX_CULL_NONE);
 	gxu_cull_mode = GX_CULL_FRONT;
-	qglDisable( GL_BLEND );
+	qgxSetBlendMode(GX_BM_NONE, gxu_blend_src_value, gxu_blend_dst_value, GX_LO_NOOP);
 }
 
 
@@ -797,11 +806,12 @@ void GfxInfo_f( void )
 		ri.Printf( PRINT_ALL, "rendering primitives: " );
 		primitives = r_primitives->integer;
 		if ( primitives == 0 ) {
-			if ( qglLockArraysEXT ) {
+			// Technically, this is the correct option, even if no compiled vertex arrays are ever used in GX:
+			//if ( qglLockArraysEXT ) {
 				primitives = 2;
-			} else {
-				primitives = 1;
-			}
+			//} else {
+			//	primitives = 1;
+			//}
 		}
 		if ( primitives == -1 ) {
 			ri.Printf( PRINT_ALL, "none\n" );
@@ -818,7 +828,7 @@ void GfxInfo_f( void )
 	ri.Printf( PRINT_ALL, "picmip: %d\n", r_picmip->integer );
 	ri.Printf( PRINT_ALL, "texture bits: %d\n", r_texturebits->integer );
 	ri.Printf( PRINT_ALL, "multitexture: %s\n", enablestrings[ GX_TEXTURE0 != GX_TEXTURE1 ] );
-	ri.Printf( PRINT_ALL, "compiled vertex arrays: %s\n", enablestrings[qglLockArraysEXT != 0 ] );
+	ri.Printf( PRINT_ALL, "compiled vertex arrays: %s\n", enablestrings[1/*qglLockArraysEXT != 0*/ ] );
 	ri.Printf( PRINT_ALL, "texenv add: %s\n", enablestrings[glConfig.textureEnvAddAvailable != 0] );
 	ri.Printf( PRINT_ALL, "compressed textures: %s\n", enablestrings[glConfig.textureCompression!=TC_NONE] );
 	if ( r_vertexLight->integer || glConfig.hardwareType == GLHW_PERMEDIA2 )
@@ -921,7 +931,7 @@ void R_Register( void )
 	r_dynamiclight = ri.Cvar_Get( "r_dynamiclight", "1", CVAR_ARCHIVE );
 	r_dlightBacks = ri.Cvar_Get( "r_dlightBacks", "1", CVAR_ARCHIVE );
 	r_finish = ri.Cvar_Get ("r_finish", "0", CVAR_ARCHIVE);
-	r_textureMode = ri.Cvar_Get( "r_textureMode", "GL_LINEAR_MIPMAP_NEAREST", CVAR_ARCHIVE );
+	r_textureMode = ri.Cvar_Get( "r_textureMode", "GX_LIN_MIP_NEAR", CVAR_ARCHIVE );
 	r_swapInterval = ri.Cvar_Get( "r_swapInterval", "0", CVAR_ARCHIVE );
 #ifdef __MACOS__
 	r_gamma = ri.Cvar_Get( "r_gamma", "1.2", CVAR_ARCHIVE );
@@ -1079,7 +1089,7 @@ void R_Init( void ) {
 	}
 	R_ToggleSmpFrame();
 
-	InitOpenGL();
+	InitGX();
 
 	R_InitImages();
 
@@ -1090,11 +1100,6 @@ void R_Init( void ) {
 	R_ModelInit();
 
 	R_InitFreeType();
-
-
-	err = qglGetError();
-	if ( err != GL_NO_ERROR )
-		ri.Printf (PRINT_ALL, "glGetError() = 0x%x\n", err);
 
 	ri.Printf( PRINT_ALL, "----- finished R_Init -----\n" );
 }

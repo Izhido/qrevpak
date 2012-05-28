@@ -318,6 +318,8 @@ void RE_BeginFrame( stereoFrame_t stereoFrame ) {
 	//
 	if ( r_measureOverdraw->integer )
 	{
+		// Stencil buffer unavailable. Deactivating:
+		/*
 		if ( glConfig.stencilBits < 4 )
 		{
 			ri.Printf( PRINT_ALL, "Warning: not enough stencil bits to measure overdraw: %d\n", glConfig.stencilBits );
@@ -339,6 +341,7 @@ void RE_BeginFrame( stereoFrame_t stereoFrame ) {
 			qglStencilFunc( GL_ALWAYS, 0U, ~0U );
 			qglStencilOp( GL_KEEP, GL_INCR, GL_INCR );
 		}
+		*/
 		r_measureOverdraw->modified = qfalse;
 	}
 	else
@@ -346,7 +349,8 @@ void RE_BeginFrame( stereoFrame_t stereoFrame ) {
 		// this is only reached if it was on and is now off
 		if ( r_measureOverdraw->modified ) {
 			R_SyncRenderThread();
-			qglDisable( GL_STENCIL_TEST );
+			// Stencil buffer unavailable. Deactivating:
+			//qglDisable( GL_STENCIL_TEST );
 		}
 		r_measureOverdraw->modified = qfalse;
 	}
@@ -372,12 +376,15 @@ void RE_BeginFrame( stereoFrame_t stereoFrame ) {
 
     // check for errors
     if ( !r_ignoreGLErrors->integer ) {
-        int	err;
+		// There is no support for error checking in GX, as it is implemented right now. Removing:
+        //int	err;
 
 		R_SyncRenderThread();
-        if ( ( err = qglGetError() ) != GL_NO_ERROR ) {
+        /*
+		if ( ( err = qglGetError() ) != GL_NO_ERROR ) {
             ri.Error( ERR_FATAL, "RE_BeginFrame() - glGetError() failed (0x%x)!\n", err );
         }
+		*/
     }
 
 	//
@@ -389,6 +396,8 @@ void RE_BeginFrame( stereoFrame_t stereoFrame ) {
 	}
 	cmd->commandId = RC_DRAW_BUFFER;
 
+	// There is no support for stereo buffers in the hardware. Disabling:
+	/*
 	if ( glConfig.stereoEnabled ) {
 		if ( stereoFrame == STEREO_LEFT ) {
 			cmd->buffer = (int)GL_BACK_LEFT;
@@ -407,6 +416,7 @@ void RE_BeginFrame( stereoFrame_t stereoFrame ) {
 			cmd->buffer = (int)GL_BACK;
 		}
 	}
+	*/
 }
 
 

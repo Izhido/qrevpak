@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // tr_main.c -- main control flow for each frame
 
 #include "tr_local.h"
+#include "gxutils.h"
 
 trGlobals_t		tr;
 
@@ -1403,23 +1404,36 @@ void R_DebugPolygon( int color, int numPoints, float *points ) {
 
 	// draw solid shade
 
-	qglColor3f( color&1, (color>>1)&1, (color>>2)&1 );
-	qglBegin( GL_POLYGON );
+	gxu_cur_r = (color&1) * 255.0;
+	gxu_cur_g = ((color>>1)&1) * 255.0;
+	gxu_cur_b = ((color>>2)&1) * 255.0;
+	gxu_cur_a = 255;
+	qgxBegin (GX_TRIANGLEFAN, gxu_cur_vertex_format, numPoints);
 	for ( i = 0 ; i < numPoints ; i++ ) {
-		qglVertex3fv( points + i * 3 );
+		qgxColor4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
+		qgxPosition3f32( points[i * 3], points[i * 3 + 1], points[i * 3 + 2] );
 	}
-	qglEnd();
+	qgxEnd();
 
 	// draw wireframe outline
 	GL_State( GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE );
-	qglDepthRange( 0, 0 );
-	qglColor3f( 1, 1, 1 );
-	qglBegin( GL_POLYGON );
+	gxu_depth_min = 0.0;
+	gxu_depth_max = 0.0;
+	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxu_depth_min, gxu_depth_max);
+	gxu_cur_r = 255;
+	gxu_cur_g = 255;
+	gxu_cur_b = 255;
+	gxu_cur_a = 255;
+	qgxBegin (GX_LINES, gxu_cur_vertex_format, numPoints + 1);
 	for ( i = 0 ; i < numPoints ; i++ ) {
-		qglVertex3fv( points + i * 3 );
+		qgxColor4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
+		qgxPosition3f32( points[i * 3], points[i * 3 + 1], points[i * 3 + 2] );
 	}
-	qglEnd();
-	qglDepthRange( 0, 1 );
+	qgxPosition3f32( points[0], points[1], points[2] );
+	qgxEnd();
+	gxu_depth_min = 0.0;
+	gxu_depth_max = 1.0;
+	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxu_depth_min, gxu_depth_max);
 }
 
 /*

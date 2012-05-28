@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // tr_flares.c
 
 #include "tr_local.h"
-
+#include "gxutils.h" 
 /*
 =============================================================================
 
@@ -253,7 +253,11 @@ void RB_TestFlare( flare_t *f ) {
 	glState.finishCalled = qfalse;
 
 	// read back the z buffer contents
+	// Temporarily deactivated until we understand how to implement this. In the meantime, and just to avoid a warning:
+	depth = 1.0;
+	/*
 	qglReadPixels( f->windowX, f->windowY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth );
+	*/
 
 	screenZ = backEnd.viewParms.projectionMatrix[14] / 
 		( ( 2*depth - 1 ) * backEnd.viewParms.projectionMatrix[11] - backEnd.viewParms.projectionMatrix[10] );
@@ -419,18 +423,21 @@ void RB_RenderFlares (void) {
 		return;		// none visible
 	}
 
+	// Clipping planes unavailable in this platform. Removing:
+	/*
 	if ( backEnd.viewParms.isPortal ) {
 		qglDisable (GL_CLIP_PLANE0);
 	}
+	*/
 
-	qglPushMatrix();
-    qglLoadIdentity();
-	qglMatrixMode( GL_PROJECTION );
-	qglPushMatrix();
-    qglLoadIdentity();
-	qglOrtho( backEnd.viewParms.viewportX, backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth,
-			  backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight,
-			  -99999, 99999 );
+	gxu_cur_modelview_matrix++;
+	guMtxIdentity(gxu_modelview_matrices[gxu_cur_modelview_matrix]);
+	gxu_cur_projection_matrix++;
+	qguOrtho(gxu_projection_matrices[gxu_cur_projection_matrix], 
+	         backEnd.viewParms.viewportX, backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth,
+	         backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight,
+			 GXU_ORTHO_ZNEAR, GXU_ORTHO_ZFAR);
+	qgxLoadProjectionMtx(gxu_projection_matrices[gxu_cur_projection_matrix], GX_ORTHOGRAPHIC);
 
 	for ( f = r_activeFlares ; f ; f = f->next ) {
 		if ( f->frameSceneNum == backEnd.viewParms.frameSceneNum
@@ -440,8 +447,7 @@ void RB_RenderFlares (void) {
 		}
 	}
 
-	qglPopMatrix();
-	qglMatrixMode( GL_MODELVIEW );
-	qglPopMatrix();
+	gxu_cur_projection_matrix--;
+	gxu_cur_modelview_matrix--;
 }
 
