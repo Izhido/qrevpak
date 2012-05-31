@@ -39,14 +39,51 @@ This is just for OpenGL conformance testing, it should never be the fastest
 ================
 */
 static void APIENTRY R_ArrayElementDiscrete( int index ) {
-	qglColor4ubv( tess.svars.colors[ index ] );
+	qgxPosition3f32(tess.xyz[ index ][0],
+	                tess.xyz[ index ][1],
+	                tess.xyz[ index ][2]);
+	qgxColor4u8(tess.svars.colors[ index ][0],
+	            tess.svars.colors[ index ][1],
+	            tess.svars.colors[ index ][2],
+	            tess.svars.colors[ index ][3]);
 	if ( glState.currenttmu ) {
-		qglMultiTexCoord2fARB( 0, tess.svars.texcoords[ 0 ][ index ][0], tess.svars.texcoords[ 0 ][ index ][1] );
-		qglMultiTexCoord2fARB( 1, tess.svars.texcoords[ 1 ][ index ][0], tess.svars.texcoords[ 1 ][ index ][1] );
+		qgxTexCoord2f32(tess.svars.texcoords[ 0 ][ index ][0],
+		                tess.svars.texcoords[ 0 ][ index ][1]);
+		qgxTexCoord2f32(tess.svars.texcoords[ 1 ][ index ][0],
+		                tess.svars.texcoords[ 1 ][ index ][1]);
 	} else {
-		qglTexCoord2fv( tess.svars.texcoords[ 0 ][ index ] );
+		qgxTexCoord2f32(tess.svars.texcoords[ 0 ][ index ][0],
+		                tess.svars.texcoords[ 0 ][ index ][1]);
 	}
-	qglVertex3fv( tess.xyz[ index ] );
+}
+
+/*
+===================
+R_DrawIndexRun
+
+===================
+*/
+static int c_indexrun[SHADER_MAX_VERTEXES];
+static int c_indexrun_size;
+static qboolean c_islines;
+
+static void R_DrawIndexRun(u8 type, void ( APIENTRY *element )(int))
+{
+	int i;
+
+	if(c_islines) {
+		type = GX_LINESTRIP;
+		c_indexrun_size++;
+	}
+	qgxBegin(type, gxu_cur_vertex_format, c_indexrun_size);
+	for(i = 0; i < c_indexrun_size; i++)
+	{
+		element(c_indexrun[i]);
+	};
+	if(c_islines) {
+		element(c_indexrun[0]);
+	}
+	qgxEnd();
 }
 
 /*
@@ -57,7 +94,7 @@ R_DrawStripElements
 */
 static int		c_vertexes;		// for seeing how long our average strips are
 static int		c_begins;
-static void R_DrawStripElements( int numIndexes, const glIndex_t *indexes, void ( APIENTRY *element )(GLint) ) {
+static void R_DrawStripElements( int numIndexes, const glIndex_t *indexes, void ( APIENTRY *element )(int) ) {
 	int i;
 	int last[3] = { -1, -1, -1 };
 	qboolean even;
@@ -68,12 +105,12 @@ static void R_DrawStripElements( int numIndexes, const glIndex_t *indexes, void 
 		return;
 	}
 
-	qglBegin( GL_TRIANGLE_STRIP );
+	c_indexrun_size = 0;
 
 	// prime the strip
-	element( indexes[0] );
-	element( indexes[1] );
-	element( indexes[2] );
+	c_indexrun[c_indexrun_size++] = indexes[0];
+	c_indexrun[c_indexrun_size++] = indexes[1];
+	c_indexrun[c_indexrun_size++] = indexes[2];
 	c_vertexes += 3;
 
 	last[0] = indexes[0];
@@ -90,7 +127,7 @@ static void R_DrawStripElements( int numIndexes, const glIndex_t *indexes, void 
 			// check previous triangle to see if we're continuing a strip
 			if ( ( indexes[i+0] == last[2] ) && ( indexes[i+1] == last[1] ) )
 			{
-				element( indexes[i+2] );
+				c_indexrun[c_indexrun_size++] = indexes[i+2];
 				c_vertexes++;
 				assert( indexes[i+2] < tess.numVertexes );
 				even = qtrue;
@@ -99,14 +136,14 @@ static void R_DrawStripElements( int numIndexes, const glIndex_t *indexes, void 
 			// a new one
 			else
 			{
-				qglEnd();
+				R_DrawIndexRun(GX_TRIANGLESTRIP, element);
 
-				qglBegin( GL_TRIANGLE_STRIP );
+				c_indexrun_size = 0;
 				c_begins++;
 
-				element( indexes[i+0] );
-				element( indexes[i+1] );
-				element( indexes[i+2] );
+				c_indexrun[c_indexrun_size++] = indexes[i+0];
+				c_indexrun[c_indexrun_size++] = indexes[i+1];
+				c_indexrun[c_indexrun_size++] = indexes[i+2];
 
 				c_vertexes += 3;
 
@@ -118,7 +155,7 @@ static void R_DrawStripElements( int numIndexes, const glIndex_t *indexes, void 
 			// check previous triangle to see if we're continuing a strip
 			if ( ( last[2] == indexes[i+1] ) && ( last[0] == indexes[i+0] ) )
 			{
-				element( indexes[i+2] );
+				c_indexrun[c_indexrun_size++] = indexes[i+2];
 				c_vertexes++;
 
 				even = qfalse;
@@ -127,14 +164,14 @@ static void R_DrawStripElements( int numIndexes, const glIndex_t *indexes, void 
 			// a new one
 			else
 			{
-				qglEnd();
+				R_DrawIndexRun(GX_TRIANGLESTRIP, element);
 
-				qglBegin( GL_TRIANGLE_STRIP );
+				c_indexrun_size = 0;
 				c_begins++;
 
-				element( indexes[i+0] );
-				element( indexes[i+1] );
-				element( indexes[i+2] );
+				c_indexrun[c_indexrun_size++] = indexes[i+0];
+				c_indexrun[c_indexrun_size++] = indexes[i+1];
+				c_indexrun[c_indexrun_size++] = indexes[i+2];
 				c_vertexes += 3;
 
 				even = qfalse;
@@ -147,7 +184,7 @@ static void R_DrawStripElements( int numIndexes, const glIndex_t *indexes, void 
 		last[2] = indexes[i+2];
 	}
 
-	qglEnd();
+	R_DrawIndexRun(GX_TRIANGLESTRIP, element);
 }
 
 
@@ -162,6 +199,9 @@ without compiled vertex arrays.
 ==================
 */
 static void R_DrawElements( int numIndexes, const glIndex_t *indexes ) {
+	// ********************* Disabling most calls from this function; assuming primitives = 3:
+	R_DrawStripElements( numIndexes,  indexes, R_ArrayElementDiscrete );
+	/*
 	int		primitives;
 
 	primitives = r_primitives->integer;
@@ -195,6 +235,7 @@ static void R_DrawElements( int numIndexes, const glIndex_t *indexes ) {
 	}
 
 	// anything else will cause no drawing
+	*/
 }
 
 
@@ -250,12 +291,22 @@ Draws triangle outlines for debugging
 ================
 */
 static void DrawTris (shaderCommands_t *input) {
+	gxu_cur_vertex_format = GX_VTXFMT0;
+	qgxDisableTexture();
 	GX_Bind( tr.whiteImage );
-	qglColor3f (1,1,1);
+	gxu_cur_r = 255;
+	gxu_cur_g = 255;
+	gxu_cur_b = 255;
+	gxu_cur_a = 255;
 
 	GL_State( GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE );
-	qglDepthRange( 0, 0 );
+	c_islines = qtrue;
+	gxu_depth_min = 0.0;
+	gxu_depth_max = 0.0;
+	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxu_depth_min, gxu_depth_max);
 
+	// These calls are not needed for the current implementation. Disabling:
+	/*
 	qglDisableClientState (GL_COLOR_ARRAY);
 	qglDisableClientState (GL_TEXTURE_COORD_ARRAY);
 
@@ -265,14 +316,22 @@ static void DrawTris (shaderCommands_t *input) {
 		qglLockArraysEXT(0, input->numVertexes);
 		GLimp_LogComment( "glLockArraysEXT\n" );
 	}
-
+	*/
 	R_DrawElements( input->numIndexes, input->indexes );
 
+	// Neither are these. Disabling:
+	/*
 	if (qglUnlockArraysEXT) {
 		qglUnlockArraysEXT();
 		GLimp_LogComment( "glUnlockArraysEXT\n" );
 	}
-	qglDepthRange( 0, 1 );
+	*/
+	gxu_depth_min = 0.0;
+	gxu_depth_max = 1.0;
+	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxu_depth_min, gxu_depth_max);
+	c_islines = qfalse;
+	gxu_cur_vertex_format = GX_VTXFMT1;
+	qgxEnableTexture();
 }
 
 
@@ -287,20 +346,33 @@ static void DrawNormals (shaderCommands_t *input) {
 	int		i;
 	vec3_t	temp;
 
+	gxu_cur_vertex_format = GX_VTXFMT0;
+	qgxDisableTexture();
 	GX_Bind( tr.whiteImage );
-	qglColor3f (1,1,1);
-	qglDepthRange( 0, 0 );	// never occluded
+	gxu_cur_r = 255;
+	gxu_cur_g = 255;
+	gxu_cur_b = 255;
+	gxu_cur_a = 255;
+	gxu_depth_min = 0.0;
+	gxu_depth_max = 0.0; // never occluded
+	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxu_depth_min, gxu_depth_max);
 	GL_State( GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE );
 
-	qglBegin (GL_LINES);
+	qgxBegin (GX_LINES, gxu_cur_vertex_format, input->numVertexes);
 	for (i = 0 ; i < input->numVertexes ; i++) {
-		qglVertex3fv (input->xyz[i]);
+		qgxPosition3f32(input->xyz[i][0], input->xyz[i][1], input->xyz[i][2]);
+		qgxColor4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 		VectorMA (input->xyz[i], 2, input->normal[i], temp);
-		qglVertex3fv (temp);
+		qgxPosition3f32(temp[0], temp[1], temp[2]);
+		qgxColor4u8(gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	}
-	qglEnd ();
+	qgxEnd ();
 
-	qglDepthRange( 0, 1 );
+	gxu_depth_min = 0.0;
+	gxu_depth_max = 1.0;
+	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxu_depth_min, gxu_depth_max);
+	gxu_cur_vertex_format = GX_VTXFMT1;
+	qgxEnableTexture();
 }
 
 /*
@@ -353,30 +425,34 @@ static void DrawMultitextured( shaderCommands_t *input, int stage ) {
 	// this is an ugly hack to work around a GeForce driver
 	// bug with multitexture and clip planes
 	if ( backEnd.viewParms.isPortal ) {
-		qglPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+		// This is not yet available in the current platform. Removing:
+		//qglPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 	}
 
 	//
 	// base
 	//
 	GX_SelectTexture( 0 );
-	qglTexCoordPointer( 2, GL_FLOAT, 0, input->svars.texcoords[0] );
+	// *********************** This call is not needed for the current implementation. Disabling:
+	//qglTexCoordPointer( 2, GL_FLOAT, 0, input->svars.texcoords[0] );
 	R_BindAnimatedImage( &pStage->bundle[0] );
 
 	//
 	// lightmap/secondary pass
 	//
 	GX_SelectTexture( 1 );
-	qglEnable( GL_TEXTURE_2D );
-	qglEnableClientState( GL_TEXTURE_COORD_ARRAY );
+	qgxEnableTexStage1();
+	// *********************** This call is not needed for the current implementation. Disabling:
+	//qglEnableClientState( GL_TEXTURE_COORD_ARRAY );
 
 	if ( r_lightmap->integer ) {
-		GX_TexEnv( GL_REPLACE );
+		GX_TexEnv( GX_REPLACE );
 	} else {
 		GX_TexEnv( tess.shader->multitextureEnv );
 	}
 
-	qglTexCoordPointer( 2, GL_FLOAT, 0, input->svars.texcoords[1] );
+	// *********************** This call is not needed for the current implementation. Disabling:
+	//qglTexCoordPointer( 2, GL_FLOAT, 0, input->svars.texcoords[1] );
 
 	R_BindAnimatedImage( &pStage->bundle[1] );
 
@@ -386,7 +462,7 @@ static void DrawMultitextured( shaderCommands_t *input, int stage ) {
 	// disable texturing on TEXTURE1, then select TEXTURE0
 	//
 	//qglDisableClientState( GL_TEXTURE_COORD_ARRAY );
-	qglDisable( GL_TEXTURE_2D );
+	qgxDisableTexStage1();
 
 	GX_SelectTexture( 0 );
 }
@@ -588,11 +664,14 @@ static void ProjectDlightTexture( void ) {
 			continue;
 		}
 
+		// *********************** These calls are not needed for the current implementation. Disabling:
+		/*
 		qglEnableClientState( GL_TEXTURE_COORD_ARRAY );
 		qglTexCoordPointer( 2, GL_FLOAT, 0, texCoordsArray[0] );
 
 		qglEnableClientState( GL_COLOR_ARRAY );
 		qglColorPointer( 4, GL_UNSIGNED_BYTE, 0, colorArray );
+		*/
 
 		GX_Bind( tr.dlightImage );
 		// include GLS_DEPTHFUNC_EQUAL so alpha tested surfaces don't add light
@@ -621,11 +700,14 @@ static void RB_FogPass( void ) {
 	fog_t		*fog;
 	int			i;
 
+	// These calls are not needed for the current implementation. Disabling:
+	/*
 	qglEnableClientState( GL_COLOR_ARRAY );
 	qglColorPointer( 4, GL_UNSIGNED_BYTE, 0, tess.svars.colors );
 
 	qglEnableClientState( GL_TEXTURE_COORD_ARRAY);
 	qglTexCoordPointer( 2, GL_FLOAT, 0, tess.svars.texcoords[0] );
+	*/
 
 	fog = tr.world->fogs + tess.fogNum;
 

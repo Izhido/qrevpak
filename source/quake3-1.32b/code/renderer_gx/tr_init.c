@@ -725,7 +725,7 @@ void GL_SetDefaultState( void )
 		GX_SelectTexture( 0 );
 	}
 	*/
-
+	gxu_cur_vertex_format = GX_VTXFMT1;
 	qgxEnableTexture();
 	GL_TextureMode( r_textureMode->string );
 	GX_TexEnv( GX_MODULATE );
