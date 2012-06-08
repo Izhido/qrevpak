@@ -34,6 +34,7 @@ idnewt:28000
 192.246.40.70:28000
 =============
 */
+/*
 qboolean	NET_StringToAdr (const char *s, netadr_t *a)
 {	
 	if (!strcmp (s, "localhost")) {
@@ -44,6 +45,7 @@ qboolean	NET_StringToAdr (const char *s, netadr_t *a)
 
 	return qfalse;
 }
+*/
 
 /*
 ==================

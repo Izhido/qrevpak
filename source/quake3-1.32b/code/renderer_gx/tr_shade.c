@@ -1042,11 +1042,14 @@ static void RB_IterateStagesGeneric( shaderCommands_t *input )
 		ComputeColors( pStage );
 		ComputeTexCoords( pStage );
 
+		// Temporarily deactivating. The current rendering code does not need these:
+		/*
 		if ( !setArraysOnce )
 		{
 			qglEnableClientState( GL_COLOR_ARRAY );
 			qglColorPointer( 4, GL_UNSIGNED_BYTE, 0, input->svars.colors );
 		}
+		*/
 
 		//
 		// do multitexture
@@ -1057,10 +1060,13 @@ static void RB_IterateStagesGeneric( shaderCommands_t *input )
 		}
 		else
 		{
+			// Temporarily deactivating. The current rendering code does not need these:
+			/*
 			if ( !setArraysOnce )
 			{
 				qglTexCoordPointer( 2, GL_FLOAT, 0, input->svars.texcoords[0] );
 			}
+			*/
 
 			//
 			// set state
@@ -1117,8 +1123,11 @@ void RB_StageIteratorGeneric( void )
 	// set polygon offset if necessary
 	if ( input->shader->polygonOffset )
 	{
+		// ****************** This is not available for the current renderer. Removing:
+		/*
 		qglEnable( GL_POLYGON_OFFSET_FILL );
 		qglPolygonOffset( r_offsetFactor->value, r_offsetUnits->value );
+		*/
 	}
 
 	//
@@ -1130,37 +1139,49 @@ void RB_StageIteratorGeneric( void )
 	if ( tess.numPasses > 1 || input->shader->multitextureEnv )
 	{
 		setArraysOnce = qfalse;
+		// ****************** Temporarily deactivating it until the current renderer implements it:
+		/*
 		qglDisableClientState (GL_COLOR_ARRAY);
 		qglDisableClientState (GL_TEXTURE_COORD_ARRAY);
+		*/
 	}
 	else
 	{
 		setArraysOnce = qtrue;
 
+		// ****************** Temporarily deactivating it until the current renderer implements it:
+		/*
 		qglEnableClientState( GL_COLOR_ARRAY);
 		qglColorPointer( 4, GL_UNSIGNED_BYTE, 0, tess.svars.colors );
 
 		qglEnableClientState( GL_TEXTURE_COORD_ARRAY);
 		qglTexCoordPointer( 2, GL_FLOAT, 0, tess.svars.texcoords[0] );
+		*/
 	}
 
 	//
 	// lock XYZ
 	//
+	// ****************** Temporarily deactivating it until the current renderer implements it:
+	/*
 	qglVertexPointer (3, GL_FLOAT, 16, input->xyz);	// padded for SIMD
 	if (qglLockArraysEXT)
 	{
 		qglLockArraysEXT(0, input->numVertexes);
 		GLimp_LogComment( "glLockArraysEXT\n" );
 	}
+	*/
 
 	//
 	// enable color and texcoord arrays after the lock if necessary
 	//
 	if ( !setArraysOnce )
 	{
+		// Temporarily deactivating. The current rendering code does not need these:
+		/*
 		qglEnableClientState( GL_TEXTURE_COORD_ARRAY );
 		qglEnableClientState( GL_COLOR_ARRAY );
+		*/
 	}
 
 	//
@@ -1186,18 +1207,22 @@ void RB_StageIteratorGeneric( void )
 	// 
 	// unlock arrays
 	//
+	// ****************** Temporarily deactivating it until the current renderer implements it:
+	/*
 	if (qglUnlockArraysEXT) 
 	{
 		qglUnlockArraysEXT();
 		GLimp_LogComment( "glUnlockArraysEXT\n" );
 	}
+	*/
 
 	//
 	// reset polygon offset
 	//
 	if ( input->shader->polygonOffset )
 	{
-		qglDisable( GL_POLYGON_OFFSET_FILL );
+		// ****************** This is not available for the current renderer. Removing:
+		//qglDisable( GL_POLYGON_OFFSET_FILL );
 	}
 }
 
@@ -1237,6 +1262,8 @@ void RB_StageIteratorVertexLitTexture( void )
 	//
 	// set arrays and lock
 	//
+	// ****************** Temporarily deactivating it until the current renderer implements it:
+	/*
 	qglEnableClientState( GL_COLOR_ARRAY);
 	qglEnableClientState( GL_TEXTURE_COORD_ARRAY);
 
@@ -1249,6 +1276,7 @@ void RB_StageIteratorVertexLitTexture( void )
 		qglLockArraysEXT(0, input->numVertexes);
 		GLimp_LogComment( "glLockArraysEXT\n" );
 	}
+	*/
 
 	//
 	// call special shade routine
@@ -1274,11 +1302,14 @@ void RB_StageIteratorVertexLitTexture( void )
 	// 
 	// unlock arrays
 	//
+	// ****************** Temporarily deactivating it until the current renderer implements it:
+	/*
 	if (qglUnlockArraysEXT) 
 	{
 		qglUnlockArraysEXT();
 		GLimp_LogComment( "glUnlockArraysEXT\n" );
 	}
+	*/
 }
 
 //define	REPLACE_MODE
@@ -1306,15 +1337,20 @@ void RB_StageIteratorLightmappedMultitexture( void ) {
 	// set color, pointers, and lock
 	//
 	GL_State( GLS_DEFAULT );
-	qglVertexPointer( 3, GL_FLOAT, 16, input->xyz );
+	// ****************** Temporarily deactivating this call until the current renderer implements it:
+	//qglVertexPointer( 3, GL_FLOAT, 16, input->xyz );
+
 
 #ifdef REPLACE_MODE
 	qglDisableClientState( GL_COLOR_ARRAY );
 	qglColor3f( 1, 1, 1 );
 	qglShadeModel( GL_FLAT );
 #else
+	// ****************** Temporarily deactivating this call until the current renderer implements it:
+	/*
 	qglEnableClientState( GL_COLOR_ARRAY );
 	qglColorPointer( 4, GL_UNSIGNED_BYTE, 0, tess.constantColor255 );
+	*/
 #endif
 
 	//
@@ -1322,39 +1358,47 @@ void RB_StageIteratorLightmappedMultitexture( void ) {
 	//
 	GX_SelectTexture( 0 );
 
-	qglEnableClientState( GL_TEXTURE_COORD_ARRAY );
+	// ****************** Temporarily deactivating this call until the current renderer implements it:
+	//qglEnableClientState( GL_TEXTURE_COORD_ARRAY );
 	R_BindAnimatedImage( &tess.xstages[0]->bundle[0] );
-	qglTexCoordPointer( 2, GL_FLOAT, 16, tess.texCoords[0][0] );
+	// ****************** Temporarily deactivating this call until the current renderer implements it:
+	//qglTexCoordPointer( 2, GL_FLOAT, 16, tess.texCoords[0][0] );
 
 	//
 	// configure second stage
 	//
 	GX_SelectTexture( 1 );
-	qglEnable( GL_TEXTURE_2D );
+	qgxEnableTexStage1();
 	if ( r_lightmap->integer ) {
-		GX_TexEnv( GL_REPLACE );
+		GX_TexEnv( GX_REPLACE );
 	} else {
-		GX_TexEnv( GL_MODULATE );
+		GX_TexEnv( GX_MODULATE );
 	}
 	R_BindAnimatedImage( &tess.xstages[0]->bundle[1] );
+	// ****************** Temporarily deactivating these calls until the current renderer implements them:
+	/*
 	qglEnableClientState( GL_TEXTURE_COORD_ARRAY );
 	qglTexCoordPointer( 2, GL_FLOAT, 16, tess.texCoords[0][1] );
+	*/
 
 	//
 	// lock arrays
 	//
+	/*
 	if ( qglLockArraysEXT ) {
 		qglLockArraysEXT(0, input->numVertexes);
 		GLimp_LogComment( "glLockArraysEXT\n" );
 	}
+	*/
 
 	R_DrawElements( input->numIndexes, input->indexes );
 
 	//
 	// disable texturing on TEXTURE1, then select TEXTURE0
 	//
-	qglDisable( GL_TEXTURE_2D );
-	qglDisableClientState( GL_TEXTURE_COORD_ARRAY );
+	qgxDisableTexStage1();
+	// ****************** Temporarily deactivating this call until the current renderer implements it:
+	//qglDisableClientState( GL_TEXTURE_COORD_ARRAY );
 
 	GX_SelectTexture( 0 );
 #ifdef REPLACE_MODE
@@ -1379,10 +1423,12 @@ void RB_StageIteratorLightmappedMultitexture( void ) {
 	//
 	// unlock arrays
 	//
+	/*
 	if ( qglUnlockArraysEXT ) {
 		qglUnlockArraysEXT();
 		GLimp_LogComment( "glUnlockArraysEXT\n" );
 	}
+	*/
 }
 
 /*

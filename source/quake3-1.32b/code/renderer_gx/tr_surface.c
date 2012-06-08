@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 // tr_surf.c
 #include "tr_local.h"
+#include "gxutils.h"
 
 /*
 
@@ -323,14 +324,19 @@ void RB_SurfaceBeam( void )
 
 	GL_State( GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE );
 
-	qglColor3f( 1, 0, 0 );
+	gxu_cur_r = 255;
+	gxu_cur_g = 0;
+	gxu_cur_b = 0;
+	gxu_cur_a = 255;
 
-	qglBegin( GL_TRIANGLE_STRIP );
+	qgxBegin (GX_TRIANGLESTRIP, gxu_cur_vertex_format, NUM_BEAM_SEGS * 2);
 	for ( i = 0; i <= NUM_BEAM_SEGS; i++ ) {
-		qglVertex3fv( start_points[ i % NUM_BEAM_SEGS] );
-		qglVertex3fv( end_points[ i % NUM_BEAM_SEGS] );
+		qgxPosition3f32 (start_points[ i % NUM_BEAM_SEGS][0], start_points[ i % NUM_BEAM_SEGS][1], start_points[ i % NUM_BEAM_SEGS][2]);
+		qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
+		qgxPosition3f32 (end_points[ i % NUM_BEAM_SEGS][0], end_points[ i % NUM_BEAM_SEGS][1], end_points[ i % NUM_BEAM_SEGS][2]);
+		qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
 	}
-	qglEnd();
+	qgxEnd();
 }
 
 //================================================================================
@@ -1072,6 +1078,8 @@ Draws x/y/z lines from the origin for orientation debugging
 ===================
 */
 void RB_SurfaceAxis( void ) {
+	//************** Deactivated until we learn how to draw lines with a certain height:
+	/*
 	GX_Bind( tr.whiteImage );
 	qglLineWidth( 3 );
 	qglBegin( GL_LINES );
@@ -1086,6 +1094,7 @@ void RB_SurfaceAxis( void ) {
 	qglVertex3f( 0,0,16 );
 	qglEnd();
 	qglLineWidth( 1 );
+	*/
 }
 
 //===========================================================================

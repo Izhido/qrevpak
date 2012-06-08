@@ -336,6 +336,11 @@ static float LittleFloat (const float *l) { return FloatSwap(l); }
 
 #define	PATH_SEP '/'
 
+#define	GAME_HARD_LINKED
+#define	CGAME_HARD_LINKED
+#define	UI_HARD_LINKED
+#define	BOTLIB_HARD_LINKED
+
 #define BigShort
 #define LittleShort Sys_LittleShort
 #define BigLong

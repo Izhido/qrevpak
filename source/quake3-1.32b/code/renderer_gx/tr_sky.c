@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 // tr_sky.c
 #include "tr_local.h"
+#include "gxutils.h"
 
 #define SKY_SUBDIVISIONS		8
 #define HALF_SKY_SUBDIVISIONS	(SKY_SUBDIVISIONS/2)
@@ -369,18 +370,20 @@ static void DrawSkySide( struct image_s *image, const int mins[2], const int max
 
 	for ( t = mins[1]+HALF_SKY_SUBDIVISIONS; t < maxs[1]+HALF_SKY_SUBDIVISIONS; t++ )
 	{
-		qglBegin( GL_TRIANGLE_STRIP );
+		qgxBegin (GX_TRIANGLESTRIP, gxu_cur_vertex_format, (maxs[0] - mins[0]) * 2);
 
 		for ( s = mins[0]+HALF_SKY_SUBDIVISIONS; s <= maxs[0]+HALF_SKY_SUBDIVISIONS; s++ )
 		{
-			qglTexCoord2fv( s_skyTexCoords[t][s] );
-			qglVertex3fv( s_skyPoints[t][s] );
+			qgxPosition3f32 (s_skyPoints[t][s][0], s_skyPoints[t][s][1], s_skyPoints[t][s][2]);
+			qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
+			qgxTexCoord2f32 ( s_skyTexCoords[t][s][0],  s_skyTexCoords[t][s][1] );
 
-			qglTexCoord2fv( s_skyTexCoords[t+1][s] );
-			qglVertex3fv( s_skyPoints[t+1][s] );
+			qgxPosition3f32 (s_skyPoints[t+1][s][0], s_skyPoints[t+1][s][1], s_skyPoints[t+1][s][2]);
+			qgxColor4u8 (gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a);
+			qgxTexCoord2f32 ( s_skyTexCoords[t+1][s][0],  s_skyTexCoords[t+1][s][1] );
 		}
 
-		qglEnd();
+		qgxEnd();
 	}
 }
 

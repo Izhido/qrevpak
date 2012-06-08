@@ -125,12 +125,16 @@ void R_RenderShadowEdges( void ) {
 			// if it doesn't share the edge with another front facing
 			// triangle, it is a sil edge
 			if ( hit[ 1 ] == 0 ) {
-				qglBegin( GL_TRIANGLE_STRIP );
-				qglVertex3fv( tess.xyz[ i ] );
-				qglVertex3fv( tess.xyz[ i + tess.numVertexes ] );
-				qglVertex3fv( tess.xyz[ i2 ] );
-				qglVertex3fv( tess.xyz[ i2 + tess.numVertexes ] );
-				qglEnd();
+				qgxBegin (GX_TRIANGLESTRIP, gxu_cur_vertex_format, 4);
+				qgxPosition3f32( tess.xyz[ i ][0], tess.xyz[ i ][1], tess.xyz[ i ][2] );
+				qgxColor4u8( gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a );
+				qgxPosition3f32( tess.xyz[ i + tess.numVertexes ][0], tess.xyz[ i + tess.numVertexes ][1], tess.xyz[ i + tess.numVertexes ][2] );
+				qgxColor4u8( gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a );
+				qgxPosition3f32( tess.xyz[ i2 ][0], tess.xyz[ i2 ][1], tess.xyz[ i2 ][2] );
+				qgxColor4u8( gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a );
+				qgxPosition3f32( tess.xyz[ i2 + tess.numVertexes ][0], tess.xyz[ i2 + tess.numVertexes ][1], tess.xyz[ i2 + tess.numVertexes ][2] );
+				qgxColor4u8( gxu_cur_r, gxu_cur_g, gxu_cur_b, gxu_cur_a );
+				qgxEnd();
 				c_edges++;
 			} else {
 				c_rejected++;
@@ -153,6 +157,8 @@ triangleFromEdge[ v1 ][ v2 ]
 =================
 */
 void RB_ShadowTessEnd( void ) {
+	//**************** Deactivated until we understand how to draw shadows without a stencil buffer:
+	/*
 	int		i;
 	int		numTris;
 	vec3_t	lightDir;
@@ -252,6 +258,7 @@ void RB_ShadowTessEnd( void ) {
 
 	// reenable writing to the color buffer
 	qglColorMask( GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE );
+	*/
 }
 
 
@@ -266,6 +273,8 @@ overlap and double darken.
 =================
 */
 void RB_ShadowFinish( void ) {
+	//**************** Deactivated until we understand how to draw shadows without a stencil buffer:
+	/*
 	if ( r_shadows->integer != 2 ) {
 		return;
 	}
@@ -298,6 +307,7 @@ void RB_ShadowFinish( void ) {
 
 	qglColor4f(1,1,1,1);
 	qglDisable( GL_STENCIL_TEST );
+	*/
 }
 
 

@@ -19,6 +19,7 @@ TARGET		:=	Q3ARev
 BUILD		:=	build
 SOURCES		:=	../../source/quake3-1.32b/code/revol \
                 ../../source/quake3-1.32b/code/game \
+                ../../source/quake3-1.32b/code/jpeg-6 \
                 ../../source/quake3-1.32b/code/renderer_gx \
                 ../../source/quake3-1.32b/code/qcommon \
                 ../../source/quake3-1.32b/code/client \
@@ -28,6 +29,7 @@ SOURCES		:=	../../source/quake3-1.32b/code/revol \
                 ../../source/gxutils/source
 DATA		:=	../../data
 INCLUDES	:=  ../../source/quake3-1.32b/code/game \
+                ../../source/quake3-1.32b/code/jpeg-6 \
                 ../../source/quake3-1.32b/code/renderer_gx \
                 ../../source/quake3-1.32b/code/qcommon \
                 ../../source/quake3-1.32b/code/client \
