@@ -64,7 +64,6 @@
     <ClCompile Include="..\..\source\quake3-1.32b\code\game\q_math.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\game\q_shared.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\jpeg-6\jcapimin.c" />
-    <ClCompile Include="..\..\source\quake3-1.32b\code\jpeg-6\jcapistd.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\jpeg-6\jccoefct.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\jpeg-6\jccolor.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\jpeg-6\jcdctmgr.c" />
@@ -105,12 +104,8 @@
     <ClCompile Include="..\..\source\quake3-1.32b\code\jpeg-6\jidctint.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\jpeg-6\jidctred.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\jpeg-6\jload.c" />
-    <ClCompile Include="..\..\source\quake3-1.32b\code\jpeg-6\jmemansi.c" />
-    <ClCompile Include="..\..\source\quake3-1.32b\code\jpeg-6\jmemdos.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\jpeg-6\jmemmgr.c" />
-    <ClCompile Include="..\..\source\quake3-1.32b\code\jpeg-6\jmemname.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\jpeg-6\jmemnobs.c" />
-    <ClCompile Include="..\..\source\quake3-1.32b\code\jpeg-6\jpegtran.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\jpeg-6\jquant1.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\jpeg-6\jquant2.c" />
     <ClCompile Include="..\..\source\quake3-1.32b\code\jpeg-6\jutils.c" />

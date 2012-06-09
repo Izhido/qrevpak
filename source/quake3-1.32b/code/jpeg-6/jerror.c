@@ -19,7 +19,11 @@
 #include "jversion.h"
 #include "jerror.h"
 
-#include "../renderer/tr_local.h"
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// The renderer for this platform is in another folder. Switching:
+//#include "../renderer/tr_local.h"
+#include "../renderer_gx/tr_local.h"
+// <<< FIX
 
 #ifndef EXIT_FAILURE		/* define exit() codes if not provided */
 #define EXIT_FAILURE  1

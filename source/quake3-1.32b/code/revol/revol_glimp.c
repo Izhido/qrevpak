@@ -88,3 +88,30 @@ qboolean QGL_Init( const char *dllname ) {
 void		QGL_Shutdown( void ) {
 }
 */
+
+void *GLimp_RendererSleep( void ) {
+	return NULL;
+}
+
+void GLimp_FrontEndSleep( void ) {
+}
+
+void GLimp_WakeRenderer( void *data ) {
+}
+
+/*
+=======================
+GLimp_SpawnRenderThread
+=======================
+*/
+qboolean GLimp_SpawnRenderThread( void (*function)( void ) ) {
+	return qfalse;
+}
+
+/*
+** GLimp_SetGamma
+**
+** This routine should only be called if glConfig.deviceSupportsGamma is TRUE
+*/
+void GLimp_SetGamma( unsigned char red[256], unsigned char green[256], unsigned char blue[256] ) {
+}

@@ -20,7 +20,11 @@
 #include "jpeglib.h"
 #include "jmemsys.h"		/* import the system-dependent declarations */
 
-#include "../renderer/tr_local.h"
+// >>> FIX: For Nintendo Wii using devkitPPC / libogc
+// The renderer for this platform is in another folder. Switching:
+//#include "../renderer/tr_local.h"
+#include "../renderer_gx/tr_local.h"
+// <<< FIX
 
 /*
  * Memory allocation and ri.Freeing are controlled by the regular library

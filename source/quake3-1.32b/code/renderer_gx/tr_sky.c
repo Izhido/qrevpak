@@ -704,6 +704,8 @@ void RB_DrawSun( void ) {
 	float		dist;
 	vec3_t		origin, vec1, vec2;
 	vec3_t		temp;
+	Mtx			m;
+	int			i, j, k;
 
 	if ( !backEnd.skyRenderedThisView ) {
 		return;
@@ -711,8 +713,18 @@ void RB_DrawSun( void ) {
 	if ( !r_drawSun->integer ) {
 		return;
 	}
-	qglLoadMatrixf( backEnd.viewParms.world.modelMatrix );
-	qglTranslatef (backEnd.viewParms.or.origin[0], backEnd.viewParms.or.origin[1], backEnd.viewParms.or.origin[2]);
+	k = 0;
+	for(i = 0; i < 3; i++)
+	{
+		for(j = 0; j < 4; j++)
+		{
+			gxu_modelview_matrices[gxu_cur_modelview_matrix][i][j] = backEnd.viewParms.world.modelMatrix[k];
+			k++;
+		}
+	}
+	qguMtxTrans(m, backEnd.viewParms.or.origin[0], backEnd.viewParms.or.origin[1], backEnd.viewParms.or.origin[2]);
+	qguMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
+	qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 
 	dist = 	backEnd.viewParms.zFar / 1.75;		// div sqrt(3)
 	size = dist * 0.4;
@@ -725,7 +737,9 @@ void RB_DrawSun( void ) {
 	VectorScale( vec2, size, vec2 );
 
 	// farthest depth range
-	qglDepthRange( 1.0, 1.0 );
+	gxu_depth_min = 1.0;
+	gxu_depth_max = 1.0;
+	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxu_depth_min, gxu_depth_max);
 
 	// FIXME: use quad stamp
 	RB_BeginSurface( tr.sunShader, tess.fogNum );
@@ -783,7 +797,9 @@ void RB_DrawSun( void ) {
 	RB_EndSurface();
 
 	// back to normal depth range
-	qglDepthRange( 0.0, 1.0 );
+	gxu_depth_min = 0.0;
+	gxu_depth_max = 1.0;
+	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxu_depth_min, gxu_depth_max);
 }
 
 
@@ -812,22 +828,38 @@ void RB_StageIteratorSky( void ) {
 	// front of everything to allow developers to see how
 	// much sky is getting sucked in
 	if ( r_showsky->integer ) {
-		qglDepthRange( 0.0, 0.0 );
+		gxu_depth_min = 0.0;
+		gxu_depth_max = 0.0;
 	} else {
-		qglDepthRange( 1.0, 1.0 );
+		gxu_depth_min = 1.0;
+		gxu_depth_max = 1.0;
 	}
+	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxu_depth_min, gxu_depth_max);
 
 	// draw the outer skybox
 	if ( tess.shader->sky.outerbox[0] && tess.shader->sky.outerbox[0] != tr.defaultImage ) {
-		qglColor3f( tr.identityLight, tr.identityLight, tr.identityLight );
+		float l = tr.identityLight;
+		if(l < 0.0) 
+			l = 0.0;
+		if(l > 1.0) 
+			l = 1.0;
+		gxu_cur_r = l * 255.0;
+		gxu_cur_g = l * 255.0;
+		gxu_cur_b = l * 255.0;
+		gxu_cur_a = 255;
 		
-		qglPushMatrix ();
+		qguMtxCopy(gxu_modelview_matrices[gxu_cur_modelview_matrix], gxu_modelview_matrices[gxu_cur_modelview_matrix + 1]);
+		gxu_cur_modelview_matrix++;
 		GL_State( 0 );
-		qglTranslatef (backEnd.viewParms.or.origin[0], backEnd.viewParms.or.origin[1], backEnd.viewParms.or.origin[2]);
+		Mtx m;
+		qguMtxTrans(m, backEnd.viewParms.or.origin[0], backEnd.viewParms.or.origin[1], backEnd.viewParms.or.origin[2]);
+		qguMtxConcat(gxu_modelview_matrices[gxu_cur_modelview_matrix], m, gxu_modelview_matrices[gxu_cur_modelview_matrix]);
+		qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 
 		DrawSkyBox( tess.shader );
 
-		qglPopMatrix();
+		gxu_cur_modelview_matrix--;
+		qgxLoadPosMtxImm(gxu_modelview_matrices[gxu_cur_modelview_matrix], GX_PNMTX0);
 	}
 
 	// generate the vertexes for all the clouds, which will be drawn
@@ -840,7 +872,9 @@ void RB_StageIteratorSky( void ) {
 
 
 	// back to normal depth range
-	qglDepthRange( 0.0, 1.0 );
+	gxu_depth_min = 0.0;
+	gxu_depth_max = 1.0;
+	qgxSetViewport (gxu_viewport_x, gxu_viewport_y, gxu_viewport_width, gxu_viewport_height, gxu_depth_min, gxu_depth_max);
 
 	// note that sky was drawn so we will draw a sun later
 	backEnd.skyRenderedThisView = qtrue;

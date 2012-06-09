@@ -182,6 +182,194 @@ void Sys_PowerOff(s32 chan)
 	};
 }
 
+/*
+==============
+Sys_Print
+==============
+*/
+void Sys_Print( const char *msg ) {
+	if(sys_frame_count > 1)
+		return;
+
+	printf(msg);
+}
+
+/*
+==================
+Sys_LowPhysicalMemory()
+==================
+*/
+qboolean Sys_LowPhysicalMemory() {
+  return qfalse; //************* Implement this when available in the platform.
+}
+
+void Sys_ShowConsole( int visLevel, qboolean quitOnClose )
+{
+}
+
+#define	MAX_FOUND_FILES	0x1000
+
+void Sys_ListFilteredFiles( const char *basedir, char *subdirs, char *filter, char **list, int *numfiles ) {
+	char		search[MAX_OSPATH], newsubdirs[MAX_OSPATH];
+	char		filename[MAX_OSPATH];
+	DIR			*fdir;
+	struct dirent *d;
+	struct stat st;
+
+	if ( *numfiles >= MAX_FOUND_FILES - 1 ) {
+		return;
+	}
+
+	if (strlen(subdirs)) {
+		Com_sprintf( search, sizeof(search), "%s/%s", basedir, subdirs );
+	}
+	else {
+		Com_sprintf( search, sizeof(search), "%s", basedir );
+	}
+
+	if ((fdir = opendir(search)) == NULL) {
+		return;
+	}
+
+	while ((d = readdir(fdir)) != NULL) {
+		Com_sprintf(filename, sizeof(filename), "%s/%s", search, d->d_name);
+		if (stat(filename, &st) == -1)
+			continue;
+
+		if (st.st_mode & S_IFDIR) {
+			if (Q_stricmp(d->d_name, ".") && Q_stricmp(d->d_name, "..")) {
+				if (strlen(subdirs)) {
+					Com_sprintf( newsubdirs, sizeof(newsubdirs), "%s/%s", subdirs, d->d_name);
+				}
+				else {
+					Com_sprintf( newsubdirs, sizeof(newsubdirs), "%s", d->d_name);
+				}
+				Sys_ListFilteredFiles( basedir, newsubdirs, filter, list, numfiles );
+			}
+		}
+		if ( *numfiles >= MAX_FOUND_FILES - 1 ) {
+			break;
+		}
+		Com_sprintf( filename, sizeof(filename), "%s/%s", subdirs, d->d_name );
+		if (!Com_FilterPath( filter, filename, qfalse ))
+			continue;
+		list[ *numfiles ] = CopyString( filename );
+		(*numfiles)++;
+	}
+
+	closedir(fdir);
+}
+
+char **Sys_ListFiles( const char *directory, const char *extension, char *filter, int *numfiles, qboolean wantsubs )
+{
+	struct dirent *d;
+	// char *p; // bk001204 - unused
+	DIR		*fdir;
+	qboolean dironly = wantsubs;
+	char		search[MAX_OSPATH];
+	int			nfiles;
+	char		**listCopy;
+	char		*list[MAX_FOUND_FILES];
+	//int			flag; // bk001204 - unused
+	int			i;
+	struct stat st;
+
+	int			extLen;
+
+	if (filter) {
+
+		nfiles = 0;
+		Sys_ListFilteredFiles( directory, "", filter, list, &nfiles );
+
+		list[ nfiles ] = 0;
+		*numfiles = nfiles;
+
+		if (!nfiles)
+			return NULL;
+
+		listCopy = Z_Malloc( ( nfiles + 1 ) * sizeof( *listCopy ) );
+		for ( i = 0 ; i < nfiles ; i++ ) {
+			listCopy[i] = list[i];
+		}
+		listCopy[i] = NULL;
+
+		return listCopy;
+	}
+
+	if ( !extension)
+		extension = "";
+
+	if ( extension[0] == '/' && extension[1] == 0 ) {
+		extension = "";
+		dironly = qtrue;
+	}
+
+	extLen = strlen( extension );
+	
+	// search
+	nfiles = 0;
+
+	if ((fdir = opendir(directory)) == NULL) {
+		*numfiles = 0;
+		return NULL;
+	}
+
+	while ((d = readdir(fdir)) != NULL) {
+		Com_sprintf(search, sizeof(search), "%s/%s", directory, d->d_name);
+		if (stat(search, &st) == -1)
+			continue;
+		if ((dironly && !(st.st_mode & S_IFDIR)) ||
+			(!dironly && (st.st_mode & S_IFDIR)))
+			continue;
+
+		if (*extension) {
+			if ( strlen( d->d_name ) < strlen( extension ) ||
+				Q_stricmp( 
+					d->d_name + strlen( d->d_name ) - strlen( extension ),
+					extension ) ) {
+				continue; // didn't match
+			}
+		}
+
+		if ( nfiles == MAX_FOUND_FILES - 1 )
+			break;
+		list[ nfiles ] = CopyString( d->d_name );
+		nfiles++;
+	}
+
+	list[ nfiles ] = 0;
+
+	closedir(fdir);
+
+	// return a copy of the list
+	*numfiles = nfiles;
+
+	if ( !nfiles ) {
+		return NULL;
+	}
+
+	listCopy = Z_Malloc( ( nfiles + 1 ) * sizeof( *listCopy ) );
+	for ( i = 0 ; i < nfiles ; i++ ) {
+		listCopy[i] = list[i];
+	}
+	listCopy[i] = NULL;
+
+	return listCopy;
+}
+
+void	Sys_FreeFileList( char **list ) {
+	int		i;
+
+	if ( !list ) {
+		return;
+	}
+
+	for ( i = 0 ; list[i] ; i++ ) {
+		Z_Free( list[i] );
+	}
+
+	Z_Free( list );
+}
 
 int main (int argc, char **argv) {
 

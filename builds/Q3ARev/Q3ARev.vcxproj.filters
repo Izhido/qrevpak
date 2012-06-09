@@ -399,9 +399,6 @@
     <ClCompile Include="..\..\source\quake3-1.32b\code\jpeg-6\jcapimin.c">
       <Filter>Source Files\code\jpeg-6</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\quake3-1.32b\code\jpeg-6\jcapistd.c">
-      <Filter>Source Files\code\jpeg-6</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\quake3-1.32b\code\jpeg-6\jccoefct.c">
       <Filter>Source Files\code\jpeg-6</Filter>
     </ClCompile>
@@ -522,22 +519,10 @@
     <ClCompile Include="..\..\source\quake3-1.32b\code\jpeg-6\jload.c">
       <Filter>Source Files\code\jpeg-6</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\quake3-1.32b\code\jpeg-6\jmemansi.c">
-      <Filter>Source Files\code\jpeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\quake3-1.32b\code\jpeg-6\jmemdos.c">
-      <Filter>Source Files\code\jpeg-6</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\quake3-1.32b\code\jpeg-6\jmemmgr.c">
       <Filter>Source Files\code\jpeg-6</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\quake3-1.32b\code\jpeg-6\jmemname.c">
-      <Filter>Source Files\code\jpeg-6</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\quake3-1.32b\code\jpeg-6\jmemnobs.c">
-      <Filter>Source Files\code\jpeg-6</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\quake3-1.32b\code\jpeg-6\jpegtran.c">
       <Filter>Source Files\code\jpeg-6</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\quake3-1.32b\code\jpeg-6\jquant1.c">

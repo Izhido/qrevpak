@@ -959,7 +959,7 @@ void RB_RenderDrawSurfList( drawSurf_t *drawSurfs, int numDrawSurfs ) {
 			}
 
 			k = 0;
-			for(i = 0; i < 4; i++)
+			for(i = 0; i < 3; i++)
 			{
 				for(j = 0; j < 4; j++)
 				{
@@ -999,7 +999,7 @@ void RB_RenderDrawSurfList( drawSurf_t *drawSurfs, int numDrawSurfs ) {
 
 	// go back to the world modelview matrix
 	k = 0;
-	for(i = 0; i < 4; i++)
+	for(i = 0; i < 3; i++)
 	{
 		for(j = 0; j < 4; j++)
 		{
@@ -1133,9 +1133,14 @@ void RE_StretchRaw (int x, int y, int w, int h, int cols, int rows, const byte *
 
 	RB_SetGL2D();
 
-	gxu_cur_r = tr.identityLight * 255.0;
-	gxu_cur_g = tr.identityLight * 255.0;
-	gxu_cur_b = tr.identityLight * 255.0;
+	float l = tr.identityLight;
+	if(l < 0.0) 
+		l = 0.0;
+	if(l > 1.0) 
+		l = 1.0;
+	gxu_cur_r = l * 255.0;
+	gxu_cur_g = l * 255.0;
+	gxu_cur_b = l * 255.0;
 	gxu_cur_a = 255;
 
 	qgxBegin (GX_QUADS, gxu_cur_vertex_format, 4);
