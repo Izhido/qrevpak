@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <stdio.h>
 #include "../game/q_shared.h"
 #include "../qcommon/qcommon.h"
+#include "revol_local.h"
 
 #include <gccore.h>
 #include <dirent.h>
@@ -167,6 +168,7 @@ void	Sys_Mkdir (const char *path) {
 }
 
 void	Sys_Init (void) {
+	IN_Init();
 }
 
 void Sys_KeyPress(char c)

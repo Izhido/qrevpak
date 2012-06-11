@@ -49,9 +49,6 @@
     <Filter Include="Header Files\code\server">
       <UniqueIdentifier>{b1072002-4f10-4514-88c7-43171883cb47}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\code\revol">
-      <UniqueIdentifier>{3003e441-e2b6-4c4c-8e47-d5b28cd8fbdd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\oggplayer">
       <UniqueIdentifier>{8e955477-50f7-45c0-aa87-c3ae4e1ae2cc}</UniqueIdentifier>
     </Filter>
@@ -75,6 +72,9 @@
     </Filter>
     <Filter Include="Header Files\code\jpeg-6">
       <UniqueIdentifier>{2b750e3b-3cfe-43b9-b498-9eebb491e9c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\code\revol">
+      <UniqueIdentifier>{f9a09d0b-5648-43fe-be6d-5f6fc83de6d6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -674,9 +674,6 @@
     <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\qgx.h">
       <Filter>Header Files\code\renderer_gx</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\quake3-1.32b\code\revol\revol_glw.h">
-      <Filter>Header Files\code\revol</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\gxutils\include\gxutils.h">
       <Filter>Header Files\gxutils</Filter>
     </ClInclude>
@@ -718,6 +715,12 @@
     </ClInclude>
     <ClInclude Include="..\..\source\quake3-1.32b\code\jpeg-6\jversion.h">
       <Filter>Header Files\code\jpeg-6</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\revol\revol_glw.h">
+      <Filter>Header Files\code\revol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\quake3-1.32b\code\revol\revol_local.h">
+      <Filter>Header Files\code\revol</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

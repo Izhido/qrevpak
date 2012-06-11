@@ -227,6 +227,7 @@
     <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_local.h" />
     <ClInclude Include="..\..\source\quake3-1.32b\code\renderer_gx\tr_public.h" />
     <ClInclude Include="..\..\source\quake3-1.32b\code\revol\revol_glw.h" />
+    <ClInclude Include="..\..\source\quake3-1.32b\code\revol\revol_local.h" />
     <ClInclude Include="..\..\source\quake3-1.32b\code\server\server.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

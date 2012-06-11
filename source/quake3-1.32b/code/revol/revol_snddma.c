@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // Implements the remaining functions required by the software mixer
 
 #include "../client/client.h"
+#include "revol_local.h"
 
 qboolean SNDDMA_Init(void)
 {
